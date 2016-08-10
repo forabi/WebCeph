@@ -39,6 +39,10 @@
         <button id="btn-calc" class="btn">
           Calculate
         </button>
+        <label>
+          Brightness:
+          <input id="input-brightness" type="range" min="0" max="255">
+        </label>
       </div>
       <div id="status-bar">
 
@@ -49,18 +53,28 @@
       const canvasWidth = 1770 / 4;
       const canvasHeight = 2370 / 4
       const statusBar = document.getElementById('status-bar');
-      var canvas = new fabric.Canvas('c', {
+      var backgroundImage = null;
+      const canvas = new fabric.Canvas('c', {
         width: canvasWidth, height: canvasHeight,
       });
 
       fabric.Image.fromURL('./assets/cephalo.bmp', (imgObject) => {
+        backgroundImage = imgObject;
         imgObject.set({
           height: canvasHeight,
           width: canvasWidth,
           flipX: true,
-        })
+        });
         canvas.setBackgroundImage(imgObject, canvas.renderAll.bind(canvas));
       });
+
+      function setBrightness(object, value) {
+        const filter = new fabric.Image.filters.Brightness({
+          brightness: value
+        });
+        object.filters.push(filter);
+        object.applyFilters(canvas.renderAll.bind(canvas));
+      }
 
       const points = { };
 
@@ -118,7 +132,12 @@
         const angle = prompt('Angle to calculate?');
         const value = calculateAngle.apply(null, angle.split('').map(name => points[name]).map(circleToPoint));
         alert(`${angle} is ${value.toFixed()} degrees`);
-      });`
+      });
+
+      const inputBrightness = document.getElementById('input-brightness');
+      inputBrightness.addEventListener('input', e => {
+        setBrightness(backgroundImage, e.target.value);
+      })
     </script>
   </body>
 </html>
