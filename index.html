@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ar" dir="auto">
+  <head>
+    <title>تجربة Fabric</title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: center;
+        height: 100vh;
+        width: 100vw;
+      }
+      .container h1 {
+        text-align: center;
+      }
+      #c {
+        border: 1px solid black;
+      }
+      #status-bar {
+        white-space: pre;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>ترسيم صورة سيفالو</h1>
+      <canvas id="c">
+
+      </canvas>
+      <div class="buttons">
+        <button id="btn-add-point" class="btn">
+          Add point
+        </button>
+        <button id="btn-calc" class="btn">
+          Calculate
+        </button>
+      </div>
+      <div id="status-bar">
+
+      </div>
+    </div>
+    <script src="./fabric.min.js"></script>
+    <script>
+      const canvasWidth = 1770 / 4;
+      const canvasHeight = 2370 / 4
+      const statusBar = document.getElementById('status-bar');
+      var canvas = new fabric.Canvas('c', {
+        width: canvasWidth, height: canvasHeight,
+      });
+
+      fabric.Image.fromURL('./assets/cephalo.bmp', (imgObject) => {
+        imgObject.set({
+          height: canvasHeight,
+          width: canvasWidth,
+          flipX: true,
+        })
+        canvas.setBackgroundImage(imgObject, canvas.renderAll.bind(canvas));
+      });
+
+      const points = { };
+
+      function addPoint(name, x, y) {
+        const circle = new fabric.Circle({
+          left: x,
+          top: canvasHeight - y,
+          strokeWidth: 1,
+          radius: 4,
+          fill: '#fff',
+          stroke: '#666',
+          hasBorders: false,
+          hasControls: false,
+          hasRotatingPoint: false,
+        });
+
+        circle.isPoint = true;
+        circle.pointName = name;
+
+        circle.on('mouseover', () => {
+          statusBar.textContent = name;
+        });
+        circle.on('mouseout', () => {
+          statusBar.textContent = '';
+        });
+        canvas.add(circle);
+
+        points[name] = circle;
+      }
+
+
+      function circleToPoint(circle) {
+        if (circle.isPoint) {
+          return circle.getCenterPoint();
+        } else {
+          throw new TypeError('Circle is not a cephalometric point');
+        }
+      }
+
+      function calculateAngle(A, B, C) {
+        var AB = Math.sqrt(Math.pow(B.x - A.x, 2) + Math.pow(B.y - A.y, 2));    
+        var BC = Math.sqrt(Math.pow(B.x - C.x, 2) + Math.pow(B.y - C.y, 2)); 
+        var AC = Math.sqrt(Math.pow(C.x - A.x, 2) + Math.pow(C.y - A.y, 2));
+        return Math.acos((BC * BC + AB * AB - AC * AC) / (2 * BC * AB)) * (180 / Math.PI);
+      }
+
+      const btnAddPoint = document.getElementById('btn-add-point');
+      btnAddPoint.addEventListener('click', e => {
+        const point = prompt('Point name');
+        addPoint(point, 50, 50);
+      });
+
+      const btnCalc = document.getElementById('btn-calc');
+      btnCalc.addEventListener('click', e => {
+        const angle = prompt('Angle to calculate?');
+        const value = calculateAngle.apply(null, angle.split('').map(name => points[name]).map(circleToPoint));
+        alert(`${angle} is ${value.toFixed()} degrees`);
+      });`
+    </script>
+  </body>
+</html>
