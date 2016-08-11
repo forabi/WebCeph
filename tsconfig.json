@@ -3,6 +3,8 @@
     "target": "es6",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
-    "noImplicitAny": true
-  }
+    "noImplicitAny": true,
+    "moduleResolution": "node"
+  },
+  "compileOnSave": true
 }

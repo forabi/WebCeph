@@ -1,0 +1,23 @@
+{
+  "name": "fabric-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "fabric.min.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/forabi/cephalo.git"
+  },
+  "keywords": [],
+  "author": "Muhammad Fawwaz Orabi <mfawwaz93@gmail.com> (http://forabi.github.io)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/forabi/cephalo/issues"
+  },
+  "homepage": "https://gitlab.com/forabi/cephalo#README",
+  "dependencies": {
+    "lodash": "^4.14.2"
+  }
+}
