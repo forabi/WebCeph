@@ -51,24 +51,27 @@
   margin-bottom: 40px;
 }
 
-.dropzone__active .dropzone_placeholder_image [id="circle"] {
-  transition-property: fill stroke;
+.dropzone .dropzone_placeholder_image [id="circle"],
+.dropzone .dropzone_placeholder_image [id="cephalo"] {
+  transition-property: fill stroke transform;
   transition-duration: 0.3s;
+  transform-origin: center center;
 }
+
+.dropzone .dropzone_placeholder_image [id="cephalo"] {
+  transform-origin: 120% 170%;
+  transform: scale(0.7);
+}
+
 
 .dropzone__active .dropzone_placeholder_image [id="circle"] {
   fill: rgba(160, 201, 255, 110);
   stroke: rgba(160, 201, 255, 255);
-}
-
-.dropzone .dropzone_placeholder_image [id="cephalo"] {
-  transition: transform 0.2s;
-  transform-origin: 100% 100%;
-  transform: rotate(0deg) scale(0.7) translateX(0);
+  transform: scale(1.05);
 }
 
 .dropzone__active .dropzone_placeholder_image [id="cephalo"] {
-  transform: rotate(-10deg) scale(0.8);
+  transform: rotate(-10deg) scale(0.85);
 }
 
 .canvas {
