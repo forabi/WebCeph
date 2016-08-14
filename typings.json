@@ -1,0 +1,13 @@
+{
+  "name": "fabric-demo",
+  "dependencies": {
+    "lodash": "registry:npm/lodash#4.0.0+20160723033700",
+    "react": "registry:npm/react#15.0.1+20160601175240",
+    "react-dom": "registry:npm/react-dom#15.0.1+20160705210405"
+  },
+  "globalDependencies": {
+    "es2015": "registry:env/es2015#1.0.0+20160526151700",
+    "material-ui": "registry:dt/material-ui#0.15.1+20160720000941",
+    "webpack-env": "registry:dt/webpack-env#1.12.2+20160316155526"
+  }
+}

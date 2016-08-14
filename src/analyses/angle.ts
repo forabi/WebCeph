@@ -19,7 +19,7 @@ export class Angle implements Measurement {
       this.components[0].components[1].symbol,
       this.components[1].components[0].symbol,
       this.components[2].components[0].symbol,
-    ]);
+    ]).join('');
   }
 
   calculate() {

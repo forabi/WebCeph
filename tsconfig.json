@@ -1,10 +1,17 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2015",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
-    "noImplicitAny": true,
-    "moduleResolution": "node"
+    "noImplicitAny": false,
+    "moduleResolution": "node",
+    "jsx": "react",
+    "sourceMap": true,
+    "module": "commonjs",
+    "isolatedModules": true
   },
-  "compileOnSave": true
+  "compileOnSave": true,
+  "exclude": [
+    "node_modules"
+  ]
 }

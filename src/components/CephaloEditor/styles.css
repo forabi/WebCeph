@@ -1,0 +1,82 @@
+.root {
+  display: table;
+  width: 100%;
+}
+
+.root > * {
+  display: table-row;
+  width: 100%;
+}
+
+.canvas_container {
+  border: 1px dotted lightgray;
+  padding: 5px;
+  height: 100%;
+  max-height: 100%;
+  text-align: center;
+  background-color: #424242;
+  color: white;
+  font-family: 'Roboto';
+}
+
+.dropzone {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dropzone_placeholder {
+  white-space: pre-wrap;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-size: 50% 50%;
+  background-position: center;
+  background-color: white;
+  color: gray;
+  font-size: x-large;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.dropzone_placeholder_image {
+  max-width: 70vw;
+  margin-bottom: 40px;
+}
+
+.dropzone__active .dropzone_placeholder_image [id="circle"] {
+  transition-property: fill stroke;
+  transition-duration: 0.3s;
+}
+
+.dropzone__active .dropzone_placeholder_image [id="circle"] {
+  fill: rgba(160, 201, 255, 110);
+  stroke: rgba(160, 201, 255, 255);
+}
+
+.dropzone .dropzone_placeholder_image [id="cephalo"] {
+  transition: transform 0.2s;
+  transform-origin: 100% 100%;
+  transform: rotate(0deg) scale(0.7) translateX(0);
+}
+
+.dropzone__active .dropzone_placeholder_image [id="cephalo"] {
+  transform: rotate(-10deg) scale(0.8);
+}
+
+.canvas {
+  height: 100%;
+  max-height: 100%;
+  max-width: 100%;
+}
+
+.toolbar {
+
+}

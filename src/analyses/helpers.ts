@@ -57,4 +57,4 @@ export function line(A: string, B: string, name: string = null): Line {
   };
 }
 
-export type Analysis = Array<{ measurment: Measurement, norm: number, stdDev?: number }>;
+export type Analysis = Array<{ measurement: Measurement, norm: number, stdDev?: number }>;

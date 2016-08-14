@@ -1,0 +1,8 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/b1426f561dde78d0e40f191be672546fca61d57a/material-ui/material-ui.d.ts",
+    "raw": "registry:dt/material-ui#0.15.1+20160720000941",
+    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/b1426f561dde78d0e40f191be672546fca61d57a/material-ui/material-ui.d.ts"
+  }
+}

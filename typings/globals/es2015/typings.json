@@ -1,0 +1,12 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/typed-contrib/es2015/0.1.3/typings.json",
+    "raw": "registry:env/es2015#1.0.0+20160526151700",
+    "main": "index.d.ts",
+    "version": "0.1.3",
+    "global": true,
+    "name": "es2015",
+    "type": "typings"
+  }
+}
