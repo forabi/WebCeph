@@ -1,4 +1,4 @@
-import { angleBetweenPoints, line } from './helpers';
+import { angleBetweenPoints, line, Analysis } from './helpers';
 
 /**
  * Frankfort Horizontal Plane
@@ -12,17 +12,17 @@ export const FH_PLANE = line('Po', 'Or');
 export const SELLA_NASION_LINE = line('S' , 'N');
 
 
-export default [
+export default <Analysis>[
   {
-    measurment: angleBetweenPoints('S', 'N', 'A'),
+    measurement: angleBetweenPoints('S', 'N', 'A'),
     norm: 82,
   },
   {
-    measurment: angleBetweenPoints('S', 'N', 'B'),
+    measurement: angleBetweenPoints('S', 'N', 'B'),
     norm: 80,
   },
   {
-    measurment: angleBetweenPoints('A', 'N', 'B'),
+    measurement: angleBetweenPoints('A', 'N', 'B'),
     norm: 2,
   }
 ]
