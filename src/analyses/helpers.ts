@@ -9,11 +9,11 @@ export interface Measurement {
   symbol: string,
   type: MeasurementType,
   unit?: AngularUnit | LinearUnit,
-  components?: Array<Measurement>,
+  components: Array<Measurement>,
   calculate?(): number,
 }
 
-export interface Point {
+export interface Point extends Measurement {
   name: string,
   symbol: string,
   type: 'coordinate',
@@ -42,6 +42,7 @@ export function point(symbol: string, name: string = null): Point {
     name,
     symbol,
     type: 'coordinate',
+    components: [],
   }
 }
 
@@ -58,3 +59,24 @@ export function line(A: string, B: string, name: string = null): Line {
 }
 
 export type Analysis = Array<{ measurement: Measurement, norm: number, stdDev?: number }>;
+
+import _ = require('lodash');
+
+const hasComponents: (Measurement) => boolean = m => m.components.length > 0;
+
+export function getStepsForMeasurement(measurement: Measurement): Array<Measurement>{
+    if (!hasComponents(measurement)) return [measurement];
+    return _.chain(measurement.components)
+     .map(c => _.flatMap(c.components, getStepsForMeasurement))
+     .flatten().uniqBy('symbol').value();
+}
+
+export function getStepsForAnalysis(analysis: Analysis): Array<Measurement> {
+    return _.chain(analysis)
+     .map('measurement')
+     .map(getStepsForMeasurement)
+     .flatten()
+     .compact()
+     .uniqBy('symbol')
+     .value();
+}
