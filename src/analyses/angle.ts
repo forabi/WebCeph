@@ -14,11 +14,11 @@ export class Angle implements Measurement {
   }
 
   get symbol(): string {
-    return uniq([
+    return 'Angle ' + uniq([
       this.components[0].components[0].symbol,
       this.components[0].components[1].symbol,
       this.components[1].components[0].symbol,
-      this.components[2].components[0].symbol,
+      this.components[1].components[1].symbol,
     ]).join('');
   }
 
