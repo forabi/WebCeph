@@ -11,18 +11,29 @@ export const FH_PLANE = line('Po', 'Or');
  */
 export const SELLA_NASION_LINE = line('S' , 'N');
 
+export const SNA = angleBetweenPoints('S', 'N', 'A');
+export const SNB = angleBetweenPoints('S', 'N', 'B');
+
 
 export default <Analysis>[
   {
-    measurement: angleBetweenPoints('S', 'N', 'A'),
+    landmark: SNA,
     norm: 82,
   },
   {
-    measurement: angleBetweenPoints('S', 'N', 'B'),
+    landmark: SNB,
     norm: 80,
   },
   {
-    measurement: angleBetweenPoints('A', 'N', 'B'),
+    landmark: {
+        name: null,
+        type: 'angle',
+        symbol: 'ANB',
+        components: [SNA, SNB],
+        calculate(SNA: number, SNB: number) {
+            return SNA - SNB;
+        },
+    },
     norm: 2,
   }
 ]

@@ -51,3 +51,9 @@ export function calculateAngleBetweenLines(line1: Line, line2: Line): number {
   const angle2 = Math.atan2(line2.y1 - line2.y2, line2.x1 - line2.x2);
   return angle1 - angle2;
 }
+
+
+// @TODO
+export function calculateDistanceBetweenTwoPoints(point1: Point, point2: Point): number {
+    return 0;
+}
