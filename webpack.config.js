@@ -35,7 +35,15 @@ const config = {
     loaders: [{
       test: /\.tsx?$/,
       exclude: /node_modules/,
-      loaders: ['ts-loader?transpileOnly=1'],
+      loaders: [{
+        loader: 'ts-loader',
+        query: {
+          transpileOnly: true,
+          compilerOptions: {
+            module: 'es2015',
+          },
+        },
+      }],
     }, {
       test: /\.jsx?$/,
       exclude: /node_modules/,
