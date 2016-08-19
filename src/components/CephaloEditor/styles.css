@@ -50,7 +50,6 @@
   max-width: 70vw;
   margin-bottom: 40px;
 }
-
 .dropzone .dropzone_placeholder_image [id="circle"],
 .dropzone .dropzone_placeholder_image [id="cephalo"] {
   transition-property: fill stroke transform;
@@ -58,16 +57,19 @@
   transform-origin: center center;
 }
 
-.dropzone .dropzone_placeholder_image [id="cephalo"] {
-  transform-origin: 120% 170%;
-  transform: scale(0.7);
-}
-
 
 .dropzone__active .dropzone_placeholder_image [id="circle"] {
   fill: rgba(160, 201, 255, 110);
   stroke: rgba(160, 201, 255, 255);
   transform: scale(1.05);
+}
+
+.dropzone .dropzone_placeholder_image [id="cephalo"] {
+  position: relative;
+  top: 120%;
+  right: 160%;
+  transform-origin: 120% 160%;
+  transform: scale(0.7);
 }
 
 .dropzone__active .dropzone_placeholder_image [id="cephalo"] {

@@ -4,7 +4,7 @@ import * as injectTapEventPlugin from 'react-tap-event-plugin';
 import { Step, Stepper, StepLabel } from 'material-ui/Stepper';
 import CephaloEditor from '../CephaloEditor';
 
-import classes = require('./style.css');
+const classes = require('./style.css');
 try {
   injectTapEventPlugin();
 } catch (e) { }

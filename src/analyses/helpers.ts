@@ -1,40 +1,57 @@
-import _ = require('lodash');
+import * as _ from 'lodash';
 
 export type AngularUnit = 'degree' | 'radian';
 export type LinearUnit = 'mm' | 'cm' | 'in';
 export type LandmarkType = 'angle' | 'point' | 'line'; 
 
+/**
+ * A generic interface that represents any cephalometric radiograph, including
+ * angles, lines and points.
+ * Landmarks may also have names and units.
+ */
 export interface Landmark {
-  name: string,
+  name?: string,
+  /**
+   * Each landmark must have a symbol which acts as the unique identifier for that landmark.
+   */
   symbol: string,
   type: LandmarkType,
   unit?: AngularUnit | LinearUnit,
-  components: Array<Landmark>,
-  calculate?(...args: Array<number>): number,
+  /**
+   * Some landmarks are composed of more basic components; for example, a line is
+   * composed of two points.
+   */
+  components: Landmark[],
+  /**
+   * An optional custom calculation method.
+   * It is passed the computed values for each of this landmark's components
+   * in the same order they were declared.
+   */
+  calculate?(...args: number[]): number,
 }
 
 export interface Point extends Landmark {
-  name: string,
+  name?: string,
   symbol: string,
   type: 'point',
 }
 
 export interface Line extends Landmark {
-  name: string,
+  name?: string,
   type: 'line',
   unit: LinearUnit,
-  components: Array<Point>
+  components: Point[]
 }
 
 export interface Angle extends Landmark {
-    name: string;
+    name?: string;
     type: 'angle';
     unit: AngularUnit;
-    components: Array<Line>
+    components: Line[]
 }
 
 export function getSymbolForAngle(lineA: Line, lineB: Line): string {
-    return 'Angle ' + _.uniq([
+    return _.uniq([
       lineA.components[0].symbol,
       lineA.components[1].symbol,
       lineB.components[0].symbol,
@@ -42,19 +59,26 @@ export function getSymbolForAngle(lineA: Line, lineB: Line): string {
     ]).join('');
 }
 
-export function angleBetweenLines(lineA: Line, lineB: Line, name: string, unit: AngularUnit = 'degree'): Angle {
+/**
+ * Creates an object conforming to the Angle interface based on 2 lines
+ */
+export function angleBetweenLines(lineA: Line, lineB: Line, name: string | undefined = undefined, unit: AngularUnit = 'degree'): Angle {
+  const symbol = getSymbolForAngle(lineA, lineB);
   return {
-      type: 'angle', name, unit,
-      symbol: getSymbolForAngle(lineA, lineB),
+      type: 'angle', symbol, unit,
+      name: name || `Angle ${symbol}`, 
       components: [lineA, lineB],
   }; 
 }
 
-export function angleBetweenPoints(A: string, B: string, C: string, name: string = null, unit: AngularUnit = 'degree'): Angle {
+/**
+ * Creates an object conforming to the Angle interface based on 3 points
+ */
+export function angleBetweenPoints(A: Point, B: Point, C: Point, name: string | undefined = undefined, unit: AngularUnit = 'degree'): Angle {
   return angleBetweenLines(line(A, B), line(B, C), name, unit);
 }
 
-export function point(symbol: string, name: string = null): Point {
+export function point(symbol: string, name: string | undefined = undefined): Point {
   return {
     name,
     symbol,
@@ -63,21 +87,20 @@ export function point(symbol: string, name: string = null): Point {
   }
 }
 
-export function line(A: string, B: string, name: string = null, unit: LinearUnit = 'mm'): Line {
+/**
+ * Creates an object conforming to the Line interface connecting two points
+ */
+export function line(A: Point, B: Point, name: string | undefined = undefined, unit: LinearUnit = 'mm'): Line {
   return {
     name,
     unit,
     symbol: `${A}-${B}`,
     type: 'line',
-    components: [
-      point(A),
-      point(B),
-    ],
+    components: [A, B],
   };
 }
 
 export type Analysis = Array<{ landmark: Landmark, norm: number, stdDev?: number }>;
-
 
 const hasComponents: (m: Landmark) => boolean = m => m.components.length > 0;
 
@@ -103,7 +126,7 @@ export function getStepsForAnalysis(analysis: Analysis): Landmark[] {
 }
 
 import {
-    calculateAngleBetweenLines,
+    calculateAngleBetweenTwoLines,
     calculateDistanceBetweenTwoPoints,
     Line as GeometricalLine,
     Point as GeometricalPoint,
@@ -111,12 +134,23 @@ import {
     degreesToRadians,
 } from '../utils/math';
 
+/**
+ * A Mapper object maps cephalometric landmarks to geometrical objects
+ */
 interface Mapper {
-    toLine(landmark): GeometricalLine;
-    toPoint(landmark): GeometricalPoint;
+    toLine(landmark: Line): GeometricalLine;
+    toPoint(landmark: Point): GeometricalPoint;
+    /**
+     * The scale factor is required to calculate linear measurements
+     * It is expected to map pixels on the screen to millimeters.
+     */
     scaleFactor: number;
 }
 
+/**
+ * Calculates the value of a landmark on a cephalometric radiograph
+ * 
+ */
 export function calculate(landmark: Landmark, mapper: Mapper): number {
     if (landmark.calculate) {
         return landmark.calculate.apply(
@@ -124,13 +158,14 @@ export function calculate(landmark: Landmark, mapper: Mapper): number {
             landmark.components.map(l => calculate(l, mapper))
         );
     } else if (landmark.type === 'angle') {
-        const lines: GeometricalLine[] = landmark.components.map(mapper.toLine);
-        const result = calculateAngleBetweenLines(lines[0], line[1]);
+        const lines: GeometricalLine[] = (<Angle>landmark).components.map(mapper.toLine);
+        const result = calculateAngleBetweenTwoLines(lines[0], lines[1]);
         return landmark.unit === 'degree' ? radiansToDegrees(result) : result;
     } else if (landmark.type === 'line') {
-        const points = (<Line>landmark).components.map(mapper.toPoint);
-        // @TODO: figure out how to use units?
+        const points: GeometricalPoint[] = (<Line>landmark).components.map(mapper.toPoint);
         const result = calculateDistanceBetweenTwoPoints(points[0], points[1]) * mapper.scaleFactor;
+        const unit = (<Line>landmark).unit;
+        return unit === 'mm' ? result : unit === 'cm' ? result / 10 : result / 25.4;
     } else {
         throw new TypeError(`Landmarks of this type (${landmark.type}) cannot be calculated`);
     }

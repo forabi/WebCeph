@@ -13,35 +13,31 @@ import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
 import Checkbox from 'material-ui/Checkbox';
-import ImageWorker = require('worker!./worker');
 import { ImageWorkerData } from './worker';
 import * as cx from 'classnames';
 import { fabric } from 'fabric';
 import { mapValues, pick } from 'lodash';
 
 require('jimp/browser/lib/jimp.js');
+declare const Jimp: any;
 
-import classes = require('./styles.css');
-import DropzonePlaceholder from './assets/placeholder.svg';
+const ImageWorker = require('worker!./worker');
+const classes = require('./styles.css');
+const DropzonePlaceholder = require('./assets/placeholder.svg').default;
 
 interface ImagePickerProps {
   className: string,
 }
 
 interface ImagePickerState {
-  image?: Object,
-  canvas?: Object,
+  image: Object | null,
+  canvas: HTMLCanvasElement | null,
+  anchorEl: Element | null,
   hasImage: boolean,
   open: boolean,
-  anchorEl: Object,
   isEditing: boolean,
   brightness: number,
-  sharpen: boolean,
-}
-
-interface ImagePickerRefs {
-  canvas: any,
-  canvasContainer: any,
+  invert: boolean,
 }
 
 export interface Edit {
@@ -52,11 +48,20 @@ export interface Edit {
 
 const invertFilter = new fabric.Image.filters.Invert();
 
+function readFileAsBuffer(file: File): Promise<ArrayBuffer> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as ArrayBuffer);
+    reader.onerror = e => reject(e.error);
+    reader.readAsArrayBuffer(file);
+  });
+}
+
 export default class CephaloEditor extends React.Component<ImagePickerProps, ImagePickerState> {
   private listener: EventListener;
   private worker: ImageWorker;
   private edits: Array<Edit> = [];
-  refs: ImagePickerRefs = { canvas: null, canvasContainer: null };
+  refs: { canvas: Element, canvasContainer: Element };
   state = {
     open: false, anchorEl: null,
     canvas: null, image: null, hasImage: false,
@@ -64,7 +69,7 @@ export default class CephaloEditor extends React.Component<ImagePickerProps, Ima
     brightness: 0, invert: false,
   };
 
-  handleDrop = (files) => {
+  handleDrop = (files: File[]) => {
     const file: File = files[0];
     
     this.setState(assign({ }, this.state, { hasImage: true }) as ImagePickerState, () => {
@@ -76,9 +81,8 @@ export default class CephaloEditor extends React.Component<ImagePickerProps, Ima
           dim => Number(dim.replace('px', ''))
         );
       
-      const reader = new FileReader();
-      reader.onload =  e => {
-        Jimp.read(e.target.result).then(img => {
+      readFileAsBuffer(file).then(buff => {
+        return Jimp.read(buff).then((img: any) => {
           img.scaleToFit(height * 0.5, width * 0.5).getBase64(Jimp.MIME_BMP, (err, data) => {
             const canvas = new fabric.Canvas(canvasEl, { height, width });
             fabric.Image.fromURL(
@@ -92,14 +96,12 @@ export default class CephaloEditor extends React.Component<ImagePickerProps, Ima
             );
           });
         });
-      }
-
-      reader.readAsArrayBuffer(file);
+      });
     });
     
   }
 
-  handleTouchTap = (event) => {
+  handleTouchTap = (event: Event) => {
     event.preventDefault();
     this.setState(assign({ }, this.state, { open: true, anchorEl: event.currentTarget }) as ImagePickerState);
   };
@@ -114,7 +116,7 @@ export default class CephaloEditor extends React.Component<ImagePickerProps, Ima
   }
 
   setBrightness = (event, value) => {
-    var filter = new fabric.Image.filters.Brightness({ brightness: value });
+    const filter = new fabric.Image.filters.Brightness({ brightness: value });
     this.state.image.filters[0] = filter;
     this.state.image.applyFilters(this.state.canvas.renderAll.bind(this.state.canvas));
   }
@@ -144,7 +146,7 @@ export default class CephaloEditor extends React.Component<ImagePickerProps, Ima
 
   componentDidMount() {
     this.worker = new ImageWorker;
-    this.listener = e => {
+    this.listener = (e: MessageEvent) => {
       console.log('Got message from worker', e);
       const patch: any = { modifiedImage: e.data.image };
       if (e.data.isDestructive) {

@@ -1,6 +1,13 @@
 {
   "compilerOptions": {
     "target": "es2015",
+    "lib": [
+        "es5",
+        "es2015",
+        "webworker",
+        "dom"
+    ],
+    "outDir": "build/",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
@@ -22,6 +29,7 @@
   },
   "compileOnSave": true,
   "exclude": [
-    "node_modules"
+      "node_modules",
+      "src/**/*.test.ts"
   ]
 }

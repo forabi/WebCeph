@@ -96,6 +96,7 @@ const config = {
       'process.env.ENVIRONMENT': JSON.stringify('BROWSER'),
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       isBrowser: true,
+      isHot: JSON.stringify(Boolean(process.env.HOT)),
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: true,

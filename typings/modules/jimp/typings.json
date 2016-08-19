@@ -1,0 +1,11 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/typed-contrib/jimp/57e201a201799cf828aa1c7efa6f1a0e4c435f2e/typings.json",
+    "raw": "registry:npm/jimp#0.2.20+20160526180746",
+    "main": "index.d.ts",
+    "global": false,
+    "name": "jimp",
+    "type": "typings"
+  }
+}
