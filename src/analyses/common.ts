@@ -1,4 +1,4 @@
-import { angleBetweenPoints, line, point, getSymbolForAngle, Analysis } from './helpers';
+import { angleBetweenPoints, line, point, Landmark, getSymbolForAngle, Analysis } from './helpers';
 import { assign } from 'lodash';
 
 /**
@@ -63,6 +63,19 @@ export const SNA = angleBetweenPoints(S, N, A);
  */
 export const SNB = angleBetweenPoints(S, N, B);
 
+/**
+ * Angle ANB is a custom landmark that is calculated as the SNA - SNB,
+ * because otherwise it would not be a negative value in cases where it should be.
+ */
+export const ANB = <Landmark>{
+  symbol: getSymbolForAngle(line(A, N), line(N, B)),
+  type: 'angle',
+  unit: 'degree',
+  components: [SNA, SNB],
+  calculate(SNA: number, SNB: number) {
+      return SNA - SNB;
+  },
+};
 
 export default <Analysis>[
   {
@@ -74,12 +87,7 @@ export default <Analysis>[
     norm: 80,
   },
   {
-    landmark: assign(angleBetweenPoints(A, N, B), {
-        components: [SNA, SNB],
-        calculate(SNA: number, SNB: number) {
-            return SNA - SNB;
-        },
-    }),
+    landmark: ANB,
     norm: 2,
   }
 ]
