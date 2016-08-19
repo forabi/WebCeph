@@ -41,7 +41,6 @@
   background-color: white;
   color: gray;
   font-size: x-large;
-  cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -52,11 +51,14 @@
 }
 .dropzone .dropzone_placeholder_image [id="circle"],
 .dropzone .dropzone_placeholder_image [id="cephalo"] {
-  transition-property: fill stroke transform;
+  transition-property: fill stroke transform opacity;
   transition-duration: 0.3s;
   transform-origin: center center;
 }
 
+.dropzone__active {
+  cursor: pointer;
+}
 
 .dropzone__active .dropzone_placeholder_image [id="circle"] {
   fill: rgba(160, 201, 255, 110);
@@ -72,8 +74,24 @@
   transform: scale(0.7);
 }
 
+
 .dropzone__active .dropzone_placeholder_image [id="cephalo"] {
   transform: rotate(-10deg) scale(0.85);
+}
+
+.dropzone__reject {
+  cursor: no-drop !important;
+}
+
+.dropzone__reject .dropzone_placeholder_image [id="circle"] {
+  fill: rgba(255, 100, 100, 50);
+  stroke: rgba(255, 100, 100, 100);
+  transform: scale(0.7);
+}
+
+.dropzone__reject .dropzone_placeholder_image [id="cephalo"] {
+  transform: scale(0.5);
+  opacity: 0;
 }
 
 .canvas {

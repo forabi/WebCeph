@@ -175,8 +175,11 @@ export default class CephaloEditor extends React.Component<ImagePickerProps, Ima
             />
           ) : (
             <Dropzone
-              className={classes.dropzone} activeClassName={classes.dropzone__active}
+              className={classes.dropzone}
+              activeClassName={classes.dropzone__active}
+              rejectClassName={classes.dropzone__reject}
               onDrop={this.handleDrop} multiple={false}
+              accept="image/*" disablePreview
             >
               <div className={classes.dropzone_placeholder}>
                 <DropzonePlaceholder className={classes.dropzone_placeholder_image} />
