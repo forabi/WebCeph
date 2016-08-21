@@ -1,6 +1,6 @@
-[submodule "src/components/layout/bootstrap"]
+[submodule "src/layout/bootstrap"]
 	path = src/layout/bootstrap
 	url = https://github.com/twbs/bootstrap.git
-[submodule "src/components/layout/flexboxgrid"]
+[submodule "src/layout/flexboxgrid"]
 	path = src/layout/flexboxgrid
 	url = https://github.com/kristoferjoseph/flexboxgrid
