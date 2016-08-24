@@ -1,5 +1,6 @@
-import { point, line, getSymbolForAngle } from './helpers';
+import { point, line, getSymbolForAngle, getEdgesForLandmark } from './helpers';
 import * as assert from 'assert';
+const expect = require('expect');
 
 describe('point()', () => {
 
@@ -30,6 +31,21 @@ describe('getSymbolForAngle()', () => {
 
     it('should handle unconnected lines');
     it('should handle points whith symbols longer than 1 character');
+});
+
+describe('getEdgesForLandmark()', () => {
+    it('should get dependencies in order', () => {
+        const A = point('A');
+        const B = point('B');
+        const l = line(A, B);
+        const actual = getEdgesForLandmark(l);
+        expect(actual).toBeAn(Array);
+        expect(actual).toMatch([
+            [B],
+            [A],
+            [A, B, l],
+        ]);
+    });
 });
 
 describe('calculate()', () => {
