@@ -17,7 +17,7 @@ export interface Line {
 }
 
 export function radiansToDegrees(value: number): number {
-  return value * (180 / Math.PI);
+  return value * 180 / Math.PI;
 }
 
 export function degreesToRadians(value: number): number {
