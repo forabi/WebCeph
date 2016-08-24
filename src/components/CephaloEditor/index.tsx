@@ -3,13 +3,18 @@ import * as ReactDOM from 'react-dom';
 import * as Dropzone from 'react-dropzone';
 import { assign } from 'lodash';
 import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
 import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
 import Popover from 'material-ui/Popover';
 import Slider from 'material-ui/Slider';
 import IconFlip from 'material-ui/svg-icons/image/flip';
 import IconBrightness from 'material-ui/svg-icons/image/brightness-5';
 import IconControlPoint from 'material-ui/svg-icons/image/control-point';
+import IconPlayArrow from 'material-ui/svg-icons/av/play-arrow';
+import IconHourglass from 'material-ui/svg-icons/action/hourglass-empty';
+import IconDone from 'material-ui/svg-icons/action/done';
 import Menu from 'material-ui/Menu';
+import { List, ListItem } from 'material-ui/List';
 import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
 import Checkbox from 'material-ui/Checkbox';
@@ -17,19 +22,62 @@ import { ImageWorkerData } from './worker';
 import * as cx from 'classnames';
 import { fabric } from 'fabric';
 import { mapValues, pick } from 'lodash';
+import { Landmark, getStepsForAnalysis } from '../../analyses/helpers';
+import downs from '../../analyses/downs';
+import { descriptions } from './strings';
+import { readFileAsBuffer } from '../../utils/file';
 
 require('jimp/browser/lib/jimp.js');
 declare const Jimp: any;
 
 const ImageWorker = require('worker!./worker');
-const classes = require('./styles.css');
+const classes = require('./style.scss');
 const DropzonePlaceholder = require('./assets/placeholder.svg').default;
 
-interface ImagePickerProps {
+function isStepDone(s: Landmark, i: number): boolean {
+  return i < 5;
+}
+
+function isCurrentStep(s: Landmark, i: number): boolean {
+  return i === 5;
+}
+
+const ICON_DONE = <IconDone color="green" />;
+const ICON_CURRENT = <IconPlayArrow color="blue" />;
+const ICON_PENDING = <IconHourglass/>;
+
+function getStepStateIcon(s: Landmark, i: number): JSXElement {
+  if (isStepDone(s, i)) {
+    return ICON_DONE;
+  } else if (isCurrentStep(s, i)) {
+    return ICON_CURRENT;
+  } else {
+    return ICON_PENDING;
+  }
+}
+
+function getDescriptionForStep(s: Landmark): string | null {
+  return descriptions[s.symbol] || s.description || null;
+}
+
+function getTitleForStep(s: Landmark): string {
+  if (s.type === 'point') {
+    return `Set point ${s.symbol} ${ s.name ? `(${s.name})` : '' }`;
+  } else if (s.type === 'line') {
+    return `Draw line ${s.symbol} ${ s.name ? `(${s.name})` : '' }`;
+  } else if (s.type === 'angle') {
+    return `Calculate angle ${s.symbol} ${ s.name ? `(${s.name})` : '' }`;
+  }
+  throw new TypeError(`Cannot handle this type of landmarks (${s.type})`);
+}
+
+type Step = Landmark;
+
+interface CephaloEditorProps {
   className: string,
 }
 
-interface ImagePickerState {
+interface CephaloEditorState {
   image: Object | null,
   canvas: HTMLCanvasElement | null,
   anchorEl: Element | null,
@@ -38,6 +86,9 @@ interface ImagePickerState {
   isEditing: boolean,
   brightness: number,
   invert: boolean,
+  isAnalysisActive: boolean,
+  analysisSteps: Landmark[];
+  isAnalysisComplete: boolean;
 }
 
 export interface Edit {
@@ -48,16 +99,7 @@ export interface Edit {
 
 const invertFilter = new fabric.Image.filters.Invert();
 
-function readFileAsBuffer(file: File): Promise<ArrayBuffer> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as ArrayBuffer);
-    reader.onerror = e => reject(e.error);
-    reader.readAsArrayBuffer(file);
-  });
-}
-
-export default class CephaloEditor extends React.Component<ImagePickerProps, ImagePickerState> {
+export default class CephaloEditor extends React.Component<CephaloEditorProps, CephaloEditorState> {
   private listener: EventListener;
   private worker: ImageWorker;
   private edits: Array<Edit> = [];
@@ -67,12 +109,14 @@ export default class CephaloEditor extends React.Component<ImagePickerProps, Ima
     canvas: null, image: null, hasImage: false,
     isEditing: false,
     brightness: 0, invert: false,
+    isAnalysisActive: true,
+    analysisSteps: getStepsForAnalysis(downs),
   };
 
   handleDrop = (files: File[]) => {
     const file: File = files[0];
     
-    this.setState(assign({ }, this.state, { hasImage: true }) as ImagePickerState, () => {
+    this.setState(assign({ }, this.state, { hasImage: true }) as CephaloEditorState, () => {
       const canvasEl = ReactDOM.findDOMNode(this.refs.canvas);
       const canvasContainerEl = ReactDOM.findDOMNode(this.refs.canvasContainer);
       const { height, width }: any = 
@@ -90,7 +134,7 @@ export default class CephaloEditor extends React.Component<ImagePickerProps, Ima
               (image) => {
                 canvas.add(image);
                 image.center();
-                this.setState(assign({ }, this.state, { image, canvas }) as ImagePickerState);
+                this.setState(assign({ }, this.state, { image, canvas }) as CephaloEditorState);
               },
               { width: img.bitmap.width * 1.4, height: img.bitmap.height * 1.4 }
             );
@@ -103,11 +147,11 @@ export default class CephaloEditor extends React.Component<ImagePickerProps, Ima
 
   handleTouchTap = (event: Event) => {
     event.preventDefault();
-    this.setState(assign({ }, this.state, { open: true, anchorEl: event.currentTarget }) as ImagePickerState);
+    this.setState(assign({ }, this.state, { open: true, anchorEl: event.currentTarget }) as CephaloEditorState);
   };
 
   handleRequestClose = () => {
-    this.setState(assign({ }, this.state, { open: false, anchorEl: null }) as ImagePickerState);
+    this.setState(assign({ }, this.state, { open: false, anchorEl: null }) as CephaloEditorState);
   };
 
   handleFlip = () => {
@@ -122,7 +166,7 @@ export default class CephaloEditor extends React.Component<ImagePickerProps, Ima
   }
 
   setInvert = (event, isChecked) => {
-    this.setState(assign({ }, this.state, { invert: isChecked }) as ImagePickerState);
+    this.setState(assign({ }, this.state, { invert: isChecked }) as CephaloEditorState);
     if (isChecked) {
       this.state.image.filters[1] = invertFilter;
     } else {
@@ -140,7 +184,7 @@ export default class CephaloEditor extends React.Component<ImagePickerProps, Ima
   }
 
   private performEdits(image, edits) {
-    this.setState(assign({ }, this.state, { isEditing: true }) as ImagePickerState);
+    this.setState(assign({ }, this.state, { isEditing: true }) as CephaloEditorState);
     this.worker.postMessage({ image, edits });
   }
 
@@ -152,7 +196,7 @@ export default class CephaloEditor extends React.Component<ImagePickerProps, Ima
       if (e.data.isDestructive) {
         patch.originalImage = e.data.image;
       }
-      this.setState(assign({ }, this.state, patch, { isEditing: false }) as ImagePickerState);
+      this.setState(assign({ }, this.state, patch, { isEditing: false }) as CephaloEditorState);
     };
     this.worker.addEventListener('message', this.listener);
   }
@@ -164,9 +208,12 @@ export default class CephaloEditor extends React.Component<ImagePickerProps, Ima
   render() {
     const hasImage = this.state.hasImage;
     const cannotEdit = !hasImage || this.state.isEditing;
+    const isAnalysisActive = this.state.isAnalysisActive;
+    const anaylsisSteps = this.state.analysisSteps;
+    const isAnalysisComplete = this.state.isAnalysisComplete;
     return (
-      <div className={cx(classes.root, this.props.className)}>
-        <div ref="canvasContainer" className={classes.canvas_container}>
+      <div className={cx(classes.root, 'row', this.props.className)}>
+        <div ref="canvasContainer" className={cx(classes.canvas_container, 'col-xs-12', 'col-sm-8')}>
           {hasImage ? (
             <canvas
               className={classes.canvas}
@@ -188,7 +235,7 @@ export default class CephaloEditor extends React.Component<ImagePickerProps, Ima
             </Dropzone>
           )}
         </div>
-        <div className={classes.toolbar}>
+        <div className={cx(classes.sidebar, 'col-xs-12', 'col-sm-4')}>
           <Toolbar>
             <ToolbarGroup firstChild>
               <FlatButton onClick={this.addPoint} disabled={cannotEdit} label="Add point" icon={<IconControlPoint />} />
@@ -217,6 +264,25 @@ export default class CephaloEditor extends React.Component<ImagePickerProps, Ima
               </Popover>
             </ToolbarGroup>
           </Toolbar>
+          { isAnalysisActive ? (
+              <List className={classes.list_steps}> 
+                {
+                  anaylsisSteps.map((s, i) => (
+                    <div key={s.symbol}>
+                      <ListItem
+                        primaryText={getTitleForStep(s)}
+                        secondaryText={getDescriptionForStep(s)}
+                        leftIcon={getStepStateIcon(s, i)}
+                      />
+                    </div>
+                  ))
+                }
+              </List>
+            ) : (
+              null
+            )
+          }
+          <RaisedButton label="Continue" disabled={!isAnalysisComplete} primary />
         </div>
       </div>
     );
