@@ -1,0 +1,106 @@
+.root {
+  display: flex;
+  * {
+    box-sizing: border-box;
+  }
+}
+
+.sidebar {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  & > * {
+    flex-shrink: 0;
+  }
+}
+
+.list_steps {
+  overflow-y: scroll;
+  flex-shrink: 1;
+  flex-grow: 0;
+  height: 100%;
+}
+
+.canvas_container {
+  height: 100%;
+  max-height: 100%;
+  text-align: center;
+  background-color: #424242;
+  color: white;
+  font-family: 'Roboto';
+  .canvas {
+    height: 100%;
+    max-height: 100%;
+    max-width: 100%;
+  }
+}
+
+.dropzone {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .dropzone_placeholder {
+    white-space: pre-wrap;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-size: 50% 50%;
+    background-position: center;
+    background-color: white;
+    color: lightgray;
+    font-size: x-large;
+    font-size: calc(0.8em + 1vw);
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .dropzone_placeholder_image {
+    max-width: 75%;
+    max-height: 65%;
+    margin-bottom: 40px;
+    [id="circle"], [id="cephalo"] {
+      transition-property: fill stroke transform opacity;
+      transition-duration: 0.3s;
+      transform-origin: center center;
+    }
+  }
+
+  &.dropzone__active {
+    cursor: pointer;
+    .dropzone_placeholder_image {
+        [id="circle"] {
+        fill: rgba(160, 201, 255, 110);
+        stroke: rgba(160, 201, 255, 255);
+        transform: scale(1.05);
+      }
+
+      [id="cephalo"] {
+        transform: rotate(-10deg) scale(0.85);
+      }
+    }
+  }
+
+  &.dropzone__reject {
+    cursor: no-drop !important;
+
+    .dropzone_placeholder_image {
+      [id="circle"] {
+        fill: rgba(255, 100, 100, 50);
+        stroke: rgba(255, 100, 100, 100);
+        transform: scale(0.7);
+      }
+
+      [id="cephalo"] {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+    }
+  }
+}

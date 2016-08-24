@@ -4,7 +4,24 @@ const path = require('path');
 const env = require('./env');
 const WebpackHTMLPlugin = require('webpack-html-plugin');
 
-const cssLoaders = ['style', 'css?module=1&localIdentName=[name]_[local]_[hash:base64:5]'];
+const localCSSLoaders = [
+  'style',
+  {
+    loader: 'css',
+    query: {
+      module: true,
+      localIdentName: '[name]_[local]_[hash:base64:5]',
+    },
+  },
+];
+
+const globalCSSLoaders = ['style', 'css'];
+
+const sassLoaders = [
+  {
+    loader: 'sass', query: { sourceMap: true },
+  },
+];
 
 const buildPath = '/';
 
@@ -50,7 +67,19 @@ const config = {
       loaders: ['babel-loader'],
     }, {
       test: /\.css$/,
-      loaders: cssLoaders,
+      loaders: localCSSLoaders,
+    }, {
+      test: /\.scss$/,
+      include: [
+        path.resolve(path.resolve(__dirname, 'src/components')),
+      ],
+      loaders: [].concat(localCSSLoaders, sassLoaders),
+    }, {
+      test: /\.scss$/,
+      include: [
+        path.resolve(path.resolve(__dirname, 'src/layout')),
+      ],
+      loaders: [].concat(globalCSSLoaders, sassLoaders),
     }, {
       test: /\.(jpg|png)$/,
       loader: 'file',
