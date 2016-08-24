@@ -104,25 +104,44 @@ export type Analysis = Array<{ landmark: Landmark, norm: number, stdDev?: number
 
 const hasComponents: (m: Landmark) => boolean = m => m.components.length > 0;
 
-export function getStepsForLandmark(landmark: Landmark): Landmark[] {
-    if (!hasComponents(landmark)) return [landmark];
-    return <Landmark[]>(
-        _.chain(landmark.components)
-            .map(c => _.flatMap(c.components, getStepsForLandmark))
-            .flatten().uniqBy('symbol').value()
+export function getEdgesForLandmark(l: Landmark): Landmark[][] {
+    const edges: Landmark[][] = [];
+    if (!hasComponents(l)) {
+            edges.push([l]);
+    } else {
+        edges.unshift([...l.components, l]);
+        for (const c of l.components) {
+            const subedges = getEdgesForLandmark(c);
+            edges.unshift(
+                _.concat(
+                    ...subedges,
+                    [...c.components, c],
+                )
     );
+        }
+    }
+    return edges.map(_.uniq);
+}
+
+export function getStepsForLandmarks(landmarks: Landmark[]): Landmark[] {
+    const edges: Landmark[][] = _.flatten(landmarks.map(getEdgesForLandmark));
+    const store = new Map;
+    const uniqueEdges = _.filter(_.map(
+        edges,
+        a => _.reject(a, e => {
+            if (store.has(e.symbol)) {
+                return true;
+            } else {
+                store.set(e.symbol, e);
+                return false;
+            }
+        }).map(l => l.symbol)
+    ), 'length');
+    return _.flatten(uniqueEdges).map(symbol => store.get(symbol));
 }
 
 export function getStepsForAnalysis(analysis: Analysis): Landmark[] {
-    return <Landmark[]>(
-        _.chain(analysis)
-            .map(l => l.landmark)
-            .map(getStepsForLandmark)
-            .flatten()
-            .compact()
-            .uniqBy('symbol')
-            .value()
-    );
+    return getStepsForLandmarks(analysis.map(c => c.landmark));
 }
 
 import {
