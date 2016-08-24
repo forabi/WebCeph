@@ -90,11 +90,11 @@ export function point(symbol: string, name: string | undefined = undefined): Poi
 /**
  * Creates an object conforming to the Line interface connecting two points
  */
-export function line(A: Point, B: Point, name: string | undefined = undefined, unit: LinearUnit = 'mm'): Line {
+export function line(A: Point, B: Point, name?: string, symbol?: string, unit: LinearUnit = 'mm'): Line {
   return {
     name,
     unit,
-    symbol: `${A}-${B}`,
+    symbol: symbol || `${A.symbol}-${B.symbol}`,
     type: 'line',
     components: [A, B],
   };
