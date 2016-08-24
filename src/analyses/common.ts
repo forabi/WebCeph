@@ -46,7 +46,7 @@ export const Gn = point('Gn', 'Gnathion');
  * Frankfort Horizontal Plane
  * Po-Or line projected to form a plane
  */
-export const FH_PLANE = line(Po, Or);
+export const FH_PLANE = line(Po, Or, 'Frankfort Horizontal Plane', 'FH');
 
 /**
  * A line connecting sella to nasion
@@ -79,15 +79,15 @@ export const ANB = <Landmark>{
 
 export default <Analysis>[
   {
-    landmark: SNA,
-    norm: 82,
+    landmark: ANB,
+    norm: 2,
   },
   {
     landmark: SNB,
     norm: 80,
   },
   {
-    landmark: ANB,
-    norm: 2,
-  }
+    landmark: SNA,
+    norm: 82,
+  },
 ]
