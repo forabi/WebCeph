@@ -1,5 +1,4 @@
 import { angleBetweenPoints, line, point, Landmark, getSymbolForAngle, Analysis } from './helpers';
-import { assign } from 'lodash';
 
 /**
  * Most superior point of outline of external auditory meatus
