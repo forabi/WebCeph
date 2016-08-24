@@ -15,6 +15,7 @@ export interface Landmark {
    * Each landmark must have a symbol which acts as the unique identifier for that landmark.
    */
   symbol: string,
+  description?: string,
   type: LandmarkType,
   unit?: AngularUnit | LinearUnit,
   /**
@@ -31,20 +32,16 @@ export interface Landmark {
 }
 
 export interface Point extends Landmark {
-  name?: string,
-  symbol: string,
   type: 'point',
 }
 
 export interface Line extends Landmark {
-  name?: string,
   type: 'line',
   unit: LinearUnit,
-  components: Point[]
+  components: Point[],
 }
 
 export interface Angle extends Landmark {
-    name?: string;
     type: 'angle';
     unit: AngularUnit;
     components: Line[]
@@ -62,11 +59,12 @@ export function getSymbolForAngle(lineA: Line, lineB: Line): string {
 /**
  * Creates an object conforming to the Angle interface based on 2 lines
  */
-export function angleBetweenLines(lineA: Line, lineB: Line, name: string | undefined = undefined, unit: AngularUnit = 'degree'): Angle {
-  const symbol = getSymbolForAngle(lineA, lineB);
+export function angleBetweenLines(lineA: Line, lineB: Line, name?: string, symbol?: string, unit: AngularUnit = 'degree'): Angle {
   return {
-      type: 'angle', symbol, unit,
-      name: name || `Angle ${symbol}`, 
+      type: 'angle',
+      symbol: symbol || getSymbolForAngle(lineA, lineB),
+      unit,
+      name, 
       components: [lineA, lineB],
   }; 
 }
@@ -74,14 +72,15 @@ export function angleBetweenLines(lineA: Line, lineB: Line, name: string | undef
 /**
  * Creates an object conforming to the Angle interface based on 3 points
  */
-export function angleBetweenPoints(A: Point, B: Point, C: Point, name: string | undefined = undefined, unit: AngularUnit = 'degree'): Angle {
-  return angleBetweenLines(line(A, B), line(B, C), name, unit);
+export function angleBetweenPoints(A: Point, B: Point, C: Point, name?: string, unit: AngularUnit = 'degree'): Angle {
+  return angleBetweenLines(line(A, B), line(B, C), name, undefined, unit);
 }
 
-export function point(symbol: string, name: string | undefined = undefined): Point {
+export function point(symbol: string, name?: string, description?: string): Point {
   return {
     name,
     symbol,
+    description,
     type: 'point',
     components: [],
   }
@@ -117,7 +116,7 @@ export function getEdgesForLandmark(l: Landmark): Landmark[][] {
                     ...subedges,
                     [...c.components, c],
                 )
-    );
+            );
         }
     }
     return edges.map(_.uniq);
@@ -150,7 +149,6 @@ import {
     Line as GeometricalLine,
     Point as GeometricalPoint,
     radiansToDegrees,
-    degreesToRadians,
 } from '../utils/math';
 
 /**
