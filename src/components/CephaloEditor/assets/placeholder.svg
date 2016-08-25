@@ -80,14 +80,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.49497475"
-     inkscape:cx="123.48306"
-     inkscape:cy="171.77612"
+     inkscape:zoom="0.9899495"
+     inkscape:cx="35.501424"
+     inkscape:cy="247.01242"
      inkscape:document-units="px"
-     inkscape:current-layer="cephalo"
+     inkscape:current-layer="layer3"
      showgrid="false"
-     inkscape:window-width="1366"
-     inkscape:window-height="697"
+     inkscape:window-width="1440"
+     inkscape:window-height="829"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -96,7 +96,32 @@
      fit-margin-right="10"
      fit-margin-bottom="10"
      showguides="true"
-     inkscape:guide-bbox="true" />
+     inkscape:guide-bbox="true">
+    <sodipodi:guide
+       position="0,0"
+       orientation="0,488.00907"
+       id="guide8104" />
+    <sodipodi:guide
+       position="488.00908,0"
+       orientation="-488.00913,0"
+       id="guide8106" />
+    <sodipodi:guide
+       position="488.00908,488.00912"
+       orientation="0,-488.00907"
+       id="guide8108" />
+    <sodipodi:guide
+       position="0,488.00912"
+       orientation="488.00913,0"
+       id="guide8110" />
+    <sodipodi:guide
+       position="244.45692,-21.213203"
+       orientation="1,0"
+       id="guide8112" />
+    <sodipodi:guide
+       position="461.63972,244.45691"
+       orientation="0,1"
+       id="guide8114" />
+  </sodipodi:namedview>
   <metadata
      id="metadata4337">
     <rdf:RDF>
@@ -126,7 +151,8 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Layer 2"
-     transform="translate(-146.63862,-219.14381)">
+     transform="translate(-146.63862,-219.14381)"
+     style="display:inline">
     <g
        id="cephalo">
       <path
@@ -147,6 +173,26 @@
          id="path4515"
          d="m 466.12674,388.85348 c 0,0 0.45974,-1.50685 -1.16967,-1.67474 -4.66192,-0.48035 -10.05826,11.73602 -10.05826,11.73602"
          style="display:inline;opacity:1;fill:none;fill-rule:evenodd;stroke:#afafaf;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;enable-background:new" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="incorrect"
+     inkscape:label="incorrect"
+     style="display:inline">
+    <g
+       id="layer1-7"
+       transform="matrix(0.71428571,0,0,0.71428571,125.91449,126.42095)">
+      <path
+         style="fill:#ee0000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.25pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         id="path4950"
+         d="M 100,60 60,100 230,270 270,230 100,60 Z"
+         inkscape:connector-curvature="0" />
+      <path
+         style="fill:#ee0000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.25pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         id="path4952"
+         d="M 60,230 230,60 270,100 100,270 60,230 Z"
+         inkscape:connector-curvature="0" />
     </g>
   </g>
 </svg>
