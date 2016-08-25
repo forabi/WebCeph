@@ -1,4 +1,9 @@
-import * as _ from 'lodash';
+import flatten from 'lodash/flatten';
+import map from 'lodash/map';
+import uniq from 'lodash/uniq';
+import filter from 'lodash/filter';
+import reject from 'lodash/reject';
+import concat from 'lodash/concat';
 
 export type AngularUnit = 'degree' | 'radian';
 export type LinearUnit = 'mm' | 'cm' | 'in';
@@ -48,7 +53,7 @@ export interface Angle extends Landmark {
 }
 
 export function getSymbolForAngle(lineA: Line, lineB: Line): string {
-    return _.uniq([
+    return uniq([
       lineA.components[0].symbol,
       lineA.components[1].symbol,
       lineB.components[0].symbol,
@@ -112,31 +117,31 @@ export function getEdgesForLandmark(l: Landmark): Landmark[][] {
         for (const c of l.components) {
             const subedges = getEdgesForLandmark(c);
             edges.unshift(
-                _.concat(
+                concat(
                     ...subedges,
                     [...c.components, c],
                 )
             );
         }
     }
-    return edges.map(_.uniq);
+    return edges.map(uniq);
 }
 
 export function getStepsForLandmarks(landmarks: Landmark[]): Landmark[] {
-    const edges: Landmark[][] = _.flatten(landmarks.map(getEdgesForLandmark));
+    const edges: Landmark[][] = flatten(landmarks.map(getEdgesForLandmark));
     const store = new Map;
-    const uniqueEdges = _.filter(_.map(
+    const uniqueEdges = filter(map(
         edges,
-        a => _.reject(a, e => {
+        a => reject(a, (e => {
             if (store.has(e.symbol)) {
                 return true;
             } else {
                 store.set(e.symbol, e);
                 return false;
             }
-        }).map(l => l.symbol)
+        })).map(l => l.symbol)
     ), 'length');
-    return _.flatten(uniqueEdges).map(symbol => store.get(symbol));
+    return flatten(uniqueEdges).map(symbol => store.get(symbol));
 }
 
 export function getStepsForAnalysis(analysis: Analysis): Landmark[] {
