@@ -8,5 +8,12 @@
     ],
     "react",
     "stage-3"
-  ]
+  ],
+  "env": {
+    "production": {
+      "presets": [
+        "react-optimize"
+      ]
+    }
+  }
 }

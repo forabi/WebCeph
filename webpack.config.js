@@ -3,6 +3,11 @@ const fail = require('webpack-fail-plugin');
 const path = require('path');
 const env = require('./env');
 const WebpackHTMLPlugin = require('webpack-html-plugin');
+const { compact } = require('lodash');
+
+const prod = p => (env.isProd ? p : null);
+const hot = p => (env.isHot ? p : null);
+const dev = p => (env.isDev ? p : null);
 
 const localCSSLoaders = [
   'style',
@@ -26,15 +31,36 @@ const sassLoaders = [
 const buildPath = '/';
 
 const config = {
-  debug: true,
+  devServer: env.isDev ? {
+    inline: true,
+    contentBase: buildPath,
+    hot: env.isHot,
+  } : false,
 
-  devtool: 'source-map',
+  debug: env.isDev,
+
+  devtool: env.isDev ? 'eval' : false,
 
   entry: {
-    bundle: [
+    bundle: compact([
+      hot('react-hot-loader/patch'),
+      hot('webpack/hot/only-dev-server'),
+      hot('webpack-hot-middleware/client'),
       path.resolve(__dirname, './src/index.tsx'),
+    ]),
+    vendor: [
+      'react',
+      'fabric',
+      'material-ui/List',
+      'material-ui/RaisedButton',
+      'material-ui/FlatButton',
+      'material-ui/Slider',
+      'material-ui/Popover',
+      'material-ui/Menu',
+      'material-ui/MenuItem',
+      'material-ui/Checkbox',
+      'material-ui/Divider',
     ],
-    vendor: ['react', 'material-ui', 'lodash'],
   },
 
   output: {
@@ -52,15 +78,18 @@ const config = {
     loaders: [{
       test: /\.tsx?$/,
       exclude: /node_modules/,
-      loaders: [{
-        loader: 'ts-loader',
-        query: {
-          transpileOnly: true,
-          compilerOptions: {
-            module: 'es2015',
+      loaders: compact([
+        prod('babel-loader'),
+        {
+          loader: 'ts-loader',
+          query: {
+            transpileOnly: true,
+            compilerOptions: {
+              module: 'es2015',
+            },
           },
         },
-      }],
+      ]),
     }, {
       test: /\.jsx?$/,
       exclude: /node_modules/,
@@ -105,7 +134,8 @@ const config = {
     }],
   },
 
-  plugins: [
+  plugins: compact([
+    hot(new webpack.HotModuleReplacementPlugin()),
     fail,
     new WebpackHTMLPlugin({
       filename: 'index.html',
@@ -118,9 +148,6 @@ const config = {
         collapseWhitespace: true,
       } : false,
     }),
-    new webpack.ProvidePlugin({
-      Promise: 'bluebird',
-    }),
     new webpack.DefinePlugin({
       'process.env.ENVIRONMENT': JSON.stringify('BROWSER'),
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
@@ -131,31 +158,11 @@ const config = {
       minimize: true,
       debug: false,
     }),
-  ],
+    prod(new webpack.optimize.OccurrenceOrderPlugin(true)),
+    prod(new webpack.optimize.UglifyJsPlugin({
+      compress: { warnings: false },
+    })),
+  ]),
 };
-
-if (env.isDevelopment) {
-  config.devtool = 'eval';
-  config.devServer = {
-    inline: true,
-    contentBase: buildPath,
-  };
-  if (env.isHot) {
-    config.devServer.hot = true;
-    config.entry.bundle.unshift('webpack-hot-middleware/client');
-    config.entry.bundle.unshift('webpack/hot/only-dev-server');
-    config.entry.bundle.unshift('react-hot-loader/patch');
-    config.plugins.unshift(new webpack.HotModuleReplacementPlugin());
-  }
-}
-
-if (env.isProduction) {
-  config.devtool = false;
-  config.debug = false;
-  config.plugins.push(new webpack.optimize.OccurrenceOrderPlugin(true));
-  config.plugins.push(new webpack.optimize.UglifyJsPlugin({
-    compress: { warnings: false },
-  }));
-}
 
 module.exports = config;

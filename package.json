@@ -5,7 +5,8 @@
   "scripts": {
     "test": "mocha src/**/*.test.* --compilers ts:ts-node/register,tsx:ts-node/register",
     "webpack:validate": "webpack-validator webpack.config.js",
-    "dev": "NODE_ENV=development HOT=1 babel-node devServer.js"
+    "dev": "NODE_ENV=development HOT=1 babel-node devServer.js",
+    "prod": "rm -rf build/**/* && NODE_ENV=production webpack"
   },
   "repository": {
     "type": "git",
@@ -45,6 +46,7 @@
     "babel-loader": "^6.2.4",
     "babel-preset-es2015": "^6.13.2",
     "babel-preset-react": "^6.11.1",
+    "babel-preset-react-optimize": "^1.0.1",
     "babel-preset-stage-3": "^6.11.0",
     "babel-register": "^6.11.6",
     "css-loader": "^0.23.1",
