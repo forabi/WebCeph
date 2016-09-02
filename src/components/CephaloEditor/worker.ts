@@ -1,4 +1,5 @@
 import 'jimp/browser/lib/jimp.js';
+import bluebird from 'bluebird';
 
 declare class Jimp {
   static read(url: string): Promise<Jimp>;
@@ -10,6 +11,7 @@ declare class Jimp {
   distance(img1: Jimp, img2: Jimp): number;
   diff(img1: Jimp, img2: Jimp): { percent: number, image: Jimp };
   scaleToFit(height: number, width: number): Jimp;
+  getBase64(mime: string, cb: (err: Error, base64: string) => void): void;
   _originalMime: 'image/bmp' | 'image/jpeg' | 'image/png';
   bitmap: {
     data: ArrayBuffer;
@@ -22,7 +24,13 @@ import { readFileAsBuffer } from '../../utils/file';
 
 export interface WorkerResult {
   id: string;
-  url: string;
+  url?: string;
+  error?: WorkerError;
+}
+
+export interface WorkerError {
+  message: string,
+  code?: string,
 }
 
 export interface Edit {
@@ -38,15 +46,31 @@ export interface WorkerRequest {
 
 declare var self: WorkerGlobalScope;
 
-self.addEventListener('message', async ({ data }: { data: WorkerRequest }) => {
-  console.log('Got message', data);
+function mapError({ message }: Error): WorkerError {
+  if (message.match(/mime/ig)) {
+    return {
+      message: (
+        'Failed to load the image. ' +
+        'Make sure it\s a valid image file and that your browser supports images of this type.'
+      )
+    };
+  } else {
+    return { message };
+  }
+}
+
+self.addEventListener('message', async ({ data }: Event & { data: WorkerRequest }) => {
   const { id, file, edits } = data;
-  const buff = await readFileAsBuffer(file);
-  const jImg = await Jimp.read(buff);
-  edits.reduce(
-    (jImg: Jimp, edit: Edit) => jImg[edit.method](...edit.args),
-    jImg
-  ).getBase64(Jimp.MIME_BMP, (err: Error, url: string) => {
+  try {
+    const buff = await readFileAsBuffer(file);
+    let img = await Jimp.read(buff);
+    img = edits.reduce(
+      (img: Jimp, edit: Edit) => img[edit.method](...edit.args),
+      img
+    );
+    const url = await bluebird.fromCallback(cb => img.getBase64(Jimp.MIME_BMP, cb));
     self.postMessage({ id, url } as WorkerResult);
-  });
+  } catch (error) {
+    self.postMessage({ id, error: mapError(error)} as WorkerResult);
+  }
 });

@@ -14,12 +14,13 @@ import IconFlip from 'material-ui/svg-icons/image/flip';
 import IconBrightness from 'material-ui/svg-icons/image/brightness-5';
 import IconControlPoint from 'material-ui/svg-icons/image/control-point';
 import Menu from 'material-ui/Menu';
+import Dialog from 'material-ui/Dialog';
 import CircularProgress from 'material-ui/CircularProgress';
 import { List, ListItem } from 'material-ui/List';
 import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
 import Checkbox from 'material-ui/Checkbox';
-import { WorkerRequest, WorkerResult, Edit } from './worker';
+import { WorkerRequest, WorkerError, WorkerResult, Edit } from './worker';
 import * as cx from 'classnames';
 import { Landmark, getStepsForAnalysis } from '../../analyses/helpers';
 import downs from '../../analyses/downs';
@@ -63,7 +64,8 @@ interface CephaloEditorState {
   url?: string,
   canvas: HTMLCanvasElement | null,
   anchorEl: Element | null,
-  isLoading: true,
+  isLoading: boolean,
+  error?: WorkerError,
   open: boolean,
   isEditing: boolean,
   containerHeight: number,
@@ -84,13 +86,14 @@ export interface Edit {
 
 export default class CephaloEditor extends React.Component<CephaloEditorProps, CephaloEditorState> {
   private listener: EventListener;
-  private worker: ImageWorker;
+  private worker: Worker;
   refs: { canvas: Element, canvasContainer: Element };
   state = {
     open: false, anchorEl: null,
     canvas: null,
     isEditing: false,
     isLoading: false,
+    error: undefined,
     brightness: 0, invert: false,
     flipX: false, flipY: false,
     isAnalysisActive: true,
@@ -114,13 +117,18 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
       
       this.setState(assign({ }, this.state, { containerHeight: height, containerWidth: width }), () => {
         const requestId = uniqueId('action_');
-
-        this.listener = this.worker.addEventListener('message', ({ data }: { data: WorkerResult }) => {
+        this.listener = ({ data }: Event & { data: WorkerResult }) => {
           if (data.id === requestId) {
-            this.setState(assign({}, this.state, { url: data.url }));
+            if (data.error) {
+              this.setState(assign({}, this.state, { error: data.error, isLoading: false }));
+            } else {
+              this.setState(assign({}, this.state, { url: data.url, error: undefined, isLoading: false }));
+            }
             this.worker.removeEventListener('message', this.listener);
           }
-        });
+        }
+        
+        this.worker.addEventListener('message', this.listener);
 
         this.worker.postMessage({
           id: requestId,
@@ -171,13 +179,19 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
     this.worker && this.worker.removeEventListener('message', this.listener);
   }
 
+  ignoreError = () => this.setState(assign({}, this.state, { error: undefined }));
+  actions = [
+    <FlatButton label="OK" primary onClick={this.ignoreError} />
+  ] 
+
   render() {
     const hasImage = !!this.state.url;
-    const isLoading = this.state.isLoading;
     const cannotEdit = !hasImage || this.state.isEditing;
     const isAnalysisActive = hasImage;
     const anaylsisSteps = this.state.analysisSteps;
     const isAnalysisComplete = this.state.isAnalysisComplete;
+    const hasError = !!this.state.error;
+    const { isLoading } = this.state;  
     return (
       <div className={cx(classes.root, 'row', this.props.className)}>
         <div ref="canvasContainer" className={cx(classes.canvas_container, 'col-xs-12', 'col-sm-8')}>
@@ -194,13 +208,22 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
             />
           ) : isLoading ? (
             <CircularProgress color="white" size={2} />
+          ) : hasError ? (
+            <Dialog
+              open title="Error loading image"
+              actions={this.actions}
+              onRequestClose={this.ignoreError}
+              style={{ width: '100%' }}
+            >
+              {this.state.error.message}
+            </Dialog>
           ) : (
             <Dropzone
               className={classes.dropzone}
               activeClassName={classes.dropzone__active}
               rejectClassName={classes.dropzone__reject}
               onDrop={this.handleDrop} multiple={false}
-              accept="image/*" disablePreview
+              accept="image/bmp,image/png,image/jpeg" disablePreview
             >
               <div className={classes.dropzone_placeholder}>
                 <DropzonePlaceholder className={classes.dropzone_placeholder_image} />

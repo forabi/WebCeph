@@ -1,0 +1,12 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/types/npm-bluebird/120a62f854429bef323e583bb3be4a86e01eeab4/typings.json",
+    "raw": "registry:npm/bluebird#3.4.1+20160811213708",
+    "main": "bluebird.d.ts",
+    "version": "3.4.1",
+    "global": false,
+    "name": "bluebird",
+    "type": "typings"
+  }
+}

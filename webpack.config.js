@@ -148,6 +148,9 @@ const config = {
         collapseWhitespace: true,
       } : false,
     }),
+    new webpack.ProvidePlugin({
+      Promise: 'bluebird',
+    }),
     new webpack.DefinePlugin({
       'process.env.ENVIRONMENT': JSON.stringify('BROWSER'),
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),

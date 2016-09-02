@@ -1,6 +1,7 @@
 {
   "name": "fabric-demo",
   "dependencies": {
+    "bluebird": "registry:npm/bluebird#3.4.1+20160811213708",
     "jimp": "registry:npm/jimp#0.2.20+20160526180746",
     "lodash": "registry:npm/lodash#4.0.0+20160723033700",
     "react": "registry:npm/react#15.0.1+20160601175240",
