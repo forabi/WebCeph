@@ -1,22 +1,22 @@
 import 'jimp/browser/lib/jimp.js';
 
-export interface JimpImage {
-  _originalMime: 'image/bmp' | 'image/jpeg' | 'image/png',
+declare class Jimp {
+  static read(url: string): Promise<Jimp>;
+  static read(buff: ArrayBuffer): Promise<Jimp>;
+  static read(url: string, callback: (err: Error | null, data: Jimp) => void): void;
+  static MIME_BMP: 'image/bmp';
+  static MIME_JPG: 'image/jpeg';
+  static MIME_PNG: 'image/png';
+  distance(img1: Jimp, img2: Jimp): number;
+  diff(img1: Jimp, img2: Jimp): { percent: number, image: Jimp };
+  scaleToFit(height: number, width: number): Jimp;
+  _originalMime: 'image/bmp' | 'image/jpeg' | 'image/png';
   bitmap: {
-    data: ArrayBuffer,
-    width: number,
-    height: number,
-  },
+    data: ArrayBuffer;
+    width: number;
+    height: number;
+  };
 };
-
-export interface Jimp {
-  read(url: string): Promise<JimpImage>;
-  read(url: string, callback: (err: Error | null, data: JimpImage) => void): void;
-  distance(img1: JimpImage, img2: JimpImage): number;
-  diff(img1: JimpImage, img2: JimpImage): { percent: number, image: JimpImage };
-};
-
-declare var Jimp: any;
 
 import { readFileAsBuffer } from '../../utils/file';
 
@@ -36,13 +36,15 @@ export interface WorkerRequest {
   edits: Edit[];
 }
 
+declare var self: WorkerGlobalScope;
+
 self.addEventListener('message', async ({ data }: { data: WorkerRequest }) => {
   console.log('Got message', data);
   const { id, file, edits } = data;
   const buff = await readFileAsBuffer(file);
   const jImg = await Jimp.read(buff);
   edits.reduce(
-    (jImg: JimpImage, edit: Edit) => jImg[edit.method].apply(jImg, edit.args),
+    (jImg: Jimp, edit: Edit) => jImg[edit.method](...edit.args),
     jImg
   ).getBase64(Jimp.MIME_BMP, (err: Error, url: string) => {
     self.postMessage({ id, url } as WorkerResult);
