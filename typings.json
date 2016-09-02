@@ -4,7 +4,7 @@
     "jimp": "registry:npm/jimp#0.2.20+20160526180746",
     "lodash": "registry:npm/lodash#4.0.0+20160723033700",
     "react": "registry:npm/react#15.0.1+20160601175240",
-    "react-dom": "registry:npm/react-dom#15.0.1+20160705210405"
+    "react-dom": "registry:npm/react-dom#15.0.1+20160826174104"
   },
   "globalDependencies": {
     "es2015": "registry:env/es2015#1.0.0+20160526151700",
@@ -12,6 +12,7 @@
     "fabricjs": "registry:dt/fabricjs#1.5.0+20160317120654",
     "material-ui": "registry:dt/material-ui#0.15.1+20160720000941",
     "mocha": "registry:env/mocha#2.2.5+20160723033700",
-    "node": "registry:env/node#6.0.0+20160813135048"
+    "node": "registry:env/node#6.0.0+20160813135048",
+    "react": "registry:dt/react#0.14.0+20160829191040"
   }
 }
