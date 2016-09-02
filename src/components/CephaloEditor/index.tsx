@@ -127,7 +127,7 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
           file,
           edits: [{
             method: 'scaleToFit',
-            args: [height * 0.5, width * 0.5],
+            args: [height, width],
           }]
         } as WorkerRequest);
       });

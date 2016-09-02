@@ -69,8 +69,8 @@ export default class CephaloCanvas extends React.Component<CephaloCanvasProps, C
         },
       );
     }, {
-      scaleX: 1.5,
-      scaleY: 1.5,
+      scaleX: 0.8,
+      scaleY: 0.8,
     });
   }
 
