@@ -159,11 +159,11 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
     this.setState(assign({}, this.state, { flipY: !this.state.flipY }));
   }
 
-  setBrightness = (event: React.MouseEvent, value: number) => {
+  setBrightness = (__: React.MouseEvent, value: number) => {
     this.setState(assign({}, this.state, { brightness: value }));
   }
 
-  setInvert = (event: React.MouseEvent, isChecked: boolean) => {
+  setInvert = (__: React.MouseEvent, isChecked: boolean) => {
     this.setState(assign({}, this.state, { invert: isChecked }));
   }
 
