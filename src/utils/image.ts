@@ -1,7 +1,7 @@
-require('jimp');
+import 'jimp/browser/lib/jimp.js';
 const url = require('url!./assets/cephalo.jpg');
 
-interface JimpImage {
+export interface JimpImage {
   _originalMime: 'image/bmp' | 'image/jpeg' | 'image/png',
   bitmap: {
     data: ArrayBuffer,
@@ -10,12 +10,14 @@ interface JimpImage {
   },
 };
 
-declare const Jimp: {
+export interface Jimp {
   read(url: string): Promise<JimpImage>;
+  read(url: string, callback: (err: Error | null, data: JimpImage) => void): void;
   distance(img1: JimpImage, img2: JimpImage): number;
   diff(img1: JimpImage, img2: JimpImage): { percent: number, image: JimpImage };
 };
 
+declare var Jimp: Jimp;
 
 let _ref: JimpImage | null = null;
 async function readReferenceImage(): Promise<JimpImage> {

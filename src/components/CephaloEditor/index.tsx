@@ -4,6 +4,7 @@ import * as Dropzone from 'react-dropzone';
 import assign from 'lodash/assign';
 import mapValues from 'lodash/mapValues';
 import pick from 'lodash/pick';
+import uniqueId from 'lodash/uniqueId';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Toolbar, ToolbarGroup} from 'material-ui/Toolbar';
@@ -12,24 +13,20 @@ import Slider from 'material-ui/Slider';
 import IconFlip from 'material-ui/svg-icons/image/flip';
 import IconBrightness from 'material-ui/svg-icons/image/brightness-5';
 import IconControlPoint from 'material-ui/svg-icons/image/control-point';
-import IconPlayArrow from 'material-ui/svg-icons/av/play-arrow';
-import IconHourglass from 'material-ui/svg-icons/action/hourglass-empty';
-import IconDone from 'material-ui/svg-icons/action/done';
 import Menu from 'material-ui/Menu';
+import CircularProgress from 'material-ui/CircularProgress';
 import { List, ListItem } from 'material-ui/List';
 import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
 import Checkbox from 'material-ui/Checkbox';
-import { ImageWorkerData } from './worker';
+import { WorkerRequest, WorkerResult, Edit } from './worker';
 import * as cx from 'classnames';
-import { fabric } from 'fabric';
 import { Landmark, getStepsForAnalysis } from '../../analyses/helpers';
 import downs from '../../analyses/downs';
 import { descriptions } from './strings';
-import { readFileAsBuffer } from '../../utils/file';
+import AnalysisStepper from '../AnalysisStepper';
+import CephaloCanvas from '../CephaloCanvas';
 
-require('jimp/browser/lib/jimp.js');
-declare const Jimp: any;
 
 const ImageWorker = require('worker!./worker');
 const classes = require('./style.scss');
@@ -41,20 +38,6 @@ function isStepDone(s: Landmark, i: number): boolean {
 
 function isCurrentStep(s: Landmark, i: number): boolean {
   return i === 5;
-}
-
-const ICON_DONE = <IconDone color="green" />;
-const ICON_CURRENT = <IconPlayArrow color="blue" />;
-const ICON_PENDING = <IconHourglass/>;
-
-function getStepStateIcon(s: Landmark, i: number): JSXElement {
-  if (isStepDone(s, i)) {
-    return ICON_DONE;
-  } else if (isCurrentStep(s, i)) {
-    return ICON_CURRENT;
-  } else {
-    return ICON_PENDING;
-  }
 }
 
 function getDescriptionForStep(s: Landmark): string | null {
@@ -72,21 +55,22 @@ function getTitleForStep(s: Landmark): string {
   throw new TypeError(`Cannot handle this type of landmarks (${s.type})`);
 }
 
-type Step = Landmark;
-
 interface CephaloEditorProps {
   className: string,
 }
 
 interface CephaloEditorState {
-  image: Object | null,
+  url?: string,
   canvas: HTMLCanvasElement | null,
   anchorEl: Element | null,
-  hasImage: boolean,
+  isLoading: true,
   open: boolean,
   isEditing: boolean,
+  containerHeight: number,
+  containerWidth: number,
   brightness: number,
   invert: boolean,
+  flipX: boolean; flipY: boolean;
   isAnalysisActive: boolean,
   analysisSteps: Landmark[];
   isAnalysisComplete: boolean;
@@ -98,27 +82,29 @@ export interface Edit {
   isDestructive?: boolean,
 }
 
-const invertFilter = new fabric.Image.filters.Invert();
-
 export default class CephaloEditor extends React.Component<CephaloEditorProps, CephaloEditorState> {
   private listener: EventListener;
   private worker: ImageWorker;
-  private edits: Array<Edit> = [];
   refs: { canvas: Element, canvasContainer: Element };
   state = {
     open: false, anchorEl: null,
-    canvas: null, image: null, hasImage: false,
+    canvas: null,
     isEditing: false,
+    isLoading: false,
     brightness: 0, invert: false,
+    flipX: false, flipY: false,
     isAnalysisActive: true,
+    isAnalysisComplete: false,
     analysisSteps: getStepsForAnalysis(downs),
+    containerHeight: 0,
+    containerWidth: 0,
+    url: undefined,
   };
 
   handleDrop = (files: File[]) => {
     const file: File = files[0];
     
-    this.setState(assign({ }, this.state, { hasImage: true }) as CephaloEditorState, () => {
-      const canvasEl = ReactDOM.findDOMNode(this.refs.canvas);
+    this.setState(assign({ }, this.state, { isLoading: true }) as CephaloEditorState, () => {
       const canvasContainerEl = ReactDOM.findDOMNode(this.refs.canvasContainer);
       const { height, width }: any = 
         mapValues(
@@ -126,27 +112,29 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
           dim => Number(dim.replace('px', ''))
         );
       
-      readFileAsBuffer(file).then(buff => {
-        return Jimp.read(buff).then((img: any) => {
-          img.scaleToFit(height * 0.5, width * 0.5).getBase64(Jimp.MIME_BMP, (err, data) => {
-            const canvas = new fabric.Canvas(canvasEl, { height, width });
-            fabric.Image.fromURL(
-              data, 
-              (image) => {
-                canvas.add(image);
-                image.center();
-                this.setState(assign({ }, this.state, { image, canvas }) as CephaloEditorState);
-              },
-              { width: img.bitmap.width * 1.4, height: img.bitmap.height * 1.4 }
-            );
-          });
+      this.setState(assign({ }, this.state, { containerHeight: height, containerWidth: width }), () => {
+        const requestId = uniqueId('action_');
+
+        this.listener = this.worker.addEventListener('message', ({ data }: { data: WorkerResult }) => {
+          if (data.id === requestId) {
+            this.setState(assign({}, this.state, { url: data.url }));
+            this.worker.removeEventListener('message', this.listener);
+          }
         });
+
+        this.worker.postMessage({
+          id: requestId,
+          file,
+          edits: [{
+            method: 'scaleToFit',
+            args: [height * 0.5, width * 0.5],
+          }]
+        } as WorkerRequest);
       });
     });
-    
   }
 
-  handleTouchTap = (event: Event) => {
+  handleTouchTap = (event: React.MouseEvent) => {
     event.preventDefault();
     this.setState(assign({ }, this.state, { open: true, anchorEl: event.currentTarget }) as CephaloEditorState);
   };
@@ -155,51 +143,28 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
     this.setState(assign({ }, this.state, { open: false, anchorEl: null }) as CephaloEditorState);
   };
 
-  handleFlip = () => {
-    this.state.image.set('flipX', !this.state.image.get('flipX'));
-    this.state.canvas.renderAll();
+  handleFlipX = () => {
+    this.setState(assign({}, this.state, { flipX: !this.state.flipX }));
   }
 
-  setBrightness = (event, value) => {
-    const filter = new fabric.Image.filters.Brightness({ brightness: value });
-    this.state.image.filters[0] = filter;
-    this.state.image.applyFilters(this.state.canvas.renderAll.bind(this.state.canvas));
+  handleFlipY = () => {
+    this.setState(assign({}, this.state, { flipY: !this.state.flipY }));
   }
 
-  setInvert = (event, isChecked) => {
-    this.setState(assign({ }, this.state, { invert: isChecked }) as CephaloEditorState);
-    if (isChecked) {
-      this.state.image.filters[1] = invertFilter;
-    } else {
-      this.state.image.filters[1] = null;
-    }
-    this.state.image.applyFilters(this.state.canvas.renderAll.bind(this.state.canvas));
+  setBrightness = (event: React.MouseEvent, value: number) => {
+    this.setState(assign({}, this.state, { brightness: value }));
+  }
+
+  setInvert = (event: React.MouseEvent, isChecked: boolean) => {
+    this.setState(assign({}, this.state, { invert: isChecked }));
   }
 
   addPoint() {
 
   }
 
-  private pushEdit(image: string, edit: Edit) {
-    this.edits.push(edit);
-  }
-
-  private performEdits(image, edits) {
-    this.setState(assign({ }, this.state, { isEditing: true }) as CephaloEditorState);
-    this.worker.postMessage({ image, edits });
-  }
-
   componentDidMount() {
     this.worker = new ImageWorker;
-    this.listener = (e: MessageEvent) => {
-      console.log('Got message from worker', e);
-      const patch: any = { modifiedImage: e.data.image };
-      if (e.data.isDestructive) {
-        patch.originalImage = e.data.image;
-      }
-      this.setState(assign({ }, this.state, patch, { isEditing: false }) as CephaloEditorState);
-    };
-    this.worker.addEventListener('message', this.listener);
   }
 
   componentWillUnmount() {
@@ -207,20 +172,28 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
   }
 
   render() {
-    const hasImage = this.state.hasImage;
+    const hasImage = !!this.state.url;
+    const isLoading = this.state.isLoading;
     const cannotEdit = !hasImage || this.state.isEditing;
-    const isAnalysisActive = this.state.isAnalysisActive;
+    const isAnalysisActive = hasImage;
     const anaylsisSteps = this.state.analysisSteps;
     const isAnalysisComplete = this.state.isAnalysisComplete;
     return (
       <div className={cx(classes.root, 'row', this.props.className)}>
         <div ref="canvasContainer" className={cx(classes.canvas_container, 'col-xs-12', 'col-sm-8')}>
           {hasImage ? (
-            <canvas
+            <CephaloCanvas
               className={classes.canvas}
-              ref="canvas"
-              alt="Preview for cephalometric radiograph"
+              src={this.state.url}
+              brightness={this.state.brightness}
+              inverted={this.state.invert}
+              flipX={this.state.flipX}
+              flipY={this.state.flipY}
+              height={this.state.containerHeight}
+              width={this.state.containerWidth}
             />
+          ) : isLoading ? (
+            <CircularProgress color="white" size={2} />
           ) : (
             <Dropzone
               className={classes.dropzone}
@@ -240,7 +213,7 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
           <Toolbar>
             <ToolbarGroup firstChild>
               <FlatButton onClick={this.addPoint} disabled={cannotEdit} label="Add point" icon={<IconControlPoint />} />
-              <FlatButton onClick={this.handleFlip} disabled={cannotEdit} label="Flip" icon={<IconFlip />} />
+              <FlatButton onClick={this.handleFlipX} disabled={cannotEdit} label="Flip" icon={<IconFlip />} />
               <FlatButton
                 disabled={cannotEdit}
                 label="Corrections" icon={<IconBrightness />}
@@ -266,19 +239,18 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
             </ToolbarGroup>
           </Toolbar>
           { isAnalysisActive ? (
-              <List className={classes.list_steps}> 
-                {
-                  anaylsisSteps.map((s, i) => (
-                    <div key={s.symbol}>
-                      <ListItem
-                        primaryText={getTitleForStep(s)}
-                        secondaryText={getDescriptionForStep(s)}
-                        leftIcon={getStepStateIcon(s, i)}
-                      />
-                    </div>
-                  ))
-                }
-              </List>
+              <AnalysisStepper
+                className={classes.list_steps}
+                steps={anaylsisSteps}
+                showResults={() => alert('results!')}
+                currentStep={6}
+                isAnalysisComplete={isAnalysisComplete}
+                isStepDone={isStepDone}
+                getDescriptionForStep={getDescriptionForStep}
+                getTitleForStep={getTitleForStep}
+                editLandmark={() => null}
+                removeLandmark={() => null}
+              />
             ) : (
               null
             )

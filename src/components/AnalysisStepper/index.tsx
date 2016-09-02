@@ -9,12 +9,13 @@ type isStepDoneFn = (step: Step, i: number) => boolean;
 type isCurrentStepFn = (step: Step, i: number) => boolean;
 
 interface AnalysisStepperProps {
+  className?: string,
   steps: Step[],
   isStepDone: isStepDoneFn,
-  isCurrentStep: isCurrentStepFn,
+  currentStep: number,
   isAnalysisComplete: boolean,
   getTitleForStep(step: Step): string;
-  getDescriptionForStep(step: Step): string;
+  getDescriptionForStep(step: Step): string | null;
   showResults(): void;
   removeLandmark(l: Landmark): void;
   editLandmark(l: Landmark): void;
@@ -54,23 +55,27 @@ const getStepStateIcon = (state: stepState) => {
   }
 }
 
-export default (props: AnalysisStepperProps): JSXElement => {
+
+export default (props: AnalysisStepperProps) => {
   const {
     steps,
     isAnalysisComplete,
     getTitleForStep, getDescriptionForStep,
-    isStepDone, isCurrentStep,
+    isStepDone, currentStep,
     showResults,
     removeLandmark, editLandmark,
   } = props;
   if (isAnalysisComplete) {
-    <div>
-      Analysis complete.
-      <RaisedButton label="Show results" primary onClick={showResults} />
-    </div>
-  } else {
     return (
-      <List>
+      <div className={props.className}>
+        Analysis complete.
+        <RaisedButton label="Show results" primary onClick={showResults} />
+      </div>
+    );
+  } else {
+    const isCurrentStep = (step: Step, i: number) => i === currentStep;
+    return (
+      <List className={props.className}>
       {
         steps.map((step, i) => {
           const stepState = getStepState(step, i, { isStepDone, isCurrentStep });
