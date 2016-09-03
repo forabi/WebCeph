@@ -56,12 +56,16 @@
     background-repeat: no-repeat;
     background-size: 50% 50%;
     background-position: center;
-    background-color: white;
-    color: lightgray;
-    font-size: x-large;
-    font-size: calc(0.8em + 1vw);
+    background-color: #EEEEEE;
     user-select: none;
     -webkit-user-select: none;
+    
+  }
+
+  .dropzone_placeholder_text {
+    font-size: calc(0.8em + 1vw);
+    color: gray;
+    margin: 25px 0;
   }
 
   .dropzone_placeholder_image {

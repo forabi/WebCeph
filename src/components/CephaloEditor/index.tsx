@@ -33,11 +33,11 @@ const ImageWorker = require('worker!./worker');
 const classes = require('./style.scss');
 const DropzonePlaceholder = require('./assets/placeholder.svg').default;
 
-function isStepDone(s: Landmark, i: number): boolean {
+function isStepDone(__: Landmark, i: number): boolean {
   return i < 5;
 }
 
-function isCurrentStep(s: Landmark, i: number): boolean {
+function isCurrentStep(__: Landmark, i: number): boolean {
   return i === 5;
 }
 
@@ -87,7 +87,7 @@ export interface Edit {
 export default class CephaloEditor extends React.Component<CephaloEditorProps, CephaloEditorState> {
   private listener: EventListener;
   private worker: Worker;
-  refs: { canvas: Element, canvasContainer: Element };
+  refs: { canvas: Element, canvasContainer: Element, dropzone: Dropzone };
   state = {
     open: false, anchorEl: null,
     canvas: null,
@@ -182,7 +182,9 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
   ignoreError = () => this.setState(assign({}, this.state, { error: undefined }));
   actions = [
     <FlatButton label="OK" primary onClick={this.ignoreError} />
-  ] 
+  ];
+
+  openFilePicker = () => this.refs.dropzone.open();
 
   render() {
     const hasImage = !!this.state.url;
@@ -218,16 +220,20 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
               {this.state.error.message}
             </Dialog>
           ) : (
-            <Dropzone
+            <Dropzone ref="dropzone"
               className={classes.dropzone}
               activeClassName={classes.dropzone__active}
               rejectClassName={classes.dropzone__reject}
               onDrop={this.handleDrop} multiple={false}
+              disableClick
               accept="image/bmp,image/png,image/jpeg" disablePreview
             >
               <div className={classes.dropzone_placeholder}>
                 <DropzonePlaceholder className={classes.dropzone_placeholder_image} />
-                Drop a cephalometric radiograph here or click to pick one
+                <span className={classes.dropzone_placeholder_text}>
+                  Drop a cephalometric radiograph here or
+                </span>
+                <RaisedButton onClick={this.openFilePicker} primary label="Click to pick an image" />
               </div>
             </Dropzone>
           )}
