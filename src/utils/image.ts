@@ -1,45 +1,47 @@
-import 'jimp/browser/lib/jimp.js';
-const url = require('url!./assets/cephalo.jpg');
+import Jimp from './jimp';
+const url: string = require('./assets/cephalo.jpg');
 
-export interface JimpImage {
-  _originalMime: 'image/bmp' | 'image/jpeg' | 'image/png',
-  bitmap: {
-    data: ArrayBuffer,
-    width: number,
-    height: number,
-  },
-};
+console.log('url', url);
 
-export interface Jimp {
-  read(url: string): Promise<JimpImage>;
-  read(url: string, callback: (err: Error | null, data: JimpImage) => void): void;
-  distance(img1: JimpImage, img2: JimpImage): number;
-  diff(img1: JimpImage, img2: JimpImage): { percent: number, image: JimpImage };
-};
 
-declare var Jimp: Jimp;
-
-let _ref: JimpImage | null = null;
-async function readReferenceImage(): Promise<JimpImage> {
+let _ref: Jimp | null = null;
+async function readReferenceImage(): Promise<Jimp> {
   if (!_ref) {
     _ref = await Jimp.read(url);
+    console.log('image read')
   }
   return _ref;
 }
 
-const getAspectRatio = (img: JimpImage) => img.bitmap.width / img.bitmap.height;
-const getDistance = (img: JimpImage, ref: JimpImage) => Jimp.distance(img, ref);
-const getPixelDiff = (img: JimpImage, ref: JimpImage) => Jimp.diff(img, ref).percent;
+const getAspectRatio = (img: Jimp) => img.bitmap.width / img.bitmap.height;
+const getDistance = (img: Jimp, ref: Jimp) => Jimp.distance(img, ref);
+const getPixelDiff = (img: Jimp, ref: Jimp) => Jimp.diff(img, ref).percent;
 
-function rejectIfFalse(value: boolean): Promise<boolean> {
-  return !value ? Promise.reject(value) : Promise.resolve(value);
+const err = new Error;
+
+function isAspectRatioSatisfied(img: Jimp): Promise<void> {
+  const ratio = getAspectRatio(img);
+  console.log('aspect ratio', ratio);
+  return ratio >= 0. && ratio < 1.2 ? Promise.resolve() : Promise.reject(err);
 }
 
-export function doesLookLikeCephalometricRadiograph(img: JimpImage): Promise<boolean> {
+async function isDistanceSatisifed(img: Jimp): Promise<void> {
+  const distance = getDistance(img, await readReferenceImage());
+  console.log('distance', distance);
+  return distance < 0.3 ? Promise.resolve() : Promise.reject(err);
+}
+
+async function isDiffSatisfied(img: Jimp): Promise<void> {
+  const diff = getPixelDiff(img, await readReferenceImage());
+  console.log('diff', diff)
+  return diff < 0.15 ? Promise.resolve() : Promise.reject(err);
+}
+
+export async function doesLookLikeCephalometricRadiograph(img: Jimp): Promise<boolean> {
   return Promise.all([
-    () => rejectIfFalse(getAspectRatio(img) < 0.73),
-    async () => rejectIfFalse(getDistance(img, await readReferenceImage()) < 0.30),
-    async () => rejectIfFalse(getPixelDiff(img, await readReferenceImage()) < 0.15),
+    isAspectRatioSatisfied(img),
+    isDistanceSatisifed(img),
+    // isDiffSatisfied(img),
   ])
   .then(() => true)
   .catch(() => false);
