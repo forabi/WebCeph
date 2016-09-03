@@ -50,7 +50,6 @@
     "babel-preset-react-optimize": "^1.0.1",
     "babel-preset-stage-3": "^6.11.0",
     "babel-register": "^6.11.6",
-    "carte-blanche": "^0.3.1",
     "css-loader": "^0.23.1",
     "eslint": "^3.2.2",
     "eslint-config-airbnb": "^10.0.0",
