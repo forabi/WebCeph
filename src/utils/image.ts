@@ -1,9 +1,6 @@
 import Jimp from './jimp';
 const url: string = require('./assets/cephalo.jpg');
 
-console.log('url', url);
-
-
 let _ref: Jimp | null = null;
 async function readReferenceImage(): Promise<Jimp> {
   if (!_ref) {
@@ -37,12 +34,21 @@ async function isDiffSatisfied(img: Jimp): Promise<void> {
   return diff < 0.15 ? Promise.resolve() : Promise.reject(err);
 }
 
-export async function doesLookLikeCephalometricRadiograph(img: Jimp): Promise<boolean> {
+export async function doesLookLikeCephalometricRadiograph(img: Jimp, tryFlippedX: boolean = true): Promise<{ isCephalo: boolean, shouldFlipX: boolean }> {
   return Promise.all([
     isAspectRatioSatisfied(img),
     isDistanceSatisifed(img),
     // isDiffSatisfied(img),
   ])
-  .then(() => true)
-  .catch(() => false);
+  .then(() => ({ isCephalo: true, shouldFlipX: false }))
+  .catch(async (result) => {
+    if (tryFlippedX) {
+      const { isCephalo } = await doesLookLikeCephalometricRadiograph(img.flip(true, false), false);
+      return {
+        isCephalo,
+        shouldFlipX: isCephalo,
+      }
+    }
+    return result;
+  });
 }

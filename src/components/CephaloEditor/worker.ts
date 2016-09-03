@@ -13,9 +13,12 @@ export interface IImageWorker extends Worker {
 
 export interface WorkerResponse {
   requestId: string;
-  url?: string;
-  isCephalo?: boolean;
+  result?: {
+    actionId: number;
+    payload: ActionResult;
+  };
   error?: WorkerError;
+  done: boolean;
 }
 
 export interface WorkerError {
@@ -66,11 +69,11 @@ function mapError({ message }: Error): WorkerError {
   }
 }
 
-type ActionResult = { isCephalo: boolean } | { url: string } | { };
+export type ActionResult = { isCephalo: boolean, shouldFlipX: boolean } | { url: string };
 
-async function performAction(img: Jimp, type: WorkerAction, payload?: WorkerPayload): Promise<ActionResult> {
+async function performAction(img: Jimp, type: WorkerAction, payload?: WorkerPayload): Promise<ActionResult | void> {
   if (type === WorkerAction.IS_CEPHALO) {
-    return { isCephalo: await doesLookLikeCephalometricRadiograph(img) };
+    return await doesLookLikeCephalometricRadiograph(img);
   } else if (type === WorkerAction.PERFORM_EDITS && payload) {
     return {
       url: await bluebird.fromCallback(
@@ -80,8 +83,6 @@ async function performAction(img: Jimp, type: WorkerAction, payload?: WorkerPayl
         ).getBase64(Jimp.MIME_BMP, cb)
       ),
     };
-  } else {
-    return { };
   }
 }
 
@@ -92,9 +93,15 @@ self.addEventListener('message', async ({ data }: RequestEvent) => {
   try {
     const buffer = await readFileAsBuffer(file);
     let img = await Jimp.read(buffer);
-    const results = await bluebird.map(actions, action => performAction(img, action.type, action.payload));
-    self.postMessage(assign({ }, ...results, { requestId }) as WorkerResponse);
+    await bluebird.map(actions, async (action, actionId) => {
+      const result = {
+        actionId,
+        payload: await performAction(img, action.type, action.payload),
+      };
+      self.postMessage({ requestId, result, done: false });
+    });
+    self.postMessage({ requestId, done: true });
   } catch (error) {
-    self.postMessage({ requestId, error: mapError(error)} as WorkerResponse);
+    self.postMessage({ requestId, error: mapError(error), done: true });
   }
 });

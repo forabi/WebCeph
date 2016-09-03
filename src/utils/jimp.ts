@@ -11,6 +11,7 @@ declare class Jimp {
   diff(img1: Jimp, img2: Jimp): { percent: number, image: Jimp };
   scaleToFit(height: number, width: number): Jimp;
   getBase64(mime: string, cb: (err: Error, base64: string) => void): void;
+  flip(horz: boolean, vert: boolean): this;
   _originalMime: 'image/bmp' | 'image/jpeg' | 'image/png';
   bitmap: {
     data: ArrayBuffer;

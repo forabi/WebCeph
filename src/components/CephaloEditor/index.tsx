@@ -13,22 +13,18 @@ import Slider from 'material-ui/Slider';
 import IconFlip from 'material-ui/svg-icons/image/flip';
 import IconBrightness from 'material-ui/svg-icons/image/brightness-5';
 import IconControlPoint from 'material-ui/svg-icons/image/control-point';
-import Menu from 'material-ui/Menu';
 import Dialog from 'material-ui/Dialog';
 import CircularProgress from 'material-ui/CircularProgress';
 import Snackbar from 'material-ui/Snackbar';
-import { List, ListItem } from 'material-ui/List';
-import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
 import Checkbox from 'material-ui/Checkbox';
-import { IImageWorker, WorkerRequest, WorkerAction, WorkerError, WorkerEvent, Edit } from './worker';
+import { IImageWorker, WorkerAction, WorkerError, WorkerEvent, Edit } from './worker';
 import * as cx from 'classnames';
 import { Landmark, getStepsForAnalysis } from '../../analyses/helpers';
 import downs from '../../analyses/downs';
 import { descriptions } from './strings';
 import AnalysisStepper from '../AnalysisStepper';
 import CephaloCanvas from '../CephaloCanvas';
-import noop from 'lodash/noop';
 
 const ImageWorker = require('worker!./worker');
 const classes = require('./style.scss');
@@ -66,8 +62,10 @@ interface CephaloEditorState {
   url?: string,
   canvas: HTMLCanvasElement | null,
   anchorEl: Element | null,
+  isWorkerBusy: boolean;
   isLoading: boolean,
   isCephalo: boolean,
+  shouldFlipX: boolean;
   error?: WorkerError,
   open: boolean,
   isEditing: boolean,
@@ -91,9 +89,11 @@ const defaultState: CephaloEditorState = {
   open: false, anchorEl: null,
   canvas: null,
   isEditing: false,
+  isWorkerBusy: false,
   isLoading: false,
   isCephalo: true,
   error: undefined,
+  shouldFlipX: false,
   brightness: 0, invert: false,
   flipX: false, flipY: false,
   isAnalysisActive: true,
@@ -125,19 +125,39 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
           dim => Number(dim.replace('px', ''))
         );
       
-      this.setState(assign({ }, this.state, { containerHeight: height, containerWidth: width }), () => {
+      this.setState(assign({ }, this.state, { isWorkerBusy: true, containerHeight: height, containerWidth: width }), () => {
         const requestId = uniqueId('action_');
-        this.worker.onmessage = ({ data }: WorkerEvent) => {
+        this.listener = ({ data }: WorkerEvent) => {
           if (data.requestId === requestId) {
             if (data.error) {
-              this.setState(assign({}, this.state, { error: data.error, isLoading: false, isCephalo: true }));
-            } else {
+              this.setState(assign({}, this.state, {
+                error: data.error,
+                isLoading: false,
+                isCephalo: true,
+                isWorkerBusy: !data.done,
+              }));
+            } else if (data.result) {
               console.log('Got successful worker response', data);
-              this.setState(assign({}, this.state, { url: data.url, isCephalo: data.isCephalo, error: undefined, isLoading: false }));
+              const patch = data.result.payload;
+              if (patch.shouldFlipX) {
+                patch.flipX = true;
+              }
+              this.setState(assign({}, this.state, patch, {
+                error: undefined,
+                isLoading: false,
+                isWorkerBusy: !data.done,
+              }));
+            } else if (data.done) {
+              this.setState(assign({}, this.state, {
+                error: undefined,
+                isLoading: false,
+                isWorkerBusy: false,
+              }));
             }
-            this.worker.removeEventListener('message');
           }
-        }
+        };
+
+        this.worker.addEventListener('message', this.listener);
 
         this.worker.postMessage({
           id: requestId,
@@ -199,15 +219,17 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
   }
 
   ignoreError = () => this.setState(assign({}, this.state, { error: undefined }));
-  actions = [
-    <FlatButton label="OK" primary onClick={this.ignoreError} />
-  ];
-
   resetWorkspace = () => this.setState(defaultState);
-
   openFilePicker = () => this.refs.dropzone.open();
-
   ignoreNotCephalo = () => this.setState(assign({ }, this.state, { isCephalo: true }));
+
+  errorDialogActions = [
+    <FlatButton label="OK" primary onClick={this.ignoreError} />,
+  ];
+  notCephaloDialogActions = [
+    <FlatButton label="Pick another image" primary onClick={this.resetWorkspace} />,
+    <FlatButton label="Dismiss" onClick={this.ignoreNotCephalo} />,
+  ];
 
   render() {
     const hasImage = !!this.state.url;
@@ -232,21 +254,22 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
                 height={this.state.containerHeight}
                 width={this.state.containerWidth}
               />
-              <Snackbar
+              <Snackbar open={this.state.isWorkerBusy} message="Still working..." />
+              <Dialog
                 open={!this.state.isCephalo}
-                autoHideDuration={Infinity}
-                message="This image does not look like a cephalometric radiograph. Would you like to load another image?"
-                action="Pick another image"
-                onActionTouchTap={this.resetWorkspace}
+                actions={this.notCephaloDialogActions}
                 onRequestClose={this.ignoreNotCephalo}
-              />
+              >
+                This image does not look like a cephalometric radiograph.
+                Would you like to load another image?
+              </Dialog>
             </div>
           ) : isLoading ? (
             <CircularProgress color="white" size={2} />
           ) : hasError ? (
             <Dialog
               open title="Error loading image"
-              actions={this.actions}
+              actions={this.errorDialogActions}
               onRequestClose={this.ignoreError}
               style={{ width: '100%' }}
             >
