@@ -20,7 +20,7 @@ import { List, ListItem } from 'material-ui/List';
 import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
 import Checkbox from 'material-ui/Checkbox';
-import { WorkerRequest, WorkerError, WorkerResult, Edit } from './worker';
+import { IImageWorker, WorkerRequest, WorkerError, WorkerEvent, Edit } from './worker';
 import * as cx from 'classnames';
 import { Landmark, getStepsForAnalysis } from '../../analyses/helpers';
 import downs from '../../analyses/downs';
@@ -86,7 +86,7 @@ export interface Edit {
 
 export default class CephaloEditor extends React.Component<CephaloEditorProps, CephaloEditorState> {
   private listener: EventListener;
-  private worker: Worker;
+  private worker: IImageWorker;
   refs: { canvas: Element, canvasContainer: Element, dropzone: Dropzone };
   state = {
     open: false, anchorEl: null,
@@ -117,8 +117,8 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
       
       this.setState(assign({ }, this.state, { containerHeight: height, containerWidth: width }), () => {
         const requestId = uniqueId('action_');
-        this.listener = ({ data }: Event & { data: WorkerResult }) => {
-          if (data.id === requestId) {
+        this.listener = ({ data }: WorkerEvent) => {
+          if (data.requestId === requestId) {
             if (data.error) {
               this.setState(assign({}, this.state, { error: data.error, isLoading: false }));
             } else {
@@ -137,7 +137,7 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
             method: 'scaleToFit',
             args: [height, width],
           }]
-        } as WorkerRequest);
+        });
       });
     });
   }
@@ -231,7 +231,7 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
               <div className={classes.dropzone_placeholder}>
                 <DropzonePlaceholder className={classes.dropzone_placeholder_image} />
                 <span className={classes.dropzone_placeholder_text}>
-                  Drop a cephalometric radiograph here or
+                  To start tracing, drop a cephalometric radiograph here or
                 </span>
                 <RaisedButton onClick={this.openFilePicker} primary label="Click to pick an image" />
               </div>

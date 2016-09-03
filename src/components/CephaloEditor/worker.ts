@@ -22,8 +22,14 @@ declare class Jimp {
 
 import { readFileAsBuffer } from '../../utils/file';
 
+export interface IImageWorker extends Worker {
+  postMessage(request: WorkerRequest): void;
+  addEventListener(type: 'message', listener: (event: WorkerEvent) => void): void;
+  addEventListener(type: 'error', listener: (event: ErrorEvent ) => void): void;
+}
+
 export interface WorkerResult {
-  id: string;
+  requestId: string;
   url?: string;
   error?: WorkerError;
 }
@@ -32,6 +38,8 @@ export interface WorkerError {
   message: string,
   code?: string,
 }
+
+export type WorkerEvent = Event & { data: WorkerResult }
 
 export interface Edit {
   method: string,
@@ -60,7 +68,7 @@ function mapError({ message }: Error): WorkerError {
 }
 
 self.addEventListener('message', async ({ data }: Event & { data: WorkerRequest }) => {
-  const { id, file, edits } = data;
+  const { id: requestId, file, edits } = data;
   try {
     const buff = await readFileAsBuffer(file);
     let img = await Jimp.read(buff);
@@ -69,8 +77,8 @@ self.addEventListener('message', async ({ data }: Event & { data: WorkerRequest 
       img
     );
     const url = await bluebird.fromCallback(cb => img.getBase64(Jimp.MIME_BMP, cb));
-    self.postMessage({ id, url } as WorkerResult);
+    self.postMessage({ requestId, url } as WorkerResult);
   } catch (error) {
-    self.postMessage({ id, error: mapError(error)} as WorkerResult);
+    self.postMessage({ requestId, error: mapError(error)} as WorkerResult);
   }
 });
