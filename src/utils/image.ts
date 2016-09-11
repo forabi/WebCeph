@@ -41,7 +41,7 @@ export async function doesLookLikeCephalometricRadiograph(img: Jimp, tryFlipX: b
     // isDiffSatisfied(img),
   ])
   .then(() => ({ isCephalo: true, shouldFlipX: false }))
-  .catch(async (result) => {
+  .catch(async () => {
     if (tryFlipX) {
       const { isCephalo } = await doesLookLikeCephalometricRadiograph(
         img.clone().flip(true, false),
@@ -52,6 +52,9 @@ export async function doesLookLikeCephalometricRadiograph(img: Jimp, tryFlipX: b
         shouldFlipX: isCephalo,
       }
     }
-    return result;
+    return {
+      isCephalo: false,
+      shouldFlipX: false,
+    };
   });
 }

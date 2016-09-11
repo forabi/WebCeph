@@ -35,8 +35,9 @@ interface CephaloEditorProps {
   onFileDropped(file: File): void;
   onBrightnessChanged(value: number): void;
   onInvertClicked(e?: __React.MouseEvent): void;
-  isLoading: boolean,
+  isLoading: boolean;
   isWorkerBusy: boolean;
+  isCephalo: boolean;
   src: string | null;
   brightness: number;
   inverted: boolean;
@@ -46,18 +47,13 @@ interface CephaloEditorProps {
 }
 
 interface CephaloEditorState {
-  url?: string,
   canvas: HTMLCanvasElement | null,
-  anchorEl: Element | null,
-  isCephalo: boolean,
-  shouldFlipX: boolean;
+  anchorEl: Element | null;
   open: boolean,
   isEditing: boolean,
   containerHeight: number,
   containerWidth: number,
-  flipX: boolean; flipY: boolean;
   isAnalysisActive: boolean,
-  analysisSteps: CephaloLandmark[];
   isAnalysisComplete: boolean;
 }
 
@@ -65,15 +61,10 @@ const defaultState: CephaloEditorState = {
   open: false, anchorEl: null,
   canvas: null,
   isEditing: false,
-  isCephalo: true,
-  shouldFlipX: false,
-  flipX: false, flipY: false,
   isAnalysisActive: true,
   isAnalysisComplete: false,
-  analysisSteps: getStepsForAnalysis(downs),
   containerHeight: 0,
   containerWidth: 0,
-  url: undefined,
 };
 
 export default class CephaloEditor extends React.Component<CephaloEditorProps, CephaloEditorState> {
@@ -136,7 +127,7 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
                 onRequestClose={noop}
               />
               <Dialog
-                open={!this.state.isCephalo}
+                open={!this.props.isCephalo}
                 actions={this.notCephaloDialogActions}
                 onRequestClose={this.ignoreNotCephalo}
               >

@@ -81,6 +81,7 @@ declare interface CephaloMapper {
 declare interface StoreState {
   'cephalo.workspace.image.data': string | null;
   'cephalo.workspace.image.isLoading': boolean;
+  'cephalo.workspace.image.isCephalo': boolean;
   'cephalo.workspace.image.isFrontal': boolean;
   'cephalo.workspace.workers': {
     [id: string]: {

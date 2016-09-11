@@ -22,6 +22,7 @@ interface AppStaticProps {
   inverted: boolean;
   isLoading: boolean;
   isWorkerBusy: boolean;
+  isCephalo: boolean;
   dispatch: Function;
 }
 
@@ -50,6 +51,7 @@ const App = (props: AppProps) => (
         flipY={props.flipY}
         isLoading={props.isLoading}
         isWorkerBusy={props.isWorkerBusy}
+        isCephalo={props.isCephalo}
       />
     </div>
   </MuiThemeProvider>
@@ -64,6 +66,7 @@ export default connect(
     isLoading: state['cephalo.workspace.image.isLoading'],
     isWorkerBusy: some(state['cephalo.workspace.workers'], 'isBusy'),
     src: state['cephalo.workspace.image.data'],
+    isCephalo: state['cephalo.workspace.image.isCephalo'],
   } as AppStaticProps),
   (dispatch: Function) => ({
     onFileDropped: (file: File) => dispatch(loadImageFile({ file, height: 100, width: 100 })),

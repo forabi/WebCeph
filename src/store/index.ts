@@ -14,6 +14,14 @@ const reducer = combineReducers<StoreState>({
     [Action.LOAD_IMAGE_SUCCEEDED]: (_, { payload }) => payload,
     [Action.LOAD_IMAGE_FAILED]: (_, __) => null,
   }, null),
+  'cephalo.workspace.image.isCephalo': handleActions<boolean, any>({
+    [Action.LOAD_IMAGE_REQUESTED]: () => true,
+    [Action.SET_IS_CEPHALO]: (_, { payload }) => payload.isCephalo,
+  }, true),
+  'cephalo.workspace.image.shouldFlipX': handleActions<boolean, any>({
+    [Action.LOAD_IMAGE_REQUESTED]: () => false,
+    [Action.SET_IS_CEPHALO]: (_, { payload }) => payload.shouldFlipX,
+  }, false),
   'cephalo.workspace.image.isLoading': handleActions<boolean, any>({
     [Action.LOAD_IMAGE_REQUESTED]: () => true,
     [Action.LOAD_IMAGE_FAILED]: () => false,

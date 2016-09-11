@@ -58,7 +58,7 @@ function* loadImage({ payload }: { payload: { file: File, height: number, width:
     while (true) {
       const { actionId, payload } = yield take(chan);
       if (actionId === 0) {
-        yield put({ type: Action.SET_IS_CEPHALO, payload: payload.isCephalo });
+        yield put({ type: Action.SET_IS_CEPHALO, payload });
       } else if (actionId === 1) {
         yield put({ type: Action.LOAD_IMAGE_SUCCEEDED, payload: payload.url });
       }
