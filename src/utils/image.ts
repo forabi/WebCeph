@@ -14,23 +14,23 @@ const getAspectRatio = (img: Jimp) => img.bitmap.width / img.bitmap.height;
 const getDistance = (img: Jimp, ref: Jimp) => Jimp.distance(img, ref);
 const getPixelDiff = (img: Jimp, ref: Jimp) => Jimp.diff(img, ref).percent;
 
-const err = new Error;
+const err = new Error('This image does not look like a cephalometric radiograph');
 
 function isAspectRatioSatisfied(img: Jimp): Promise<void> {
   const ratio = getAspectRatio(img);
-  console.log('aspect ratio', ratio);
-  return ratio >= 0. && ratio < 1.2 ? Promise.resolve() : Promise.reject(err);
+  console.info('Aspect ratio: %f', ratio);
+  return ratio >= 0.70 && ratio < 1.5 ? Promise.resolve() : Promise.reject(err);
 }
 
 async function isDistanceSatisifed(img: Jimp): Promise<void> {
   const distance = getDistance(img, await readReferenceImage());
-  console.log('distance', distance);
-  return distance < 0.3 ? Promise.resolve() : Promise.reject(err);
+  console.info('Hamming distance: %f', distance);
+  return distance < 0.25 ? Promise.resolve() : Promise.reject(err);
 }
 
 async function isDiffSatisfied(img: Jimp): Promise<void> {
   const diff = getPixelDiff(img, await readReferenceImage());
-  console.log('diff', diff)
+  console.info('Pixel difference %f', diff)
   return diff < 0.15 ? Promise.resolve() : Promise.reject(err);
 }
 
