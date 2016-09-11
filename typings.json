@@ -5,6 +5,7 @@
     "jimp": "registry:npm/jimp#0.2.20+20160526180746",
     "lodash": "registry:npm/lodash#4.0.0+20160723033700",
     "react": "registry:npm/react#15.0.1+20160601175240",
+    "react-dom": "registry:npm/react-dom#15.0.1+20160826174104",
     "react-redux": "registry:npm/react-redux#4.4.0+20160614222153"
   },
   "globalDependencies": {

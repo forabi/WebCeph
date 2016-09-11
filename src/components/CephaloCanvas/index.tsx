@@ -1,5 +1,6 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
+import { GeometricalLine, GeometricalPoint } from '../../utils/math';
 
 require('fabric');
 
@@ -86,7 +87,7 @@ export default class CephaloCanvas extends React.Component<CephaloCanvasProps, C
       typeof this.state.canvas === 'undefined' || 
       typeof this.state.image === 'undefined'
     ) return;
-    const img = this.state.image;
+    const img: fabric.IImage = this.state.image;
     const canvas = this.state.canvas;
     let shouldRerender = false;
     if (nextProps.flipX !== this.props.flipX) {
