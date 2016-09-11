@@ -1,4 +1,4 @@
-import { angleBetweenPoints, line, angleBetweenLines, Analysis } from './helpers';
+import { angleBetweenPoints, line, angleBetweenLines } from './helpers';
 import commonAnalysis, { FH_PLANE, N, Pog, A, B, Gn, S, Po } from './common';
 
 export default <Analysis>[

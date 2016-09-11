@@ -1,4 +1,4 @@
-import { angleBetweenPoints, line, point, Landmark, getSymbolForAngle, Analysis } from './helpers';
+import { angleBetweenPoints, line, point, getSymbolForAngle } from './helpers';
 
 /**
  * Most superior point of outline of external auditory meatus
@@ -66,7 +66,7 @@ export const SNB = angleBetweenPoints(S, N, B);
  * Angle ANB is a custom landmark that is calculated as the SNA - SNB,
  * because otherwise it would not be a negative value in cases where it should be.
  */
-export const ANB = <Landmark>{
+export const ANB = <CephaloLandmark>{
   symbol: getSymbolForAngle(line(A, N), line(N, B)),
   type: 'angle',
   unit: 'degree',

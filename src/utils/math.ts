@@ -1,21 +1,3 @@
-/**
- * Describes a geometrical point in a 2D-plane
- */
-export interface Point {
-  x: number,
-  y: number,
-};
-
-/**
- * Describes a geometrical line in a 2D-plane
- */
-export interface Line {
-  x1: number,
-  x2: number,
-  y1: number,
-  y2: number,
-}
-
 export function radiansToDegrees(value: number): number {
   return value * 180 / Math.PI;
 }
@@ -30,7 +12,7 @@ export function degreesToRadians(value: number): number {
  * @return {number} distance in pixels
  * @see https://en.wikipedia.org/wiki/Pythagorean_theorem
  */
-export function calculateDistanceBetweenTwoPoints(A: Point, B: Point): number {
+export function calculateDistanceBetweenTwoPoints(A: GeometricalPoint, B: GeometricalPoint): number {
     return Math.sqrt(Math.pow(B.x - A.x, 2) + Math.pow(B.y - A.y, 2));
 }
 
@@ -40,7 +22,7 @@ export function calculateDistanceBetweenTwoPoints(A: Point, B: Point): number {
  * @see https://en.wikipedia.org/wiki/Inverse_trigonometric_functions
  * @see https://en.wikipedia.org/wiki/Law_of_cosines
  */
-export function calculateAngleBetweenPoints(A: Point, B: Point, C: Point): number {
+export function calculateAngleBetweenPoints(A: GeometricalPoint, B: GeometricalPoint, C: GeometricalPoint): number {
   // Calculate length of each line in the triangle formed by A, B, C.
   const AB = calculateDistanceBetweenTwoPoints(A, B);    
   const BC = calculateDistanceBetweenTwoPoints(B, C);
@@ -58,7 +40,7 @@ export function calculateAngleBetweenPoints(A: Point, B: Point, C: Point): numbe
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan2
  * @see https://en.wikipedia.org/wiki/Inverse_trigonometric_functions
  */
-export function calculateAngleBetweenTwoLines(line1: Line, line2: Line): number {
+export function calculateAngleBetweenTwoLines(line1: GeometricalLine, line2: GeometricalLine): number {
   const angle1 = Math.atan2(line1.y1 - line1.y2, line1.x1 - line1.x2);
   const angle2 = Math.atan2(line2.y1 - line2.y2, line2.x1 - line2.x2);
   return angle1 - angle2;

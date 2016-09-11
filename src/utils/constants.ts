@@ -17,3 +17,8 @@ export const Action = {
   SET_WORKER_STATUS: 'SET_WORKER_STATUS',
   SET_IS_CEPHALO: 'SET_IS_CEPHALO',
 };
+
+export enum ImageWorkerAction {
+  PERFORM_EDITS,
+  IS_CEPHALO,
+}

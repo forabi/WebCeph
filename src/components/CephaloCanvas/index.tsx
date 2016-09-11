@@ -1,6 +1,5 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
-import { Line, Point } from '../../utils/math';
 
 require('fabric');
 
@@ -18,7 +17,7 @@ interface CephaloCanvasProps {
   flipY?: boolean;
   height: number,
   width: number,
-  landmarks?: (Line | Point)[];
+  landmarks?: (GeometricalLine | GeometricalPoint)[];
   onClick?(e: MouseEvent): void;
 }
 

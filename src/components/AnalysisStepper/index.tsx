@@ -3,7 +3,8 @@ import { List, ListItem } from 'material-ui/List';
 import { Landmark } from '../../analyses/helpers';
 import RaisedButton from 'material-ui/RaisedButton';
 
-type Step = Landmark;
+export type stepState = 'done' | 'current' | 'pending';
+export type Step = CephaloLandmark & { title: string, state: stepState };
 
 type isStepDoneFn = (step: Step, i: number) => boolean;
 type isCurrentStepFn = (step: Step, i: number) => boolean;
@@ -17,8 +18,8 @@ interface AnalysisStepperProps {
   getTitleForStep(step: Step): string;
   getDescriptionForStep(step: Step): string | null;
   showResults(): void;
-  removeLandmark(l: Landmark): void;
-  editLandmark(l: Landmark): void;
+  removeLandmark(landmark: CephaloLandmark): void;
+  editLandmark(landmark: CephaloLandmark): void;
 }
 
 import IconPlayArrow from 'material-ui/svg-icons/av/play-arrow';
