@@ -5,7 +5,7 @@ let _ref: Jimp | null = null;
 async function readReferenceImage(): Promise<Jimp> {
   if (!_ref) {
     _ref = await Jimp.read(url);
-    console.log('image read')
+    console.info('Reference image loaded');
   }
   return _ref;
 }
