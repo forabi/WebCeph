@@ -34,7 +34,7 @@ async function isDiffSatisfied(img: Jimp): Promise<void> {
   return diff < 0.15 ? Promise.resolve() : Promise.reject(err);
 }
 
-export async function doesLookLikeCephalometricRadiograph(img: Jimp, tryFlippedX: boolean = true): Promise<{ isCephalo: boolean, shouldFlipX: boolean }> {
+export async function doesLookLikeCephalometricRadiograph(img: Jimp, tryFlipX: boolean = true): Promise<{ isCephalo: boolean, shouldFlipX: boolean }> {
   return Promise.all([
     isAspectRatioSatisfied(img),
     isDistanceSatisifed(img),
@@ -42,8 +42,11 @@ export async function doesLookLikeCephalometricRadiograph(img: Jimp, tryFlippedX
   ])
   .then(() => ({ isCephalo: true, shouldFlipX: false }))
   .catch(async (result) => {
-    if (tryFlippedX) {
-      const { isCephalo } = await doesLookLikeCephalometricRadiograph(img.flip(true, false), false);
+    if (tryFlipX) {
+      const { isCephalo } = await doesLookLikeCephalometricRadiograph(
+        img.clone().flip(true, false),
+        false,
+      );
       return {
         isCephalo,
         shouldFlipX: isCephalo,
