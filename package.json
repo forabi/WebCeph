@@ -6,7 +6,8 @@
     "test": "mocha src/**/*.test.* --compilers ts:ts-node/register,tsx:ts-node/register",
     "webpack:validate": "webpack-validator webpack.config.js",
     "dev": "NODE_ENV=development HOT=1 babel-node devServer.js",
-    "prod": "rm -rf build/**/*.{js,jpg,png,svg,html,log,css} && NODE_ENV=production webpack --bail --progress"
+    "clean": "rm -rf build/**/*.{js,jpg,png,svg,html,log,css}",
+    "prod": "npm run clean && NODE_ENV=production webpack --bail --progress"
   },
   "repository": {
     "type": "git",
