@@ -1,7 +1,6 @@
 import bluebird from 'bluebird';
 import Jimp from './jimp';
 import { ErrorCode } from './constants';
-import assign from 'lodash/assign';
 import { doesLookLikeCephalometricRadiograph } from './image';
 import { readFileAsBuffer } from './file';
 import {

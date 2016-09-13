@@ -19,7 +19,7 @@ import CircularProgress from 'material-ui/CircularProgress';
 import Snackbar from 'material-ui/Snackbar';
 import Divider from 'material-ui/Divider';
 import Checkbox from 'material-ui/Checkbox';
-import * as cx from 'classnames';
+import cx from 'classnames';
 import { getStepsForAnalysis } from '../../analyses/helpers';
 import downs from '../../analyses/downs';
 import AnalysisStepper from '../AnalysisStepper';

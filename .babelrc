@@ -3,7 +3,7 @@
     [
       "es2015",
       {
-          "modules": false
+        "modules": false
       }
     ],
     "react",
@@ -11,6 +11,9 @@
   ],
   "env": {
     "production": {
+      "plugins": [
+        "transform-runtime"
+      ],
       "presets": [
         "react-optimize"
       ]

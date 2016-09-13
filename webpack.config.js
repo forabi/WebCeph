@@ -3,11 +3,17 @@ const fail = require('webpack-fail-plugin');
 const path = require('path');
 const env = require('./env');
 const WebpackHTMLPlugin = require('webpack-html-plugin');
-const Dashboard = require('webpack-dashboard');
-const DashboardPlugin = require('webpack-dashboard/plugin');
 const { compact } = require('lodash');
 
-const dashboard = new Dashboard();
+let Dashboard;
+let DashboardPlugin;
+let dashboard;
+
+if (env.isDev) {
+  Dashboard = require('webpack-dashboard');
+  DashboardPlugin = require('webpack-dashboard/plugin');
+  dashboard = new Dashboard();
+}
 
 const prod = p => (env.isProd ? p : null);
 const hot = p => (env.isHot ? p : null);
@@ -89,9 +95,14 @@ const config = {
           query: {
             transpileOnly: true,
             silent: true,
-            compilerOptions: {
-              module: 'es2015',
-            },
+            compilerOptions: Object.assign(
+              {
+                module: 'es2015',
+              },
+              env.isProd ? {
+                jsx: 'preserve',
+              } : { }
+            ),
           },
         },
       ]),
@@ -141,7 +152,7 @@ const config = {
 
   plugins: compact([
     hot(new webpack.HotModuleReplacementPlugin()),
-    dev(new DashboardPlugin(dashboard.setData)),
+    dashboard ? new DashboardPlugin(dashboard.setData) : null,
     fail,
     new WebpackHTMLPlugin({
       filename: 'index.html',
