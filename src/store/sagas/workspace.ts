@@ -1,7 +1,7 @@
 import uniqueId from 'lodash/uniqueId';
 import { Action } from '../../utils/constants';
 import { takeLatest, eventChannel, END } from 'redux-saga';
-import { put, take, fork, call } from 'redux-saga/effects';
+import { put, take, fork, call, Effect } from 'redux-saga/effects';
 import { ImageWorkerAction } from '../../utils/constants';
 import { ImageWorkerInstance, ImageWorkerEvent } from '../../utils/image-worker.d';
 
@@ -34,7 +34,7 @@ function processImageInWorker(file: File, actions: any[]) {
   });
 }
 
-function* loadImage({ payload }: { payload: { file: File, height: number, width: number } }): any {
+function* loadImage({ payload }: { payload: { file: File, height: number, width: number } }): IterableIterator<Effect> {
   const { file, height, width } = payload;
   const workerId = uniqueId('worker_');
   yield put({ type: Action.WORKER_CREATED, payload: { workerId } });
