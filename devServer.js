@@ -15,6 +15,7 @@ if (env.isDevelopment) {
     publicPath: webpackConfig.output.publicPath,
     stats: false,
     quiet: true,
+    historyApiFallback: true,
   }));
 
   router.use(webpackHotMiddleware(compiler, {
