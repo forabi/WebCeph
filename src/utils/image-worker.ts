@@ -21,7 +21,7 @@ function mapError({ message }: Error): ImageWorkerError {
       message: (
         'Failed to load the image. ' +
         'Make sure it\s a valid image file and that your browser supports images of this type.'
-      )
+      ),
     };
   } else {
     return { message, code: ErrorCode.UNKNOWN };
