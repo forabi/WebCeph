@@ -31,10 +31,6 @@ const DropzonePlaceholder = require('./assets/placeholder.svg').default;
 
 interface CephaloEditorProps {
   className: string;
-  onFlipXClicked(e?: __React.MouseEvent): void;
-  onFileDropped(file: File): void;
-  onBrightnessChanged(value: number): void;
-  onInvertClicked(e?: __React.MouseEvent): void;
   isLoading: boolean;
   isWorkerBusy: boolean;
   isCephalo: boolean;
@@ -44,31 +40,32 @@ interface CephaloEditorProps {
   flipX: boolean;
   flipY: boolean;
   error?: { message: string };
+  canvasHeight: number;
+  canvasWidth: number;
+  isAnalysisActive: boolean;
+  isAnalysisComplete: boolean;
+  onFlipXClicked(e?: __React.MouseEvent): void;
+  onFileDropped(file: File): void;
+  onBrightnessChanged(value: number): void;
+  onInvertClicked(e?: __React.MouseEvent): void;
+  onPickAnotherImageClicked(...args: any[]): void;
+  onIgnoreNotCephaloClicked(...args: any[]): void;
+  onEditLandmarkClicked(e?: __React.MouseEvent): void;
+  onRemoveLandmarkClicked(e?: __React.MouseEvent): void;
 }
 
 interface CephaloEditorState {
-  canvas: HTMLCanvasElement | null,
   anchorEl: Element | null;
   open: boolean,
-  isEditing: boolean,
-  containerHeight: number,
-  containerWidth: number,
-  isAnalysisActive: boolean,
-  isAnalysisComplete: boolean;
 }
 
 const defaultState: CephaloEditorState = {
-  open: false, anchorEl: null,
-  canvas: null,
-  isEditing: false,
-  isAnalysisActive: true,
-  isAnalysisComplete: false,
-  containerHeight: 0,
-  containerWidth: 0,
+  open: false,
+  anchorEl: null,
 };
 
 export default class CephaloEditor extends React.Component<CephaloEditorProps, CephaloEditorState> {
-  refs: { canvas: Element, canvasContainer: Element, dropzone: Dropzone };
+  refs: { dropzone: Dropzone };
   state = defaultState;
 
   handleDrop = async (files: File[]) => {
@@ -97,18 +94,18 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
     <FlatButton label="OK" primary onClick={this.ignoreError} />,
   ];
   notCephaloDialogActions = [
-    <FlatButton label="Pick another image" primary onClick={this.resetWorkspace} />,
-    <FlatButton label="Dismiss" onClick={this.ignoreNotCephalo} />,
+    <FlatButton label="Pick another image" primary onClick={this.props.onPickAnotherImageClicked} />,
+    <FlatButton label="Dismiss" onClick={this.props.onIgnoreNotCephaloClicked} />,
   ];
 
   render() {
     const hasImage = this.props.src !== null;
     const cannotEdit = !hasImage;
-    const isAnalysisActive = hasImage;
-    const isAnalysisComplete = this.state.isAnalysisComplete;
+    const isAnalysisActive = this.props.isAnalysisActive;
+    const isAnalysisComplete = this.props.isAnalysisComplete;
     return (
       <div className={cx(classes.root, 'row', this.props.className)}>
-        <div ref="canvasContainer" className={cx(classes.canvas_container, 'col-xs-12', 'col-sm-8')}>
+        <div className={cx(classes.canvas_container, 'col-xs-12', 'col-sm-8')}>
           {hasImage ? (
             <div>
               <CephaloCanvas
@@ -118,8 +115,8 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
                 inverted={this.props.inverted}
                 flipX={this.props.flipX}
                 flipY={this.props.flipY}
-                height={this.state.containerHeight}
-                width={this.state.containerWidth}
+                height={this.props.canvasHeight}
+                width={this.props.canvasWidth}
               />
               <Snackbar
                 open={this.props.isWorkerBusy}
@@ -129,7 +126,7 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
               <Dialog
                 open={!this.props.isCephalo}
                 actions={this.notCephaloDialogActions}
-                onRequestClose={this.ignoreNotCephalo}
+                onRequestClose={this.props.onIgnoreNotCephaloClicked}
               >
                 This image does not look like a cephalometric radiograph.
                 Would you like to load another image?
@@ -199,10 +196,9 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
           { isAnalysisActive ? (
               <AnalysisStepper
                 className={classes.list_steps}
-                showResults={() => alert('results!')}
-                isAnalysisComplete={isAnalysisComplete}
-                editLandmark={() => null}
-                removeLandmark={() => null}
+                showResults={this.props.onShowAnalysisResultsClicked}
+                editLandmark={this.props.onEditLandmarkClicked}
+                removeLandmark={this.props.onRemoveLandmarkClicked}
               />
             ) : (
               null

@@ -1,5 +1,5 @@
 import uniqueId from 'lodash/uniqueId';
-import { Action } from '../../utils/constants';
+import { Event } from '../../utils/constants';
 import { takeLatest, eventChannel, END } from 'redux-saga';
 import { put, take, fork, call, Effect } from 'redux-saga/effects';
 import { ImageWorkerAction } from '../../utils/constants';
@@ -37,7 +37,7 @@ function processImageInWorker(file: File, actions: any[]) {
 function* loadImage({ payload }: { payload: { file: File, height: number, width: number } }): IterableIterator<Effect> {
   const { file, height, width } = payload;
   const workerId = uniqueId('worker_');
-  yield put({ type: Action.WORKER_CREATED, payload: { workerId } });
+  yield put({ type: Event.WORKER_CREATED, payload: { workerId } });
   const actions = [
     {
       type: ImageWorkerAction.IS_CEPHALO,
@@ -54,26 +54,26 @@ function* loadImage({ payload }: { payload: { file: File, height: number, width:
   ];
   const chan = yield call(processImageInWorker, file, actions);
   try {
-    yield put({ type: Action.SET_WORKER_STATUS, payload: { workerId, isBusy: true } });
+    yield put({ type: Event.WORKER_STATUS_CHANGED, payload: { workerId, isBusy: true } });
     while (true) {
       const { actionId, payload } = yield take(chan);
       if (actionId === 0) {
-        yield put({ type: Action.SET_IS_CEPHALO, payload });
+        yield put({ type: Event.SET_IS_CEPHALO_REQUESTED, payload });
       } else if (actionId === 1) {
-        yield put({ type: Action.LOAD_IMAGE_SUCCEEDED, payload: payload.url });
+        yield put({ type: Event.LOAD_IMAGE_SUCCEEDED, payload: payload.url });
       }
     }
   } catch (error) {
     console.error(error);
     yield put({
-      type: Action.LOAD_IMAGE_FAILED,
+      type: Event.LOAD_IMAGE_FAILED,
       payload: error.message,
       error: true,
     });
   } finally {
     chan.close();
     yield put({
-      type: Action.SET_WORKER_STATUS,
+      type: Event.WORKER_STATUS_CHANGED,
       payload: {
         workerId,
         isBusy: false,
@@ -83,7 +83,7 @@ function* loadImage({ payload }: { payload: { file: File, height: number, width:
 }
 
 function* watchWorkspace() {
-  yield fork(takeLatest, Action.LOAD_IMAGE_REQUESTED, loadImage);
+  yield fork(takeLatest, Event.LOAD_IMAGE_REQUESTED, loadImage);
 }
 
 export default watchWorkspace;

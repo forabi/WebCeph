@@ -4,7 +4,15 @@ import * as injectTapEventPlugin from 'react-tap-event-plugin';
 import { connect } from 'react-redux';
 import CephaloEditor from '../CephaloEditor';
 import cx from 'classnames';
-import { flipImageX, invertImage, setBrightness, loadImageFile } from '../../actions/workspace';
+import assign from 'lodash/assign';
+import {
+  flipImageX,
+  invertImage,
+  setBrightness,
+  loadImageFile,
+  resetWorkspace,
+  ignoreLikelyNotCephalo,
+} from '../../events/workspace';
 import attempt from 'lodash/attempt';
 import some from 'lodash/some';
 
@@ -14,7 +22,7 @@ require('../../layout/_index.scss');
 
 attempt(injectTapEventPlugin);
 
-interface AppStaticProps {
+interface StateProps {
   src: string | null;
   flipX: boolean;
   flipY: boolean;
@@ -23,35 +31,33 @@ interface AppStaticProps {
   isLoading: boolean;
   isWorkerBusy: boolean;
   isCephalo: boolean;
-  dispatch: Function;
+  canvasHeight: number;
+  canvasWidth: number;
+  isAnalysisActive: boolean;
+  isAnalysisComplete: boolean;
 }
 
-interface AppFunctions {
+interface DispatchProps {
+  dispatch: Function;
   onFlipXClicked(e: __React.MouseEvent): void;
   onInvertClicked(e: __React.MouseEvent): void;
-  onFileDropped(file: File): void;
   onBrightnessChanged(value: number): void;
+  onPickAnotherImageClicked(...args: any[]): void;
+  onIgnoreNotCephaloClicked(...args: any[]): void;
+  onEditLandmarkClicked(e?: __React.MouseEvent): void;
+  onRemoveLandmarkClicked(e?: __React.MouseEvent): void;
 }
 
-type AppProps = AppStaticProps & AppFunctions;
+type AppProps = StateProps & DispatchProps & { 
+  onFileDropped(file: File): void;
+};
 
 const App = (props: AppProps) => (
   <MuiThemeProvider>
     <div className={cx('col-xs-12', classes.root)}>
       <CephaloEditor
         className={cx('row', classes.editor)}
-        src={props.src}
-        onFileDropped={props.onFileDropped}
-        onFlipXClicked={props.onFlipXClicked}
-        onBrightnessChanged={props.onBrightnessChanged}
-        onInvertClicked={props.onInvertClicked}
-        brightness={props.brightness}
-        inverted={props.inverted}
-        flipX={props.flipX}
-        flipY={props.flipY}
-        isLoading={props.isLoading}
-        isWorkerBusy={props.isWorkerBusy}
-        isCephalo={props.isCephalo}
+        {...props}
       />
     </div>
   </MuiThemeProvider>
@@ -67,11 +73,31 @@ export default connect(
     isWorkerBusy: some(state['cephalo.workspace.workers'], 'isBusy'),
     src: state['cephalo.workspace.image.data'],
     isCephalo: state['cephalo.workspace.image.isCephalo'],
-  } as AppStaticProps),
+    canvasHeight: state['cephalo.workspace.canvas.height'],
+    canvasWidth: state['cephalo.workspace.canvas.width'],
+    isAnalysisActive: state['cephalo.workspace.activeAnalysis'] !== null,
+    isAnalysisComplete: false, // @TODO
+  } as StateProps),
   (dispatch: Function) => ({
-    onFileDropped: (file: File) => dispatch(loadImageFile({ file, height: 100, width: 100 })),
+    dispatch,
     onFlipXClicked: () => dispatch(flipImageX()),
     onBrightnessChanged: (value: number) => dispatch(setBrightness(value)),
     onInvertClicked: () => dispatch(invertImage()),
-  } as AppFunctions),
+    onPickAnotherImageClicked: () => dispatch(resetWorkspace()),
+    onIgnoreNotCephaloClicked: () => dispatch(ignoreLikelyNotCephalo()),
+    onEditLandmarkClicked: () => null, // @TODO
+    onRemoveLandmarkClicked: () => null, // @TODO
+  } as DispatchProps),
+  (stateProps: StateProps, dispatchProps: DispatchProps) => assign(
+    {},
+    stateProps,
+    dispatchProps,
+    {
+      onFileDropped: (file: File) => dispatchProps.dispatch(loadImageFile({
+        file,
+        height: stateProps.canvasHeight,
+        width: stateProps.canvasWidth,
+      })),
+    },
+  ) as AppProps,
 )(App);

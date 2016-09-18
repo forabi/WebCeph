@@ -1,46 +1,59 @@
 import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { handleActions } from 'redux-actions';
-import { Action } from '../utils/constants';
+import { Event } from '../utils/constants';
 import rootSaga from './sagas';
 import assign from 'lodash/assign';
 import omit from 'lodash/omit';
 
 declare const window: Window & { devToolsExtension?: () => any };
 
-const reducer = combineReducers<StoreState>({
+const reducer = combineReducers({
   'cephalo.workspace.image.data': handleActions<string | null, any>({
-    [Action.LOAD_IMAGE_REQUESTED]: (_, __) => null,
-    [Action.LOAD_IMAGE_SUCCEEDED]: (_, { payload }) => payload,
-    [Action.LOAD_IMAGE_FAILED]: (_, __) => null,
+    [Event.LOAD_IMAGE_REQUESTED]: () => null,
+    [Event.LOAD_IMAGE_SUCCEEDED]: (_, { payload }) => payload,
+    [Event.LOAD_IMAGE_FAILED]: () => null,
+    [Event.RESET_WORKSPACE_REQUESTED]: () => null,
   }, null),
+  'cephalo.workspace.canvas.height': handleActions<number, any>({
+    [Event.CANVAS_RESIZED]: (_, { payload }) => payload.height,
+  }, 600),
+  'cephalo.workspace.canvas.width': handleActions<number, any>({
+    [Event.CANVAS_RESIZED]: (_, { payload }) => payload.width,
+  }, 600),
   'cephalo.workspace.image.isCephalo': handleActions<boolean, any>({
-    [Action.LOAD_IMAGE_REQUESTED]: () => true,
-    [Action.SET_IS_CEPHALO]: (_, { payload }) => payload.isCephalo,
+    [Event.SET_IS_CEPHALO_REQUESTED]: (_, { payload }) => payload.isCephalo,
+    [Event.RESET_WORKSPACE_REQUESTED]: () => true,
   }, true),
   'cephalo.workspace.image.shouldFlipX': handleActions<boolean, any>({
-    [Action.LOAD_IMAGE_REQUESTED]: () => false,
-    [Action.SET_IS_CEPHALO]: (_, { payload }) => payload.shouldFlipX,
+    [Event.LOAD_IMAGE_REQUESTED]: () => false,
+    [Event.SET_IS_CEPHALO_REQUESTED]: (state, { payload }) => payload.shouldFlipX || state,
+    [Event.RESET_WORKSPACE_REQUESTED]: () => false,
   }, false),
   'cephalo.workspace.image.isLoading': handleActions<boolean, any>({
-    [Action.LOAD_IMAGE_REQUESTED]: () => true,
-    [Action.LOAD_IMAGE_FAILED]: () => false,
-    [Action.LOAD_IMAGE_SUCCEEDED]: () => false,
+    [Event.LOAD_IMAGE_REQUESTED]: () => true,
+    [Event.LOAD_IMAGE_FAILED]: () => false,
+    [Event.LOAD_IMAGE_SUCCEEDED]: () => false,
+    [Event.RESET_WORKSPACE_REQUESTED]: () => false,
   }, false),
   'cephalo.workspace.image.flipX': handleActions<boolean, any>({
-    [Action.FLIP_IMAGE_X]: (state: boolean) => !state,
-    [Action.LOAD_IMAGE_REQUESTED]: () => false,
+    [Event.FLIP_IMAGE_X_REQUESTED]: (state: boolean) => !state,
+    [Event.LOAD_IMAGE_REQUESTED]: () => false,
+    [Event.RESET_WORKSPACE_REQUESTED]: () => false,
   }, false),
   'cephalo.workspace.image.brightness': handleActions<number, any>({
-    [Action.SET_IMAGE_BRIGHTNESS]: (__, { payload }) => payload,
-    [Action.LOAD_IMAGE_REQUESTED]: () => 0,
+    [Event.SET_IMAGE_BRIGHTNESS_REQUESTED]: (__, { payload }) => payload,
+    [Event.LOAD_IMAGE_REQUESTED]: () => 0,
+    [Event.RESET_WORKSPACE_REQUESTED]: () => 0,
   }, 0),
   'cephalo.workspace.image.invert': handleActions<boolean, any>({
-    [Action.INVERT_IMAGE]: (state) => !state,
+    [Event.INVERT_IMAGE_REQUESTED]: (state) => !state,
+    [Event.RESET_WORKSPACE_REQUESTED]: () => false,
   }, false),
   'cephalo.workspace.activeAnalysis': handleActions<Analysis | null, any>({
-    [Action.SET_ACTIVE_ANALYSIS]: (__, { payload }) => payload,
-    [Action.LOAD_IMAGE_REQUESTED]: () => null,
+    [Event.SET_ACTIVE_ANALYSIS_REQUESTED]: (__, { payload }) => payload,
+    [Event.LOAD_IMAGE_REQUESTED]: () => null,
+    [Event.RESET_WORKSPACE_REQUESTED]: () => null,
   }, null),
   'cephalo.workspace.landmarks': handleActions<{ [id: string]: CephaloLandmark }, any>({
 
@@ -51,7 +64,7 @@ const reducer = combineReducers<StoreState>({
       error?: { message: string },
     },
   }, any>({
-    [Action.WORKER_CREATED]: (state, { payload }) => {
+    [Event.WORKER_CREATED]: (state, { payload }) => {
       return assign(
         { },
         state,
@@ -60,8 +73,8 @@ const reducer = combineReducers<StoreState>({
         },
       );
     },
-    [Action.WORKER_TERMINATED]: (state, { payload }) => omit(state, payload.workerId),
-    [Action.SET_WORKER_STATUS]: (state, { payload }) => {
+    [Event.WORKER_TERMINATED]: (state, { payload }) => omit(state, payload.workerId),
+    [Event.WORKER_STATUS_CHANGED]: (state, { payload }) => {
       return assign(
         { },
         state,
