@@ -81,9 +81,9 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
     this.setState(assign({ }, this.state, { open: false, anchorEl: null }) as CephaloEditorState);
   };
 
-  setBrightness = debounce((__: React.MouseEvent, value: number) => {
-    this.props.onBrightnessChanged(value);
-  }, 100, { trailing: true });
+  setBrightness = (__: React.MouseEvent, value: number) => {
+    requestAnimationFrame(() => this.props.onBrightnessChanged(value));
+  };
 
   ignoreError = () => this.setState(assign({}, this.state, { error: undefined }));
   resetWorkspace = () => this.setState(defaultState);
