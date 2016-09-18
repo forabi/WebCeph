@@ -64,6 +64,7 @@ const App = (props: AppProps) => (
 );
 
 export default connect(
+  // mapStateToProps
   (state: StoreState) => ({
     flipX: state['cephalo.workspace.image.flipX'],
     flipY: state['cephalo.workspace.image.flipY'],
@@ -78,6 +79,8 @@ export default connect(
     isAnalysisActive: state['cephalo.workspace.activeAnalysis'] !== null,
     isAnalysisComplete: false, // @TODO
   } as StateProps),
+
+  // mapDispatchToProps
   (dispatch: Function) => ({
     dispatch,
     onFlipXClicked: () => dispatch(flipImageX()),
@@ -88,6 +91,8 @@ export default connect(
     onEditLandmarkClicked: () => null, // @TODO
     onRemoveLandmarkClicked: () => null, // @TODO
   } as DispatchProps),
+
+  // mergeProps
   (stateProps: StateProps, dispatchProps: DispatchProps) => assign(
     {},
     stateProps,

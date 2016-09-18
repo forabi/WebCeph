@@ -3,7 +3,7 @@ import * as Dropzone from 'react-dropzone';
 import assign from 'lodash/assign';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
-import { Toolbar, ToolbarGroup} from 'material-ui/Toolbar';
+import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
 import Popover from 'material-ui/Popover';
 import Slider from 'material-ui/Slider';
 import IconFlip from 'material-ui/svg-icons/image/flip';
