@@ -1,0 +1,11 @@
+{
+  "required": [
+    "ResizeObserver",
+    "Canvas",
+    "requestAnimationFrame",
+    "WebWorker"
+  ],
+  "optional": [
+    "ServiceWorker"
+  ]
+}
