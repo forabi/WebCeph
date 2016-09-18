@@ -1,5 +1,6 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
+import assign from 'lodash/assign';
 
 require('fabric');
 
@@ -67,15 +68,20 @@ export default class CephaloCanvas extends React.Component<CephaloCanvasProps, C
           this.handlePropChanges(this.props);
         },
       );
-    }, {
-      height: this.props.height,
-      width: this.props.width,
-      scaleX: 0.8,
-      scaleY: 0.8,
-    });
+    },
+    assign(
+      (this.props.height < this.props.width ?
+        { height: this.props.height } :
+        { width: this.props.width }
+      ),
+      {
+        scaleX: 0.9,
+        scaleY: 0.9,
+      }),
+    );
   }
 
-  shouldComponentUpdate(nextProps: CephaloCanvasProps) {
+  shouldComponentUpdate(__: CephaloCanvasProps) {
     return false;
   }
 
