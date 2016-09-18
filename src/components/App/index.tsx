@@ -12,7 +12,7 @@ import {
   loadImageFile,
   resetWorkspace,
   ignoreLikelyNotCephalo,
-} from '../../events/workspace';
+} from '../../actions/workspace';
 import attempt from 'lodash/attempt';
 import some from 'lodash/some';
 
