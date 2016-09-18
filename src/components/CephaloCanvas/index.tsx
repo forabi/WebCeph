@@ -1,6 +1,5 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
-import { GeometricalLine, GeometricalPoint } from '../../utils/math';
 
 require('fabric');
 

@@ -69,13 +69,13 @@ declare type Analysis = Array<{ landmark: CephaloLandmark, norm: number, stdDev?
  * A Mapper object maps cephalometric landmarks to geometrical objects
  */
 declare interface CephaloMapper {
-    toLine(landmark: CephaloLine): GeometricalLine;
-    toPoint(landmark: CephaloPoint): GeometricalPoint;
-    /**
-     * The scale factor is required to calculate linear measurements
-     * It is expected to map pixels on the screen to millimeters.
-     */
-    scaleFactor: number;
+  toLine(landmark: CephaloLine): GeometricalLine;
+  toPoint(landmark: CephaloPoint): GeometricalPoint;
+  /**
+   * The scale factor is required to calculate linear measurements
+   * It is expected to map pixels on the screen to millimeters.
+   */
+  scaleFactor: number;
 }
 
 declare interface StoreState {
