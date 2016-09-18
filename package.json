@@ -48,6 +48,15 @@
     "webpack-html-plugin": "^0.1.1"
   },
   "devDependencies": {
+    "@types/bluebird": "^3.0.33",
+    "@types/classnames": "0.0.28",
+    "@types/expect": "^1.13.29",
+    "@types/lodash": "^4.14.34",
+    "@types/mocha": "^2.2.31",
+    "@types/react": "^0.14.34",
+    "@types/react-dom": "^0.14.16",
+    "@types/react-dropzone": "0.0.27",
+    "@types/react-tap-event-plugin": "0.0.29",
     "babel": "^6.5.2",
     "babel-cli": "^6.11.4",
     "babel-eslint": "^6.1.2",
