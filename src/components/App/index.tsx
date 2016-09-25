@@ -9,7 +9,8 @@ import attempt from 'lodash/attempt';
 import mapValues from 'lodash/mapValues';
 import pickBy from 'lodash/pickBy';
 import some from 'lodash/some';
-import every from 'lodash/every';
+import intersection from 'lodash/intersection';
+import map from 'lodash/map';
 import {
   flipImageX,
   invertImage,
@@ -76,6 +77,14 @@ const App = (props: AppProps) => (
 
 import { Na } from '../../analyses/common';
 
+function isAnalysisComplete(setLandmarks: { [id: string]: CephaloLandmark }, activeAnalysis: Analysis | null) {
+  if (!activeAnalysis) return false;
+  return intersection(
+    map(activeAnalysis, x => x.landmark.symbol),
+    map(setLandmarks, x => x.symbol),
+  ).length > 0;
+}
+
 export default connect(
   // mapStateToProps
   (state: StoreState) => ({
@@ -90,7 +99,10 @@ export default connect(
     canvasHeight: state['cephalo.workspace.canvas.height'],
     canvasWidth: state['cephalo.workspace.canvas.width'],
     isAnalysisActive: state['cephalo.workspace.analysis.activeAnalysis'] !== null,
-    isAnalysisComplete: every(state['cephalo.workspace.landmarks'], 'isSet'),
+    isAnalysisComplete: isAnalysisComplete(
+      state['cephalo.workspace.landmarks'],
+      state['cephalo.workspace.analysis.activeAnalysis'],
+    ),
     error: state['cephalo.workspace.error'],
     landmarks: pickBy(mapValues(state['cephalo.workspace.landmarks'], x => x.mappedTo), Boolean),
   } as StateProps),

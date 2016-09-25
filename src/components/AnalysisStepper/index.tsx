@@ -102,7 +102,7 @@ const mapLandmarkToStep = (state: StoreState) => function (landmark: CephaloLand
 
 const ConnectedAnalysisStepper = connect(
   (state: StoreState) => {
-    const activeAnalysis = state['cephalo.workspace.activeAnalysis'];
+    const activeAnalysis = state['cephalo.workspace.analysis.activeAnalysis'];
     if (activeAnalysis !== null) {
       return {
         steps: (
