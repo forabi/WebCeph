@@ -5,16 +5,21 @@ import { connect } from 'react-redux';
 import CephaloEditor from '../CephaloEditor';
 import cx from 'classnames';
 import assign from 'lodash/assign';
+import attempt from 'lodash/attempt';
+import mapValues from 'lodash/mapValues';
+import pickBy from 'lodash/pickBy';
+import some from 'lodash/some';
+import every from 'lodash/every';
 import {
   flipImageX,
   invertImage,
   setBrightness,
   loadImageFile,
   resetWorkspace,
+  ignoreWorkspaceError,
   ignoreLikelyNotCephalo,
+  addLandmark,
 } from '../../actions/workspace';
-import attempt from 'lodash/attempt';
-import some from 'lodash/some';
 
 const classes = require('./style.scss');
 
@@ -35,6 +40,8 @@ interface StateProps {
   canvasWidth: number;
   isAnalysisActive: boolean;
   isAnalysisComplete: boolean;
+  landmarks: { [id: string]: GeometricalLine | GeometricalPoint } | { };
+  error?: { message: string };
 }
 
 interface DispatchProps {
@@ -44,8 +51,12 @@ interface DispatchProps {
   onBrightnessChanged(value: number): void;
   onPickAnotherImageClicked(...args: any[]): void;
   onIgnoreNotCephaloClicked(...args: any[]): void;
-  onEditLandmarkClicked(e?: __React.MouseEvent): void;
-  onRemoveLandmarkClicked(e?: __React.MouseEvent): void;
+  onIgnoreErrorClicked(...args: any[]): void;
+  onAddLandmarkRequested(landmark: CephaloLandmark): void;
+  onEditLandmarkRequested(landmark: CephaloLandmark): void;
+  onRemoveLandmarkRequested(landmark: CephaloLandmark): void;
+  onCanvasResized(e: ResizeObserverEntry): void;
+  onCanvasClicked(e: fabric.IEvent & { e: MouseEvent }): void;
 }
 
 type AppProps = StateProps & DispatchProps & { 
@@ -63,6 +74,8 @@ const App = (props: AppProps) => (
   </MuiThemeProvider>
 );
 
+import { Na } from '../../analyses/common';
+
 export default connect(
   // mapStateToProps
   (state: StoreState) => ({
@@ -76,8 +89,10 @@ export default connect(
     isCephalo: state['cephalo.workspace.image.isCephalo'],
     canvasHeight: state['cephalo.workspace.canvas.height'],
     canvasWidth: state['cephalo.workspace.canvas.width'],
-    isAnalysisActive: state['cephalo.workspace.activeAnalysis'] !== null,
-    isAnalysisComplete: false, // @TODO
+    isAnalysisActive: state['cephalo.workspace.analysis.activeAnalysis'] !== null,
+    isAnalysisComplete: every(state['cephalo.workspace.landmarks'], 'isSet'),
+    error: state['cephalo.workspace.error'],
+    landmarks: pickBy(mapValues(state['cephalo.workspace.landmarks'], x => x.mappedTo), Boolean),
   } as StateProps),
 
   // mapDispatchToProps
@@ -88,8 +103,15 @@ export default connect(
     onInvertClicked: () => dispatch(invertImage()),
     onPickAnotherImageClicked: () => dispatch(resetWorkspace()),
     onIgnoreNotCephaloClicked: () => dispatch(ignoreLikelyNotCephalo()),
-    onEditLandmarkClicked: () => null, // @TODO
-    onRemoveLandmarkClicked: () => null, // @TODO
+    onIgnoreErrorClicked: () => dispatch(ignoreWorkspaceError()),
+    onCanvasResized: () => null, // @TODO
+    onAddLandmarkRequested: () => null, // @TODO
+    onEditLandmarkRequested: () => null, // @TODO
+    onRemoveLandmarkRequested: () => null, // @TODO
+    onCanvasClicked: e => {
+      console.log('Canvas clicked', e);
+      dispatch(addLandmark(Na, e.e.offsetX, e.e.offsetY));
+    },
   } as DispatchProps),
 
   // mergeProps

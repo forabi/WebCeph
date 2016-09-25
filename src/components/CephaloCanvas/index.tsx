@@ -1,12 +1,40 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import assign from 'lodash/assign';
+import map from 'lodash/map';
+import compact from 'lodash/compact';
+
+// declare var window: Window & { ResizeObserver: ResizeObserver };
 
 require('fabric');
 
 const classes = require('./style.scss');
 
 const invertFilter = new fabric.Image.filters.Invert();
+
+function isPoint(object: any): object is GeometricalPoint {
+  return !!object.x && !!object.y;
+}
+
+const drawLandmark = (value: (GeometricalLine | GeometricalPoint), id: string) => {
+  if (isPoint(value)) {
+    return new fabric.Circle({
+      left: value.x,
+      top: value.y,
+      strokeWidth: 5,
+      radius: 12,
+      fill: '#fff',
+      stroke: '#666',
+      hasControls: false,
+      hasBorders: false,
+      data: { id },
+      originX: 'center',
+      originY: 'center',
+    });
+  } else {
+    return undefined;
+  }
+};
 
 interface CephaloCanvasProps {
   className?: string;
@@ -18,13 +46,15 @@ interface CephaloCanvasProps {
   flipY?: boolean;
   height: number,
   width: number,
-  landmarks?: (GeometricalLine | GeometricalPoint)[];
-  onClick?(e: MouseEvent): void;
+  landmarks: { [id: string]: GeometricalLine | GeometricalPoint } | { };
+  onClick?(e: fabric.IEvent): void;
+  onCanvasResized(e: ResizeObserverEntry): void;
 }
 
 interface CephaloCanvasState {
   image?: fabric.IImage;
   canvas?: fabric.ICanvas;
+  landmarksGroup?: fabric.IGroup;
 }
 
 const BRIGHTNESS = 0;
@@ -44,9 +74,10 @@ export default class CephaloCanvas extends React.Component<CephaloCanvasProps, C
   }
 
   state = {
-    image: undefined,
     canvas: undefined,
-  }
+    image: undefined,
+    landmarksGroup: undefined,
+  };
 
   componentDidMount() {
     const canvas = new fabric.Canvas(
@@ -56,29 +87,45 @@ export default class CephaloCanvas extends React.Component<CephaloCanvasProps, C
         width: this.props.width,
       }
     );
-    fabric.Image.fromURL(this.props.src, image => {
-      canvas.add(image);
-      image.center();
-      this.setState(
+    const landmarksGroup = new fabric.Group();
+    canvas.add(landmarksGroup);
+    fabric.Image.fromURL(
+      this.props.src,
+      image => {
+        canvas.add(image);
+        image.sendToBack().center();
+        image.setCoords();
+        canvas.on('mouse:up', this.props.onClick);
+        this.setState(
+          {
+            canvas,
+            image,
+            landmarksGroup,
+          },
+          () => {
+            this.handlePropChanges(this.props);
+          },
+        );
+      },
+      assign(
+        (this.props.height < this.props.width ?
+          { height: this.props.height } :
+          { width: this.props.width }
+        ),
         {
-          canvas,
-          image,
-        },
-        () => {
-          this.handlePropChanges(this.props);
-        },
-      );
-    },
-    assign(
-      (this.props.height < this.props.width ?
-        { height: this.props.height } :
-        { width: this.props.width }
+          scaleX: 0.9,
+          scaleY: 0.9,
+          selectable: false,
+          hasControls: false,
+        }
       ),
-      {
-        scaleX: 0.9,
-        scaleY: 0.9,
-      }),
     );
+  }
+
+  componentWillUnmount() {
+    if (this.state.canvas) {
+      this.state.canvas.removeListeners();
+    }
   }
 
   shouldComponentUpdate(__: CephaloCanvasProps) {
@@ -127,6 +174,13 @@ export default class CephaloCanvas extends React.Component<CephaloCanvasProps, C
     if (nextProps.contrast !== this.props.contrast) {
       // @TODO: set contrast
       shouldRerender = true;
+    }
+
+    // @TODO: invistigate the possibilty and efficency of diffing
+    if (nextProps.landmarks !== this.props.landmarks) {
+      shouldRerender = true;
+      const objectsToDraw = compact(map(nextProps.landmarks, drawLandmark));
+      this.state.landmarksGroup.add(...objectsToDraw);
     }
 
     img.applyFilters(() => {

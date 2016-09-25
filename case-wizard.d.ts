@@ -29,6 +29,11 @@ declare interface CephaloLandmark {
   calculate?(...args: number[]): number,
 }
 
+declare interface MappedCephaloLandmark extends CephaloLandmark {
+  mappedTo?: (GeometricalLine | GeometricalPoint);
+  visible: boolean;
+}
+
 declare interface CephaloPoint extends CephaloLandmark {
   type: 'point',
 }
@@ -80,6 +85,7 @@ declare interface CephaloMapper {
 
 declare interface StoreState {
   'cephalo.workspace.image.data': string | null;
+  'cephalo.workspace.error': { message: string } | null;
   'cephalo.workspace.canvas.height': number;
   'cephalo.workspace.canvas.width': number;
   'cephalo.workspace.image.isLoading': boolean;
@@ -98,6 +104,12 @@ declare interface StoreState {
   'cephalo.workspace.image.brightness': number;
   'cephalo.workspace.image.invert': boolean;
   'cephalo.workspace.image.contrast': number;
-  'cephalo.workspace.activeAnalysis': Analysis | null;
-  'cephalo.workspace.landmarks': { [id: string]: CephaloLandmark };
+  'cephalo.workspace.analysis.activeAnalysis': Analysis | null;
+  'cephalo.workspace.analysis.isLoading': boolean;
+  'cephalo.workspace.landmarks': {
+    [id: string]: CephaloLandmark & {
+      visible: boolean;
+      mappedTo?: GeometricalPoint | GeometricalLine
+    };
+  };
 }

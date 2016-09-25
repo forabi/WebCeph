@@ -28,6 +28,7 @@ interface CephaloEditorProps {
   isWorkerBusy: boolean;
   isCephalo: boolean;
   src: string | null;
+  landmarks: { [id: string]: GeometricalLine | GeometricalPoint } | { };
   brightness: number;
   inverted: boolean;
   flipX: boolean;
@@ -43,25 +44,27 @@ interface CephaloEditorProps {
   onInvertClicked(e?: __React.MouseEvent): void;
   onPickAnotherImageClicked(...args: any[]): void;
   onIgnoreNotCephaloClicked(...args: any[]): void;
-  onEditLandmarkClicked(e?: __React.MouseEvent): void;
-  onRemoveLandmarkClicked(e?: __React.MouseEvent): void;
+  onEditLandmarkRequested(landmark: CephaloLandmark): void;
+  onRemoveLandmarkRequested(landmark: CephaloLandmark): void;
+  onIgnoreErrorClicked(...args: any[]): void;
+  onCanvasResized(e: ResizeObserverEntry): void;
+  onCanvasClicked(e: fabric.IEvent): void;
 }
 
 interface CephaloEditorState {
-  anchorEl: Element | null;
   open: boolean,
+  anchorEl?: Element;
 }
 
 const defaultState: CephaloEditorState = {
   open: false,
-  anchorEl: null,
 };
 
 export default class CephaloEditor extends React.Component<CephaloEditorProps, CephaloEditorState> {
   refs: { dropzone: Dropzone };
   state = defaultState;
 
-  handleDrop = async (files: File[]) => {
+  handleDrop = (files: File[]) => {
     this.props.onFileDropped(files[0]);
   }
 
@@ -78,13 +81,11 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
     requestAnimationFrame(() => this.props.onBrightnessChanged(value));
   };
 
-  ignoreError = () => this.setState(assign({}, this.state, { error: undefined }));
-  resetWorkspace = () => this.setState(defaultState);
   openFilePicker = () => this.refs.dropzone.open();
-  ignoreNotCephalo = () => this.setState(assign({ }, this.state, { isCephalo: true }));
 
   errorDialogActions = [
-    <FlatButton label="OK" primary onClick={this.ignoreError} />,
+    <FlatButton label="Pick another image" primary onClick={this.props.onPickAnotherImageClicked} />,
+    <FlatButton label="Dismiss" primary onClick={this.props.onIgnoreErrorClicked} />,
   ];
   notCephaloDialogActions = [
     <FlatButton label="Pick another image" primary onClick={this.props.onPickAnotherImageClicked} />,
@@ -103,13 +104,16 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
             <div>
               <CephaloCanvas
                 className={classes.canvas}
-                src={this.props.src}
+                src={this.props.src as string}
                 brightness={this.props.brightness}
                 inverted={this.props.inverted}
                 flipX={this.props.flipX}
                 flipY={this.props.flipY}
                 height={this.props.canvasHeight}
                 width={this.props.canvasWidth}
+                onCanvasResized={this.props.onCanvasResized}
+                onClick={this.props.onCanvasClicked}
+                landmarks={this.props.landmarks}
               />
               <Snackbar
                 open={this.props.isWorkerBusy}
@@ -131,7 +135,7 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
             <Dialog
               open title="Error loading image"
               actions={this.errorDialogActions}
-              onRequestClose={this.ignoreError}
+              onRequestClose={this.props.onIgnoreErrorClicked}
               style={{ width: '100%' }}
             >
               {this.props.error.message}
@@ -190,11 +194,12 @@ export default class CephaloEditor extends React.Component<CephaloEditorProps, C
               <AnalysisStepper
                 className={classes.list_steps}
                 showResults={this.props.onShowAnalysisResultsClicked}
-                editLandmark={this.props.onEditLandmarkClicked}
-                removeLandmark={this.props.onRemoveLandmarkClicked}
+                editLandmark={this.props.onRemoveLandmarkRequested}
+                removeLandmark={this.props.onRemoveLandmarkRequested}
+                isAnalysisComplete={this.props.isAnalysisComplete}
               />
             ) : (
-              null
+              <div className={classes.list_steps} />
             )
           }
           <RaisedButton label="Continue" disabled={!isAnalysisComplete} primary />

@@ -17,7 +17,7 @@
     "module": "commonjs",
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
-    "traceResolution": true,
+    "traceResolution": false,
     "noImplicitReturns": true,
     "pretty": true,
     "noUnusedParameters": true,

@@ -1,9 +1,9 @@
 import uniqueId from 'lodash/uniqueId';
 import { Event } from '../../utils/constants';
-import { takeLatest, eventChannel, END } from 'redux-saga';
-import { put, take, fork, call, Effect } from 'redux-saga/effects';
+import { takeLatest, eventChannel, END, Channel } from 'redux-saga';
+import { put, take, fork, call, race, Effect } from 'redux-saga/effects';
 import { ImageWorkerAction } from '../../utils/constants';
-import { ImageWorkerInstance, ImageWorkerEvent } from '../../utils/image-worker.d';
+import { ImageWorkerInstance, ImageWorkerEvent, ImageWorkerResponse } from '../../utils/image-worker.d';
 
 const ImageWorker = require('worker!../../utils/image-worker');
 const worker: ImageWorkerInstance = new ImageWorker;
@@ -13,13 +13,8 @@ function processImageInWorker(file: File, actions: any[]) {
   return eventChannel(emit => {
     const listener = ({ data }: ImageWorkerEvent) => {
       if (data.requestId === requestId) {
-        if (data.error) {
-          console.error('Got worker error', data);
-          throw data.error;
-        } else if (data.result) {
-          console.info('Got successful worker response', data);
-          emit(data.result);
-        } else if (data.done) {
+        emit(data);
+        if (data.done) {
           console.info('Worker done processing request %s', requestId);
           emit(END);
         }
@@ -52,15 +47,22 @@ function* loadImage({ payload }: { payload: { file: File, height: number, width:
       }
     },
   ];
-  const chan = yield call(processImageInWorker, file, actions);
+  const chan: Channel<ImageWorkerResponse> = yield call(processImageInWorker, file, actions);
   try {
     yield put({ type: Event.WORKER_STATUS_CHANGED, payload: { workerId, isBusy: true } });
     while (true) {
-      const { actionId, payload } = yield take(chan);
-      if (actionId === 0) {
-        yield put({ type: Event.SET_IS_CEPHALO_REQUESTED, payload });
-      } else if (actionId === 1) {
-        yield put({ type: Event.LOAD_IMAGE_SUCCEEDED, payload: payload.url });
+      const data: ImageWorkerResponse = yield take(chan);
+      if (data.error) {
+        console.error('Got worker error', data);
+        yield put({ type: Event.LOAD_IMAGE_FAILED, payload: data.error });
+      } else if (data.result) {
+        console.info('Got successful worker response', data);
+        const { actionId, payload } = data.result;
+        if (actionId === 0) {
+          yield put({ type: Event.SET_IS_CEPHALO_REQUESTED, payload });
+        } else if (actionId === 1) {
+          yield put({ type: Event.LOAD_IMAGE_SUCCEEDED, payload: payload.url });
+        }
       }
     }
   } catch (error) {

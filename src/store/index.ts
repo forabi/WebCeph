@@ -15,6 +15,12 @@ const reducer = combineReducers({
     [Event.LOAD_IMAGE_FAILED]: () => null,
     [Event.RESET_WORKSPACE_REQUESTED]: () => null,
   }, null),
+  'cephalo.workspace.error': handleActions<{ message: string } | null, any>({
+    [Event.IGNORE_WORKSPACE_ERROR_REQUESTED]: () => null,
+    [Event.LOAD_IMAGE_FAILED]: (__, { payload }) => payload,
+    [Event.RESET_WORKSPACE_REQUESTED]: () => null,
+    [Event.LOAD_IMAGE_REQUESTED]: () => null,
+  }, null),
   'cephalo.workspace.canvas.height': handleActions<number, any>({
     [Event.CANVAS_RESIZED]: (_, { payload }) => payload.height,
   }, 600),
@@ -50,13 +56,32 @@ const reducer = combineReducers({
     [Event.INVERT_IMAGE_REQUESTED]: (state) => !state,
     [Event.RESET_WORKSPACE_REQUESTED]: () => false,
   }, false),
-  'cephalo.workspace.activeAnalysis': handleActions<Analysis | null, any>({
+  'cephalo.workspace.analysis.activeAnalysis': handleActions<Analysis | null, any>({
     [Event.SET_ACTIVE_ANALYSIS_REQUESTED]: (__, { payload }) => payload,
     [Event.LOAD_IMAGE_REQUESTED]: () => null,
     [Event.RESET_WORKSPACE_REQUESTED]: () => null,
   }, null),
-  'cephalo.workspace.landmarks': handleActions<{ [id: string]: CephaloLandmark }, any>({
-
+  'cephalo.workspace.analysis.isLoading': handleActions<any, boolean>({
+    [Event.FETCH_ANALYSIS_SUCCEEDED]: () => false,
+    [Event.FETCH_ANALYSIS_FAILED]: () => false,
+    [Event.FETCH_ANALYSIS_REQUESTED]: () => true,
+  }, false),
+  'cephalo.workspace.landmarks': handleActions<CephaloLandmark & { visible: boolean; mappedTo?: GeometricalPoint | GeometricalLine }, any>({
+    [Event.ADD_LANDMARK_REQUESTED]: (state, { payload }) => assign(
+      { },
+      state,
+      {
+        [payload.landmark.symbol]: assign(
+          { },
+          payload.landmark,
+          {
+            visible: true,
+            mappedTo: { x: payload.x, y: payload.y },
+          }
+        ),
+      },
+    ),
+    [Event.REMOVE_LANDMARK_REQUESTED]: (state, { payload }) => omit(state, payload.symbol),
   }, { }),
   'cephalo.workspace.workers': handleActions<{
     [id: string]: {
@@ -82,7 +107,7 @@ const reducer = combineReducers({
           [payload.workerId]: assign(
             { },
             state[payload.workerId],
-            payload
+            payload,
           ),
         },
       );
