@@ -11,6 +11,7 @@ import pickBy from 'lodash/pickBy';
 import some from 'lodash/some';
 import intersection from 'lodash/intersection';
 import map from 'lodash/map';
+import pure from 'recompose/pure';
 import {
   flipImageX,
   invertImage,
@@ -64,7 +65,7 @@ type AppProps = StateProps & DispatchProps & {
   onFileDropped(file: File): void;
 };
 
-const App = (props: AppProps) => (
+const App = pure((props: AppProps) => (
   <MuiThemeProvider>
     <div className={cx('col-xs-12', classes.root)}>
       <CephaloEditor
@@ -73,7 +74,7 @@ const App = (props: AppProps) => (
       />
     </div>
   </MuiThemeProvider>
-);
+));
 
 import { Na } from '../../analyses/common';
 
@@ -98,7 +99,10 @@ export default connect(
     isCephalo: state['cephalo.workspace.image.isCephalo'],
     canvasHeight: state['cephalo.workspace.canvas.height'],
     canvasWidth: state['cephalo.workspace.canvas.width'],
-    isAnalysisActive: state['cephalo.workspace.analysis.activeAnalysis'] !== null,
+    isAnalysisActive: (
+      state['cephalo.workspace.image.data'] !== null && 
+      state['cephalo.workspace.analysis.activeAnalysis'] !== null
+    ),
     isAnalysisComplete: isAnalysisComplete(
       state['cephalo.workspace.landmarks'],
       state['cephalo.workspace.analysis.activeAnalysis'],

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { List, ListItem } from 'material-ui/List';
 import RaisedButton from 'material-ui/RaisedButton';
 import has from 'lodash/has';
+import pure from 'recompose/pure';
 
 export type stepState = 'done' | 'current' | 'pending';
 export type Step = CephaloLandmark & { title: string, state: stepState };
@@ -30,7 +31,7 @@ const icons: { [id: string]: JSX.Element } = {
   pending: ICON_PENDING,
 };
 
-export const AnalysisStepper = (props: AnalysisStepperProps) => {
+export const AnalysisStepper = pure((props: AnalysisStepperProps) => {
   const {
     steps,
     isAnalysisComplete,
@@ -64,7 +65,7 @@ export const AnalysisStepper = (props: AnalysisStepperProps) => {
       </List>
     );
   }
-};
+});
 
 import { getStepsForAnalysis } from '../../analyses/helpers';
 import { descriptions } from './strings';
