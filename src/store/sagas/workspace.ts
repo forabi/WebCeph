@@ -42,7 +42,7 @@ function* loadImage({ payload }: { payload: { file: File, height: number, width:
       payload: {
         edits: [{
           method: 'scaleToFit',
-          args: [height, width],
+          args: [width, height],
         }],
       }
     },
