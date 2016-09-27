@@ -48,13 +48,15 @@ interface CephaloCanvasProps {
   width: number,
   landmarks: { [id: string]: GeometricalLine | GeometricalPoint } | { };
   onClick?(e: fabric.IEvent): void;
-  onCanvasResized(e: ResizeObserverEntry): void;
+  onCanvasResized?(e: ResizeObserverEntry): void;
 }
 
 interface CephaloCanvasState {
   image?: fabric.IImage;
   canvas?: fabric.ICanvas;
   landmarksGroup?: fabric.IGroup;
+  onClick?(e: fabric.IEvent): void;
+  onCanvasResized?(e: ResizeObserverEntry): void;
 }
 
 const BRIGHTNESS = 0;
@@ -77,6 +79,8 @@ export default class CephaloCanvas extends React.Component<CephaloCanvasProps, C
     canvas: undefined,
     image: undefined,
     landmarksGroup: undefined,
+    onClick: undefined,
+    onCanvasResized: undefined,
   };
 
   componentDidMount() {
@@ -95,7 +99,10 @@ export default class CephaloCanvas extends React.Component<CephaloCanvasProps, C
         canvas.add(image);
         image.sendToBack().center();
         image.setCoords();
-        canvas.on('mouse:up', this.props.onClick);
+        canvas.on('mouse:up', (e: fabric.IEvent) => {
+          if (!this.state.onClick) return;
+          this.state.onClick(e)
+        });
         this.setState(
           {
             canvas,
@@ -142,7 +149,7 @@ export default class CephaloCanvas extends React.Component<CephaloCanvasProps, C
       typeof this.state.image === 'undefined'
     ) return;
     const img: fabric.IImage = this.state.image;
-    const canvas = this.state.canvas;
+    const canvas: fabric.ICanvas = this.state.canvas;
     let shouldRerender = false;
     if (nextProps.flipX !== this.props.flipX) {
       img.setFlipX(nextProps.flipX || this.defaultProps.flipX);
@@ -182,6 +189,12 @@ export default class CephaloCanvas extends React.Component<CephaloCanvasProps, C
       const objectsToDraw = compact(map(nextProps.landmarks, drawLandmark));
       this.state.landmarksGroup.add(...objectsToDraw);
     }
+
+    // Copy props over to state so that we can call the updated event handlers 
+    this.setState({
+      onClick: nextProps.onClick,
+      onCanvasResized: nextProps.onCanvasResized,
+    });
 
     img.applyFilters(() => {
       if (shouldRerender) {

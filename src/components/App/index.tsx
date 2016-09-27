@@ -11,6 +11,9 @@ import pickBy from 'lodash/pickBy';
 import some from 'lodash/some';
 import intersection from 'lodash/intersection';
 import map from 'lodash/map';
+import find from 'lodash/find';
+import has from 'lodash/has';
+import memoize from 'lodash/memoize';
 import pure from 'recompose/pure';
 import {
   flipImageX,
@@ -22,6 +25,7 @@ import {
   ignoreLikelyNotCephalo,
   addLandmark,
 } from '../../actions/workspace';
+import { getStepsForAnalysis } from '../../analyses/helpers';
 
 const classes = require('./style.scss');
 
@@ -44,6 +48,7 @@ interface StateProps {
   isAnalysisComplete: boolean;
   landmarks: { [id: string]: GeometricalLine | GeometricalPoint } | { };
   error?: { message: string };
+  analysisSteps: CephaloLandmark[];
 }
 
 interface DispatchProps {
@@ -58,12 +63,15 @@ interface DispatchProps {
   onEditLandmarkRequested(landmark: CephaloLandmark): void;
   onRemoveLandmarkRequested(landmark: CephaloLandmark): void;
   onCanvasResized(e: ResizeObserverEntry): void;
-  onCanvasClicked(e: fabric.IEvent & { e: MouseEvent }): void;
 }
 
-type AppProps = StateProps & DispatchProps & { 
+interface AdditionalProps { 
   onFileDropped(file: File): void;
-};
+  onCanvasClicked(e: fabric.IEvent & { e: MouseEvent }): void;
+  expectedNextLandmark: CephaloLandmark | null;
+}
+
+type AppProps = StateProps & DispatchProps & AdditionalProps;
 
 const App = pure((props: AppProps) => (
   <MuiThemeProvider>
@@ -76,15 +84,30 @@ const App = pure((props: AppProps) => (
   </MuiThemeProvider>
 ));
 
-import { Na } from '../../analyses/common';
-
-function isAnalysisComplete(setLandmarks: { [id: string]: CephaloLandmark }, activeAnalysis: Analysis | null) {
+function getIsAnalysisComplete(setLandmarks: { [id: string]: CephaloLandmark }, activeAnalysis: Analysis | null) {
   if (!activeAnalysis) return false;
   return intersection(
     map(activeAnalysis, x => x.landmark.symbol),
     map(setLandmarks, x => x.symbol),
   ).length > 0;
 }
+
+const getExpectedNextLandmark = (
+  (
+    steps: CephaloLandmark[],
+    setLandmarks: { [id: string]: GeometricalLine | GeometricalPoint } | { }
+  ) => (find(
+    steps,
+    x => x.type === 'point' && !has(setLandmarks, x.symbol),
+  ) || null) as CephaloLandmark | null
+);
+
+const getAnalysisSteps = memoize((analysis: Analysis | null): CephaloLandmark[] => {
+  if (analysis !== null) {
+    return getStepsForAnalysis(analysis);
+  }
+  return [];
+});
 
 export default connect(
   // mapStateToProps
@@ -103,12 +126,13 @@ export default connect(
       state['cephalo.workspace.image.data'] !== null && 
       state['cephalo.workspace.analysis.activeAnalysis'] !== null
     ),
-    isAnalysisComplete: isAnalysisComplete(
+    isAnalysisComplete: getIsAnalysisComplete(
       state['cephalo.workspace.landmarks'],
       state['cephalo.workspace.analysis.activeAnalysis'],
     ),
     error: state['cephalo.workspace.error'],
     landmarks: pickBy(mapValues(state['cephalo.workspace.landmarks'], x => x.mappedTo), Boolean),
+    analysisSteps: getAnalysisSteps(state['cephalo.workspace.analysis.activeAnalysis']),
   } as StateProps),
 
   // mapDispatchToProps
@@ -124,23 +148,30 @@ export default connect(
     onAddLandmarkRequested: () => null, // @TODO
     onEditLandmarkRequested: () => null, // @TODO
     onRemoveLandmarkRequested: () => null, // @TODO
-    onCanvasClicked: e => {
-      console.log('Canvas clicked', e);
-      dispatch(addLandmark(Na, e.e.offsetX, e.e.offsetY));
-    },
   } as DispatchProps),
 
   // mergeProps
-  (stateProps: StateProps, dispatchProps: DispatchProps) => assign(
-    {},
-    stateProps,
-    dispatchProps,
-    {
-      onFileDropped: (file: File) => dispatchProps.dispatch(loadImageFile({
-        file,
-        height: stateProps.canvasHeight,
-        width: stateProps.canvasWidth,
-      })),
-    },
-  ) as AppProps,
+  (stateProps: StateProps, dispatchProps: DispatchProps) => {
+    const expectedNextLandmark = getExpectedNextLandmark(stateProps.analysisSteps, stateProps.landmarks);
+    return assign(
+      {},
+      stateProps,
+      dispatchProps,
+      {
+        expectedNextLandmark,
+        onFileDropped: (file: File) => dispatchProps.dispatch(loadImageFile({
+          file,
+          height: stateProps.canvasHeight,
+          width: stateProps.canvasWidth,
+        })),
+        onCanvasClicked: e => {
+          if (expectedNextLandmark) {
+            dispatchProps.dispatch(
+              addLandmark(expectedNextLandmark, e.e.offsetX, e.e.offsetY)
+            );
+          }
+        },
+      } as AdditionalProps,
+    ) as AppProps;
+  },
 )(App);
