@@ -59,8 +59,6 @@ const reducer = combineReducers({
   }, false),
   'cephalo.workspace.analysis.activeAnalysis': handleActions<Analysis | null, any>({
     [Event.SET_ACTIVE_ANALYSIS_REQUESTED]: (__, { payload }) => payload,
-    // [Event.LOAD_IMAGE_REQUESTED]: () => null,
-    // [Event.RESET_WORKSPACE_REQUESTED]: () => null,
   }, downs),
   'cephalo.workspace.analysis.isLoading': handleActions<any, boolean>({
     [Event.FETCH_ANALYSIS_SUCCEEDED]: () => false,
