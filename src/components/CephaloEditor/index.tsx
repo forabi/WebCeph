@@ -24,6 +24,7 @@ const classes = require('./style.scss');
 const DropzonePlaceholder = require('./assets/placeholder.svg').default;
 
 interface CephaloEditorProps {
+  dispatch: Function;
   className: string;
   isLoading: boolean;
   isWorkerBusy: boolean;
@@ -40,7 +41,7 @@ interface CephaloEditorProps {
   isAnalysisActive: boolean;
   isAnalysisComplete: boolean;
   onFlipXClicked(e?: __React.MouseEvent): void;
-  onFileDropped(file: File): void;
+  onFileDropped(dispatch: Function): (file: File) => void;
   onBrightnessChanged(value: number): void;
   onInvertClicked(e?: __React.MouseEvent): void;
   onPickAnotherImageClicked(...args: any[]): void;
@@ -50,6 +51,8 @@ interface CephaloEditorProps {
   onIgnoreErrorClicked(...args: any[]): void;
   onCanvasResized(e: ResizeObserverEntry): void;
   onCanvasClicked(e: fabric.IEvent): void;
+  analysisSteps: Step[];
+  getStepState(step: Step): stepState;
 }
 
 interface CephaloEditorState {
@@ -66,7 +69,7 @@ class CephaloEditor extends React.Component<CephaloEditorProps, CephaloEditorSta
   state = defaultState;
 
   handleDrop = (files: File[]) => {
-    this.props.onFileDropped(files[0]);
+    this.props.onFileDropped(this.props.dispatch)(files[0]);
   }
 
   handleTouchTap = (event: React.MouseEvent) => {
@@ -198,6 +201,8 @@ class CephaloEditor extends React.Component<CephaloEditorProps, CephaloEditorSta
                 editLandmark={this.props.onRemoveLandmarkRequested}
                 removeLandmark={this.props.onRemoveLandmarkRequested}
                 isAnalysisComplete={this.props.isAnalysisComplete}
+                steps={this.props.analysisSteps}
+                getStepState={this.props.getStepState}
               />
             ) : (
               <div className={classes.list_steps} />

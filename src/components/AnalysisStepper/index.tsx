@@ -1,17 +1,15 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { List, ListItem } from 'material-ui/List';
 import RaisedButton from 'material-ui/RaisedButton';
-import has from 'lodash/has';
 import pure from 'recompose/pure';
 
-export type stepState = 'done' | 'current' | 'pending';
-export type Step = CephaloLandmark & { title: string, state: stepState };
+const classes = require('./style.scss');
 
 interface AnalysisStepperProps {
   className?: string,
-  steps: Step[],
-  isAnalysisComplete: boolean,
+  isAnalysisComplete: boolean;
+  steps: Step[];
+  getStepState(step: Step): stepState;
   showResults(): void;
   removeLandmark(landmark: CephaloLandmark): void;
   editLandmark(landmark: CephaloLandmark): void;
@@ -21,53 +19,18 @@ import IconPlayArrow from 'material-ui/svg-icons/av/play-arrow';
 import IconHourglass from 'material-ui/svg-icons/action/hourglass-empty';
 import IconDone from 'material-ui/svg-icons/action/done';
 
-const ICON_DONE    = <IconDone      color="green" />;
-const ICON_CURRENT = <IconPlayArrow color="blue"  />;
-const ICON_PENDING = <IconHourglass               />;
+const ICON_DONE       = <IconDone color="green"/>;
+const ICON_CURRENT    = <IconPlayArrow color="blue" />;
+const ICON_PENDING    = <IconHourglass />;
+const ICON_EVALUATING = <IconHourglass className={classes.icon_pending__evaluating} />;
 
 const icons: { [id: string]: JSX.Element } = {
   done: ICON_DONE,
   current: ICON_CURRENT,
   pending: ICON_PENDING,
+  evaluating: ICON_EVALUATING,
 };
 
-export const AnalysisStepper = pure((props: AnalysisStepperProps) => {
-  const {
-    steps,
-    isAnalysisComplete,
-    showResults,
-    removeLandmark, editLandmark,
-  } = props;
-  if (isAnalysisComplete) {
-    return (
-      <div className={props.className}>
-        Analysis complete.
-        <RaisedButton label="Show results" primary onClick={showResults} />
-      </div>
-    );
-  } else {
-    return (
-      <List className={props.className}>
-      {
-        steps.map((step) => {
-          const stepState = step.state;
-          return (
-            <div key={step.symbol}>
-              <ListItem
-                primaryText={step.title}
-                secondaryText={step.description}
-                leftIcon={icons[stepState]}
-              />
-            </div>
-          );
-        })
-      }
-      </List>
-    );
-  }
-});
-
-import { getStepsForAnalysis } from '../../analyses/helpers';
 import { descriptions } from './strings';
 
 const getDescriptionForStep: (landmark: CephaloLandmark) => string | null = landmark => {
@@ -85,37 +48,40 @@ const getTitleForStep = (landmark: CephaloLandmark) => {
   throw new TypeError(`Cannot handle this type of landmarks (${landmark.type})`);
 }
 
-const getStepState = (state: StoreState) => (landmark: CephaloLandmark) => {
-  if (has(state['cephalo.workspace.landmarks'], landmark.symbol)) {
-    return 'done' as stepState;
+export const AnalysisStepper = (props: AnalysisStepperProps) => {
+  const {
+    steps,
+    getStepState,
+    isAnalysisComplete,
+    showResults,
+    removeLandmark, editLandmark,
+  } = props;
+  if (isAnalysisComplete) {
+    return (
+      <div className={props.className}>
+        Analysis complete.
+        <RaisedButton label="Show results" primary onClick={showResults} />
+      </div>
+    );
   } else {
-    return 'pending' as stepState;
+    return (
+      <List className={props.className}>
+      {
+        steps.map((step) => {
+          return (
+            <div key={step.symbol}>
+              <ListItem
+                primaryText={getTitleForStep(step)}
+                secondaryText={getDescriptionForStep(step) || undefined}
+                leftIcon={icons[getStepState(step)]}
+              />
+            </div>
+          );
+        })
+      }
+      </List>
+    );
   }
-}
+};
 
-const mapLandmarkToStep = (state: StoreState) => function (landmark: CephaloLandmark): Step {
-  return Object.assign({ }, landmark, {
-    title: getTitleForStep(landmark),
-    description: getDescriptionForStep(landmark),
-    state: getStepState(state)(landmark),
-  });
-}
-
-const ConnectedAnalysisStepper = connect(
-  (state: StoreState) => {
-    const activeAnalysis = state['cephalo.workspace.analysis.activeAnalysis'];
-    if (activeAnalysis !== null) {
-      return {
-        steps: (
-          getStepsForAnalysis(activeAnalysis).map(mapLandmarkToStep(state))
-        ) as Step[],
-      };
-    } else {
-      return {
-        steps: [],
-      };
-    }
-  },
-)(AnalysisStepper);
-
-export default ConnectedAnalysisStepper;
+export default AnalysisStepper;

@@ -83,6 +83,10 @@ declare interface CephaloMapper {
   scaleFactor: number;
 }
 
+
+declare type stepState = 'done' | 'current' | 'pending' | 'evaluating';
+declare type Step = CephaloLandmark & { title: string, state: stepState };
+
 declare interface StoreState {
   'cephalo.workspace.image.data': string | null;
   'cephalo.workspace.error': { message: string } | null;
@@ -105,6 +109,7 @@ declare interface StoreState {
   'cephalo.workspace.image.invert': boolean;
   'cephalo.workspace.image.contrast': number;
   'cephalo.workspace.analysis.activeAnalysis': Analysis | null;
+  'cephalo.workspace.analysis.stepsBeingEvaluated': string[];
   'cephalo.workspace.analysis.isLoading': boolean;
   'cephalo.workspace.landmarks': {
     [id: string]: CephaloLandmark & {

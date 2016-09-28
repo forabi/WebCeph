@@ -4,28 +4,28 @@ import * as injectTapEventPlugin from 'react-tap-event-plugin';
 import { connect } from 'react-redux';
 import CephaloEditor from '../CephaloEditor';
 import cx from 'classnames';
-import assign from 'lodash/assign';
 import attempt from 'lodash/attempt';
-import mapValues from 'lodash/mapValues';
-import pickBy from 'lodash/pickBy';
 import some from 'lodash/some';
-import intersection from 'lodash/intersection';
-import map from 'lodash/map';
-import find from 'lodash/find';
-import has from 'lodash/has';
-import memoize from 'lodash/memoize';
+import throttle from 'lodash/throttle';
 import pure from 'recompose/pure';
 import {
   flipImageX,
   invertImage,
   setBrightness,
-  loadImageFile,
   resetWorkspace,
   ignoreWorkspaceError,
   ignoreLikelyNotCephalo,
-  addLandmark,
 } from '../../actions/workspace';
-import { getStepsForAnalysis } from '../../analyses/helpers';
+
+import {
+  activeAnalysisStepsSelector,
+  isAnalysisCompleteSelector,
+  isAnalysisActiveSelector,
+  getStepStateSelector,
+  onCanvasClickedSelector,
+  onFileDroppedSelector,
+  mappedLandmarksSelector,
+} from '../../store/selectors/workspace';
 
 const classes = require('./style.scss');
 
@@ -49,6 +49,9 @@ interface StateProps {
   landmarks: { [id: string]: GeometricalLine | GeometricalPoint } | { };
   error?: { message: string };
   analysisSteps: CephaloLandmark[];
+  getStepState(step: Step): stepState;
+  onCanvasClicked(dispatch: Function): (e: fabric.IEvent & { e: MouseEvent }) => void;
+  onFileDropped(dispatch: Function): (file: File) => void;
 }
 
 interface DispatchProps {
@@ -65,13 +68,7 @@ interface DispatchProps {
   onCanvasResized(e: ResizeObserverEntry): void;
 }
 
-interface AdditionalProps { 
-  onFileDropped(file: File): void;
-  onCanvasClicked(e: fabric.IEvent & { e: MouseEvent }): void;
-  expectedNextLandmark: CephaloLandmark | null;
-}
-
-type AppProps = StateProps & DispatchProps & AdditionalProps;
+type AppProps = StateProps & DispatchProps;
 
 const App = pure((props: AppProps) => (
   <MuiThemeProvider>
@@ -83,31 +80,6 @@ const App = pure((props: AppProps) => (
     </div>
   </MuiThemeProvider>
 ));
-
-function getIsAnalysisComplete(setLandmarks: { [id: string]: CephaloLandmark }, activeAnalysis: Analysis | null) {
-  if (!activeAnalysis) return false;
-  return intersection(
-    map(activeAnalysis, x => x.landmark.symbol),
-    map(setLandmarks, x => x.symbol),
-  ).length > 0;
-}
-
-const getExpectedNextLandmark = (
-  (
-    steps: CephaloLandmark[],
-    setLandmarks: { [id: string]: GeometricalLine | GeometricalPoint } | { }
-  ) => (find(
-    steps,
-    x => x.type === 'point' && !has(setLandmarks, x.symbol),
-  ) || null) as CephaloLandmark | null
-);
-
-const getAnalysisSteps = memoize((analysis: Analysis | null): CephaloLandmark[] => {
-  if (analysis !== null) {
-    return getStepsForAnalysis(analysis);
-  }
-  return [];
-});
 
 export default connect(
   // mapStateToProps
@@ -122,24 +94,21 @@ export default connect(
     isCephalo: state['cephalo.workspace.image.isCephalo'],
     canvasHeight: state['cephalo.workspace.canvas.height'],
     canvasWidth: state['cephalo.workspace.canvas.width'],
-    isAnalysisActive: (
-      state['cephalo.workspace.image.data'] !== null && 
-      state['cephalo.workspace.analysis.activeAnalysis'] !== null
-    ),
-    isAnalysisComplete: getIsAnalysisComplete(
-      state['cephalo.workspace.landmarks'],
-      state['cephalo.workspace.analysis.activeAnalysis'],
-    ),
+    isAnalysisActive: isAnalysisActiveSelector(state),
+    isAnalysisComplete: isAnalysisCompleteSelector(state),
     error: state['cephalo.workspace.error'],
-    landmarks: pickBy(mapValues(state['cephalo.workspace.landmarks'], x => x.mappedTo), Boolean),
-    analysisSteps: getAnalysisSteps(state['cephalo.workspace.analysis.activeAnalysis']),
+    landmarks: mappedLandmarksSelector(state),
+    analysisSteps: activeAnalysisStepsSelector(state),
+    getStepState: getStepStateSelector(state),
+    onCanvasClicked: onCanvasClickedSelector(state),
+    onFileDropped: onFileDroppedSelector(state),
   } as StateProps),
 
   // mapDispatchToProps
   (dispatch: Function) => ({
     dispatch,
     onFlipXClicked: () => dispatch(flipImageX()),
-    onBrightnessChanged: (value: number) => dispatch(setBrightness(value)),
+    onBrightnessChanged: throttle((value: number) => dispatch(setBrightness(value)), 200),
     onInvertClicked: () => dispatch(invertImage()),
     onPickAnotherImageClicked: () => dispatch(resetWorkspace()),
     onIgnoreNotCephaloClicked: () => dispatch(ignoreLikelyNotCephalo()),
@@ -147,31 +116,6 @@ export default connect(
     onCanvasResized: () => null, // @TODO
     onAddLandmarkRequested: () => null, // @TODO
     onEditLandmarkRequested: () => null, // @TODO
-    onRemoveLandmarkRequested: () => null, // @TODO
+    onRemoveLandmarkRequested: () => null, // @TODO,
   } as DispatchProps),
-
-  // mergeProps
-  (stateProps: StateProps, dispatchProps: DispatchProps) => {
-    const expectedNextLandmark = getExpectedNextLandmark(stateProps.analysisSteps, stateProps.landmarks);
-    return assign(
-      {},
-      stateProps,
-      dispatchProps,
-      {
-        expectedNextLandmark,
-        onFileDropped: (file: File) => dispatchProps.dispatch(loadImageFile({
-          file,
-          height: stateProps.canvasHeight,
-          width: stateProps.canvasWidth,
-        })),
-        onCanvasClicked: e => {
-          if (expectedNextLandmark) {
-            dispatchProps.dispatch(
-              addLandmark(expectedNextLandmark, e.e.offsetX, e.e.offsetY)
-            );
-          }
-        },
-      } as AdditionalProps,
-    ) as AppProps;
-  },
 )(App);

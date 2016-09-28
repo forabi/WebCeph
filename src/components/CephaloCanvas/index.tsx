@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import assign from 'lodash/assign';
 import map from 'lodash/map';
 import compact from 'lodash/compact';
+import { connect } from 'react-redux';
 
 // declare var window: Window & { ResizeObserver: ResizeObserver };
 
@@ -47,16 +48,15 @@ interface CephaloCanvasProps {
   height: number,
   width: number,
   landmarks: { [id: string]: GeometricalLine | GeometricalPoint } | { };
-  onClick?(e: fabric.IEvent): void;
+  onClick?: (dispatch: Function) => (e: fabric.IEvent) => void;
   onCanvasResized?(e: ResizeObserverEntry): void;
+  dispatch: Function;
 }
 
 interface CephaloCanvasState {
   image?: fabric.IImage;
   canvas?: fabric.ICanvas;
   landmarksGroup?: fabric.IGroup;
-  onClick?(e: fabric.IEvent): void;
-  onCanvasResized?(e: ResizeObserverEntry): void;
 }
 
 const BRIGHTNESS = 0;
@@ -65,7 +65,7 @@ const INVERT = 1;
 /**
  * A wrapper around a canvas element that provides a declarative API for setting cephalometric radiograph image and provide common edits like brightness and contrast.
  */
-export default class CephaloCanvas extends React.Component<CephaloCanvasProps, CephaloCanvasState> {
+export class CephaloCanvas extends React.Component<CephaloCanvasProps, CephaloCanvasState> {
   defaultProps = {
    brightness: 0,
    contrast: 0,
@@ -79,8 +79,6 @@ export default class CephaloCanvas extends React.Component<CephaloCanvasProps, C
     canvas: undefined,
     image: undefined,
     landmarksGroup: undefined,
-    onClick: undefined,
-    onCanvasResized: undefined,
   };
 
   componentDidMount() {
@@ -100,8 +98,8 @@ export default class CephaloCanvas extends React.Component<CephaloCanvasProps, C
         image.sendToBack().center();
         image.setCoords();
         canvas.on('mouse:up', (e: fabric.IEvent) => {
-          if (!this.state.onClick) return;
-          this.state.onClick(e)
+          if (!this.props.onClick) return;
+          this.props.onClick(this.props.dispatch)(e);
         });
         this.setState(
           {
@@ -150,6 +148,7 @@ export default class CephaloCanvas extends React.Component<CephaloCanvasProps, C
     ) return;
     const img: fabric.IImage = this.state.image;
     const canvas: fabric.ICanvas = this.state.canvas;
+    const landmarksGroup: fabric.IGroup = this.state.landmarksGroup;
     let shouldRerender = false;
     if (nextProps.flipX !== this.props.flipX) {
       img.setFlipX(nextProps.flipX || this.defaultProps.flipX);
@@ -186,15 +185,10 @@ export default class CephaloCanvas extends React.Component<CephaloCanvasProps, C
     // @TODO: invistigate the possibilty and efficency of diffing
     if (nextProps.landmarks !== this.props.landmarks) {
       shouldRerender = true;
-      const objectsToDraw = compact(map(nextProps.landmarks, drawLandmark));
-      this.state.landmarksGroup.add(...objectsToDraw);
+      const objectsToDraw = compact(map(nextProps.landmarks, drawLandmark)) as fabric.IObject[];
+      landmarksGroup.forEachObject(o => o.remove());
+      landmarksGroup.add(...objectsToDraw);
     }
-
-    // Copy props over to state so that we can call the updated event handlers 
-    this.setState({
-      onClick: nextProps.onClick,
-      onCanvasResized: nextProps.onCanvasResized,
-    });
 
     img.applyFilters(() => {
       if (shouldRerender) {
@@ -212,3 +206,5 @@ export default class CephaloCanvas extends React.Component<CephaloCanvasProps, C
     )
   }
 }
+
+export default connect()(CephaloCanvas);

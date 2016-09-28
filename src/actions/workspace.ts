@@ -7,6 +7,11 @@ export const addLandmark: (landmark: CephaloLandmark, x: number, y: number) => a
   (landmark, x, y) => ({ landmark, x, y }),
 );
 
+/** Performs steps in the cephalometric analysis that can be automatically evaluated in the current state.
+ * This may include calculating an angle (i.e SNA) provided that all three points (S, N and A) have been set
+*/
+export const tryAutomaticSteps: () => any = createAction(Event.TRY_AUTOMATIC_STEPS_REQUESTED);
+
 /* Image editing actions */
 export const loadImageFile: (options: { file: File, height: number, width: number }) => any = createAction(Event.LOAD_IMAGE_REQUESTED);
 export const flipImageX: () => any = createAction(Event.FLIP_IMAGE_X_REQUESTED);

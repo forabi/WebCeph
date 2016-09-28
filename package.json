@@ -39,6 +39,7 @@
     "redux": "^3.6.0",
     "redux-actions": "^0.12.0",
     "redux-saga": "^0.11.1",
+    "reselect": "^2.5.4",
     "topsort": "0.0.2",
     "url-loader": "^0.5.7",
     "webpack": "^2.1.0-beta.20",

@@ -1,9 +1,13 @@
 import uniqueId from 'lodash/uniqueId';
 import { Event } from '../../utils/constants';
 import { takeLatest, eventChannel, END, Channel } from 'redux-saga';
-import { put, take, fork, call, race, Effect } from 'redux-saga/effects';
+import { put, take, fork, call, select, Effect } from 'redux-saga/effects';
 import { ImageWorkerAction } from '../../utils/constants';
 import { ImageWorkerInstance, ImageWorkerEvent, ImageWorkerResponse } from '../../utils/image-worker.d';
+import reject from 'lodash/reject';
+import every from 'lodash/every';
+import includes from 'lodash/includes';
+import find from 'lodash/find';
 
 const ImageWorker = require('worker!../../utils/image-worker');
 const worker: ImageWorkerInstance = new ImageWorker;
@@ -35,9 +39,6 @@ function* loadImage({ payload }: { payload: { file: File, height: number, width:
   yield put({ type: Event.WORKER_CREATED, payload: { workerId } });
   const actions = [
     {
-      type: ImageWorkerAction.IS_CEPHALO,
-    },
-    {
       type: ImageWorkerAction.PERFORM_EDITS,
       payload: {
         edits: [{
@@ -59,8 +60,6 @@ function* loadImage({ payload }: { payload: { file: File, height: number, width:
         console.info('Got successful worker response', data);
         const { actionId, payload } = data.result;
         if (actionId === 0) {
-          yield put({ type: Event.SET_IS_CEPHALO_REQUESTED, payload });
-        } else if (actionId === 1) {
           yield put({ type: Event.LOAD_IMAGE_SUCCEEDED, payload: payload.url });
         }
       }
@@ -84,8 +83,35 @@ function* loadImage({ payload }: { payload: { file: File, height: number, width:
   }
 }
 
+import { activeAnalysisStepsSelector, completedStepsSelector } from '../selectors/workspace';
+
+const isManual = (step: CephaloLandmark) => step.type === 'point';
+
+function* performAutomaticStep(): IterableIterator<Effect> {
+  const steps: CephaloLandmark[] = yield select(activeAnalysisStepsSelector);
+  const completedSteps: CephaloLandmark[] = yield select(completedStepsSelector);
+  const eligibleSteps = reject(steps, s => isManual(s) || includes(completedSteps, s));
+  for (const step of eligibleSteps) {
+    if (every(
+      step.components,
+      component => find(
+        completedSteps, completed => completed.symbol === component.symbol
+      )
+    )) {
+      console.log('Found step eligible for automatic evaluation', step.symbol);
+      yield put({ type: Event.STEP_EVALUATION_STARTED, payload: step.symbol });
+      // @TODO: Calculate things here,
+      // on success:
+      // yield put({ type: Event.ADD_LANDMARK_REQUESTED, payload: step.symbol });
+      // finally:
+      // yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
+    }
+  };
+}
+
 function* watchWorkspace() {
   yield fork(takeLatest, Event.LOAD_IMAGE_REQUESTED, loadImage);
+  yield fork(takeLatest, Event.TRY_AUTOMATIC_STEPS_REQUESTED, performAutomaticStep);
 }
 
 export default watchWorkspace;
