@@ -2,7 +2,7 @@ import { getStepsForAnalysis } from '../../analyses/helpers';
 import { createSelector } from 'reselect';
 import filter from 'lodash/filter';
 import has from 'lodash/has';
-import intersection from 'lodash/intersection';
+import every from 'lodash/every';
 import map from 'lodash/map';
 import includes from 'lodash/includes';
 import find from 'lodash/find';
@@ -59,10 +59,7 @@ export const isAnalysisCompleteSelector = createSelector(
   activeAnalysisSelector,
   (setLandmarks, activeAnalysis) => {
     if (!activeAnalysis) return false;
-    return intersection(
-      map(activeAnalysis, x => x.landmark.symbol),
-      map(setLandmarks, x => x.symbol),
-    ).length > 0;
+    return every(activeAnalysis, step => has(setLandmarks, step.landmark.symbol));
   },
 );
 
