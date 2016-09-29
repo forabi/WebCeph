@@ -21,7 +21,7 @@ declare module 'deep-diff' {
   } 
 
   interface Accumulator<T> {
-    push(diff: Diff<T>): void;
+    push(o: T): void;
     length: number;
   }
 
@@ -48,7 +48,7 @@ declare module 'deep-diff' {
      * An optional accumulator/array (requirement is that it have a push function).
      * Each difference is pushed to the specified accumulator.
      */
-    acc?: Accumulator<T>,
+    acc?: Accumulator<Diff<T>>,
   ) => Diff<T>[];
 
   const diff: DiffFunction;
