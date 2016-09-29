@@ -1,3 +1,4 @@
+/// <reference path="./resize-observer.d.ts" />
 /// <reference path="./deep-diff.d.ts" />
 
 declare type AngularUnit = 'degree' | 'radian';
