@@ -1,5 +1,6 @@
 declare module 'deep-diff' {
-  export interface Diff<T> {
+
+  export interface BaseDiff<T> {
     /**
      * indicates the kind of change; will be one of the following:
      * 'N' = indicates a newly added property/element
@@ -10,16 +11,41 @@ declare module 'deep-diff' {
     kind: 'N' |'D' | 'E' |'A';
     /** The property path (from the left-hand-side root) */
     path: string[];
+  }
+
+  export interface NewDiff<T> extends BaseDiff<T> {
+    kind: 'N';
+    /** The value on the right-hand-side of the comparison (undefined if kind === 'D') */
+    rhs: T;
+  }
+
+  export interface EditDiff<T> extends BaseDiff<T> {
+    kind: 'E';
     /** The value on the left-hand-side of the comparison (undefined if kind === 'N') */
     lhs: T;
-    /** the value on the right-hand-side of the comparison (undefined if kind === 'D') */
     rhs: T;
-    /** when kind === 'A', indicates the array index where the change occurred */
-    index?: number;
-    /** when kind === 'A', contains a nested change record indicating the change that occurred at the array index */
-    item?: Diff;
-  } 
+  }
 
+  export interface DeleteDiff<T> extends BaseDiff<T> {
+    kind: 'D';
+    /** The value on the left-hand-side of the comparison (undefined if kind === 'N') */
+    lhs: T;
+  }
+
+  export interface ArrayDiff<T> extends BaseDiff<T> {
+    kind: 'A';
+    /** The value on the right-hand-side of the comparison (undefined if kind === 'D') */
+    rhs: T;
+    /** The value on the left-hand-side of the comparison (undefined if kind === 'N') */
+    lhs: T;
+    /** Indicates the array index where the change occurred */
+    index?: number;
+    /** Contains a nested change record indicating the change that occurred at the array index */
+    item?: Diff;
+  }
+
+  type Diff<T> = NewDiff<T> | EditDiff<T> | DeleteDiff<T> | ArrayDiff<T>;
+  
   interface Accumulator<T> {
     push(o: T): void;
     length: number;
