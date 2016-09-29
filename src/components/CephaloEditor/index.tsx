@@ -30,7 +30,7 @@ interface CephaloEditorProps {
   isWorkerBusy: boolean;
   isCephalo: boolean;
   src: string | null;
-  landmarks: { [id: string]: GeometricalLine | GeometricalPoint } | { };
+  landmarks: { [id: string]: GeometricalObject } | { };
   brightness: number;
   inverted: boolean;
   flipX: boolean;

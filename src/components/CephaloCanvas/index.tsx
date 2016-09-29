@@ -1,10 +1,8 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import assign from 'lodash/assign';
-import map from 'lodash/map';
-import compact from 'lodash/compact';
 import { connect } from 'react-redux';
-import deepDiff from 'deep-diff';
+import deepDiff, { Diff } from 'deep-diff';
 
 // declare var window: Window & { ResizeObserver: ResizeObserver };
 
@@ -18,7 +16,7 @@ function isPoint(object: any): object is GeometricalPoint {
   return !!object.x && !!object.y;
 }
 
-const geometricalObjectToFabricObject = (value: (GeometricalLine | GeometricalPoint), id: string) => {
+const geometricalObjectToFabricObject = (value: (GeometricalObject), id: string) => {
   if (isPoint(value)) {
     return new fabric.Circle({
       left: value.x,
@@ -48,7 +46,7 @@ interface CephaloCanvasProps {
   flipY?: boolean;
   height: number,
   width: number,
-  landmarks: { [id: string]: GeometricalLine | GeometricalPoint } | { };
+  landmarks: { [id: string]: GeometricalObject } | { };
   onClick?: (dispatch: Function) => (e: fabric.IEvent) => void;
   onCanvasResized?(e: ResizeObserverEntry): void;
   dispatch: Function;
@@ -58,7 +56,7 @@ interface CephaloCanvasState {
   image?: fabric.IImage;
   canvas?: fabric.ICanvas;
   landmarksGroup?: fabric.IGroup;
-  objectMap: WeakMap<string, fabric.IObject>;
+  objectMap: Map<string, fabric.IObject>;
 }
 
 const BRIGHTNESS = 0;
@@ -81,7 +79,7 @@ export class CephaloCanvas extends React.Component<CephaloCanvasProps, CephaloCa
     canvas: undefined,
     image: undefined,
     landmarksGroup: undefined,
-    objectMap: new WeakMap(),
+    objectMap: new Map<string, fabric.IObject>(),
   };
 
   componentDidMount() {
@@ -185,24 +183,26 @@ export class CephaloCanvas extends React.Component<CephaloCanvasProps, CephaloCa
       shouldRerender = true;
     }
 
-    // @TODO: invistigate the possibilty and efficency of diffing
+    // @TODO: measure the performance of diffing
     const objectMap = this.state.objectMap;
     if (nextProps.landmarks !== this.props.landmarks) {
       shouldRerender = true;
-      const diffs = deepDiff(this.props.landmarks, nextProps.landmarks);
-      console.log('diffs', diffs);
+      const diffs = deepDiff(
+        this.props.landmarks,
+        nextProps.landmarks
+      );
       diffs.forEach(diff => {
         if (diff.kind === 'N') {
-          const object = geometricalObjectToFabricObject(diff.rhs);
+          const object = geometricalObjectToFabricObject(diff.rhs, diff.path[0]);
           if (object) {
-            objectMap.set(diff.path, object);
+            objectMap.set(diff.path[0], object);
             landmarksGroup.add(object);
           }
         } else if (diff.kind === 'E') {
-          objectMap.get(diff.path).set(diff.path[1], diff.rhs)
+          objectMap.get(diff.path[0]).set(diff.path[1], diff.rhs);
         } else if (diff.kind === 'D') {
-          objectMap.get(diff.path).remove();
-          objectMap.delete(diff.path);
+          objectMap.get(diff.path[1]).remove();
+          objectMap.delete(diff.path[0]);
         }
       });
     }

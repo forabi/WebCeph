@@ -1,3 +1,5 @@
+/// <reference path="./deep-diff.d.ts" />
+
 declare type AngularUnit = 'degree' | 'radian';
 declare type LinearUnit = 'mm' | 'cm' | 'in';
 declare type LandmarkType = 'angle' | 'point' | 'line'; 
@@ -30,7 +32,7 @@ declare interface CephaloLandmark {
 }
 
 declare interface MappedCephaloLandmark extends CephaloLandmark {
-  mappedTo?: (GeometricalLine | GeometricalPoint);
+  mappedTo?: GeometricalObject;
   visible: boolean;
 }
 
@@ -67,6 +69,8 @@ declare interface GeometricalLine {
   y1: number,
   y2: number,
 }
+
+declare type GeometricalObject = GeometricalLine | GeometricalPoint;
 
 declare type Analysis = Array<{ landmark: CephaloLandmark, norm: number, stdDev?: number }>;
 
@@ -114,7 +118,7 @@ declare interface StoreState {
   'cephalo.workspace.landmarks': {
     [id: string]: CephaloLandmark & {
       visible: boolean;
-      mappedTo?: GeometricalPoint | GeometricalLine
+      mappedTo?: GeometricalObject
     };
   };
 }

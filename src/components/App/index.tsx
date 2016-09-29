@@ -46,7 +46,7 @@ interface StateProps {
   canvasWidth: number;
   isAnalysisActive: boolean;
   isAnalysisComplete: boolean;
-  landmarks: { [id: string]: GeometricalLine | GeometricalPoint } | { };
+  landmarks: { [id: string]: GeometricalObject } | { };
   error?: { message: string };
   analysisSteps: CephaloLandmark[];
   getStepState(step: Step): stepState;
