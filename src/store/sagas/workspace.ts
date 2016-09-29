@@ -83,28 +83,25 @@ function* loadImage({ payload }: { payload: { file: File, height: number, width:
   }
 }
 
-import { activeAnalysisStepsSelector, completedStepsSelector } from '../selectors/workspace';
+import { activeAnalysisStepsSelector, getStepStateSelector } from '../selectors/workspace';
 
 const isManual = (step: CephaloLandmark) => step.type === 'point';
 
 function* performAutomaticStep(): IterableIterator<Effect> {
   const steps: CephaloLandmark[] = yield select(activeAnalysisStepsSelector);
-  const completedSteps: CephaloLandmark[] = yield select(completedStepsSelector);
-  const eligibleSteps = reject(steps, s => isManual(s) || includes(completedSteps, s));
+  const getStepState: (s: CephaloLandmark) => stepState = yield select(getStepStateSelector);
+  const eligibleSteps = reject(steps, s => isManual(s) || getStepState(s) !== 'pending');
   for (const step of eligibleSteps) {
     if (every(
       step.components,
-      component => find(
-        completedSteps, completed => completed.symbol === component.symbol
-      )
+      component => getStepState(component) === 'done',
     )) {
       console.log('Found step eligible for automatic evaluation', step.symbol);
       yield put({ type: Event.STEP_EVALUATION_STARTED, payload: step.symbol });
       // @TODO: Calculate things here,
+      // yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
       // on success:
       // yield put({ type: Event.ADD_LANDMARK_REQUESTED, payload: step.symbol });
-      // finally:
-      // yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
     }
   };
 }
