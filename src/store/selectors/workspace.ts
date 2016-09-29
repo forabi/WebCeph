@@ -51,7 +51,7 @@ export const activeAnalysisStepsSelector = createSelector(
 export const completedStepsSelector = createSelector(
   activeAnalysisStepsSelector,
   setLandmarksSelector,
-  (steps, landmarks) => filter(steps, s => has(landmarks, s.symbol)),
+  (steps, setLandmarks) => filter(steps, s => has(setLandmarks, s.symbol)),
 );
 
 export const isAnalysisCompleteSelector = createSelector(
