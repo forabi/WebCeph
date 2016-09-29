@@ -191,20 +191,29 @@ export class CephaloCanvas extends React.Component<CephaloCanvasProps, CephaloCa
         this.props.landmarks,
         nextProps.landmarks
       );
-      diffs.forEach(diff => {
-        if (diff.kind === 'N') {
-          const object = geometricalObjectToFabricObject(diff.rhs, diff.path[0]);
-          if (object) {
-            objectMap.set(diff.path[0], object);
-            landmarksGroup.add(object);
+      if (diffs) {
+        shouldRerender = true;
+        diffs.forEach(diff => {
+          if (diff.kind === 'N') {
+            const object = geometricalObjectToFabricObject(diff.rhs, diff.path[0]);
+            if (object) {
+              objectMap.set(diff.path[0], object);
+              landmarksGroup.add(object);
+            }
+          } else if (diff.kind === 'E') {
+            objectMap.get(diff.path[0]).set(diff.path[1], diff.rhs);
+          } else if (diff.kind === 'D') {
+            objectMap.get(diff.path[1]).remove();
+            objectMap.delete(diff.path[0]);
           }
-        } else if (diff.kind === 'E') {
-          objectMap.get(diff.path[0]).set(diff.path[1], diff.rhs);
-        } else if (diff.kind === 'D') {
-          objectMap.get(diff.path[1]).remove();
-          objectMap.delete(diff.path[0]);
-        }
-      });
+        });
+      } else {
+        console.warn(
+          'Previous landmarks are identical to the new ones, ' +
+          'even though we had to perform a deep diff. ' + 
+          'This is a potentially wasted render cycle.'
+        );
+      }
     }
 
     img.applyFilters(() => {

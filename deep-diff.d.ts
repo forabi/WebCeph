@@ -61,11 +61,11 @@ declare module 'deep-diff' {
     /**
      * The left-hand operand; the origin object
      */
-    origin: { [id: string]: T },
+    origin?: { [id: string]: T },
     /**
      * The right-hand operand; the object being compared structurally with the origin object.
      */
-    target: typeof origin,
+    target?: typeof origin,
     /**
      * An optional function that determines whether difference analysis should continue down the object graph
      */
@@ -75,7 +75,7 @@ declare module 'deep-diff' {
      * Each difference is pushed to the specified accumulator.
      */
     acc?: Accumulator<Diff<T>>,
-  ) => Diff<T>[];
+  ) => Diff<T>[] | undefined;
 
   const diff: DiffFunction;
   export default diff;
