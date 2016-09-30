@@ -3,12 +3,10 @@ import { createSelector } from 'reselect';
 import filter from 'lodash/filter';
 import has from 'lodash/has';
 import every from 'lodash/every';
-import map from 'lodash/map';
 import includes from 'lodash/includes';
 import find from 'lodash/find';
-import mapValues from 'lodash/mapValues';
 
-const setLandmarksSelector = (state: StoreState) => state['cephalo.workspace.landmarks'];
+export const mappedLandmarksSelector = (state: StoreState) => state['cephalo.workspace.landmarks'];
 
 const activeAnalysisSelector = (state: StoreState) => state['cephalo.workspace.analysis.activeAnalysis'];
 
@@ -18,7 +16,7 @@ export const stepsBeingEvaluatedSelector = (state: StoreState) => state['cephalo
 
 export const getStepStateSelector = createSelector(
   stepsBeingEvaluatedSelector,
-  setLandmarksSelector,
+  mappedLandmarksSelector,
   (stepsBeingEvaluated, setLandmarks) => (landmark: CephaloLandmark): stepState => {
     if (includes(stepsBeingEvaluated, landmark.symbol)) {
       return 'evaluating';
@@ -50,12 +48,12 @@ export const activeAnalysisStepsSelector = createSelector(
 
 export const completedStepsSelector = createSelector(
   activeAnalysisStepsSelector,
-  setLandmarksSelector,
+  mappedLandmarksSelector,
   (steps, setLandmarks) => filter(steps, s => has(setLandmarks, s.symbol)),
 );
 
 export const isAnalysisCompleteSelector = createSelector(
-  setLandmarksSelector,
+  mappedLandmarksSelector,
   activeAnalysisSelector,
   (setLandmarks, activeAnalysis) => {
     if (!activeAnalysis) return false;
@@ -65,7 +63,7 @@ export const isAnalysisCompleteSelector = createSelector(
 
 export const expectedNextLandmarkSelector = createSelector(
   activeAnalysisStepsSelector,
-  setLandmarksSelector,
+  mappedLandmarksSelector,
   (steps, setLandmarks) => (find(
     steps,
     x => x.type === 'point' && !has(setLandmarks, x.symbol),
@@ -84,7 +82,7 @@ export const onCanvasClickedSelector = createSelector(
     return (e => {
       if (expectedLandmark) {
         dispatch(
-          addLandmark(expectedLandmark, e.e.offsetX, e.e.offsetY)
+          addLandmark(expectedLandmark.symbol, { x: e.e.offsetX, y: e.e.offsetY })
         );
         dispatch(tryAutomaticSteps());
       }
@@ -103,9 +101,4 @@ export const onFileDroppedSelector = createSelector(
       dispatch(loadImageFile({ file, height, width }));
     }) as (file: File) => void;
   },
-);
-
-export const mappedLandmarksSelector = createSelector(
-  setLandmarksSelector,
-  landmarks => mapValues(landmarks, x => x.mappedTo),
 );

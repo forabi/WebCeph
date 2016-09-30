@@ -6,7 +6,7 @@ import rootSaga from './sagas';
 import assign from 'lodash/assign';
 import omit from 'lodash/omit';
 import without from 'lodash/without';
-import downs from '../analyses/downs';
+import common from '../analyses/common';
 
 declare const window: Window & { devToolsExtension?: () => any };
 
@@ -60,7 +60,7 @@ const reducer = combineReducers({
   }, false),
   'cephalo.workspace.analysis.activeAnalysis': handleActions<Analysis | null, any>({
     [Event.SET_ACTIVE_ANALYSIS_REQUESTED]: (__, { payload }) => payload,
-  }, downs),
+  }, common),
   'cephalo.workspace.analysis.stepsBeingEvaluated': handleActions<string[], any>({
     [Event.STEP_EVALUATION_STARTED]: (state, { payload }) => [...state, payload],
     [Event.STEP_EVALUATION_FINISHED]: (state, { payload }) => without(state, payload),
@@ -75,13 +75,9 @@ const reducer = combineReducers({
       { },
       state,
       {
-        [payload.landmark.symbol]: assign(
+        [payload.symbol]: assign(
           { },
-          payload.landmark,
-          {
-            visible: true,
-            mappedTo: { x: payload.x, y: payload.y },
-          }
+          payload.value,
         ),
       },
     ),
