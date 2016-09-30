@@ -43,7 +43,7 @@ declare module 'deep-diff' {
     /** Contains a nested change record indicating the change that occurred at the array index */
     item?: Diff;
     /** The property path (from the left-hand-side root) */
-    path: (string | number)[];
+    path: ReadonlyArray<string> & { 0: number };
   }
 
   type Diff<T> = NewDiff<T> | EditDiff<T> | DeleteDiff<T> | ArrayDiff<T>;
