@@ -2,7 +2,7 @@ import * as React from 'react';
 import ReactDOM from 'react-dom';
 import assign from 'lodash/assign';
 import { connect } from 'react-redux';
-import deepDiff, { Diff } from 'deep-diff';
+import { diff as deepDiff } from 'deep-diff';
 
 // declare var window: Window & { ResizeObserver: ResizeObserver };
 

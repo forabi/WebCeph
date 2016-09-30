@@ -42,6 +42,8 @@ declare module 'deep-diff' {
     index?: number;
     /** Contains a nested change record indicating the change that occurred at the array index */
     item?: Diff;
+    /** The property path (from the left-hand-side root) */
+    path: (string | number)[];
   }
 
   type Diff<T> = NewDiff<T> | EditDiff<T> | DeleteDiff<T> | ArrayDiff<T>;
@@ -61,7 +63,7 @@ declare module 'deep-diff' {
     /**
      * The left-hand operand; the origin object
      */
-    origin?: { [id: string]: T },
+    origin?: { [id: string]: T } | Array<T>,
     /**
      * The right-hand operand; the object being compared structurally with the origin object.
      */
@@ -77,6 +79,6 @@ declare module 'deep-diff' {
     acc?: Accumulator<Diff<T>>,
   ) => Diff<T>[] | undefined;
 
-  const diff: DiffFunction;
-  export default diff;
+  export const diff: DiffFunction;
+  export default Object.assign(diff, { diff });
 }
