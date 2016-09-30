@@ -1,5 +1,9 @@
-declare module 'deep-diff' {
+// Type definitions for deep-diff
+// Project: https://github.com/flitbit/diff/
+// Definitions by: forabi <https://github.com/forabi/>
+// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
+declare module 'deep-diff' {
   export interface BaseDiff<T> {
     /**
      * indicates the kind of change; will be one of the following:
@@ -53,9 +57,7 @@ declare module 'deep-diff' {
     length: number;
   }
 
-  interface Prefilter {
-    (path: string[], key: string): boolean;
-  }
+  type DiffableObject<T> = { [id: string]: T } | Array<T>;
   /**
    * A function that calculates the differences between two objects
    */
@@ -63,7 +65,7 @@ declare module 'deep-diff' {
     /**
      * The left-hand operand; the origin object
      */
-    origin?: { [id: string]: T } | Array<T>,
+    origin?: DiffableObject<T>,
     /**
      * The right-hand operand; the object being compared structurally with the origin object.
      */
@@ -71,7 +73,7 @@ declare module 'deep-diff' {
     /**
      * An optional function that determines whether difference analysis should continue down the object graph
      */
-    prefilter?: Prefilter,
+    prefilter?: (path: string[], key: string) => boolean,
     /**
      * An optional accumulator/array (requirement is that it have a push function).
      * Each difference is pushed to the specified accumulator.
@@ -79,6 +81,62 @@ declare module 'deep-diff' {
     acc?: Accumulator<Diff<T>>,
   ) => Diff<T>[] | undefined;
 
+  interface DeepDiff {
+    /**
+     * A function that calculates the differences between two objects.
+     */
+    diff: DiffFunction;
+
+    isConflict(): boolean;
+
+    /**
+     * In a browser, deep-diff defines a global variable DeepDiff.
+     * If there is a conflict in the global namespace you can restore the conflicting definition and assign deep-diff to another variable like this:
+     * var deep = DeepDiff.noConflict();.
+     */
+    noConflict(): DeepDiff;
+
+    /**
+     * A function that calculates the differences between two objects and reports each to an observer function
+     */
+    observableDiff<T>(
+      lhs: DiffableObject<T>,
+      rhs: typeof lhs,
+      changes: (diff: Diff<T>) => void,
+      prefilter?: Prefilter,
+      path?: string[],
+      key?: string,
+      stack?: Diff<T>[],
+    ): void;
+
+    /**
+     * A function that applies any structural differences from one object to another
+     */
+    applyDiff<T>(
+      target: DiffableObject<T>,
+      source: typeof target,
+      filter: (target: typeof target, source: typeof source, change: Diff<T>) => boolean,
+    ): void;
+
+    /**
+     * A function that applies a single change record to an origin object
+     */
+    applyChange<T>(
+      target: DiffableObject<T>,
+      source: typeof target,
+      change: Diff<T>,
+    ): void;
+  
+    /**
+     * A function that reverts a single change record from a target object
+     */
+    revertChange<T>(
+      target: DiffableObject<T>,
+      source: typeof source,
+      change: Diff<T>,
+    ): void;
+  }
+  const deepDiff: DeepDiff;
   export const diff: DiffFunction;
-  export default Object.assign(diff, { diff });
+  export default Object.assign(diff, deepDiff, { diff });
 }
