@@ -1,13 +1,11 @@
 import uniqueId from 'lodash/uniqueId';
 import { Event } from '../../utils/constants';
-import { takeLatest, takeEvery, eventChannel, END, Channel } from 'redux-saga';
+import { takeLatest, eventChannel, END, Channel } from 'redux-saga';
 import { put, take, fork, call, select, Effect } from 'redux-saga/effects';
 import { ImageWorkerAction } from '../../utils/constants';
 import { ImageWorkerInstance, ImageWorkerEvent, ImageWorkerResponse } from '../../utils/image-worker.d';
 import reject from 'lodash/reject';
 import every from 'lodash/every';
-import includes from 'lodash/includes';
-import find from 'lodash/find';
 
 const ImageWorker = require('worker!../../utils/image-worker');
 const worker: ImageWorkerInstance = new ImageWorker;

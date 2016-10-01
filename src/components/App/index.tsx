@@ -46,6 +46,7 @@ attempt(injectTapEventPlugin);
 
 interface StateProps {
   shouldCheckBrowserCompatiblity: boolean;
+  isCheckingCompatiblity: boolean;
   isBrowserCompatible: boolean;
   missingBrowserFeatures: MissingBrowserFeature[];
   currentBrowser: Browser;
@@ -100,11 +101,16 @@ class App extends React.Component<AppProps, {}> {
       <MuiThemeProvider>
         <div className={cx('col-xs-12', classes.root)}>
           <CompatibilityChecker
-            open={props.shouldCheckBrowserCompatiblity && !props.isBrowserCompatible}
+            open={
+              props.shouldCheckBrowserCompatiblity && (
+                props.isCheckingCompatiblity || !props.isBrowserCompatible
+              )
+            }
             missingFeatures={props.missingBrowserFeatures}
             currentBrowser={props.currentBrowser}
             recommendedBrowsers={props.recommendedBrowsers}
             onDialogClosed={props.onCompatibilityDialogClosed}
+            isChecking={props.isCheckingCompatiblity}
           />
           <CephaloEditor
             className={cx('row', classes.editor)}
@@ -120,6 +126,7 @@ export default connect(
   // mapStateToProps
   (state: StoreState) => ({
     shouldCheckBrowserCompatiblity: !state['env.compatiblity.isIgnored'],
+    isCheckingCompatiblity: state['env.compatiblity.isBeingChecked'],
     missingBrowserFeatures: state['env.compatiblity.missingFeatures'],
     isBrowserCompatible: state['env.compatiblity.missingFeatures'].length === 0,
     currentBrowser: getCurrentBrowser(),

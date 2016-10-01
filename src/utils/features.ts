@@ -1,9 +1,9 @@
 interface FeatureDetails {
   name: string;
   whyRequired?: string;
+  optional?: true;
 };
 
-// @TODO: handle all features
 export default {
   canvas: {
     name: 'Canvas',
@@ -12,13 +12,14 @@ export default {
       'while tracing a cephalometric image'
     ),
   },
-  contextmenu: {
-    name: 'Context Menu',
-    whyRequired: (
-      'This feature is required to display a menu when you right-click ' +
-      'on the cephalometric tracing canvas'
-    ),
-  },
+  // contextmenu: {
+  //   name: 'Context Menu',
+  //   optional: true,
+  //   whyRequired: (
+  //     'This feature is required to display a menu when you right-click ' +
+  //     'on the cephalometric tracing canvas'
+  //   ),
+  // },
   serviceworker: {
     name: 'Service Worker',
     whyRequired: (
@@ -66,6 +67,7 @@ export default {
     name: 'On Input',
   },
   sharedworkers: {
+    optional: true,
     name: 'Shared Workers',
   },
   transferables: {
@@ -88,6 +90,7 @@ export default {
   },
   intl: {
     name: 'Internationalization API',
+    optional: true,
     whyRequired: (
       'This feature is required to display the application menus and dialogs ' +
       'in your language'

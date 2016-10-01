@@ -10,13 +10,24 @@ import common from '../analyses/common';
 
 declare const window: Window & { devToolsExtension?: () => any };
 
+const defaultArray = [];
+
 const reducer = combineReducers({
   'env.compatiblity.isIgnored': handleActions({
     [Event.IGNORE_BROWSER_COMPATIBLITY_REQUESTED]: (_, __) => true,
     [Event.ENFORCE_BROWSER_COMPATIBLITY_REQUESTED]: (_, __) => false,
+    [Event.BROWSER_COMPATIBLITY_CHECK_FAILED]: (_, __) => true,
   }, false),
-  'env.compatiblity.missingFeatures': handleActions<MissingBrowserFeature[], any>({
-    [Event.BROWSER_COMPATIBLITY_CHECK_FINISHED]: (_, { payload }) => payload,
+  'env.compatiblity.isBeingChecked': handleActions({
+    [Event.BROWSER_COMPATIBLITY_CHECK_REQUESTED]: (_, __) => true,
+    [Event.BROWSER_COMPATIBLITY_CHECK_SUCCEEDED]: (_, __) => false,
+    [Event.BROWSER_COMPATIBLITY_CHECK_FAILED]: (_, __) => false,
+  }, false),
+  'env.compatiblity.missingFeatures': handleActions<MissingBrowserFeature[], MissingBrowserFeature>({
+    [Event.BROWSER_COMPATIBLITY_CHECK_MISSING_FEATURE_DETECTED]: (state, { payload }) => [
+      ...state,
+      payload,
+    ],
   }, []),
   'cephalo.workspace.image.data': handleActions<string | null, any>({
     [Event.LOAD_IMAGE_REQUESTED]: () => null,
@@ -136,7 +147,6 @@ function addDevTools() {
 }
 
 const createConfiguredStore = () => {
-
   const store = createStore(
     reducer,
     compose(

@@ -1,5 +1,18 @@
 $border-color: lightblue;
 
+.dialog__loading {
+
+}
+
+.loading_container {
+  display: flex;
+  align-items: center;
+  // justify-content: center;
+  & > * {
+    margin: 1rem;
+  }
+}
+
 .browser_recommendation_container {
   display: flex;
   width: 100%;

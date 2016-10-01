@@ -95,6 +95,7 @@ declare type Step = CephaloLandmark & { title: string, state: stepState };
 declare interface StoreState {
   'env.compatiblity.isIgnored': boolean;
   'env.compatiblity.missingFeatures': MissingBrowserFeature[];
+  'env.compatiblity.isBeingChecked': boolean;
   'cephalo.workspace.image.data': string | null;
   'cephalo.workspace.error': { message: string } | null;
   'cephalo.workspace.canvas.height': number;

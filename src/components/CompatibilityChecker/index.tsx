@@ -4,11 +4,12 @@ import Dialog from 'material-ui/Dialog';
 import ListItem from 'material-ui/List/ListItem';
 import List from 'material-ui/List/List';
 
-import featureDetails from './features';
+import featureDetails from '../../utils/features';
 import browserDetails from '../../utils/browsers';
 
 interface CompatibilityCheckerProps {
   open: boolean;
+  isChecking: boolean;
   className?: string;
   missingFeatures: MissingBrowserFeature[];
   recommendedBrowsers: BrowserRecommendation[];
@@ -74,4 +75,23 @@ const CompatibilityChecker = (props: CompatibilityCheckerProps) => (
   </div>
 );
 
-export default CompatibilityChecker;
+import branch from 'recompose/branch';
+import pure from 'recompose/pure';
+import renderComponent from 'recompose/renderComponent';
+import CircularProgress from 'material-ui/CircularProgress';
+import identity from 'lodash/identity';
+
+const ProgressDialog = (props: CompatibilityCheckerProps) => (
+  <Dialog className={classes.dialog__loading} open={props.open}>
+    <div className={classes.loading_container}>
+      <CircularProgress />
+      <span>Checking browser compatiblity...</span>
+    </div>
+  </Dialog>
+);
+
+export default branch(
+  (props: CompatibilityCheckerProps) => props.isChecking,
+  renderComponent(ProgressDialog),
+  identity,
+)(pure(CompatibilityChecker));
