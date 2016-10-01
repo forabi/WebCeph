@@ -4,7 +4,6 @@
   "feature-detects": [
     "test/blob",
     "test/canvas",
-    "test/contextmenu",
     "test/eventlistener",
     "test/indexeddb",
     "test/indexeddbblob",
