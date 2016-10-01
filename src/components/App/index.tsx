@@ -70,9 +70,12 @@ interface DispatchProps {
 
 type AppProps = StateProps & DispatchProps;
 
+import CompatibilityChecker from '../CompatibilityChecker';
+
 const App = pure((props: AppProps) => (
   <MuiThemeProvider>
     <div className={cx('col-xs-12', classes.root)}>
+      <CompatibilityChecker />
       <CephaloEditor
         className={cx('row', classes.editor)}
         {...props}

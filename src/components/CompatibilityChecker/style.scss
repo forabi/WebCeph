@@ -1,0 +1,53 @@
+$border-color: lightblue;
+
+.browser_recommendation_container {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.browser_recommendation {
+  margin: 0.2rem;
+  padding: 1rem;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  font-weight: bold;
+  border: 0.2rem solid darken($border-color, 5%);
+
+
+  &:visited {
+    color: inherit;
+  }
+
+  &:hover {
+    background-color: lightblue;
+    border: 0.2rem solid darken($border-color, 30%);
+    color: inherit;
+  }
+
+  &__browser_icon > * {
+    height: 64px;
+    width: auto;
+    margin-bottom: 0.5rem;
+  }
+
+  &__browser_name {
+
+  }
+
+  &__browser_min_version {
+    color: gray;
+    margin: 3px;
+    font-size: x-small;
+    display: block;
+
+    &::before {
+      content: '';
+    }
+    &::after {
+      content: '+';
+    }
+  }
+}
