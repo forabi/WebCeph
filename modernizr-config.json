@@ -13,8 +13,6 @@
     "test/svg",
     "test/css/animations",
     "test/css/flexbox",
-    "test/css/opacity",
-    "test/es6/generators",
     "test/es6/number",
     "test/event/oninput",
     "test/file/api",

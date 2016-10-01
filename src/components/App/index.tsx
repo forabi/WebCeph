@@ -2,13 +2,16 @@ import * as React from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import * as injectTapEventPlugin from 'react-tap-event-plugin';
 import { connect } from 'react-redux';
-import CephaloEditor from '../CephaloEditor';
 import cx from 'classnames';
 import attempt from 'lodash/attempt';
 import some from 'lodash/some';
 import throttle from 'lodash/throttle';
 import pure from 'recompose/pure';
 import noop from 'lodash/noop'
+
+import CephaloEditor from '../CephaloEditor';
+import CompatibilityChecker from '../CompatibilityChecker';
+
 import {
   flipImageX,
   invertImage,
@@ -84,9 +87,6 @@ interface DispatchProps {
 
 type AppProps = StateProps & DispatchProps;
 
-import CompatibilityChecker from '../CompatibilityChecker';
-
-
 class App extends React.Component<AppProps, {}> {
   componentDidMount() {
     if (this.props.shouldCheckBrowserCompatiblity) {
@@ -100,7 +100,7 @@ class App extends React.Component<AppProps, {}> {
       <MuiThemeProvider>
         <div className={cx('col-xs-12', classes.root)}>
           <CompatibilityChecker
-            open={props.shouldCheckBrowserCompatiblity && props.isBrowserCompatible}
+            open={props.shouldCheckBrowserCompatiblity && !props.isBrowserCompatible}
             missingFeatures={props.missingBrowserFeatures}
             currentBrowser={props.currentBrowser}
             recommendedBrowsers={props.recommendedBrowsers}
@@ -121,7 +121,7 @@ export default connect(
   (state: StoreState) => ({
     shouldCheckBrowserCompatiblity: !state['env.compatiblity.isIgnored'],
     missingBrowserFeatures: state['env.compatiblity.missingFeatures'],
-    isBrowserCompatible: state['env.compatiblity.missingFeatures'].length > 0,
+    isBrowserCompatible: state['env.compatiblity.missingFeatures'].length === 0,
     currentBrowser: getCurrentBrowser(),
     recommendedBrowsers: getRecommendedBrowsers(),
     onCompatibilityDialogClosed: noop,

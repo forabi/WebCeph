@@ -1,6 +1,6 @@
 /*!
  * modernizr v3.3.1
- * Build http://modernizr.com/download?-blobconstructor-bloburls-canvas-cssanimations-datauri-es6number-eventlistener-filereader-flexbox-generators-indexeddb-indexeddbblob-inlinesvg-intl-json-oninput-opacity-serviceworker-sharedworkers-svg-transferables-webworkers-dontmin
+ * Build http://modernizr.com/download?-blobconstructor-bloburls-canvas-cssanimations-datauri-es6number-eventlistener-filereader-flexbox-indexeddb-indexeddbblob-inlinesvg-intl-json-oninput-serviceworker-sharedworkers-svg-transferables-webworkers-dontmin
  *
  * Copyright (c)
  *  Faruk Ates
@@ -1425,90 +1425,6 @@ Detects support for the Flexible Box Layout model, a.k.a. Flexbox, which allows 
 */
 
   Modernizr.addTest('flexbox', testAllProps('flexBasis', '1px', true));
-
-
-  /**
-   * List of property values to set for css tests. See ticket #21
-   * http://git.io/vUGl4
-   *
-   * @memberof Modernizr
-   * @name Modernizr._prefixes
-   * @optionName Modernizr._prefixes
-   * @optionProp prefixes
-   * @access public
-   * @example
-   *
-   * Modernizr._prefixes is the internal list of prefixes that we test against
-   * inside of things like [prefixed](#modernizr-prefixed) and [prefixedCSS](#-code-modernizr-prefixedcss). It is simply
-   * an array of kebab-case vendor prefixes you can use within your code.
-   *
-   * Some common use cases include
-   *
-   * Generating all possible prefixed version of a CSS property
-   * ```js
-   * var rule = Modernizr._prefixes.join('transform: rotate(20deg); ');
-   *
-   * rule === 'transform: rotate(20deg); webkit-transform: rotate(20deg); moz-transform: rotate(20deg); o-transform: rotate(20deg); ms-transform: rotate(20deg);'
-   * ```
-   *
-   * Generating all possible prefixed version of a CSS value
-   * ```js
-   * rule = 'display:' +  Modernizr._prefixes.join('flex; display:') + 'flex';
-   *
-   * rule === 'display:flex; display:-webkit-flex; display:-moz-flex; display:-o-flex; display:-ms-flex; display:flex'
-   * ```
-   */
-
-  var prefixes = (ModernizrProto._config.usePrefixes ? ' -webkit- -moz- -o- -ms- '.split(' ') : []);
-
-  // expose these for the plugin API. Look in the source for how to join() them against your input
-  ModernizrProto._prefixes = prefixes;
-
-  
-/*!
-{
-  "name": "CSS Opacity",
-  "caniuse": "css-opacity",
-  "property": "opacity",
-  "tags": ["css"]
-}
-!*/
-
-  // Browsers that actually have CSS Opacity implemented have done so
-  // according to spec, which means their return values are within the
-  // range of [0.0,1.0] - including the leading zero.
-
-  Modernizr.addTest('opacity', function() {
-    var style = createElement('a').style;
-    style.cssText = prefixes.join('opacity:.55;');
-
-    // The non-literal . in this regex is intentional:
-    // German Chrome returns this value as 0,55
-    // github.com/Modernizr/Modernizr/issues/#issue/59/comment/516632
-    return (/^0.55$/).test(style.opacity);
-  });
-
-/*!
-{
-  "name": "ES6 Generators",
-  "property": "generators",
-  "authors": ["Michael Kachanovskyi"],
-  "tags": ["es6"]
-}
-!*/
-/* DOC
-Check if browser implements ECMAScript 6 Generators per specification.
-*/
-
-  Modernizr.addTest('generators', function() {
-    try {
-      /* jshint evil: true */
-      new Function('function* test() {}')();
-    } catch (e) {
-      return false;
-    }
-    return true;
-  });
 
 /*!
 {

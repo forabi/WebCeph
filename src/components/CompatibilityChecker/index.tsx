@@ -21,7 +21,7 @@ const classes = require('./style.scss');
 const CompatibilityChecker = (props: CompatibilityCheckerProps) => (
   <div className={props.className}>
     <Dialog open={props.open}>
-      <h3>Browser incompatible</h3>
+      <h3>You are using an outdated web browser</h3>
       <div>
         Your browser does not support all the features required for this application to work.
       </div>
@@ -59,7 +59,7 @@ const CompatibilityChecker = (props: CompatibilityCheckerProps) => (
         ))
       }
       </div>
-      The following features are missing:
+      If you are curious, the following features are missing:
       <List>
       {
         props.missingFeatures.map(feature => (

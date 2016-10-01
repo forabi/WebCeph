@@ -138,7 +138,7 @@ interface BrowserFeature {
 type MissingBrowserFeature = BrowserFeature & { available: false };
 
 interface Browser {
-  id: BrowserId;
+  id: BrowserId | string;
   /** Display name for the browser */
   name: string;
   /**

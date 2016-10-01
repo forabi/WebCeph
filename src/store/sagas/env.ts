@@ -12,7 +12,7 @@ function* checkBrowserCompatiblity(): IterableIterator<Effect> {
     keys(Modernizr), (key => ({
       id: key,
       available: Boolean(Modernizr[key]),
-      optional: false,
+      optional: false, // @TODO: handle optional features?
     })),
   ), f => f.available || f.optional);
   // const missingFeatures: BrowserFeature[] = [{
