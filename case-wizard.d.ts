@@ -93,6 +93,8 @@ declare type stepState = 'done' | 'current' | 'pending' | 'evaluating';
 declare type Step = CephaloLandmark & { title: string, state: stepState };
 
 declare interface StoreState {
+  'env.compatiblity.isIgnored': boolean;
+  'env.compatiblity.missingFeatures': MissingBrowserFeature[];
   'cephalo.workspace.image.data': string | null;
   'cephalo.workspace.error': { message: string } | null;
   'cephalo.workspace.canvas.height': number;
@@ -121,4 +123,36 @@ declare interface StoreState {
       visible?: boolean;
     };
   };
+}
+
+/** Browser compatiblity checking */
+type BrowserId = 'Chrome' | 'Firefox' | 'Opera' | 'Microsoft Edge' | 'Safari';
+type OsId = 'mac' | 'windows' | 'linux' | 'chromeos' | 'ios' | 'android';
+
+interface BrowserFeature {
+  id: string;
+  available: boolean;
+  optional: boolean;
+}
+
+type MissingBrowserFeature = BrowserFeature & { available: false };
+
+interface Browser {
+  id: BrowserId;
+  /** Display name for the browser */
+  name: string;
+  /**
+   * The current version of the browser
+   */
+  version: string;
+  /**
+   * URL to the download page of the browser
+   */
+  downloadUrl: string;
+}
+
+interface BrowserRecommendation {
+  id: BrowserId;
+  /** Display name for the browser */
+  name: string;
 }

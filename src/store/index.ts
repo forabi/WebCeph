@@ -11,6 +11,13 @@ import common from '../analyses/common';
 declare const window: Window & { devToolsExtension?: () => any };
 
 const reducer = combineReducers({
+  'env.compatiblity.isIgnored': handleActions({
+    [Event.IGNORE_BROWSER_COMPATIBLITY_REQUESTED]: (_, __) => true,
+    [Event.ENFORCE_BROWSER_COMPATIBLITY_REQUESTED]: (_, __) => false,
+  }, false),
+  'env.compatiblity.missingFeatures': handleActions<MissingBrowserFeature[], any>({
+    [Event.BROWSER_COMPATIBLITY_CHECK_FINISHED]: (_, { payload }) => payload,
+  }, []),
   'cephalo.workspace.image.data': handleActions<string | null, any>({
     [Event.LOAD_IMAGE_REQUESTED]: () => null,
     [Event.LOAD_IMAGE_SUCCEEDED]: (_, { payload }) => payload,

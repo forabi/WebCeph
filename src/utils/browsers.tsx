@@ -7,9 +7,6 @@ const EdgeIcon = require('./icons/edge.svg').default;
 const OperaIcon = require('./icons/opera.svg').default;
 const SafariIcon = require('./icons/safari-ios.svg').default;
 
-export type BrowserId = 'Chrome' | 'Firefox' | 'Opera' | 'Microsoft Edge' | 'Safari';
-export type OsId = 'mac' | 'windows' | 'linux' | 'chromeos' | 'ios' | 'android';
-
 interface BrowserDetails {
   name: string;
   downloadUrl: string;
@@ -17,9 +14,9 @@ interface BrowserDetails {
   isApplicable?(): boolean;
 }
 
-export const currentBrowser = bowser;
+const _current = bowser;
 
-export default {
+export const details = {
   Chrome: {
     name: 'Chrome',
     downloadUrl: 'https://google.com/chrome',
@@ -40,7 +37,7 @@ export default {
     downloadUrl: 'https://www.microsoft.com/windows/microsoft-edge',
     icon: <EdgeIcon />,
     isApplicable() {
-      return currentBrowser.windows;
+      return _current.windows && _current.osversion === '10';
     }
   },
   Safari: {
@@ -48,7 +45,17 @@ export default {
     downloadUrl: 'https://www.apple.com/safari/',
     icon: <SafariIcon />,
     isApplicable() {
-      return currentBrowser.mac;
+      return _current.mac;
     }
   },
 } as { [id: string]: BrowserDetails };
+
+
+export const currentBrowser: Browser = {
+  id: _current.name as BrowserId,
+  name: details[_current.name].name,
+  downloadUrl: details[_current.name].downloadUrl,
+  version: _current.version,
+}
+
+export default details;

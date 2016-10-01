@@ -8,6 +8,7 @@ import attempt from 'lodash/attempt';
 import some from 'lodash/some';
 import throttle from 'lodash/throttle';
 import pure from 'recompose/pure';
+import noop from 'lodash/noop'
 import {
   flipImageX,
   invertImage,
@@ -27,6 +28,13 @@ import {
   mappedLandmarksSelector,
 } from '../../store/selectors/workspace';
 
+import {
+  getCurrentBrowser,
+  getRecommendedBrowsers,
+} from '../../store/selectors/env';
+
+import { checkBrowserCompatibility } from '../../actions/initialization';
+
 const classes = require('./style.scss');
 
 require('../../layout/_index.scss');
@@ -34,6 +42,12 @@ require('../../layout/_index.scss');
 attempt(injectTapEventPlugin);
 
 interface StateProps {
+  shouldCheckBrowserCompatiblity: boolean;
+  isBrowserCompatible: boolean;
+  missingBrowserFeatures: MissingBrowserFeature[];
+  currentBrowser: Browser;
+  recommendedBrowsers: BrowserRecommendation[];
+  onCompatibilityDialogClosed: () => void;
   src: string | null;
   flipX: boolean;
   flipY: boolean;
@@ -72,21 +86,45 @@ type AppProps = StateProps & DispatchProps;
 
 import CompatibilityChecker from '../CompatibilityChecker';
 
-const App = pure((props: AppProps) => (
-  <MuiThemeProvider>
-    <div className={cx('col-xs-12', classes.root)}>
-      <CompatibilityChecker />
-      <CephaloEditor
-        className={cx('row', classes.editor)}
-        {...props}
-      />
-    </div>
-  </MuiThemeProvider>
-));
+
+class App extends React.Component<AppProps, {}> {
+  componentDidMount() {
+    if (this.props.shouldCheckBrowserCompatiblity) {
+      this.props.dispatch(checkBrowserCompatibility());
+    }
+  }
+
+  render() {
+    const props = this.props;
+    return (
+      <MuiThemeProvider>
+        <div className={cx('col-xs-12', classes.root)}>
+          <CompatibilityChecker
+            open={props.shouldCheckBrowserCompatiblity && props.isBrowserCompatible}
+            missingFeatures={props.missingBrowserFeatures}
+            currentBrowser={props.currentBrowser}
+            recommendedBrowsers={props.recommendedBrowsers}
+            onDialogClosed={props.onCompatibilityDialogClosed}
+          />
+          <CephaloEditor
+            className={cx('row', classes.editor)}
+            {...props}
+          />
+        </div>
+      </MuiThemeProvider>
+    );
+  };
+}
 
 export default connect(
   // mapStateToProps
   (state: StoreState) => ({
+    shouldCheckBrowserCompatiblity: !state['env.compatiblity.isIgnored'],
+    missingBrowserFeatures: state['env.compatiblity.missingFeatures'],
+    isBrowserCompatible: state['env.compatiblity.missingFeatures'].length > 0,
+    currentBrowser: getCurrentBrowser(),
+    recommendedBrowsers: getRecommendedBrowsers(),
+    onCompatibilityDialogClosed: noop,
     flipX: state['cephalo.workspace.image.flipX'],
     flipY: state['cephalo.workspace.image.flipY'],
     brightness: state['cephalo.workspace.image.brightness'],
@@ -121,4 +159,4 @@ export default connect(
     onEditLandmarkRequested: () => null, // @TODO
     onRemoveLandmarkRequested: () => null, // @TODO,
   } as DispatchProps),
-)(App);
+)(pure(App));

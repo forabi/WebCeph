@@ -1,9 +1,10 @@
 import { fork } from 'redux-saga/effects';
-import { Event } from '../../utils/constants';
 import watchWorkspace from './workspace';
+import envSaga from './env';
 
 function* rootSaga() {
   yield fork(watchWorkspace);
+  yield fork(envSaga);
 }
 
 export default rootSaga;
