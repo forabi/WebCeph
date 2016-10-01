@@ -117,9 +117,8 @@ declare interface StoreState {
   'cephalo.workspace.analysis.stepsBeingEvaluated': string[];
   'cephalo.workspace.analysis.isLoading': boolean;
   'cephalo.workspace.landmarks': {
-    [id: string]: CephaloLandmark & {
-      visible: boolean;
-      mappedTo?: GeometricalObject
+    [id: string]: GeometricalObject & {
+      visible?: boolean;
     };
   };
 }
