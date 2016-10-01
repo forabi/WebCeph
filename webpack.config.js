@@ -12,6 +12,7 @@ let dashboard;
 if (env.isDev) {
   Dashboard = require('webpack-dashboard');
   DashboardPlugin = require('webpack-dashboard/plugin');
+
   dashboard = new Dashboard();
 }
 

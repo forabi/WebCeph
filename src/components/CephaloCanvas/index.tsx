@@ -77,7 +77,8 @@ const BRIGHTNESS = 0;
 const INVERT = 1;
 
 /**
- * A wrapper around a canvas element that provides a declarative API for setting cephalometric radiograph image and provide common edits like brightness and contrast.
+ * A wrapper around a canvas element that provides a declarative API for setting cephalometric radiograph image and performing common edits like brightness and contrast.
+ * This component use a React-like diffing mechanism to avoid expensive redraws of landmarks that have not changed
  */
 export class CephaloCanvas extends React.Component<CephaloCanvasProps, CephaloCanvasState> {
   defaultProps = {
@@ -96,9 +97,11 @@ export class CephaloCanvas extends React.Component<CephaloCanvasProps, CephaloCa
     objectMap: new Map<string, fabric.IObject>(),
   };
 
+  refs: { canvas: __React.ReactInstance };
+
   componentDidMount() {
     const canvas = new fabric.Canvas(
-      ReactDOM.findDOMNode(this.refs.canvas) as HTMLCanvasElement,
+      ReactDOM.findDOMNode<HTMLCanvasElement>(this.refs.canvas),
       {
         height: this.props.height,
         width: this.props.width,

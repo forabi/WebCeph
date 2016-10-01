@@ -33,22 +33,22 @@ const icons: { [id: string]: JSX.Element } = {
 
 import { descriptions } from './strings';
 
-const getDescriptionForStep: (landmark: CephaloLandmark) => string | null = landmark => {
+const getDescriptionForStep= (landmark: CephaloLandmark) => {
   return descriptions[landmark.symbol] || landmark.description || null;
 }
 
 const getTitleForStep = (landmark: CephaloLandmark) => {
   if (landmark.type === 'point') {
-    return `Set point ${landmark.symbol} ${ landmark.name ? `(${landmark.name})` : '' }`;
+    return `Set point ${landmark.symbol}${ landmark.name ? ` (${landmark.name})` : '' }`;
   } else if (landmark.type === 'line') {
-    return `Draw line ${landmark.symbol} ${ landmark.name ? `(${landmark.name})` : '' }`;
+    return `Draw line ${landmark.symbol}${ landmark.name ? ` (${landmark.name})` : '' }`;
   } else if (landmark.type === 'angle') {
-    return `Calculate angle ${landmark.symbol} ${ landmark.name ? `(${landmark.name})` : '' }`;
+    return `Calculate angle ${landmark.symbol}${ landmark.name ? ` (${landmark.name})` : '' }`;
   }
   throw new TypeError(`Cannot handle this type of landmarks (${landmark.type})`);
 }
 
-export const AnalysisStepper = (props: AnalysisStepperProps) => {
+export const AnalysisStepper = pure((props: AnalysisStepperProps) => {
   const {
     steps,
     getStepState,
@@ -82,6 +82,6 @@ export const AnalysisStepper = (props: AnalysisStepperProps) => {
       </List>
     );
   }
-};
+});
 
 export default AnalysisStepper;
