@@ -60,6 +60,7 @@
     "@types/react-dom": "^0.14.16",
     "@types/react-dropzone": "0.0.27",
     "@types/react-tap-event-plugin": "0.0.29",
+    "@types/webpack": "^1.12.34",
     "babel": "^6.5.2",
     "babel-cli": "^6.11.4",
     "babel-eslint": "^6.1.2",
