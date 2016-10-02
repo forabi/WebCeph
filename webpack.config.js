@@ -48,8 +48,6 @@ const config = {
     hot: env.isHot,
   } : false,
 
-  debug: env.isDev,
-
   devtool: env.isDev ? 'eval' : false,
 
   entry: {
@@ -81,74 +79,86 @@ const config = {
   },
 
   resolve: {
-    root: __dirname,
-    extensions: ['', '.webpack.js', '.web.js', '.ts', '.tsx', '.js'],
+    extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js'],
+    modules: [
+      path.join(__dirname, 'src'),
+      'node_modules',
+    ],
   },
 
   module: {
-    loaders: [{
-      test: /\.tsx?$/,
-      exclude: /node_modules/,
-      loaders: compact([
-        prod('babel-loader'),
-        {
-          loader: 'ts-loader',
-          query: {
-            transpileOnly: true,
-            silent: true,
-            compilerOptions: Object.assign(
-              {
-                module: 'es2015',
-              },
-              env.isProd ? {
-                jsx: 'preserve',
-              } : { }
-            ),
-          },
-        },
-      ]),
-    }, {
-      test: /\.jsx?$/,
-      exclude: /node_modules/,
-      loaders: ['babel-loader'],
-    }, {
-      test: /\.css$/,
-      loaders: localCSSLoaders,
-    }, {
-      test: /\.scss$/,
-      include: [
-        path.resolve(path.resolve(__dirname, 'src/components')),
-      ],
-      loaders: [].concat(localCSSLoaders, sassLoaders),
-    }, {
-      test: /\.scss$/,
-      include: [
-        path.resolve(path.resolve(__dirname, 'src/layout')),
-      ],
-      loaders: [].concat(globalCSSLoaders, sassLoaders),
-    }, {
-      test: /\.(jpg|png)$/,
-      loader: 'file',
-    }, {
-      test: /\.json$/,
-      loader: 'json',
-    }, {
-      test: /\.html$/,
-      loader: 'html',
-    }, {
-      test: /\.svg$/,
-      loader: [
-        'babel-loader',
-        {
-          loader: 'react-svg',
-          query: {
-            svgo: {
-              plugins: [{ cleanupIDs: false, removeEmptyContainers: true }],
+    rules: [
+      {
+        test: /\.tsx?$/,
+        exclude: /node_modules/,
+        use: compact([
+          prod('babel-loader'),
+          {
+            loader: 'ts-loader',
+            query: {
+              transpileOnly: true,
+              silent: true,
+              compilerOptions: Object.assign(
+                {
+                  module: 'es2015',
+                },
+                env.isProd ? {
+                  jsx: 'preserve',
+                } : { }
+              ),
             },
           },
-        },
-      ],
-    }],
+        ]),
+      },
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        use: ['babel-loader'],
+      }, {
+        test: /\.css$/,
+        use: localCSSLoaders,
+      },
+      {
+        test: /\.scss$/,
+        include: [
+          path.resolve(path.resolve(__dirname, 'src/components')),
+        ],
+        use: [].concat(localCSSLoaders, sassLoaders),
+      },
+      {
+        test: /\.scss$/,
+        include: [
+          path.resolve(path.resolve(__dirname, 'src/layout')),
+        ],
+        use: [].concat(globalCSSLoaders, sassLoaders),
+      },
+      {
+        test: /\.(jpg|png)$/,
+        use: 'file',
+      },
+      {
+        test: /\.json$/,
+        use: 'json',
+      },
+      {
+        test: /\.html$/,
+        use: 'html',
+      },
+      {
+        test: /\.svg$/,
+        use: [
+          'babel-loader',
+          {
+            loader: 'react-svg',
+            query: {
+              svgo: {
+                plugins: [{ cleanupIDs: false, removeEmptyContainers: true }],
+              },
+            },
+          },
+        ],
+      },
+    ],
   },
 
   plugins: compact([
