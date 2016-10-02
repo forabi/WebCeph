@@ -18,7 +18,6 @@ import cx from 'classnames';
 import AnalysisStepper from '../AnalysisStepper';
 import CephaloCanvas from '../CephaloCanvas';
 import noop from 'lodash/noop';
-import pure from 'recompose/pure';
 
 const classes = require('./style.scss');
 const DropzonePlaceholder = require('./assets/placeholder.svg').default;
@@ -64,7 +63,7 @@ const defaultState: CephaloEditorState = {
   open: false,
 };
 
-class CephaloEditor extends React.Component<CephaloEditorProps, CephaloEditorState> {
+class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEditorState> {
   refs: { dropzone: Dropzone };
   state = defaultState;
 
@@ -215,4 +214,4 @@ class CephaloEditor extends React.Component<CephaloEditorProps, CephaloEditorSta
   }
 }
 
-export default pure(CephaloEditor);
+export default CephaloEditor;

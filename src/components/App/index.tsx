@@ -6,7 +6,6 @@ import cx from 'classnames';
 import attempt from 'lodash/attempt';
 import some from 'lodash/some';
 import throttle from 'lodash/throttle';
-import pure from 'recompose/pure';
 import noop from 'lodash/noop'
 
 import CephaloEditor from '../CephaloEditor';
@@ -88,7 +87,7 @@ interface DispatchProps {
 
 type AppProps = StateProps & DispatchProps;
 
-class App extends React.Component<AppProps, {}> {
+class App extends React.PureComponent<AppProps, {}> {
   componentDidMount() {
     if (this.props.shouldCheckBrowserCompatiblity) {
       this.props.dispatch(checkBrowserCompatibility());
@@ -166,4 +165,4 @@ export default connect(
     onEditLandmarkRequested: () => null, // @TODO
     onRemoveLandmarkRequested: () => null, // @TODO,
   } as DispatchProps),
-)(pure(App));
+)(App);

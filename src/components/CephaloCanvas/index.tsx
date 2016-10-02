@@ -80,7 +80,7 @@ const INVERT = 1;
  * A wrapper around a canvas element that provides a declarative API for setting cephalometric radiograph image and performing common edits like brightness and contrast.
  * This component use a React-like diffing mechanism to avoid expensive redraws of landmarks that have not changed
  */
-export class CephaloCanvas extends React.Component<CephaloCanvasProps, CephaloCanvasState> {
+export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, CephaloCanvasState> {
   defaultProps = {
    brightness: 0,
    contrast: 0,
