@@ -13,7 +13,7 @@ interface CheckResult {
 }
 
 function performModernizrTests() {
-  // Lazyily load Modernizr to start performing feature tests
+  // Lazily load Modernizr to start performing feature tests
   const Modernizr = require('exports?Modernizr!../../utils/modernizr.js');
 
   return eventChannel(emit => {
@@ -28,7 +28,7 @@ function performModernizrTests() {
     const completed = (feature: string) => (isSupported: boolean) => {
       emit({ feature, isSupported } as CheckResult);
 
-      /* Modernizr does not provide an event for completion
+      /* Modernizr does not provide an event for completion yet
        * We need to keep track of how many features have completed compared to 
        * the number of features we need.
        */
