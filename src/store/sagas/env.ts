@@ -1,4 +1,4 @@
-import { takeLatest, eventChannel, END, Channel  } from 'redux-saga';
+import { takeLatest, eventChannel, END, Channel } from 'redux-saga';
 import { put, take, fork, call, Effect } from 'redux-saga/effects';
 import keys from 'lodash/keys';
 import noop from 'lodash/noop';
@@ -12,38 +12,54 @@ interface CheckResult {
   isSupported: boolean;
 }
 
-function* performModernizrTests(): IterableIterator<CheckResult> {
+function performModernizrTests() {
+  // Lazyily load Modernizr to start performing feature tests
   const Modernizr = require('exports?Modernizr!../../utils/modernizr.js');
+
   return eventChannel(emit => {
-    let j = 0;
+    /** This is used to keep track of number of features completed. See below. */
+    let j = 0; 
+
     const features = keys(featureDetails);
     const total = features.length;
+    /**
+     * This function is fired whenever an individual feature detection test is finished
+     */
     const completed = (feature: string) => (isSupported: boolean) => {
       emit({ feature, isSupported } as CheckResult);
+
+      /* Modernizr does not provide an event for completion
+       * We need to keep track of how many features have completed compared to 
+       * the number of features we need.
+       */
       j++;
       if (j >= total) {
         emit(END);
       }
     };
+
+    // Listen for feature test events
     each(features, feature => Modernizr.on(feature, completed(feature)));
+
+    // Unsubscribe function for this channel. We do not need to do any clean up.
     return noop;
   });
 }
 
 function* checkBrowserCompatiblity(): IterableIterator<Effect> {
   console.info('[env] Performing browser compatiblity check...');
-  const chan: Channel<any> = yield call(performModernizrTests);
+  const chan: Channel<CheckResult> = yield call(performModernizrTests);
   try {
     while (true) {
       const result: CheckResult = yield take(chan);
-      // @TODO: figure out how to handle optional features
+      // @TODO: Figure out how to handle optional features
       if (!result.isSupported) {
         console.info('Detected missing feature: ', result.feature);
         yield put({
           type: Event.BROWSER_COMPATIBLITY_CHECK_MISSING_FEATURE_DETECTED,
           payload: ({
             id: result.feature,
-            optional: featureDetails[result.feature].optional,
+            optional: featureDetails[result.feature].optional || false,
             available: false,
           }) as MissingBrowserFeature,
         });
@@ -51,7 +67,7 @@ function* checkBrowserCompatiblity(): IterableIterator<Effect> {
     }
   } catch (error) {
     console.error('Error checking browser compatiblity', error);
-    yield put({ type: Event.BROWSER_COMPATIBLITY_CHECK_FAILED });
+    yield put({ type: Event.BROWSER_COMPATIBLITY_CHECK_FAILED, payload: error });
   } finally {
     chan.close();
     console.info('[env] Finished checking browser compatiblity.');

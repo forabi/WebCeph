@@ -4,6 +4,12 @@ interface FeatureDetails {
   optional?: true;
 };
 
+/**
+ * @NOTE
+ * It is important that you do not define features that are not included in the Modernizr build.
+ * Otherwise, the checking complete event (BROWSER_COMPATIBLITY_CHECK_SUCCEEDED) may never be fired,
+ * which means the 'Checking browser compatiblity...' dialog will never close. 
+ */
 export default {
   canvas: {
     name: 'Canvas',
