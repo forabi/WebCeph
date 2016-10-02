@@ -19,6 +19,20 @@ interface CompatibilityCheckerProps {
 
 const classes = require('./style.scss');
 
+const getFeatureName = ({ id }: BrowserFeature) => {
+  if (id && featureDetails[id]) {
+    return featureDetails[id].name;
+  }
+  return id || 'Unknown feature';
+};
+
+const getWhyFeatureIsRequired = ({ id }: BrowserFeature) => {
+  if (id && featureDetails[id]) {
+    return featureDetails[id].whyRequired;
+  }
+  return undefined;
+}
+
 const CompatibilityChecker = (props: CompatibilityCheckerProps) => (
   <div className={props.className}>
     <Dialog open={props.open}>
@@ -65,8 +79,8 @@ const CompatibilityChecker = (props: CompatibilityCheckerProps) => (
       {
         props.missingFeatures.map(feature => (
           <ListItem key={feature.id}
-            primaryText={featureDetails[feature.id].name}
-            secondaryText={featureDetails[feature.id].whyRequired}
+            primaryText={getFeatureName(feature)}
+            secondaryText={getWhyFeatureIsRequired(feature)}
           />
         ))
       }

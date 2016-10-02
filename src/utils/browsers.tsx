@@ -53,8 +53,8 @@ export const details = {
 
 export const currentBrowser: Browser = {
   id: _current.name as BrowserId,
-  name: details[_current.name].name,
-  downloadUrl: details[_current.name].downloadUrl,
+  name: details[_current.name] ? details[_current.name].name : 'Unknown',
+  downloadUrl: details[_current.name] ? details[_current.name].downloadUrl : '',
   version: _current.version,
 }
 
