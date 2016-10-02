@@ -38,7 +38,7 @@ function* checkBrowserCompatiblity(): IterableIterator<Effect> {
       const result: CheckResult = yield take(chan);
       // @TODO: figure out how to handle optional features
       if (!result.isSupported) {
-        console.info('Found missing feature: ', result.feature);
+        console.info('Detected missing feature: ', result.feature);
         yield put({
           type: Event.BROWSER_COMPATIBLITY_CHECK_MISSING_FEATURE_DETECTED,
           payload: ({
