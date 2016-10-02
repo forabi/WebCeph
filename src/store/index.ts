@@ -10,8 +10,6 @@ import common from '../analyses/common';
 
 declare const window: Window & { devToolsExtension?: () => any };
 
-const defaultArray = [];
-
 const reducer = combineReducers({
   'env.compatiblity.isIgnored': handleActions({
     [Event.IGNORE_BROWSER_COMPATIBLITY_REQUESTED]: (_, __) => true,
@@ -43,10 +41,10 @@ const reducer = combineReducers({
   }, null),
   'cephalo.workspace.canvas.height': handleActions<number, any>({
     [Event.CANVAS_RESIZED]: (_, { payload }) => payload.height,
-  }, 600),
+  }, 792),
   'cephalo.workspace.canvas.width': handleActions<number, any>({
     [Event.CANVAS_RESIZED]: (_, { payload }) => payload.width,
-  }, 600),
+  }, 960),
   'cephalo.workspace.image.isCephalo': handleActions<boolean, any>({
     [Event.SET_IS_CEPHALO_REQUESTED]: (_, { payload }) => payload.isCephalo,
     [Event.RESET_WORKSPACE_REQUESTED]: () => true,

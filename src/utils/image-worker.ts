@@ -14,17 +14,26 @@ import { ImageWorkerAction } from './constants';
 
 declare var self: DedicatedWorkerGlobalScope;
 
+const genericErrorMessage = (
+  'Failed to load the image. ' +
+  'Make sure it\s a valid image file and that your browser supports images of this type.'
+);
+
 function mapError({ message }: Error): ImageWorkerError {
   if (message.match(/mime/ig)) {
     return {
       code: ErrorCode.INCOMPATIBLE_IMAGE_TYPE,
-      message: (
-        'Failed to load the image. ' +
-        'Make sure it\s a valid image file and that your browser supports images of this type.'
-      ),
+      message: genericErrorMessage,
     };
   } else {
-    return { message, code: ErrorCode.UNKNOWN };
+    return {
+      message: (
+        genericErrorMessage + 
+        '\n' +
+        `Details: ${message}`
+      ),
+      code: ErrorCode.UNKNOWN
+    };
   }
 }
 
