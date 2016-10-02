@@ -77,8 +77,9 @@ const BRIGHTNESS = 0;
 const INVERT = 1;
 
 /**
- * A wrapper around a canvas element that provides a declarative API for setting cephalometric radiograph image and performing common edits like brightness and contrast.
- * This component use a React-like diffing mechanism to avoid expensive redraws of landmarks that have not changed
+ * A wrapper around a canvas element.
+ * Provides a declarative API for viewing landmarks on a cephalomertic image and performing common edits like brightness and contrast.
+ * This component uses a React-like diffing mechanism to avoid expensive redraws of landmarks that have not changed
  */
 export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, CephaloCanvasState> {
   defaultProps = {
@@ -120,11 +121,13 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, Cepha
           this.props.onClick(this.props.dispatch)(e);
         });
         this.setState(
-          {
-            canvas,
-            image,
-            landmarksGroup,
-          },
+          state => (
+            assign({}, state, {
+              canvas,
+              image,
+              landmarksGroup,
+            })
+          ),
           () => {
             this.handlePropChanges(this.props);
           },
@@ -227,7 +230,7 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, Cepha
       } else {
         console.warn(
           'Previous landmarks are identical to the new ones, ' +
-          'even though we had to perform a deep diff. ' + 
+          'but we had to perform a deep diff to figure this out. ' + 
           'This is a potentially wasted render cycle.'
         );
       }
