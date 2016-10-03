@@ -66,7 +66,7 @@ export const SNB = angleBetweenPoints(S, N, B);
  * Angle ANB is a custom landmark that is calculated as the SNA - SNB,
  * because otherwise it would not be a negative value in cases where it should be.
  */
-export const ANB = <CephaloLandmark>{
+export const ANB: BaseCephaloLandmark = {
   symbol: getSymbolForAngle(line(A, N), line(N, B)),
   type: 'angle',
   unit: 'degree',

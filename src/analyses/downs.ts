@@ -9,7 +9,7 @@ export default <Analysis>[
     stdDev: 5.1,
   },
   {
-    landmark: angleBetweenLines(line(Gn ,S), FH_PLANE, 'Y Axis', 'GnS-FH'),
+    landmark: angleBetweenLines(line(Gn, S), FH_PLANE, 'Y Axis', 'GnS-FH'),
     norm: 59.4,
     stdDev: 3.8,
   },

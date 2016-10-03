@@ -48,10 +48,10 @@ export function angleBetweenPoints(A: CephaloPoint, B: CephaloPoint, C: CephaloP
 
 export function point(symbol: string, name?: string, description?: string): CephaloPoint {
   return {
+    type: 'point',
     name,
     symbol,
     description,
-    type: 'point',
     components: [],
   }
 }
@@ -61,12 +61,22 @@ export function point(symbol: string, name?: string, description?: string): Ceph
  */
 export function line(A: CephaloPoint, B: CephaloPoint, name?: string, symbol?: string, unit: LinearUnit = 'mm'): CephaloLine {
   return {
+    type: 'line',
     name,
     unit,
     symbol: symbol || `${A.symbol}-${B.symbol}`,
-    type: 'line',
     components: [A, B],
   };
+}
+
+export function distance(A: CephaloPoint, B: CephaloPoint, name?: string, unit: LinearUnit = 'mm'): CephaloDistance {
+  return {
+    type: 'distance',
+    name,
+    unit,
+    components: [A, B],
+    symbol: `distance_${A.symbol}_${B.symbol}`,
+  }
 }
 
 const hasComponents: (m: CephaloLandmark) => boolean = m => m.components.length > 0;
@@ -122,31 +132,31 @@ import {
  * Calculates the value of a landmark on a cephalometric radiograph
  * 
  */
-export function evaluate(landmark: CephaloLandmark, mapper: CephaloMapper): GeometricalObject | number {
+export function evaluate(landmark: CephaloLandmark, mapper: CephaloMapper): GeometricalObject | number | undefined {
   if (landmark.calculate) {
     return landmark.calculate.apply(
       landmark, 
-      landmark.components.map(l => evaluate(l, mapper))
+      map(landmark.components, l => evaluate(l, mapper))
     );
   } else if (landmark.type === 'angle') {
     let result: number;
     if (landmark.components[0].type === 'point') {
-      const points: GeometricalPoint[] = map((landmark as CephaloAngle).components as CephaloPoint[], mapper.toPoint);
+      const points: GeometricalPoint[] = map(landmark.components as CephaloPoint[], mapper.toPoint);
       result = calculateAngleBetweenPoints(points[0], points[1], points[2]);
     } else {
-      const lines: GeometricalLine[] = map((landmark as CephaloAngle).components as CephaloLine[], mapper.toLine);
+      const lines: GeometricalLine[] = map(landmark.components as CephaloLine[], mapper.toLine);
       result = calculateAngleBetweenTwoLines(lines[0], lines[1]);
     }
     return landmark.unit === 'degree' ? radiansToDegrees(result) : result;
   } else if (landmark.type === 'distance') {
-    const points: GeometricalPoint[] = (<CephaloLine>landmark).components.map(mapper.toPoint);
+    const points: GeometricalPoint[] = map(landmark.components, mapper.toPoint);
     const result = calculateDistanceBetweenTwoPoints(points[0], points[1]) * mapper.scaleFactor;
-    const unit = (<CephaloLine>landmark).unit;
+    const unit = landmark.unit;
     return unit === 'mm' ? result : unit === 'cm' ? result / 10 : result / 25.4;
   } else if (landmark.type === 'line') {
-    return mapper.toLine(landmark as CephaloLine);
+    return mapper.toLine(landmark);
   } else if (landmark.type === 'point') {
-    return mapper.toPoint(landmark as CephaloPoint);
+    return mapper.toPoint(landmark);
   }
-  throw new TypeError(`Landmarks of this type (${landmark.type}) cannot be calculated`);
+  return undefined;
 }

@@ -51,7 +51,7 @@ interface CephaloEditorProps {
   onCanvasResized(e: ResizeObserverEntry): void;
   onCanvasClicked(e: fabric.IEvent): void;
   analysisSteps: Step[];
-  getStepState(step: Step): stepState;
+  getStepState(step: Step): StepState;
   getStepValue(step: Step): number | undefined;
 }
 

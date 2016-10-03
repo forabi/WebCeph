@@ -67,7 +67,7 @@ interface StateProps {
   landmarks: { [id: string]: GeometricalObject } | { };
   error?: { message: string };
   analysisSteps: CephaloLandmark[];
-  getStepState(step: Step): stepState;
+  getStepState(step: Step): StepState;
   onCanvasClicked(dispatch: Function): (e: fabric.IEvent & { e: MouseEvent }) => void;
   onFileDropped(dispatch: Function): (file: File) => void;
   getStepValue(step: Step): number | undefined;

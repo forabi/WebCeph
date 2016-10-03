@@ -1,16 +1,16 @@
 /// <reference path="./resize-observer.d.ts" />
 /// <reference path="./deep-diff.d.ts" />
 
-declare type AngularUnit = 'degree' | 'radian';
-declare type LinearUnit = 'mm' | 'cm' | 'in';
-declare type LandmarkType = 'angle' | 'point' | 'line' | 'distance'; 
+type AngularUnit = 'degree' | 'radian';
+type LinearUnit = 'mm' | 'cm' | 'in';
+type oLandmarkType = 'angle' | 'point' | 'line' | 'distance';
 
 /**
  * A generic interface that represents any cephalometric landmark, including
  * angles, lines and points.
  * Landmarks may also have names and units.
  */
-declare interface CephaloLandmark {
+interface BaseCephaloLandmark {
   name?: string,
   /**
    * Each landmark must have a symbol which acts as the unique identifier for that landmark.
@@ -32,37 +32,34 @@ declare interface CephaloLandmark {
   calculate?(...args: number[]): number,
 }
 
-declare interface MappedCephaloLandmark extends CephaloLandmark {
-  mappedTo?: GeometricalObject;
-  visible: boolean;
-}
-
-declare interface CephaloPoint extends CephaloLandmark {
+interface CephaloPoint extends BaseCephaloLandmark {
   type: 'point',
 }
 
-declare interface CephaloLine extends CephaloLandmark {
+ interface CephaloLine extends BaseCephaloLandmark {
   type: 'line',
   unit: LinearUnit,
   components: CephaloPoint[],
 }
 
-declare interface CephaloDistance extends CephaloLandmark {
+interface CephaloDistance extends BaseCephaloLandmark {
   type: 'distance';
   unit: LinearUnit;
   components: CephaloPoint[];
 }
 
-declare interface CephaloAngle extends CephaloLandmark {
-    type: 'angle';
-    unit: AngularUnit;
-    components: CephaloPoint[] | CephaloLine[];
+interface CephaloAngle extends BaseCephaloLandmark {
+  type: 'angle';
+  unit: AngularUnit;
+  components: CephaloPoint[] | CephaloLine[];
 }
+
+type CephaloLandmark = CephaloPoint | CephaloLine | CephaloAngle | CephaloDistance;
 
 /**
  * Describes a geometrical point in a 2D-plane
  */
-declare interface GeometricalPoint {
+interface GeometricalPoint {
   x: number,
   y: number,
 };
@@ -70,21 +67,21 @@ declare interface GeometricalPoint {
 /**
  * Describes a geometrical line in a 2D-plane
  */
-declare interface GeometricalLine {
+interface GeometricalLine {
   x1: number,
   x2: number,
   y1: number,
   y2: number,
 }
 
-declare type GeometricalObject = GeometricalLine | GeometricalPoint;
+type GeometricalObject = GeometricalLine | GeometricalPoint;
 
-declare type Analysis = Array<{ landmark: CephaloLandmark, norm: number, stdDev?: number }>;
+type Analysis = Array<{ landmark: CephaloLandmark, norm: number, stdDev?: number }>;
 
 /**
  * A Mapper object maps cephalometric landmarks to geometrical objects
  */
-declare interface CephaloMapper {
+interface CephaloMapper {
   toLine(landmark: CephaloLine): GeometricalLine;
   toPoint(landmark: CephaloPoint): GeometricalPoint;
   /**
@@ -94,11 +91,10 @@ declare interface CephaloMapper {
   scaleFactor: number;
 }
 
+type StepState = 'done' | 'current' | 'pending' | 'evaluating';
+type Step = CephaloLandmark & { title: string, state: StepState };
 
-declare type stepState = 'done' | 'current' | 'pending' | 'evaluating';
-declare type Step = CephaloLandmark & { title: string, state: stepState };
-
-declare interface StoreState {
+interface StoreState {
   'env.compatiblity.isIgnored': boolean;
   'env.compatiblity.missingFeatures': MissingBrowserFeature[];
   'env.compatiblity.isBeingChecked': boolean;

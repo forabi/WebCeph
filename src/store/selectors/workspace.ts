@@ -14,14 +14,36 @@ const imageDataSelector = (state: StoreState) => state['cephalo.workspace.image.
 
 export const stepsBeingEvaluatedSelector = (state: StoreState) => state['cephalo.workspace.analysis.stepsBeingEvaluated'];
 
+export const activeAnalysisStepsSelector = createSelector(
+  activeAnalysisSelector,
+  analysis => {
+    if (analysis !== null) {
+      return getStepsForAnalysis(analysis);
+    }
+    return [];
+  }
+);
+
+export const expectedNextLandmarkSelector = createSelector(
+  activeAnalysisStepsSelector,
+  mappedLandmarksSelector,
+  (steps, setLandmarks) => (find(
+    steps,
+    x => x.type === 'point' && !has(setLandmarks, x.symbol),
+  ) || null) as CephaloLandmark | null,
+);
+
 export const getStepStateSelector = createSelector(
   stepsBeingEvaluatedSelector,
   mappedLandmarksSelector,
-  (stepsBeingEvaluated, setLandmarks) => (landmark: CephaloLandmark): stepState => {
-    if (includes(stepsBeingEvaluated, landmark.symbol)) {
-      return 'evaluating';
-    } else if (has(setLandmarks, landmark.symbol)) {
+  expectedNextLandmarkSelector,
+  (stepsBeingEvaluated, setLandmarks, expectedLandmark) => (landmark: CephaloLandmark): StepState => {
+    if (has(setLandmarks, landmark.symbol)) {
       return 'done';
+    } else if (includes(stepsBeingEvaluated, landmark.symbol)) {
+      return 'evaluating';
+    } else if (expectedLandmark && expectedLandmark.symbol === landmark.symbol) {
+      return 'current';
     } else {
       return 'pending';
     }
@@ -44,18 +66,19 @@ export const cephaloMapperSelector = createSelector(
         y2: B.y,
       }
     };
-    return { toPoint, toLine, scaleFactor: 1 };
+    // @TODO: Handle scale factor
+    return { toPoint, toLine, scaleFactor: 1 / 3.2 };
   }
 )
 
 export const mapLandmarkToGeometricalObject = createSelector(
   cephaloMapperSelector,
-  cephaloMapper => (l: CephaloLandmark) => {
+  cephaloMapper => (landmark: CephaloLandmark) => {
     const { toLine, toPoint } = cephaloMapper;
-    if (l.type === 'line') {
-      return toLine(l as CephaloLine);
-    } else if (l.type === 'point') {
-      return toPoint(l as CephaloPoint);
+    if (landmark.type === 'line') {
+      return toLine(landmark);
+    } else if (landmark.type === 'point') {
+      return toPoint(landmark);
     }
     return undefined;
   },
@@ -74,16 +97,6 @@ export const isAnalysisActiveSelector = createSelector(
   ),
 )
 
-export const activeAnalysisStepsSelector = createSelector(
-  activeAnalysisSelector,
-  analysis => {
-    if (analysis !== null) {
-      return getStepsForAnalysis(analysis);
-    }
-    return [];
-  }
-);
-
 export const completedStepsSelector = createSelector(
   activeAnalysisStepsSelector,
   mappedLandmarksSelector,
@@ -93,19 +106,10 @@ export const completedStepsSelector = createSelector(
 export const isAnalysisCompleteSelector = createSelector(
   mappedLandmarksSelector,
   activeAnalysisSelector,
-  (setLandmarks, activeAnalysis) => {
+  (mappedLandmarks, activeAnalysis) => {
     if (!activeAnalysis) return false;
-    return every(activeAnalysis, step => has(setLandmarks, step.landmark.symbol));
+    return every(activeAnalysis, step => has(mappedLandmarks, step.landmark.symbol));
   },
-);
-
-export const expectedNextLandmarkSelector = createSelector(
-  activeAnalysisStepsSelector,
-  mappedLandmarksSelector,
-  (steps, setLandmarks) => (find(
-    steps,
-    x => x.type === 'point' && !has(setLandmarks, x.symbol),
-  ) || null) as CephaloLandmark | null,
 );
 
 import {

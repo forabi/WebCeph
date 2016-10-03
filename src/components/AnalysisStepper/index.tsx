@@ -7,7 +7,7 @@ const classes = require('./style.scss');
 interface AnalysisStepperProps {
   className?: string,
   steps: Step[];
-  getStepState(step: Step): stepState;
+  getStepState(step: Step): StepState;
   getStepValue(step: Step): number | undefined;
   showResults(): void;
   removeLandmark(landmark: CephaloLandmark): void;
@@ -32,7 +32,7 @@ const icons: { [id: string]: JSX.Element } = {
 
 import { descriptions } from './strings';
 
-const getDescriptionForStep= (landmark: CephaloLandmark) => {
+const getDescriptionForStep = (landmark: CephaloLandmark) => {
   return descriptions[landmark.symbol] || landmark.description || null;
 }
 
@@ -43,8 +43,10 @@ const getTitleForStep = (landmark: CephaloLandmark) => {
     return `Draw line ${landmark.symbol}${ landmark.name ? ` (${landmark.name})` : '' }`;
   } else if (landmark.type === 'angle') {
     return `Calculate angle ${landmark.symbol}${ landmark.name ? ` (${landmark.name})` : '' }`;
+  } else if (landmark.type === 'distance') {
+    return `Measure distance between points ${landmark.components[0].symbol} and ${landmark.components[1].symbol}`
   }
-  throw new TypeError(`Cannot handle this type of landmarks (${landmark.type})`);
+  return undefined;
 }
 
 export const AnalysisStepper = pure((props: AnalysisStepperProps) => {
@@ -66,7 +68,7 @@ export const AnalysisStepper = pure((props: AnalysisStepperProps) => {
               primaryText={getTitleForStep(step)}
               secondaryText={getDescriptionForStep(step) || undefined}
               leftIcon={icons[getStepState(step)]}
-              rightIcon={ step.type === 'angle' && typeof value === 'number' ? <span>{value.toFixed(1)}</span> : undefined}
+              rightIcon={ typeof value === 'number' ? <span>{value.toFixed(1)}</span> : undefined}
             />
           </div>
         );

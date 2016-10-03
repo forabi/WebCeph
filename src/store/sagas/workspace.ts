@@ -96,7 +96,7 @@ function* performAutomaticStep(): IterableIterator<Effect> {
   performance.mark('startAutomaticEvaluation');
   const steps: CephaloLandmark[] = yield select(activeAnalysisStepsSelector);
   const cephaloMapper: CephaloMapper = yield select(cephaloMapperSelector);
-  const getStepState: (s: CephaloLandmark) => stepState = yield select(getStepStateSelector);
+  const getStepState: (s: CephaloLandmark) => StepState = yield select(getStepStateSelector);
   const eligibleSteps = reject(steps, s => isManual(s) || getStepState(s) !== 'pending');
   for (const step of eligibleSteps) {
     console.info('Evaluationg step %s for automatic tracing', step.symbol);
@@ -107,12 +107,16 @@ function* performAutomaticStep(): IterableIterator<Effect> {
       console.log('Found step eligible for automatic evaluation', step.symbol);
       yield put({ type: Event.STEP_EVALUATION_STARTED, payload: step.symbol });
       const value = evaluate(step, cephaloMapper);
-      yield put(addLandmark(step.symbol, value));
-      yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
-      yield put(tryAutomaticSteps());
+      if (value) {
+        yield put(addLandmark(step.symbol, value));
+        yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
+        yield put(tryAutomaticSteps());
+      } else {
+        yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
+      }
     } else {
       console.info('Step %s is not eligible for automatic tracing', step.symbol);
-      yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
+      // yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
     }
   };
   performance.mark('endAutomaticEvaluation');
