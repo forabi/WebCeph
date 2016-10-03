@@ -84,16 +84,18 @@ function* loadImage({ payload }: { payload: { file: File, height: number, width:
 import {
   activeAnalysisStepsSelector,
   getStepStateSelector,
-  mapLandmarkToGeometricalObject,
+  cephaloMapperSelector,
 } from '../selectors/workspace';
 import { addLandmark, tryAutomaticSteps } from '../../actions/workspace';
+
+import { evaluate } from '../../analyses/helpers';
 
 const isManual = (step: CephaloLandmark) => step.type === 'point';
 
 function* performAutomaticStep(): IterableIterator<Effect> {
   performance.mark('startAutomaticEvaluation');
   const steps: CephaloLandmark[] = yield select(activeAnalysisStepsSelector);
-  const toGeoObject: (l: CephaloLandmark) => GeometricalObject | undefined = yield select(mapLandmarkToGeometricalObject);
+  const cephaloMapper: CephaloMapper = yield select(cephaloMapperSelector);
   const getStepState: (s: CephaloLandmark) => stepState = yield select(getStepStateSelector);
   const eligibleSteps = reject(steps, s => isManual(s) || getStepState(s) !== 'pending');
   for (const step of eligibleSteps) {
@@ -104,16 +106,10 @@ function* performAutomaticStep(): IterableIterator<Effect> {
     )) {
       console.log('Found step eligible for automatic evaluation', step.symbol);
       yield put({ type: Event.STEP_EVALUATION_STARTED, payload: step.symbol });
-      const geoObject = toGeoObject(step);
-      if (geoObject) {
-        yield put(addLandmark(step.symbol, geoObject));
-        yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
-        yield put(tryAutomaticSteps());
-      } else {
-        yield put(addLandmark(step.symbol, true));
-        yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
-        yield put(tryAutomaticSteps());
-      }
+      const value = evaluate(step, cephaloMapper);
+      yield put(addLandmark(step.symbol, value));
+      yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
+      yield put(tryAutomaticSteps());
     } else {
       console.info('Step %s is not eligible for automatic tracing', step.symbol);
       yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });

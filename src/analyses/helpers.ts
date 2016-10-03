@@ -122,11 +122,11 @@ import {
  * Calculates the value of a landmark on a cephalometric radiograph
  * 
  */
-export function calculate(landmark: CephaloLandmark, mapper: CephaloMapper): GeometricalObject | number {
+export function evaluate(landmark: CephaloLandmark, mapper: CephaloMapper): GeometricalObject | number {
   if (landmark.calculate) {
     return landmark.calculate.apply(
       landmark, 
-      landmark.components.map(l => calculate(l, mapper))
+      landmark.components.map(l => evaluate(l, mapper))
     );
   } else if (landmark.type === 'angle') {
     let result: number;

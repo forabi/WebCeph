@@ -61,26 +61,9 @@ export const mapLandmarkToGeometricalObject = createSelector(
   },
 );
 
-import { calculate } from '../../analyses/helpers';
-
-export const calculateLandmarkSelector = createSelector(
-  getStepStateSelector,
-  cephaloMapperSelector,
-  (getStepState, cephaloMapper) => (step: Step) => {
-    if (getStepState(step) === 'done') {
-      try {
-        const result = calculate(step, cephaloMapper);
-        if (typeof result === 'number') {
-          return result;
-        }
-        return undefined;
-      } catch (e) {
-        console.error('Error calculating landmark:', e);
-        return undefined;
-      }
-    }
-    return undefined;
-  }
+export const getLandmarkValueSelector = createSelector(
+  mappedLandmarksSelector,
+  (mappedLandmarksSelector) => (step: Step | CephaloLandmark) => mappedLandmarksSelector[step.symbol],
 )
 
 export const isAnalysisActiveSelector = createSelector(

@@ -87,7 +87,7 @@ const reducer = combineReducers({
     [Event.FETCH_ANALYSIS_FAILED]: () => false,
     [Event.FETCH_ANALYSIS_REQUESTED]: () => true,
   }, false),
-  'cephalo.workspace.landmarks': handleActions<any, any>({
+  'cephalo.workspace.landmarks': handleActions<any, { symbol: string, value: GeometricalObject | number }>({
     [Event.ADD_LANDMARK_REQUESTED]: (state, { payload }) => assign(
       { },
       state,

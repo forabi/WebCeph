@@ -28,7 +28,7 @@ import {
   onCanvasClickedSelector,
   onFileDroppedSelector,
   mappedLandmarksSelector,
-  calculateLandmarkSelector,
+  getLandmarkValueSelector,
 } from '../../store/selectors/workspace';
 
 import {
@@ -151,7 +151,7 @@ export default connect(
     getStepState: getStepStateSelector(state),
     onCanvasClicked: onCanvasClickedSelector(state),
     onFileDropped: onFileDroppedSelector(state),
-    getStepValue: calculateLandmarkSelector(state),
+    getStepValue: getLandmarkValueSelector(state),
   } as StateProps),
 
   // mapDispatchToProps

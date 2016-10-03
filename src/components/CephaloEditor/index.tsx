@@ -202,7 +202,7 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
                 removeLandmark={this.props.onRemoveLandmarkRequested}
                 steps={this.props.analysisSteps}
                 getStepState={this.props.getStepState}
-                calculateLandmark={this.props.getStepValue}
+                getStepValue={this.props.getStepValue}
               />
             ) : (
               <div className={classes.list_steps} />
