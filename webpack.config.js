@@ -4,6 +4,7 @@ const path = require('path');
 const env = require('./env');
 const WebpackHTMLPlugin = require('webpack-html-plugin');
 const { compact } = require('lodash');
+const autoprefixer = require('autoprefixer');
 
 let Dashboard;
 let DashboardPlugin;
@@ -29,9 +30,12 @@ const localCSSLoaders = [
       localIdentName: '[name]_[local]_[hash:base64:5]',
     },
   },
+  'postcss',
 ];
 
-const globalCSSLoaders = ['style', 'css'];
+const globalCSSLoaders = [
+  'style', 'css', 'postcss',
+];
 
 const sassLoaders = [
   {
@@ -46,7 +50,7 @@ const config = {
     inline: true,
     contentBase: buildPath,
     hot: env.isHot,
-  } : false,
+  } : undefined,
 
   devtool: env.isDev ? 'eval' : false,
 
@@ -123,14 +127,14 @@ const config = {
         include: [
           path.resolve(path.resolve(__dirname, 'src/components')),
         ],
-        use: [].concat(localCSSLoaders, sassLoaders),
+        use: [...localCSSLoaders, ...sassLoaders],
       },
       {
         test: /\.scss$/,
         include: [
           path.resolve(path.resolve(__dirname, 'src/layout')),
         ],
-        use: [].concat(globalCSSLoaders, sassLoaders),
+        use: [...globalCSSLoaders, ...sassLoaders],
       },
       {
         test: /\.(jpg|png)$/,
@@ -162,6 +166,16 @@ const config = {
   },
 
   plugins: compact([
+    new webpack.LoaderOptionsPlugin({
+      options: {
+        context: __dirname,
+        postcss() {
+          return {
+            defaults: [autoprefixer],
+          };
+        },
+      },
+    }),
     hot(new webpack.HotModuleReplacementPlugin()),
     dashboard ? new DashboardPlugin(dashboard.setData) : null,
     fail,
@@ -191,7 +205,10 @@ const config = {
     }),
     prod(new webpack.optimize.OccurrenceOrderPlugin(true)),
     prod(new webpack.optimize.UglifyJsPlugin({
-      compress: { warnings: false },
+      compress: {
+        drop_console: true,
+        warnings: false,
+      },
     })),
   ]),
 };
