@@ -84,7 +84,7 @@ function* loadImage({ payload }: { payload: { file: File, height: number, width:
 import {
   activeAnalysisStepsSelector,
   getStepStateSelector,
-  mappedLandmarksSelector,
+  mapLandmarkToGeometricalObject,
 } from '../selectors/workspace';
 import { addLandmark, tryAutomaticSteps } from '../../actions/workspace';
 
@@ -93,7 +93,7 @@ const isManual = (step: CephaloLandmark) => step.type === 'point';
 function* performAutomaticStep(): IterableIterator<Effect> {
   performance.mark('startAutomaticEvaluation');
   const steps: CephaloLandmark[] = yield select(activeAnalysisStepsSelector);
-  const setLandmarks: { [id: string]: GeometricalObject } = yield select(mappedLandmarksSelector);
+  const toGeoObject: (l: CephaloLandmark) => GeometricalObject | undefined = yield select(mapLandmarkToGeometricalObject);
   const getStepState: (s: CephaloLandmark) => stepState = yield select(getStepStateSelector);
   const eligibleSteps = reject(steps, s => isManual(s) || getStepState(s) !== 'pending');
   for (const step of eligibleSteps) {
@@ -104,22 +104,19 @@ function* performAutomaticStep(): IterableIterator<Effect> {
     )) {
       console.log('Found step eligible for automatic evaluation', step.symbol);
       yield put({ type: Event.STEP_EVALUATION_STARTED, payload: step.symbol });
-      // @TODO: Calculate things here
-      if (step.type === 'line') {
-        const line: GeometricalLine = {
-          x1: setLandmarks[step.components[0].symbol].x,
-          y1: setLandmarks[step.components[0].symbol].y,
-          x2: setLandmarks[step.components[1].symbol].x,
-          y2: setLandmarks[step.components[1].symbol].y,
-        };
-        yield put(addLandmark(step.symbol, line));
-      } else if (step.type === 'angle') {
-        yield put(addLandmark(step.symbol, 50));
+      const geoObject = toGeoObject(step);
+      if (geoObject) {
+        yield put(addLandmark(step.symbol, geoObject));
+        yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
+        yield put(tryAutomaticSteps());
+      } else {
+        yield put(addLandmark(step.symbol, true));
+        yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
+        yield put(tryAutomaticSteps());
       }
-      yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
-      yield put(tryAutomaticSteps());
     } else {
       console.info('Step %s is not eligible for automatic tracing', step.symbol);
+      yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
     }
   };
   performance.mark('endAutomaticEvaluation');

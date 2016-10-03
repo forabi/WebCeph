@@ -28,6 +28,61 @@ export const getStepStateSelector = createSelector(
   },
 );
 
+export const cephaloMapperSelector = createSelector(
+  mappedLandmarksSelector,
+  (mappedLandmarks): CephaloMapper => {
+    const toPoint = (cephaloPoint: CephaloPoint) => {
+      return mappedLandmarks[cephaloPoint.symbol] as GeometricalPoint;
+    };
+    const toLine = (cephaloLine: CephaloLine) => {
+      const A = toPoint(cephaloLine.components[0]);
+      const B = toPoint(cephaloLine.components[1]);
+      return {
+        x1: A.x,
+        y1: A.y,
+        x2: B.x,
+        y2: B.y,
+      }
+    };
+    return { toPoint, toLine, scaleFactor: 1 };
+  }
+)
+
+export const mapLandmarkToGeometricalObject = createSelector(
+  cephaloMapperSelector,
+  cephaloMapper => (l: CephaloLandmark) => {
+    const { toLine, toPoint } = cephaloMapper;
+    if (l.type === 'line') {
+      return toLine(l as CephaloLine);
+    } else if (l.type === 'point') {
+      return toPoint(l as CephaloPoint);
+    }
+    return undefined;
+  },
+);
+
+import { calculate } from '../../analyses/helpers';
+
+export const calculateLandmarkSelector = createSelector(
+  getStepStateSelector,
+  cephaloMapperSelector,
+  (getStepState, cephaloMapper) => (step: Step) => {
+    if (getStepState(step) === 'done') {
+      try {
+        const result = calculate(step, cephaloMapper);
+        if (typeof result === 'number') {
+          return result;
+        }
+        return undefined;
+      } catch (e) {
+        console.error('Error calculating landmark:', e);
+        return undefined;
+      }
+    }
+    return undefined;
+  }
+)
+
 export const isAnalysisActiveSelector = createSelector(
   activeAnalysisSelector,
   imageDataSelector,
@@ -82,7 +137,7 @@ export const onCanvasClickedSelector = createSelector(
     return (e => {
       if (expectedLandmark) {
         dispatch(
-          addLandmark(expectedLandmark.symbol, { x: e.e.offsetX, y: e.e.offsetY })
+          addLandmark(expectedLandmark.symbol, { x: e.e.layerX, y: e.e.layerY })
         );
         dispatch(tryAutomaticSteps());
       }

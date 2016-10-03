@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { List, ListItem } from 'material-ui/List';
-import RaisedButton from 'material-ui/RaisedButton';
 import pure from 'recompose/pure';
 
 const classes = require('./style.scss');
 
 interface AnalysisStepperProps {
   className?: string,
-  isAnalysisComplete: boolean;
   steps: Step[];
   getStepState(step: Step): stepState;
+  getStepValue(step: Step): number | undefined;
   showResults(): void;
   removeLandmark(landmark: CephaloLandmark): void;
   editLandmark(landmark: CephaloLandmark): void;
@@ -52,36 +51,29 @@ export const AnalysisStepper = pure((props: AnalysisStepperProps) => {
   const {
     steps,
     getStepState,
-    isAnalysisComplete,
     showResults,
+    getStepValue,
     removeLandmark, editLandmark,
   } = props;
-  if (isAnalysisComplete) {
-    return (
-      <div className={props.className}>
-        Analysis complete.
-        <RaisedButton label="Show results" primary onClick={showResults} />
-      </div>
-    );
-  } else {
-    return (
-      <List className={props.className}>
-      {
-        steps.map((step) => {
-          return (
-            <div key={step.symbol}>
-              <ListItem
-                primaryText={getTitleForStep(step)}
-                secondaryText={getDescriptionForStep(step) || undefined}
-                leftIcon={icons[getStepState(step)]}
-              />
-            </div>
-          );
-        })
-      }
-      </List>
-    );
-  }
+  return (
+    <List className={props.className}>
+    {
+      steps.map((step) => {
+        const value = getStepValue(step);
+        return (
+          <div key={step.symbol}>
+            <ListItem
+              primaryText={getTitleForStep(step)}
+              secondaryText={getDescriptionForStep(step) || undefined}
+              leftIcon={icons[getStepState(step)]}
+              rightIcon={ step.type === 'angle' && typeof value === 'number' ? <span>{value.toFixed(1)}</span> : undefined}
+            />
+          </div>
+        );
+      })
+    }
+    </List>
+  );
 });
 
 export default AnalysisStepper;

@@ -7,6 +7,7 @@ import assign from 'lodash/assign';
 import omit from 'lodash/omit';
 import without from 'lodash/without';
 import common from '../analyses/common';
+import isPlainObject from 'lodash/isPlainObject';
 
 declare const window: Window & { devToolsExtension?: () => any };
 
@@ -91,9 +92,11 @@ const reducer = combineReducers({
       { },
       state,
       {
-        [payload.symbol]: assign(
-          { },
-          payload.value,
+        [payload.symbol]: (
+          isPlainObject(payload.value) ? assign(
+            { },
+            payload.value,
+          ) : payload.value
         ),
       },
     ),

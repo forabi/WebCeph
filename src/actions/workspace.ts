@@ -2,7 +2,7 @@ import { Event } from '../utils/constants';
 import { createAction } from 'redux-actions';
 
 /* Tracing actions */
-export const addLandmark: (symbol: string, value: GeometricalObject) => any = createAction(
+export const addLandmark: (symbol: string, value: GeometricalObject | true) => any = createAction(
   Event.ADD_LANDMARK_REQUESTED,
   (symbol: string, value: GeometricalObject) => ({ symbol, value }),
 );

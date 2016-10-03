@@ -52,6 +52,7 @@ interface CephaloEditorProps {
   onCanvasClicked(e: fabric.IEvent): void;
   analysisSteps: Step[];
   getStepState(step: Step): stepState;
+  getStepValue(step: Step): number | undefined;
 }
 
 interface CephaloEditorState {
@@ -199,9 +200,9 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
                 showResults={this.props.onShowAnalysisResultsClicked}
                 editLandmark={this.props.onRemoveLandmarkRequested}
                 removeLandmark={this.props.onRemoveLandmarkRequested}
-                isAnalysisComplete={this.props.isAnalysisComplete}
                 steps={this.props.analysisSteps}
                 getStepState={this.props.getStepState}
+                calculateLandmark={this.props.getStepValue}
               />
             ) : (
               <div className={classes.list_steps} />

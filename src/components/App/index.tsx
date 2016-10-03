@@ -28,6 +28,7 @@ import {
   onCanvasClickedSelector,
   onFileDroppedSelector,
   mappedLandmarksSelector,
+  calculateLandmarkSelector,
 } from '../../store/selectors/workspace';
 
 import {
@@ -69,6 +70,7 @@ interface StateProps {
   getStepState(step: Step): stepState;
   onCanvasClicked(dispatch: Function): (e: fabric.IEvent & { e: MouseEvent }) => void;
   onFileDropped(dispatch: Function): (file: File) => void;
+  getStepValue(step: Step): number | undefined;
 }
 
 interface DispatchProps {
@@ -149,6 +151,7 @@ export default connect(
     getStepState: getStepStateSelector(state),
     onCanvasClicked: onCanvasClickedSelector(state),
     onFileDropped: onFileDroppedSelector(state),
+    getStepValue: calculateLandmarkSelector(state),
   } as StateProps),
 
   // mapDispatchToProps

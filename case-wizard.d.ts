@@ -3,7 +3,7 @@
 
 declare type AngularUnit = 'degree' | 'radian';
 declare type LinearUnit = 'mm' | 'cm' | 'in';
-declare type LandmarkType = 'angle' | 'point' | 'line'; 
+declare type LandmarkType = 'angle' | 'point' | 'line' | 'distance'; 
 
 /**
  * A generic interface that represents any cephalometric landmark, including
@@ -47,10 +47,16 @@ declare interface CephaloLine extends CephaloLandmark {
   components: CephaloPoint[],
 }
 
+declare interface CephaloDistance extends CephaloLandmark {
+  type: 'distance';
+  unit: LinearUnit;
+  components: CephaloPoint[];
+}
+
 declare interface CephaloAngle extends CephaloLandmark {
     type: 'angle';
     unit: AngularUnit;
-    components: CephaloLine[]
+    components: CephaloPoint[] | CephaloLine[];
 }
 
 /**
@@ -120,9 +126,9 @@ declare interface StoreState {
   'cephalo.workspace.analysis.stepsBeingEvaluated': string[];
   'cephalo.workspace.analysis.isLoading': boolean;
   'cephalo.workspace.landmarks': {
-    [id: string]: GeometricalObject & {
+    [id: string]: true | (GeometricalObject & {
       visible?: boolean;
-    };
+    });
   };
 }
 
