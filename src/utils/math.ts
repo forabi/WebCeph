@@ -1,9 +1,19 @@
+import has from 'lodash/has';
+
 export function radiansToDegrees(value: number): number {
   return value * 180 / Math.PI;
 }
 
 export function degreesToRadians(value: number): number {
   return value *  Math.PI / 180;
+}
+
+export function isGeometricalPoint(object: any): object is GeometricalPoint {
+  return has(object, 'x') && has(object, 'y');
+}
+
+export function isGeometricalLine(object: any): object is GeometricalLine {
+  return has(object, 'x2') && has(object, 'y1') && has(object, 'x2') && has(object, 'y2');
 }
 
 
