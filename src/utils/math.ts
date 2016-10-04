@@ -16,6 +16,10 @@ export function isGeometricalLine(object: any): object is GeometricalLine {
   return has(object, 'x2') && has(object, 'y1') && has(object, 'x2') && has(object, 'y2');
 }
 
+export function isBehind(point: GeometricalPoint, line: GeometricalLine) {
+  return ((line.x2 - line.x1) * (point.y - line.y1) - (line.y2 - line.y1) * (point.x - line.x1)) > 0;
+} 
+
 
 /**
  * Calculates distance between two points
