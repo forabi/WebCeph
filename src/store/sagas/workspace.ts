@@ -1,6 +1,6 @@
 import uniqueId from 'lodash/uniqueId';
 import { Event } from '../../utils/constants';
-import { takeLatest, eventChannel, END, Channel } from 'redux-saga';
+import { takeLatest, takeEvery, eventChannel, END, Channel } from 'redux-saga';
 import { put, take, fork, call, select, Effect } from 'redux-saga/effects';
 import { ImageWorkerAction } from '../../utils/constants';
 import { ImageWorkerInstance, ImageWorkerEvent, ImageWorkerResponse } from '../../utils/image-worker.d';
@@ -125,7 +125,7 @@ function* performAutomaticStep(): IterableIterator<Effect> {
 
 function* watchWorkspace() {
   yield fork(takeLatest, Event.LOAD_IMAGE_REQUESTED, loadImage);
-  yield fork(takeLatest, Event.TRY_AUTOMATIC_STEPS_REQUESTED, performAutomaticStep);
+  yield fork(takeEvery, Event.TRY_AUTOMATIC_STEPS_REQUESTED, performAutomaticStep);
 }
 
 export default watchWorkspace;
