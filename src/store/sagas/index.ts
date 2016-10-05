@@ -1,9 +1,11 @@
 import { fork } from 'redux-saga/effects';
-import watchWorkspace from './workspace';
+import watchImageRequests from './image';
+import watchSteps from './evaluation';
 import envSaga from './env';
 
 function* rootSaga() {
-  yield fork(watchWorkspace);
+  yield fork(watchImageRequests);
+  yield fork(watchSteps);
   yield fork(envSaga);
 }
 
