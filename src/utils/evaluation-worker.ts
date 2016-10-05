@@ -59,8 +59,9 @@ self.addEventListener('message', ({ data }) => {
         postMessage(addLandmark(step.symbol, value));
         postMessage({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
         postMessage(tryAutomaticSteps());
+      } else {
+        postMessage({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
       }
-      self.postMessage({ symbol: step.symbol, value });
     } else {
       console.info('Step %s is not eligible for automatic tracing', step.symbol);
       // yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
