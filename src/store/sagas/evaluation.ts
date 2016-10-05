@@ -31,7 +31,7 @@ function evaluateInWorker(state: any) {
     }
     performance.mark('worker message sent');
     worker.addEventListener('message', listener);
-    worker.postMessage(JSON.stringify(state));
+    worker.postMessage(state);
     return () => {
       worker.removeEventListener('message', listener);
       worker.terminate();

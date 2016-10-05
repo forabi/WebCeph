@@ -43,8 +43,7 @@ const getStepStateSelector = (stepsBeingEvaluated, mappedLandmarks, expectedLand
 };
 
 self.addEventListener('message', ({ data }) => {
-  const state = JSON.parse(data);
-  const { mappedLandmarks, stepsBeingEvaluted, expectedLandmark } = state;
+  const { mappedLandmarks, stepsBeingEvaluted, expectedLandmark } = data;
   const getStepState = getStepStateSelector(stepsBeingEvaluted, mappedLandmarks, expectedLandmark);
   const cephaloMapper: CephaloMapper = getCephaloMapper(mappedLandmarks);
   const eligibleSteps = reject(steps, s => isManual(s) || getStepState(s) !== 'pending');
