@@ -54,17 +54,18 @@ export const FH_PLANE = line(Po, Or, 'Frankfort Horizontal Plane', 'FH');
 export const SELLA_NASION_LINE = line(S, N);
 
 /**
- * Angle SNA describes the skeletal relation of the maxilla to the skull
+ * SNA (sella, nasion, A point) indicates whether or not the maxilla is normal, prognathic, or retrognathic.
  */
 export const SNA = angleBetweenPoints(S, N, A);
 
 /**
- * Angle SNB describes the skeletal relation of the mandible to the skull
+ * SNB (sella, nasion, B point) indicates whether or not the mandible is normal, prognathic, or retrognathic.
  */
 export const SNB = angleBetweenPoints(S, N, B);
 
 /**
- * Angle ANB is a custom landmark that is calculated as the SNA - SNB,
+ * ANB (A point, nasion, B point) indicates whether the skeletal relationship between the maxilla and mandible is a normal skeletal class I (+2 degrees), a skeletal Class II (+4 degrees or more), or skeletal class III (0 or negative) relationship.
+ * ANB is a custom landmark that is calculated as the SNA - SNB,
  * because otherwise it would not be a negative value in cases where it should be.
  */
 export const ANB: BaseCephaloLandmark = {
@@ -77,7 +78,7 @@ export const ANB: BaseCephaloLandmark = {
   },
 };
 
-export const components = [
+export const components: AnalysisComponent[] = [
   {
     landmark: ANB,
     norm: 2,
@@ -93,7 +94,7 @@ export const components = [
 ];
 
 
-const interpretANB = (ANB: number, min = 0, max = 4) => {
+export const interpretANB = (ANB: number, min = 0, max = 4) => {
   if (ANB > max) {
     return AnalysisResult.CLASS_II_SKELETAL_PATTERN;
   } else if (ANB < min) {
@@ -103,7 +104,7 @@ const interpretANB = (ANB: number, min = 0, max = 4) => {
   }
 };
 
-const interpretSNA = (SNA: number, min = 80, max = 84) => {
+export const interpretSNA = (SNA: number, min = 80, max = 84) => {
   if (SNA > max) {
     return AnalysisResult.PROGNATHIC_MAXILLA;
   } else if (SNA < min) {
@@ -113,7 +114,7 @@ const interpretSNA = (SNA: number, min = 80, max = 84) => {
   }
 };
 
-const interpretSNB = (SNB: number, min = 78, max = 82) => {
+export const interpretSNB = (SNB: number, min = 78, max = 82) => {
   if (SNB > max) {
     return AnalysisResult.PROGNATHIC_MANDIBLE;
   } else if (SNB < min) {
@@ -123,7 +124,7 @@ const interpretSNB = (SNB: number, min = 78, max = 82) => {
   }
 };
 
-type EvalutedValues = {
+export interface EvaluatedValues {
   SNA?: number;
   SNB?: number;
   ANB?: number;
@@ -132,7 +133,7 @@ type EvalutedValues = {
 const analysis: Analysis = {
   id: 'commons',
   components,
-  interpret(values: EvalutedValues) {
+  interpret(values: EvaluatedValues) {
     const results: AnalysisResult[] = [];
     if (has(values, 'ANB')) results.push(interpretANB(values.ANB as number));
     if (has(values, 'SNA')) results.push(interpretSNA(values.SNA as number));

@@ -98,6 +98,11 @@ enum AnalysisResult {
   RETROGNATHIC_MANDIBLE,
   /** Indicates the mandible is neither retrognathic nor prognathic */
   NORMAL_MANDIBLE,
+
+  // Skeletal profile
+  NORMAL_SKELETAL_PROFILE,
+  CONCAVE_SKELETAL_PROFILE,
+  CONVEX_SKELETAL_PROFILE,
 }
 
 type AnalysisComponent = {

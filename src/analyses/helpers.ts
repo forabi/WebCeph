@@ -118,7 +118,7 @@ export function getStepsForLandmarks(landmarks: CephaloLandmark[]): CephaloLandm
 }
 
 export function getStepsForAnalysis(analysis: Analysis): CephaloLandmark[] {
-  return getStepsForLandmarks(analysis.map(c => c.landmark));
+  return getStepsForLandmarks(analysis.components.map(c => c.landmark));
 }
 
 import {
