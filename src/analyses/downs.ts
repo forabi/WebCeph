@@ -1,4 +1,3 @@
-import has from 'lodash/has';
 import assign from 'lodash/assign';
 
 import { angleBetweenPoints, line, angleBetweenLines } from './helpers';
@@ -78,7 +77,7 @@ const analysis: Analysis = {
   interpret(values) {
     const results: AnalysisResult[] = common.interpret(values);
     // @TODO
-    if (has(values, ANGLE_OF_CONVEXITY.symbol)){
+    if (values[ANGLE_OF_CONVEXITY.symbol] !== undefined){
       results.push(
         interpretAngleOfConvexity(values[ANGLE_OF_CONVEXITY.symbol] as number),
       );

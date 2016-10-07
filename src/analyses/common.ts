@@ -1,4 +1,3 @@
-import has from 'lodash/has';
 import { angleBetweenPoints, line, point, getSymbolForAngle } from './helpers';
 import { AnalysisResultSeverity, AnalysisResultType } from '../../constants';
 
@@ -174,9 +173,9 @@ const analysis: Analysis = {
   components,
   interpret(values: EvaluatedValues) {
     const results: AnalysisResult[] = [];
-    if (has(values, 'ANB')) results.push(interpretANB(values.ANB as number));
-    if (has(values, 'SNA')) results.push(interpretSNA(values.SNA as number));
-    if (has(values, 'SNB')) results.push(interpretSNB(values.SNB as number));
+    if (values.ANB !== undefined) results.push(interpretANB(values.ANB as number));
+    if (values.SNA !== undefined) results.push(interpretSNA(values.SNA as number));
+    if (values.SNB !== undefined) results.push(interpretSNB(values.SNB as number));
     return results;
   }
 }
