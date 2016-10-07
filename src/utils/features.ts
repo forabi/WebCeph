@@ -88,6 +88,9 @@ export default {
   inlinesvg: {
     name: 'Inline SVG',
   },
+  svgfilters: {
+    name: 'SVG Filters',
+  },
   filereader: {
     name: 'FileReader API',
   },

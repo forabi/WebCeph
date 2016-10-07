@@ -185,7 +185,7 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
                 <Slider
                   style={{ width: 200, margin: 15 }}
                   description="Brightness"
-                  min={0} max={255}
+                  min={0} max={100}
                   defaultValue={this.props.brightness}
                   onChange={this.setBrightness}
                 />

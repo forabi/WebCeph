@@ -68,9 +68,9 @@ const reducer = combineReducers({
   }, false),
   'cephalo.workspace.image.brightness': handleActions<number, any>({
     [Event.SET_IMAGE_BRIGHTNESS_REQUESTED]: (__, { payload }) => payload,
-    [Event.LOAD_IMAGE_REQUESTED]: () => 0,
-    [Event.RESET_WORKSPACE_REQUESTED]: () => 0,
-  }, 0),
+    [Event.LOAD_IMAGE_REQUESTED]: () => 50,
+    [Event.RESET_WORKSPACE_REQUESTED]: () => 50,
+  }, 50),
   'cephalo.workspace.image.invert': handleActions<boolean, any>({
     [Event.INVERT_IMAGE_REQUESTED]: (state) => !state,
     [Event.RESET_WORKSPACE_REQUESTED]: () => false,

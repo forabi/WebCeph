@@ -7,12 +7,25 @@ import { isGeometricalPoint, isGeometricalLine } from '../../utils/math';
 
 // declare var window: Window & { ResizeObserver: ResizeObserver };
 
-const INVERT_FILTER = <feColorMatrix
-  id="invert"
-  in="SourceGraphic"
-  type="matrix"
-  values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0"
-/>
+const INVERT_FILTER = (
+  <filter id="invert">
+    <feColorMatrix
+      in="SourceGraphic"
+      type="matrix"
+      values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0"
+    />
+  </filter>
+);
+
+const getBrightnessFilter = (value: number) => (
+  <filter id="brightness">
+    <feComponentTransfer>
+      <feFuncR type="linear" intercept={(value - 50) / 100} slope="1"/>
+      <feFuncG type="linear" intercept={(value - 50) / 100} slope="1"/>
+      <feFuncB type="linear" intercept={(value - 50) / 100} slope="1"/>
+    </feComponentTransfer>
+  </filter>
+)
 
 const classes = require('./style.scss');
 
@@ -68,15 +81,6 @@ interface CephaloCanvasProps {
  * This component uses a React-like diffing mechanism to avoid expensive redraws of landmarks that have not changed
  */
 export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> {
-  defaultProps = {
-   brightness: 0,
-   contrast: 0,
-   inverted: false,
-   flipX: false,
-   flipY: false,
-   landmarks: [],
-  }
-
   refs: { image: __React.ReactInstance };
 
   private handleClick = (e: __React.MouseEvent) => {
@@ -116,14 +120,17 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
   render() {
     return (
       <svg className={this.props.className} height={this.props.height} width={this.props.width}>
-        {INVERT_FILTER}
-        <image
-          xlinkHref={this.props.src}
-          ref="image" onClick={this.handleClick}
-          width={this.props.width} height={this.props.height}
-          filter={this.getFilterAttribute()}
-          transform={this.getTransformAttribute()}
-        />
+        {getBrightnessFilter(this.props.brightness || 50)}
+        <g filter="url(#brightness)">
+          {INVERT_FILTER}
+          <image
+            xlinkHref={this.props.src}
+            ref="image" onClick={this.handleClick}
+            width={this.props.width} height={this.props.height}
+            filter={this.getFilterAttribute()}
+            transform={this.getTransformAttribute()}
+          />
+        </g>
         {compact(map(toArray(this.props.landmarks), geometricalObjectToSVG))}
       </svg>
     )
