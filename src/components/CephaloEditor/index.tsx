@@ -31,6 +31,7 @@ interface CephaloEditorProps {
   src: string | null;
   landmarks: { [id: string]: GeometricalObject } | { };
   brightness: number;
+  contrast: number;
   inverted: boolean;
   flipX: boolean;
   flipY: boolean;
@@ -42,6 +43,7 @@ interface CephaloEditorProps {
   onFlipXClicked(e?: __React.MouseEvent): void;
   onFileDropped(dispatch: Function): (file: File) => void;
   onBrightnessChanged(value: number): void;
+  onContrastChanged(value: number): void;
   onInvertClicked(e?: __React.MouseEvent): void;
   onPickAnotherImageClicked(...args: any[]): void;
   onIgnoreNotCephaloClicked(...args: any[]): void;
@@ -82,7 +84,11 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
   };
 
   setBrightness = (__: React.MouseEvent, value: number) => {
-    requestAnimationFrame(() => this.props.onBrightnessChanged(value));
+    this.props.onBrightnessChanged(value);
+  };
+
+  setContrast = (__: React.MouseEvent, value: number) => {
+    this.props.onBrightnessChanged(value);
   };
 
   openFilePicker = () => this.refs.dropzone.open();
@@ -110,6 +116,7 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
                 className={classes.canvas}
                 src={this.props.src as string}
                 brightness={this.props.brightness}
+                contrast={this.props.contrast}
                 inverted={this.props.inverted}
                 flipX={this.props.flipX}
                 flipY={this.props.flipY}
@@ -188,6 +195,13 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
                   min={0} max={100}
                   defaultValue={this.props.brightness}
                   onChange={this.setBrightness}
+                />
+                <Slider
+                  style={{ width: 200, margin: 15 }}
+                  description="Contrast"
+                  min={0} max={100}
+                  defaultValue={this.props.contrast}
+                  onChange={this.setContrast}
                 />
                 <Divider />
                 <Checkbox label="Invert" checked={this.props.inverted} onCheck={this.props.onInvertClicked} />

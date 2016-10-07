@@ -16,6 +16,7 @@ import {
   flipImageX,
   invertImage,
   setBrightness,
+  setContrast,
   resetWorkspace,
   ignoreWorkspaceError,
   ignoreLikelyNotCephalo,
@@ -57,6 +58,7 @@ interface StateProps {
   flipX: boolean;
   flipY: boolean;
   brightness: number;
+  contrast: number;
   inverted: boolean;
   isLoading: boolean;
   isWorkerBusy: boolean;
@@ -79,6 +81,7 @@ interface DispatchProps {
   onFlipXClicked(e: __React.MouseEvent): void;
   onInvertClicked(e: __React.MouseEvent): void;
   onBrightnessChanged(value: number): void;
+  onContrastChanged(value: number): void;
   onPickAnotherImageClicked(...args: any[]): void;
   onIgnoreNotCephaloClicked(...args: any[]): void;
   onIgnoreErrorClicked(...args: any[]): void;
@@ -141,6 +144,7 @@ export default connect(
     flipX: state['cephalo.workspace.image.flipX'],
     flipY: state['cephalo.workspace.image.flipY'],
     brightness: state['cephalo.workspace.image.brightness'],
+    contrast: state['cephalo.workspace.image.contrast'],
     inverted: state['cephalo.workspace.image.invert'],
     isLoading: state['cephalo.workspace.image.isLoading'],
     isWorkerBusy: some(state['cephalo.workspace.workers'], 'isBusy'),
@@ -163,7 +167,8 @@ export default connect(
   (dispatch: Function) => ({
     dispatch,
     onFlipXClicked: () => dispatch(flipImageX()),
-    onBrightnessChanged: throttle((value: number) => dispatch(setBrightness(value)), 200),
+    onBrightnessChanged: (value: number) => dispatch(setBrightness(value)),
+    onContrastChanged: (value: number) => dispatch(setContrast(value)),
     onInvertClicked: () => dispatch(invertImage()),
     onPickAnotherImageClicked: () => dispatch(resetWorkspace()),
     onIgnoreNotCephaloClicked: () => dispatch(ignoreLikelyNotCephalo()),

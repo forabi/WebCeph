@@ -10,12 +10,35 @@ import { isGeometricalPoint, isGeometricalLine } from '../../utils/math';
 const InvertFilter = ({ id }: { id: string }) => (
   <filter id={id}>
     <feColorMatrix
-      in="SourceGraphic"
-      type="matrix"
-      values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0"
+      in="SourceGraphic" type="matrix"
+      values={`
+        -1  0  0  0 1
+         0 -1  0  0 1
+         0  0 -1  0 1
+         1  1  1 0  1
+      `}
     />
   </filter>
 );
+
+const ContrastFilter = ({ id, value = 50 }: { id: string, value: number }) => {
+  const c = 0.5 - (value / 100);
+  const t = (1 - c) / 2;
+  return (
+    <filter id={id}>
+      <feColorMatrix
+        in="SourceGraphic" type="matrix"
+        values={`
+          1.5 0   0   0 ${c}
+          0   1.5 0   0 ${c}
+          0   0   1.5 0 ${c}
+          0   0   0   1 0
+          ${t} ${t} ${t} 0 1
+        `}
+      />
+    </filter>
+  );
+};
 
 const BrightnessFilter = ({ id, value }: { id: string, value: number }) => (
   <filter id={id}>
@@ -110,22 +133,25 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
         ref="canvas" 
         onClick={this.handleClick}
         className={this.props.className}
-        height={this.props.height} width={this.props.width}
+        width={this.props.width} height={this.props.height}
       >
         <defs>
           <BrightnessFilter id="brightness" value={this.props.brightness || 50} />
           <DropShadow id="shadow" />
           <InvertFilter id="invert" />
+          <ContrastFilter id="contrast" value={50} />
         </defs>
         <g filter="url(#brightness)">
-          <g filter="url(#shadow)">
-            <image
-              xlinkHref={this.props.src}
-              x={this.props.width * 0.05} y={this.props.height * 0.05}
-              width={this.props.width * 0.9} height={this.props.height * 0.9}
-              filter={this.getFilterAttribute()}
-              transform={this.getTransformAttribute()}
-            />
+          <g filter="url(#contrast)">
+            <g filter="url(#shadow)">
+              <image
+                xlinkHref={this.props.src}
+                x={this.props.width * 0.05} y={this.props.height * 0.05}
+                width={this.props.width * 0.9} height={this.props.height * 0.9}
+                filter={this.getFilterAttribute()}
+                transform={this.getTransformAttribute()}
+              />
+            </g>
           </g>
         </g>
         {compact(map(toArray(this.props.landmarks), geometricalObjectToSVG))}
