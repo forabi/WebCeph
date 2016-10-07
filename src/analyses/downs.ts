@@ -3,7 +3,7 @@ import assign from 'lodash/assign';
 
 import { angleBetweenPoints, line, angleBetweenLines } from './helpers';
 import common, { components as commonComponents, FH_PLANE, N, Pog, A, B, Gn, S, Po } from './common';
-import { radiansToDegrees, calculateAngleBetweenPoints, isBehind } from '../utils/math';\
+import { radiansToDegrees, calculateAngleBetweenPoints, isBehind } from '../utils/math';
 import { AnalysisResultType, AnalysisResultSeverity } from '../../constants';
 
 export const ANGLE_OF_CONVEXITY: CephaloAngle = assign(

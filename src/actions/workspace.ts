@@ -20,7 +20,6 @@ export const invertImage: () => any = createAction(Event.INVERT_IMAGE_REQUESTED)
 export const resetWorkspace: () => any = createAction(Event.RESET_WORKSPACE_REQUESTED);
 export const ignoreWorkspaceError: () => any = createAction(Event.IGNORE_WORKSPACE_ERROR_REQUESTED);
 
-
 /**
  * Ignores the result of automatic detection of whether the image is a cephalometric radiograph
  */
