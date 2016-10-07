@@ -30,20 +30,12 @@ function processImageInWorker(file: File, actions: any[]) {
 }
 
 function* loadImage({ payload }: { payload: { file: File, height: number, width: number } }): IterableIterator<Effect> {
-  const { file, height, width } = payload;
+  const { file } = payload;
   const workerId = uniqueId('worker_');
   yield put({ type: Event.WORKER_CREATED, payload: { workerId } });
   const actions = [
     {
-      type: ImageWorkerAction.PERFORM_EDITS,
-      payload: {
-        edits: [
-          {
-            method: 'scaleToFit',
-            args: [width, height],
-          } as ImageWorkerScaleEdit,
-        ] as ImageWorkerEdit[],
-      }
+      type: ImageWorkerAction.READ_AS_DATA_URL,
     },
   ];
   const chan: Channel<ImageWorkerResponse> = yield call(processImageInWorker, file, actions);

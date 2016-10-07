@@ -7,7 +7,8 @@
     "webpack:validate": "webpack-validator webpack.config.js",
     "dev": "NODE_ENV=development HOT=1 babel-node devServer.js",
     "clean": "rm -rf build/**/*.{js,jpg,png,svg,html,log,css}",
-    "prod": "npm run clean && NODE_ENV=production webpack --bail --progress"
+    "prod": "npm run clean && NODE_ENV=production webpack --bail --progress",
+    "modernizr:build": "modernizr -c modernizr-config.json -d ./src/utils/modernizr.js"
   },
   "repository": {
     "type": "git",

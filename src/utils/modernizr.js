@@ -1,6 +1,6 @@
 /*!
  * modernizr v3.3.1
- * Build http://modernizr.com/download?-blobconstructor-bloburls-canvas-cssanimations-datauri-es6number-eventlistener-filereader-flexbox-indexeddb-indexeddbblob-inlinesvg-intl-json-oninput-serviceworker-sharedworkers-svg-transferables-webworkers-dontmin
+ * Build http://modernizr.com/download?-blobconstructor-bloburls-cssanimations-datauri-es6number-eventlistener-filereader-flexbox-indexeddb-indexeddbblob-inlinesvg-intl-json-oninput-serviceworker-sharedworkers-svg-svgfilters-transferables-webworkers-dontmin
  *
  * Copyright (c)
  *  Faruk Ates
@@ -201,72 +201,6 @@ Detects support for the Blob constructor, for creating file-like objects of immu
     aliases: ['blob-constructor']
   });
 
-
-  /**
-   * docElement is a convenience wrapper to grab the root element of the document
-   *
-   * @access private
-   * @returns {HTMLElement|SVGElement} The root element of the document
-   */
-
-  var docElement = document.documentElement;
-  
-
-  /**
-   * A convenience helper to check if the document we are running in is an SVG document
-   *
-   * @access private
-   * @returns {boolean}
-   */
-
-  var isSVG = docElement.nodeName.toLowerCase() === 'svg';
-  
-
-  /**
-   * createElement is a convenience wrapper around document.createElement. Since we
-   * use createElement all over the place, this allows for (slightly) smaller code
-   * as well as abstracting away issues with creating elements in contexts other than
-   * HTML documents (e.g. SVG documents).
-   *
-   * @access private
-   * @function createElement
-   * @returns {HTMLElement|SVGElement} An HTML or SVG element
-   */
-
-  function createElement() {
-    if (typeof document.createElement !== 'function') {
-      // This is the case in IE7, where the type of createElement is "object".
-      // For this reason, we cannot call apply() as Object is not a Function.
-      return document.createElement(arguments[0]);
-    } else if (isSVG) {
-      return document.createElementNS.call(document, 'http://www.w3.org/2000/svg', arguments[0]);
-    } else {
-      return document.createElement.apply(document, arguments);
-    }
-  }
-
-  ;
-/*!
-{
-  "name": "Canvas",
-  "property": "canvas",
-  "caniuse": "canvas",
-  "tags": ["canvas", "graphics"],
-  "polyfills": ["flashcanvas", "excanvas", "slcanvas", "fxcanvas"]
-}
-!*/
-/* DOC
-Detects support for the `<canvas>` element for 2D drawing.
-*/
-
-  // On the S60 and BB Storm, getContext exists, but always returns undefined
-  // so we actually have to call getContext() to verify
-  // github.com/Modernizr/Modernizr/issues/issue/97/
-  Modernizr.addTest('canvas', function() {
-    var elem = createElement('canvas');
-    return !!(elem.getContext && elem.getContext('2d'));
-  });
-
 /*!
 {
   "name": "Event Listener",
@@ -322,6 +256,51 @@ Detects native support for addEventListener
 
   function contains(str, substr) {
     return !!~('' + str).indexOf(substr);
+  }
+
+  ;
+
+  /**
+   * docElement is a convenience wrapper to grab the root element of the document
+   *
+   * @access private
+   * @returns {HTMLElement|SVGElement} The root element of the document
+   */
+
+  var docElement = document.documentElement;
+  
+
+  /**
+   * A convenience helper to check if the document we are running in is an SVG document
+   *
+   * @access private
+   * @returns {boolean}
+   */
+
+  var isSVG = docElement.nodeName.toLowerCase() === 'svg';
+  
+
+  /**
+   * createElement is a convenience wrapper around document.createElement. Since we
+   * use createElement all over the place, this allows for (slightly) smaller code
+   * as well as abstracting away issues with creating elements in contexts other than
+   * HTML documents (e.g. SVG documents).
+   *
+   * @access private
+   * @function createElement
+   * @returns {HTMLElement|SVGElement} An HTML or SVG element
+   */
+
+  function createElement() {
+    if (typeof document.createElement !== 'function') {
+      // This is the case in IE7, where the type of createElement is "object".
+      // For this reason, we cannot call apply() as Object is not a Function.
+      return document.createElement(arguments[0]);
+    } else if (isSVG) {
+      return document.createElementNS.call(document, 'http://www.w3.org/2000/svg', arguments[0]);
+    } else {
+      return document.createElement.apply(document, arguments);
+    }
   }
 
   ;
@@ -1341,6 +1320,32 @@ Detects support for SVG in `<embed>` or `<object>` elements.
 */
 
   Modernizr.addTest('svg', !!document.createElementNS && !!document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGRect);
+
+/*!
+{
+  "name": "SVG filters",
+  "property": "svgfilters",
+  "caniuse": "svg-filters",
+  "tags": ["svg"],
+  "builderAliases": ["svg_filters"],
+  "authors": ["Erik Dahlstrom"],
+  "notes": [{
+    "name": "W3C Spec",
+    "href": "https://www.w3.org/TR/SVG11/filters.html"
+  }]
+}
+!*/
+
+  // Should fail in Safari: https://stackoverflow.com/questions/9739955/feature-detecting-support-for-svg-filters.
+  Modernizr.addTest('svgfilters', function() {
+    var result = false;
+    try {
+      result = 'SVGFEColorMatrixElement' in window &&
+        SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_SATURATE == 2;
+    }
+    catch (e) {}
+    return result;
+  });
 
 
   /**

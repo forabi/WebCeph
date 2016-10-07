@@ -124,11 +124,11 @@ export const onCanvasClickedSelector = createSelector(
     return (e => {
       if (expectedLandmark) {
         dispatch(
-          addLandmark(expectedLandmark.symbol, { x: e.e.layerX, y: e.e.layerY })
+          addLandmark(expectedLandmark.symbol, { x: e.X, y: e.Y })
         );
         dispatch(tryAutomaticSteps());
       }
-    }) as (e: fabric.IEvent & { e: MouseEvent }) => void;
+    }) as (e: { X: number, Y: number }) => void;
   },
 );
 

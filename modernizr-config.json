@@ -3,7 +3,6 @@
   "options": [],
   "feature-detects": [
     "test/blob",
-    "test/canvas",
     "test/eventlistener",
     "test/indexeddb",
     "test/indexeddbblob",
@@ -11,6 +10,7 @@
     "test/json",
     "test/serviceworker",
     "test/svg",
+    "test/svg/filters",
     "test/css/animations",
     "test/css/flexbox",
     "test/es6/number",

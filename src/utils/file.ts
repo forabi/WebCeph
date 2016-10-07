@@ -6,3 +6,12 @@ export function readFileAsBuffer(file: File): Promise<ArrayBuffer> {
     reader.readAsArrayBuffer(file);
   });
 }
+
+export function readFileAsDataURL(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = e => reject(e.error);
+    reader.readAsDataURL(file);
+  });
+}

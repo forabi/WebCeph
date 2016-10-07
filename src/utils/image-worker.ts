@@ -1,14 +1,10 @@
-import bluebird from 'bluebird';
-import Jimp from './jimp';
 import { ErrorCode } from './constants';
-import { doesLookLikeCephalometricRadiograph } from './image';
-import { readFileAsBuffer } from './file';
+import { readFileAsDataURL } from './file';
+import findIndex from 'lodash/findIndex';
 import {
-  ImageWorkerPayload,
   ImageWorkerRequestEvent,
   ImageWorkerError,
   ImageWorkerActionResult,
-  ImageWorkerEdit,
 } from './image-worker.d';
 import { ImageWorkerAction } from './constants';
 
@@ -37,33 +33,19 @@ function mapError({ message }: Error): ImageWorkerError {
   }
 }
 
-async function performAction(img: Jimp, type: ImageWorkerAction, payload?: ImageWorkerPayload): Promise<ImageWorkerActionResult | void> {
-  if (type === ImageWorkerAction.IS_CEPHALO) {
-    return await doesLookLikeCephalometricRadiograph(img);
-  } else if (type === ImageWorkerAction.PERFORM_EDITS && payload) {
-    return {
-      url: await bluebird.fromCallback(
-        cb => payload.edits.reduce(
-          (img: Jimp, edit: ImageWorkerEdit) => img[edit.method](...edit.args),
-          img
-        ).getBase64(Jimp.MIME_BMP, cb)
-      ),
-    };
-  }
-}
-
 self.addEventListener('message', async ({ data }: ImageWorkerRequestEvent) => {
   const { id: requestId, file, actions } = data;
   try {
-    const buffer = await readFileAsBuffer(file);
-    let img = await Jimp.read(buffer);
-    await bluebird.map(actions, async (action, actionId) => {
+    const index = findIndex(actions, { type: ImageWorkerAction.READ_AS_DATA_URL });
+    if (index >= 0) {
       const result = {
-        actionId,
-        payload: await performAction(img, action.type, action.payload),
+        actionId: index,
+        payload: {
+          url: await readFileAsDataURL(file),
+        } as ImageWorkerActionResult,
       };
       self.postMessage({ requestId, result, done: false });
-    });
+    }
     self.postMessage({ requestId, done: true });
   } catch (error) {
     self.postMessage({ requestId, error: mapError(error), done: true });

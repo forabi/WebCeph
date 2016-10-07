@@ -3,6 +3,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import * as injectTapEventPlugin from 'react-tap-event-plugin';
 import { connect } from 'react-redux';
 import cx from 'classnames';
+import assign from 'lodash/assign';
 import attempt from 'lodash/attempt';
 import some from 'lodash/some';
 import throttle from 'lodash/throttle';
@@ -68,7 +69,7 @@ interface StateProps {
   error?: { message: string };
   analysisSteps: CephaloLandmark[];
   getStepState(step: Step): StepState;
-  onCanvasClicked(dispatch: Function): (e: fabric.IEvent & { e: MouseEvent }) => void;
+  onCanvasClicked: (dispatch: Function) => (e: { X: number, Y: number }) => void;
   onFileDropped(dispatch: Function): (file: File) => void;
   getStepValue(step: Step): number | undefined;
 }
@@ -87,7 +88,11 @@ interface DispatchProps {
   onCanvasResized(e: ResizeObserverEntry): void;
 }
 
-type AppProps = StateProps & DispatchProps;
+interface MergeProps {
+  onCanvasClicked(e: { X: number, Y: number }): void;
+}
+
+type AppProps = StateProps & DispatchProps & MergeProps;
 
 class App extends React.PureComponent<AppProps, {}> {
   componentDidMount() {
@@ -149,9 +154,9 @@ export default connect(
     landmarks: mappedLandmarksSelector(state),
     analysisSteps: activeAnalysisStepsSelector(state),
     getStepState: getStepStateSelector(state),
-    onCanvasClicked: onCanvasClickedSelector(state),
     onFileDropped: onFileDroppedSelector(state),
     getStepValue: getLandmarkValueSelector(state),
+    onCanvasClicked: onCanvasClickedSelector(state),
   } as StateProps),
 
   // mapDispatchToProps
@@ -168,4 +173,13 @@ export default connect(
     onEditLandmarkRequested: () => null, // @TODO
     onRemoveLandmarkRequested: () => null, // @TODO,
   } as DispatchProps),
+
+  (stateProps: StateProps, dispatchProps: DispatchProps) => assign(
+    { },
+    stateProps,
+    dispatchProps,
+    {
+      onCanvasClicked: stateProps.onCanvasClicked(dispatchProps.dispatch),
+    }
+  )
 )(App);

@@ -49,7 +49,7 @@ interface CephaloEditorProps {
   onRemoveLandmarkRequested(landmark: CephaloLandmark): void;
   onIgnoreErrorClicked(...args: any[]): void;
   onCanvasResized(e: ResizeObserverEntry): void;
-  onCanvasClicked(e: fabric.IEvent): void;
+  onCanvasClicked(e: MouseEvent): void;
   analysisSteps: Step[];
   getStepState(step: Step): StepState;
   getStepValue(step: Step): number | undefined;

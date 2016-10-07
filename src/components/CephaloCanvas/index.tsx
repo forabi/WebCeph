@@ -1,12 +1,20 @@
 import * as React from 'react';
-import mapValues from 'lodash/mapValues';
-import { connect } from 'react-redux';
+import map from 'lodash/map';
+import compact from 'lodash/compact';
+import toArray from 'lodash/toArray';
+import { findDOMNode } from 'react-dom'; 
 import { isGeometricalPoint, isGeometricalLine } from '../../utils/math';
 
 // declare var window: Window & { ResizeObserver: ResizeObserver };
 
-const classes = require('./style.scss');
+const INVERT_FILTER = <feColorMatrix
+  id="invert"
+  in="SourceGraphic"
+  type="matrix"
+  values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0"
+/>
 
+const classes = require('./style.scss');
 
 const geometricalObjectToSVG = (value: (GeometricalObject), id: string): (JSX.Element | undefined) => {
   if (isGeometricalPoint(value)) {
@@ -33,7 +41,7 @@ const geometricalObjectToSVG = (value: (GeometricalObject), id: string): (JSX.El
     //   originX: 'center',
     //   originY: 'center',
     // });
-    return <line key={id} {...value} strokeWidth={3} fill="#55f" />;
+    return <line key={id} {...value} stroke="#fff" strokeWidth={3} fill="#55f" />;
   } else {
     return undefined;
   }
@@ -50,9 +58,8 @@ interface CephaloCanvasProps {
   height: number,
   width: number,
   landmarks: { [id: string]: GeometricalObject } | { };
-  onClick?: (dispatch: Function) => (e: fabric.IEvent) => void;
+  onClick?: (e: { X: number, Y: number }) => void;
   onCanvasResized?(e: ResizeObserverEntry): void;
-  dispatch: Function;
 }
 
 /**
@@ -70,14 +77,57 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
    landmarks: [],
   }
 
+  refs: { image: __React.ReactInstance };
+
+  private handleClick = (e: __React.MouseEvent) => {
+    if (this.props.onClick) {
+      const element = findDOMNode(this.refs.image);
+      const rect = element.getBoundingClientRect();
+      const scrollTop = document.documentElement.scrollTop;
+      const scrollLeft = document.documentElement.scrollLeft;
+      const elementLeft = rect.left + scrollLeft;  
+      const elementTop = rect.top + scrollTop;
+      this.props.onClick({
+        X: e.pageX - elementLeft,
+        Y: e.pageY - elementTop,
+      });
+    }
+  }
+
+  private getFilterAttribute = () => {
+    let f = '';
+    if (this.props.inverted) {
+      f += " url(#invert)";
+    }
+    return f;
+  }
+
+  private getTransformAttribute = () => {
+    let t = '';
+    if (this.props.flipX) {
+      t += ` scale(-1, 1) translate(-${this.props.width}, 0)`;
+    }
+    if (this.props.flipY) {
+      t += ` scale(1, -1) translate(0, -${this.props.height})`;
+    }
+    return t;
+  }
+
   render() {
     return (
-      <div className={this.props.className}>
-        <image xlinkHref={this.props.src}width={this.props.width} height={this.props.height} />
-        {mapValues(this.props.landmarks, geometricalObjectToSVG)}
-      </div>
+      <svg className={this.props.className} height={this.props.height} width={this.props.width}>
+        {INVERT_FILTER}
+        <image
+          xlinkHref={this.props.src}
+          ref="image" onClick={this.handleClick}
+          width={this.props.width} height={this.props.height}
+          filter={this.getFilterAttribute()}
+          transform={this.getTransformAttribute()}
+        />
+        {compact(map(toArray(this.props.landmarks), geometricalObjectToSVG))}
+      </svg>
     )
   }
 }
 
-export default connect()(CephaloCanvas);
+export default CephaloCanvas;

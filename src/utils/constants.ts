@@ -60,6 +60,7 @@ export const Event = {
 };
 
 export enum ImageWorkerAction {
+  READ_AS_DATA_URL,
   PERFORM_EDITS,
   IS_CEPHALO,
 }
