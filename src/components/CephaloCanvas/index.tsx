@@ -31,29 +31,8 @@ const classes = require('./style.scss');
 
 const geometricalObjectToSVG = (value: (GeometricalObject), id: string): (JSX.Element | undefined) => {
   if (isGeometricalPoint(value)) {
-    // return new fabric.Circle({
-    //   left: value.x,
-    //   top: value.y,
-    //   strokeWidth: 3,
-    //   radius: 2,
-    //   fill: '#55f',
-    //   stroke: '#fff',
-    //   hasControls: false,
-    //   hasBorders: false,
-    //   data: { id },
-    //   originX: 'center',
-    //   originY: 'center',
-    // });
     return <circle key={id} r={2} stroke="#fff" strokeWidth={3} cx={value.x} cy={value.y} />
   } else if (isGeometricalLine(value)) {
-    // return new fabric.Line([value.x1, value.y1, value.x2, value.y2], {
-    //   fill: '#55f',
-    //   stroke: '#fff',
-    //   strokeWidth: 3,
-    //   selectable: false,
-    //   originX: 'center',
-    //   originY: 'center',
-    // });
     return <line key={id} {...value} stroke="#fff" strokeWidth={3} fill="#55f" />;
   } else {
     return undefined;

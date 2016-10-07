@@ -63,7 +63,6 @@ const config = {
     ]),
     vendor: [
       'react',
-      'fabric',
       'material-ui/List',
       'material-ui/RaisedButton',
       'material-ui/FlatButton',
