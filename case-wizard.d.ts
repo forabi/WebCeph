@@ -76,7 +76,48 @@ interface GeometricalLine {
 
 type GeometricalObject = GeometricalLine | GeometricalPoint;
 
-type Analysis = Array<{ landmark: CephaloLandmark, norm: number, stdDev?: number }>;
+
+type EvaluatedValue = GeometricalObject | number;
+
+/** A result of interpreting the evaluated components of a cephalometric analysis */
+enum AnalysisResult {
+  // Skeletal pattern
+  
+  CLASS_I_SKELETAL_PATTERN,
+  CLASS_II_SKELETAL_PATTERN,
+  CLASS_III_SKELETAL_PATTERN,
+
+  // Maxilla
+  PROGNATHIC_MAXILLA,
+  RETROGNATHIC_MAXILLA,
+  /** Indicates the maxilla is neither prognathic nor prognathic */
+  NORMAL_MAXILLA,
+
+  // Mandible
+  PROGNATHIC_MANDIBLE,
+  RETROGNATHIC_MANDIBLE,
+  /** Indicates the mandible is neither prognathic nor prognathic */
+  NORMAL_MANDIBLE,
+}
+
+type AnalysisComponent = {
+  landmark: CephaloLandmark;
+  norm: number;
+  stdDev?: number;
+};
+
+
+interface Analysis {
+  id: string;
+  components: AnalysisComponent[];
+
+  /** Given a map of the evaluated values of this analysis components,
+   * this function should return an array of interpreted results.
+   * For example, given a computed value of 7 for angle ANB,
+   * the returned value should have a result of type CLASS_II_SKELETAL_PATTERN
+   */
+  interpret(values: { [id: string]: EvaluatedValue }): AnalysisResult[];
+};
 
 /**
  * A Mapper object maps cephalometric landmarks to geometrical objects

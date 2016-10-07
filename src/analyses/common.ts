@@ -1,3 +1,4 @@
+import has from 'lodash/has';
 import { angleBetweenPoints, line, point, getSymbolForAngle } from './helpers';
 
 /**
@@ -76,7 +77,7 @@ export const ANB: BaseCephaloLandmark = {
   },
 };
 
-export default <Analysis>[
+export const components = [
   {
     landmark: ANB,
     norm: 2,
@@ -89,4 +90,55 @@ export default <Analysis>[
     landmark: SNA,
     norm: 82,
   },
-]
+];
+
+
+const interpretANB = (ANB: number, min = 0, max = 4) => {
+  if (ANB > max) {
+    return AnalysisResult.CLASS_II_SKELETAL_PATTERN;
+  } else if (ANB < min) {
+    return AnalysisResult.CLASS_III_SKELETAL_PATTERN;
+  } else {
+    return AnalysisResult.CLASS_I_SKELETAL_PATTERN;
+  }
+};
+
+const interpretSNA = (SNA: number, min = 80, max = 84) => {
+  if (SNA > max) {
+    return AnalysisResult.PROGNATHIC_MAXILLA;
+  } else if (SNA < min) {
+    return AnalysisResult.RETROGNATHIC_MAXILLA;
+  } else {
+    return AnalysisResult.NORMAL_MAXILLA;
+  }
+};
+
+const interpretSNB = (SNB: number, min = 78, max = 82) => {
+  if (SNB > max) {
+    return AnalysisResult.PROGNATHIC_MANDIBLE;
+  } else if (SNB < min) {
+    return AnalysisResult.RETROGNATHIC_MANDIBLE;
+  } else {
+    return AnalysisResult.NORMAL_MANDIBLE;
+  }
+};
+
+type EvalutedValues = {
+  SNA?: number;
+  SNB?: number;
+  ANB?: number;
+}
+
+const analysis: Analysis = {
+  id: 'commons',
+  components,
+  interpret(values: EvalutedValues) {
+    const results: AnalysisResult[] = [];
+    if (has(values, 'ANB')) results.push(interpretANB(values.ANB as number));
+    if (has(values, 'SNA')) results.push(interpretSNA(values.SNA as number));
+    if (has(values, 'SNB')) results.push(interpretSNB(values.SNB as number));
+    return results;
+  }
+}
+
+export default analysis;

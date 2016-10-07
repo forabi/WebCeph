@@ -132,7 +132,7 @@ import {
  * Calculates the value of a landmark on a cephalometric radiograph
  * 
  */
-export function evaluate(landmark: CephaloLandmark, mapper: CephaloMapper): GeometricalObject | number | undefined {
+export function evaluate(landmark: CephaloLandmark, mapper: CephaloMapper): EvaluatedValue | undefined {
   if (landmark.calculate) {
     return landmark.calculate.apply(
       landmark, 
