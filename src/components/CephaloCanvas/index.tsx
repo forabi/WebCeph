@@ -7,8 +7,8 @@ import { isGeometricalPoint, isGeometricalLine } from '../../utils/math';
 
 // declare var window: Window & { ResizeObserver: ResizeObserver };
 
-const INVERT_FILTER = (
-  <filter id="invert">
+const InvertFilter = ({ id }: { id: string }) => (
+  <filter id={id}>
     <feColorMatrix
       in="SourceGraphic"
       type="matrix"
@@ -17,13 +17,21 @@ const INVERT_FILTER = (
   </filter>
 );
 
-const getBrightnessFilter = (value: number) => (
-  <filter id="brightness">
+const BrightnessFilter = ({ id, value }: { id: string, value: number }) => (
+  <filter id={id}>
     <feComponentTransfer>
       <feFuncR type="linear" intercept={(value - 50) / 100} slope="1"/>
       <feFuncG type="linear" intercept={(value - 50) / 100} slope="1"/>
       <feFuncB type="linear" intercept={(value - 50) / 100} slope="1"/>
     </feComponentTransfer>
+  </filter>
+);
+
+const DropShadow = ({ id }: { id: string }) => (
+  <filter id={id} x="0" y="0" width="200%" height="200%">
+    <feOffset result="offOut" in="SourceAlpha" dx="0" dy="0" />
+    <feGaussianBlur result="blurOut" in="offOut" stdDeviation="3" />
+    <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
   </filter>
 )
 
@@ -60,11 +68,11 @@ interface CephaloCanvasProps {
  * This component uses a React-like diffing mechanism to avoid expensive redraws of landmarks that have not changed
  */
 export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> {
-  refs: { image: __React.ReactInstance };
+  refs: { canvas: __React.ReactInstance };
 
   private handleClick = (e: __React.MouseEvent) => {
     if (this.props.onClick) {
-      const element = findDOMNode(this.refs.image);
+      const element = findDOMNode(this.refs.canvas);
       const rect = element.getBoundingClientRect();
       const scrollTop = document.documentElement.scrollTop;
       const scrollLeft = document.documentElement.scrollLeft;
@@ -98,17 +106,27 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
 
   render() {
     return (
-      <svg className={this.props.className} height={this.props.height} width={this.props.width}>
-        {getBrightnessFilter(this.props.brightness || 50)}
+      <svg
+        ref="canvas" 
+        onClick={this.handleClick}
+        className={this.props.className}
+        height={this.props.height} width={this.props.width}
+      >
+        <defs>
+          <BrightnessFilter id="brightness" value={this.props.brightness || 50} />
+          <DropShadow id="shadow" />
+          <InvertFilter id="invert" />
+        </defs>
         <g filter="url(#brightness)">
-          {INVERT_FILTER}
-          <image
-            xlinkHref={this.props.src}
-            ref="image" onClick={this.handleClick}
-            width={this.props.width} height={this.props.height}
-            filter={this.getFilterAttribute()}
-            transform={this.getTransformAttribute()}
-          />
+          <g filter="url(#shadow)">
+            <image
+              xlinkHref={this.props.src}
+              x={this.props.width * 0.05} y={this.props.height * 0.05}
+              width={this.props.width * 0.9} height={this.props.height * 0.9}
+              filter={this.getFilterAttribute()}
+              transform={this.getTransformAttribute()}
+            />
+          </g>
         </g>
         {compact(map(toArray(this.props.landmarks), geometricalObjectToSVG))}
       </svg>
