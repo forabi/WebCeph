@@ -62,9 +62,22 @@ const classes = require('./style.scss');
 
 const geometricalObjectToSVG = (value: (GeometricalObject), id: string): (JSX.Element | undefined) => {
   if (isGeometricalPoint(value)) {
-    return <circle key={id} r={2} stroke="#fff" strokeWidth={3} cx={value.x} cy={value.y} />
+    return (
+      <circle
+        key={id}
+        stroke="#fff" strokeWidth={3}
+        // onMouseDown={} // @TODO
+        // onMouseUp={} // @TODO
+        r={2} cx={value.x} cy={value.y}
+      />
+    );
   } else if (isGeometricalLine(value)) {
-    return <line key={id} {...value} stroke="#fff" strokeWidth={3} fill="#55f" />;
+    return (
+      <line key={id}
+        {...value}
+        stroke="#fff" strokeWidth={3} fill="#55f"
+      />
+    );
   } else {
     return undefined;
   }

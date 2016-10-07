@@ -6,7 +6,6 @@ import cx from 'classnames';
 import assign from 'lodash/assign';
 import attempt from 'lodash/attempt';
 import some from 'lodash/some';
-import throttle from 'lodash/throttle';
 import noop from 'lodash/noop'
 
 import CephaloEditor from '../CephaloEditor';
@@ -185,6 +184,6 @@ export default connect(
     dispatchProps,
     {
       onCanvasClicked: stateProps.onCanvasClicked(dispatchProps.dispatch),
-    }
-  )
+    } as MergeProps
+  ) as AppProps
 )(App);
