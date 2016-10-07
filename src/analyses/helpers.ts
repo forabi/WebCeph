@@ -7,12 +7,12 @@ import concat from 'lodash/concat';
 import assign from 'lodash/assign';
 
 export function getSymbolForAngle(lineA: CephaloLine, lineB: CephaloLine): string {
-    return uniq([
-      lineA.components[0].symbol,
-      lineA.components[1].symbol,
-      lineB.components[0].symbol,
-      lineB.components[1].symbol,
-    ]).join('');
+  return uniq([
+    lineA.components[0].symbol,
+    lineA.components[1].symbol,
+    lineB.components[0].symbol,
+    lineB.components[1].symbol,
+  ]).join('');
 }
 
 /**
@@ -20,11 +20,11 @@ export function getSymbolForAngle(lineA: CephaloLine, lineB: CephaloLine): strin
  */
 export function angleBetweenLines(lineA: CephaloLine, lineB: CephaloLine, name?: string, symbol?: string, unit: AngularUnit = 'degree'): CephaloAngle {
   return {
-      type: 'angle',
-      symbol: symbol || getSymbolForAngle(lineA, lineB),
-      unit,
-      name, 
-      components: [lineA, lineB],
+    type: 'angle',
+    symbol: symbol || getSymbolForAngle(lineA, lineB),
+    unit,
+    name, 
+    components: [lineA, lineB],
   };
 }
 
@@ -82,39 +82,39 @@ export function distance(A: CephaloPoint, B: CephaloPoint, name?: string, unit: 
 const hasComponents: (m: CephaloLandmark) => boolean = m => m.components.length > 0;
 
 export function getEdgesForLandmark(l: CephaloLandmark): CephaloLandmark[][] {
-    const edges: CephaloLandmark[][] = [];
-    if (!hasComponents(l)) {
-            edges.push([l]);
-    } else {
-        edges.unshift([...l.components, l]);
-        for (const c of l.components) {
-            const subedges = getEdgesForLandmark(c);
-            edges.unshift(
-                concat(
-                    ...subedges,
-                    [...c.components, c],
-                )
-            );
-        }
+  const edges: CephaloLandmark[][] = [];
+  if (!hasComponents(l)) {
+    edges.push([l]);
+  } else {
+    edges.unshift([...l.components, l]);
+    for (const c of l.components) {
+      const subedges = getEdgesForLandmark(c);
+      edges.unshift(
+        concat(
+            ...subedges,
+            [...c.components, c],
+        ),
+      );
     }
-    return edges.map(uniq);
+  }
+  return edges.map(uniq);
 }
 
 export function getStepsForLandmarks(landmarks: CephaloLandmark[]): CephaloLandmark[] {
-    const edges: CephaloLandmark[][] = flatten(landmarks.map(getEdgesForLandmark));
-    const store = new Map;
-    const uniqueEdges = filter(map(
-        edges,
-        a => reject(a, (e => {
-            if (store.has(e.symbol)) {
-                return true;
-            } else {
-                store.set(e.symbol, e);
-                return false;
-            }
-        })).map(l => l.symbol)
-    ), 'length');
-    return flatten(uniqueEdges).map(symbol => store.get(symbol));
+  const edges: CephaloLandmark[][] = flatten(landmarks.map(getEdgesForLandmark));
+  const store = new Map;
+  const uniqueEdges = filter(map(
+    edges,
+    a => reject(a, (e => {
+        if (store.has(e.symbol)) {
+            return true;
+        } else {
+            store.set(e.symbol, e);
+            return false;
+        }
+    })).map(l => l.symbol)
+  ), 'length');
+  return flatten(uniqueEdges).map(symbol => store.get(symbol));
 }
 
 export function getStepsForAnalysis(analysis: Analysis): CephaloLandmark[] {

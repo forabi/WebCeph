@@ -1,9 +1,10 @@
 /// <reference path="./resize-observer.d.ts" />
+/// <reference path="./constants.ts" />
 /// <reference path="./deep-diff.d.ts" />
 
 type AngularUnit = 'degree' | 'radian';
 type LinearUnit = 'mm' | 'cm' | 'in';
-type oLandmarkType = 'angle' | 'point' | 'line' | 'distance';
+type LandmarkType = 'angle' | 'point' | 'line' | 'distance';
 
 /**
  * A generic interface that represents any cephalometric landmark, including
@@ -51,7 +52,7 @@ interface CephaloDistance extends BaseCephaloLandmark {
 interface CephaloAngle extends BaseCephaloLandmark {
   type: 'angle';
   unit: AngularUnit;
-  components: CephaloPoint[] | CephaloLine[];
+  components: CephaloPoint[] | CephaloLine[] | CephaloAngle[];
 }
 
 type CephaloLandmark = CephaloPoint | CephaloLine | CephaloAngle | CephaloDistance;
@@ -79,30 +80,10 @@ type GeometricalObject = GeometricalLine | GeometricalPoint;
 
 type EvaluatedValue = GeometricalObject | number;
 
-/** A result of interpreting the evaluated components of a cephalometric analysis */
-enum AnalysisResult {
-  // Skeletal pattern
-  
-  CLASS_I_SKELETAL_PATTERN,
-  CLASS_II_SKELETAL_PATTERN,
-  CLASS_III_SKELETAL_PATTERN,
 
-  // Maxilla
-  PROGNATHIC_MAXILLA,
-  RETROGNATHIC_MAXILLA,
-  /** Indicates the maxilla is neither retrognathic nor prognathic */
-  NORMAL_MAXILLA,
-
-  // Mandible
-  PROGNATHIC_MANDIBLE,
-  RETROGNATHIC_MANDIBLE,
-  /** Indicates the mandible is neither retrognathic nor prognathic */
-  NORMAL_MANDIBLE,
-
-  // Skeletal profile
-  NORMAL_SKELETAL_PROFILE,
-  CONCAVE_SKELETAL_PROFILE,
-  CONVEX_SKELETAL_PROFILE,
+interface AnalysisResult {
+  type: AnalysisResultType;
+  severity: AnalysisResultSeverity;
 }
 
 type AnalysisComponent = {

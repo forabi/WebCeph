@@ -1,5 +1,6 @@
 import has from 'lodash/has';
 import { angleBetweenPoints, line, point, getSymbolForAngle } from './helpers';
+import { AnalysisResultSeverity, AnalysisResultType } from '../../constants';
 
 /**
  * Most superior point of outline of external auditory meatus
@@ -68,13 +69,13 @@ export const SNB = angleBetweenPoints(S, N, B);
  * ANB is a custom landmark that is calculated as the SNA - SNB,
  * because otherwise it would not be a negative value in cases where it should be.
  */
-export const ANB: BaseCephaloLandmark = {
+export const ANB: CephaloAngle = {
   symbol: getSymbolForAngle(line(A, N), line(N, B)),
   type: 'angle',
   unit: 'degree',
   components: [SNA, SNB],
   calculate(SNA: number, SNB: number) {
-      return SNA - SNB;
+    return SNA - SNB;
   },
 };
 
@@ -93,35 +94,73 @@ export const components: AnalysisComponent[] = [
   },
 ];
 
-
-export const interpretANB = (ANB: number, min = 0, max = 4) => {
+export const interpretANB = (ANB: number, min = 0, max = 4): AnalysisResult => {
+  // @TODO: handle severity
+  const severity = Math.min(
+    AnalysisResultSeverity.HIGH,
+    Math.round(Math.abs(ANB - ((min + max) / 2)) / 3),
+  );
   if (ANB > max) {
-    return AnalysisResult.CLASS_II_SKELETAL_PATTERN;
+    return {
+      type: AnalysisResultType.CLASS_II_SKELETAL_PATTERN,
+      severity,
+    };
   } else if (ANB < min) {
-    return AnalysisResult.CLASS_III_SKELETAL_PATTERN;
-  } else {
-    return AnalysisResult.CLASS_I_SKELETAL_PATTERN;
+    return {
+      type: AnalysisResultType.CLASS_III_SKELETAL_PATTERN,
+      severity,
+    };
   }
+  return {
+    type: AnalysisResultType.CLASS_I_SKELETAL_PATTERN,
+    severity: AnalysisResultSeverity.NONE,
+  };
 };
 
-export const interpretSNA = (SNA: number, min = 80, max = 84) => {
+export const interpretSNA = (SNA: number, min = 80, max = 84): AnalysisResult => {
+  // @TODO: handle severity
+  const severity = Math.min(
+    AnalysisResultSeverity.HIGH,
+    Math.round(Math.abs(SNA - ((min + max) / 2)) / 3),
+  );
   if (SNA > max) {
-    return AnalysisResult.PROGNATHIC_MAXILLA;
+    return {
+      type: AnalysisResultType.PROGNATHIC_MAXILLA,
+      severity,
+    };  
   } else if (SNA < min) {
-    return AnalysisResult.RETROGNATHIC_MAXILLA;
-  } else {
-    return AnalysisResult.NORMAL_MAXILLA;
+    return {
+      type: AnalysisResultType.RETROGNATHIC_MAXILLA,
+      severity,
+    };
   }
+  return {
+    type: AnalysisResultType.NORMAL_MAXILLA,
+    severity: AnalysisResultSeverity.NONE,
+  };
 };
 
-export const interpretSNB = (SNB: number, min = 78, max = 82) => {
+export const interpretSNB = (SNB: number, min = 78, max = 82): AnalysisResult => {
+  // @TODO: handle severity
+  const severity = Math.min(
+    AnalysisResultSeverity.HIGH,
+    Math.round(Math.abs(SNB - ((min + max) / 2)) / 3),
+  );
   if (SNB > max) {
-    return AnalysisResult.PROGNATHIC_MANDIBLE;
+    return {
+      type: AnalysisResultType.PROGNATHIC_MANDIBLE,
+      severity,
+    };
   } else if (SNB < min) {
-    return AnalysisResult.RETROGNATHIC_MANDIBLE;
-  } else {
-    return AnalysisResult.NORMAL_MANDIBLE;
+    return {
+      type: AnalysisResultType.RETROGNATHIC_MANDIBLE,
+      severity,
+    }
   }
+  return {
+    type: AnalysisResultType.NORMAL_MANDIBLE,
+    severity: AnalysisResultSeverity.NONE,
+  };
 };
 
 export interface EvaluatedValues {

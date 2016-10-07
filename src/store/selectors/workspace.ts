@@ -108,7 +108,7 @@ export const isAnalysisCompleteSelector = createSelector(
   activeAnalysisSelector,
   (mappedLandmarks, activeAnalysis) => {
     if (!activeAnalysis) return false;
-    return every(activeAnalysis, step => has(mappedLandmarks, step.landmark.symbol));
+    return every(activeAnalysis.components, step => has(mappedLandmarks, step.landmark.symbol));
   },
 );
 
