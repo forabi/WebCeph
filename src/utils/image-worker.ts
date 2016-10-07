@@ -46,15 +46,17 @@ async function performAction(img: Jimp, type: ImageWorkerAction, payload?: Image
         cb => payload.edits.reduce(
           (img: Jimp, edit: ImageWorkerEdit) => img[edit.method](...edit.args),
           img
-        ).getBase64(Jimp.MIME_BMP, cb)
+        ).getBase64(Jimp.MIME_PNG, cb)
       ),
     };
   }
 }
 
 self.addEventListener('message', async ({ data }: ImageWorkerRequestEvent) => {
-  const { id: requestId, file, actions } = data;
+  performance.mark('IMG_WORKER_MESSAGE_RECIEVED');
+  const { id: requestId } = data;
   try {
+    const { file, actions } = data;
     const buffer = await readFileAsBuffer(file);
     let img = await Jimp.read(buffer);
     await bluebird.map(actions, async (action, actionId) => {
@@ -68,4 +70,10 @@ self.addEventListener('message', async ({ data }: ImageWorkerRequestEvent) => {
   } catch (error) {
     self.postMessage({ requestId, error: mapError(error), done: true });
   }
+  performance.mark('IMG_WORKER_MESSAGE_PROCESSED');
+  performance.measure(
+    'Image worker message',
+    'IMG_WORKER_MESSAGE_RECIEVED',
+    'IMG_WORKER_MESSAGE_PROCESSED'
+  );
 });

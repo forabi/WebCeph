@@ -25,10 +25,20 @@ export type ImageWorkerEvent = Event & { data: ImageWorkerResponse }
 
 export type ImageWorkerActionResult = { isCephalo: boolean, shouldFlipX: boolean } | { url: string };
 
-export interface ImageWorkerEdit {
-  method: string,
-  args: any[]
+export interface ImageWorkerScaleEdit {
+  method: 'scaleToFit' ,
+  /**
+   * height, width, mode
+   */
+  args: [number, number, string];
 };
+
+export interface ImageWorkerCropEdit {
+  method: 'crop';
+  args: [number, number, number, number];
+}
+
+export type ImageWorkerEdit = ImageWorkerScaleEdit | ImageWorkerCropEdit;
 
 export type ImageWorkerPayload = { edits: ImageWorkerEdit[] };
 

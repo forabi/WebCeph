@@ -91,7 +91,7 @@ function* performAutomaticStepOnMainThread(): IterableIterator<Effect> {
       }
     } else {
       console.info('Step %s is not eligible for automatic tracing', step.symbol);
-      // yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
+      yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
     }
   };
   performance.mark('endAutomaticEvaluation');
@@ -99,8 +99,8 @@ function* performAutomaticStepOnMainThread(): IterableIterator<Effect> {
 }
 
 function* watchSteps() {
-  yield fork(takeEvery, Event.TRY_AUTOMATIC_STEPS_REQUESTED, performAutomaticStepOnMainThread);
-  // yield fork(takeLatest, Event.TRY_AUTOMATIC_STEPS_REQUESTED, performAutomaticStepInWorker);
+  // yield fork(takeEvery, Event.TRY_AUTOMATIC_STEPS_REQUESTED, performAutomaticStepOnMainThread);
+  yield fork(takeLatest, Event.TRY_AUTOMATIC_STEPS_REQUESTED, performAutomaticStepInWorker);
 }
 
 export default watchSteps;

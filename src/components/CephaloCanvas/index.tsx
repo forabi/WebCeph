@@ -23,8 +23,9 @@ const geometricalObjectToFabricObject = (value: (GeometricalObject), id: string)
       radius: 2,
       fill: '#55f',
       stroke: '#fff',
-      hasControls: false,
+      hasControls: true,
       hasBorders: false,
+      selectable: true,
       data: { id },
       originX: 'center',
       originY: 'center',
@@ -113,6 +114,9 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, Cepha
           if (!this.props.onClick) return;
           this.props.onClick(this.props.dispatch)(e);
         });
+        // canvas.on('object:modified', (e: fabric.IEvent) => {
+        //   e.target;
+        // });
         this.setState(
           state => (
             assign({}, state, {
