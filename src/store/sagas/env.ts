@@ -18,7 +18,7 @@ function performModernizrTests() {
 
   return eventChannel(emit => {
     /** This is used to keep track of number of features completed. See below. */
-    let j = 0; 
+    let j = 1; 
 
     const features = keys(featureDetails);
     const total = features.length;
@@ -63,7 +63,7 @@ function* checkBrowserCompatiblity(): IterableIterator<Effect> {
             available: false,
           }) as MissingBrowserFeature,
         });
-      } 
+      }
     }
   } catch (error) {
     console.error('Error checking browser compatiblity', error);
