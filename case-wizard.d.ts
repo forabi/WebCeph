@@ -90,13 +90,13 @@ enum AnalysisResult {
   // Maxilla
   PROGNATHIC_MAXILLA,
   RETROGNATHIC_MAXILLA,
-  /** Indicates the maxilla is neither prognathic nor prognathic */
+  /** Indicates the maxilla is neither retrognathic nor prognathic */
   NORMAL_MAXILLA,
 
   // Mandible
   PROGNATHIC_MANDIBLE,
   RETROGNATHIC_MANDIBLE,
-  /** Indicates the mandible is neither prognathic nor prognathic */
+  /** Indicates the mandible is neither retrognathic nor prognathic */
   NORMAL_MANDIBLE,
 }
 
