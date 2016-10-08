@@ -1,5 +1,8 @@
-import { angleBetweenPoints, line, point, getSymbolForAngle } from './helpers';
-import { AnalysisResultSeverity, AnalysisResultType } from '../../constants';
+import { 
+  line, point,
+  angleBetweenPoints, getSymbolForAngle,
+  AnalysisResultSeverity, SkeletalPattern, Mandible, Maxilla
+} from './helpers';
 
 /**
  * Most superior point of outline of external auditory meatus
@@ -93,72 +96,66 @@ export const components: AnalysisComponent[] = [
   },
 ];
 
-export const interpretANB = (ANB: number, min = 0, max = 4): AnalysisResult => {
+export const interpretANB = (value: number, min = 0, max = 4): AnalysisResult => {
   // @TODO: handle severity
-  const severity = Math.min(
+  const symbol = ANB.symbol;
+  const severity: AnalysisResultSeverity = Math.min(
     AnalysisResultSeverity.HIGH,
-    Math.round(Math.abs(ANB - ((min + max) / 2)) / 3),
+    Math.round(Math.abs(value - ((min + max) / 2)) / 3),
   );
-  if (ANB > max) {
-    return {
-      type: AnalysisResultType.CLASS_II_SKELETAL_PATTERN,
-      severity,
-    };
-  } else if (ANB < min) {
-    return {
-      type: AnalysisResultType.CLASS_III_SKELETAL_PATTERN,
-      severity,
-    };
+  let type = SkeletalPattern.class1;
+  if (value > max) {
+    type = SkeletalPattern.class2;
+  } else if (value < min) {
+    type = SkeletalPattern.class3;
   }
   return {
-    type: AnalysisResultType.CLASS_I_SKELETAL_PATTERN,
-    severity: AnalysisResultSeverity.NONE,
+    type,
+    severity,
+    value,
+    symbol,
   };
 };
 
-export const interpretSNA = (SNA: number, min = 80, max = 84): AnalysisResult => {
+export const interpretSNA = (value: number, min = 80, max = 84): AnalysisResult => {
   // @TODO: handle severity
+  const symbol = SNA.symbol;
   const severity = Math.min(
     AnalysisResultSeverity.HIGH,
-    Math.round(Math.abs(SNA - ((min + max) / 2)) / 3),
+    Math.round(Math.abs(value - ((min + max) / 2)) / 3),
   );
-  if (SNA > max) {
-    return {
-      type: AnalysisResultType.PROGNATHIC_MAXILLA,
-      severity,
-    };  
-  } else if (SNA < min) {
-    return {
-      type: AnalysisResultType.RETROGNATHIC_MAXILLA,
-      severity,
-    };
+  let type = Maxilla.normal;
+  if (value > max) {
+    type = Maxilla.prognathic;
+  } else if (value < min) {
+    type = Maxilla.retrognathic;
   }
   return {
-    type: AnalysisResultType.NORMAL_MAXILLA,
-    severity: AnalysisResultSeverity.NONE,
+    type,
+    severity,
+    value,
+    symbol,
   };
 };
 
-export const interpretSNB = (SNB: number, min = 78, max = 82): AnalysisResult => {
+export const interpretSNB = (value: number, min = 78, max = 82): AnalysisResult => {
   // @TODO: handle severity
+  const symbol = SNB.symbol;
+  let type = Mandible.normal;
   const severity = Math.min(
     AnalysisResultSeverity.HIGH,
-    Math.round(Math.abs(SNB - ((min + max) / 2)) / 3),
+    Math.round(Math.abs(value - ((min + max) / 2)) / 3),
   );
-  if (SNB > max) {
-    return {
-      type: AnalysisResultType.PROGNATHIC_MANDIBLE,
-      severity,
-    };
-  } else if (SNB < min) {
-    return {
-      type: AnalysisResultType.RETROGNATHIC_MANDIBLE,
-      severity,
-    }
+  if (value > max) {
+    type = Mandible.prognathic;
+  } else if (value < min) {
+    type = Mandible.retrognathic;
   }
   return {
-    type: AnalysisResultType.NORMAL_MANDIBLE,
-    severity: AnalysisResultSeverity.NONE,
+    type,
+    severity,
+    value,
+    symbol,
   };
 };
 

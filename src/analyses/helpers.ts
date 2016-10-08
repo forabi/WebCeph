@@ -5,6 +5,7 @@ import filter from 'lodash/filter';
 import reject from 'lodash/reject';
 import concat from 'lodash/concat';
 import assign from 'lodash/assign';
+import has from 'lodash/has';
 
 export function getSymbolForAngle(lineA: CephaloLine, lineB: CephaloLine): string {
   return uniq([
@@ -159,4 +160,115 @@ export function evaluate(landmark: CephaloLandmark, mapper: CephaloMapper): Eval
     return mapper.toPoint(landmark);
   }
   return undefined;
+}
+
+export enum SkeletalPattern {
+  class1 = 0,
+  class2,
+  class3,
+}
+
+export enum Maxilla {
+  prognathic = 3,
+  retrognathic,
+  /** Indicates the maxilla is neither retrognathic nor prognathic */
+  normal,
+}
+
+export enum Mandible {
+  // Mandible
+  prognathic = 6,
+  retrognathic,
+  /** Indicates the mandible is neither retrognathic nor prognathic */
+  normal,
+}
+
+export enum SkeletalProfile {
+  normal = 9,
+  concave,
+  convex,
+}
+
+const typeMap = {
+  [SkeletalPattern.class1]: 'Class I',
+  [SkeletalPattern.class2]: 'Class II',
+  [SkeletalPattern.class3]: 'Class III',
+  [SkeletalProfile.concave]: 'Concave',
+  [SkeletalProfile.convex]: 'Convex',
+  [SkeletalProfile.normal]: 'Normal',
+  [Maxilla.normal]: 'Normal',
+  [Maxilla.prognathic]: 'Prognathic',
+  [Maxilla.retrognathic]: 'Retrognathic',
+  [Mandible.normal]: 'Normal',
+  [Mandible.prognathic]: 'Prognathic',
+  [Mandible.retrognathic]: 'Retrognathic',
+}
+
+export enum AnalysisResultSeverity {
+  NONE = 0,
+  UNKNOWN = NONE,
+  LOW = 1,
+  SLIGHT = LOW,
+  MEDIUM = 2,
+  HIGH = 3,
+  SEVERE = HIGH,
+}
+
+export function isSkeletalPattern(value: number | string): value is SkeletalPattern {
+  return has(SkeletalPattern, value);
+}
+
+export function isMaxilla(value: number | string): value is Maxilla {
+  return has(Maxilla, value);
+}
+
+export function isMandible(value: number | string): value is Mandible {
+  return has(Mandible, value);
+}
+
+export function isSkeletalProfile(value: number | string): value is SkeletalProfile {
+  return has(SkeletalProfile, value);
+}
+
+const severityMap = {
+  [AnalysisResultSeverity.LOW]: 'Slight',
+  [AnalysisResultSeverity.MEDIUM]: 'Medium',
+  [AnalysisResultSeverity.HIGH]: 'Severe',
+}
+
+export function mapSeverityToString(value: number) {
+  return severityMap[value] || '-';
+}
+
+export function mapTypeToIndication(value: number) {
+  return typeMap[value] || '-';
+}
+
+export function hasResultValue(result: any): result is ViewableAnalysisResultWithValue {
+  return result.value !== undefined && result.symbol !== undefined;
+}
+
+export function mapResultToViewableResult(result: AnalysisResult): ViewableAnalysisResult {
+  let name = 'Unknown';
+  if (isSkeletalPattern(result.type)) {
+    name = 'Skeletal Pattern';
+  } else if (isSkeletalProfile(result.type)) {
+    name = 'Skeletal Profile';
+  } else if (isMaxilla(result.type)) {
+    name = 'Maxilla';
+  } else if (isMandible(result.type)) {
+    name = 'Mandible';
+  } else {
+    console.warn(
+      'Cannot find name for analysis result',
+      result,
+    );
+  }
+  return {
+    name,
+    value: result.value,
+    symbol: result.symbol,
+    severity: mapSeverityToString(result.severity),
+    indicates: mapTypeToIndication(result.type),
+  };
 }

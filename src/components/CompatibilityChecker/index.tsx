@@ -33,7 +33,7 @@ const getWhyFeatureIsRequired = ({ id }: BrowserFeature) => {
   return undefined;
 }
 
-const CompatibilityChecker = (props: CompatibilityCheckerProps) => (
+const CompatibilityChecker = pure((props: CompatibilityCheckerProps) => (
   <div className={props.className}>
     <Dialog open={props.open}>
       <h3>You are using an outdated web browser</h3>
@@ -87,25 +87,23 @@ const CompatibilityChecker = (props: CompatibilityCheckerProps) => (
       </List>
     </Dialog>
   </div>
-);
+));
 
-import branch from 'recompose/branch';
-import pure from 'recompose/pure';
-import renderComponent from 'recompose/renderComponent';
+import { branch, pure, renderComponent } from 'recompose';
 import CircularProgress from 'material-ui/CircularProgress';
 import identity from 'lodash/identity';
 
-const ProgressDialog = (props: CompatibilityCheckerProps) => (
+const ProgressDialog = pure((props: CompatibilityCheckerProps) => (
   <Dialog className={classes.dialog__loading} open={props.open}>
     <div className={classes.loading_container}>
       <CircularProgress />
       <span>Checking browser compatiblity...</span>
     </div>
   </Dialog>
-);
+));
 
 export default branch(
   (props: CompatibilityCheckerProps) => props.isChecking,
   renderComponent(ProgressDialog),
   identity,
-)(pure(CompatibilityChecker));
+)(CompatibilityChecker);

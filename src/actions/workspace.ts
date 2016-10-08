@@ -28,3 +28,6 @@ export const ignoreLikelyNotCephalo: () => any = createAction(
   Event.SET_IS_CEPHALO_REQUESTED,
   () => ({ isCephalo: true }),
 );
+
+export const showAnalysisResults: () => void = createAction(Event.SHOW_ANALYSIS_RESULTS_REQUESTED); 
+export const closeAnalysisResults: () => void = createAction(Event.CLOSE_ANALYSIS_RESULTS_REQUESTED);

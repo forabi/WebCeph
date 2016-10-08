@@ -26,7 +26,9 @@ function performModernizrTests() {
      * This function is fired whenever an individual feature detection test is finished
      */
     const completed = (feature: string) => (isSupported: boolean) => {
-      emit({ feature, isSupported } as CheckResult);
+      if (!featureDetails[feature].optional) {
+        emit({ feature, isSupported } as CheckResult);
+      }
 
       /* Modernizr does not provide an event for completion yet
        * We need to keep track of how many features have completed compared to 

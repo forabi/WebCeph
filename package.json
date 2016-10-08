@@ -82,6 +82,7 @@
     "@types/react-dom": "^0.14.16",
     "@types/react-dropzone": "0.0.27",
     "@types/react-tap-event-plugin": "0.0.29",
+    "@types/recompose": "^0.20.1",
     "@types/webpack": "^1.12.34",
     "autoprefixer": "^6.5.0",
     "babel": "^6.5.2",

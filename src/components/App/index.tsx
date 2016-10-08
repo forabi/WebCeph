@@ -10,6 +10,7 @@ import noop from 'lodash/noop'
 
 import CephaloEditor from '../CephaloEditor';
 import CompatibilityChecker from '../CompatibilityChecker';
+import AnalysisResultsViewer from '../AnalysisResultsViewer';
 
 import {
   flipImageX,
@@ -19,12 +20,15 @@ import {
   resetWorkspace,
   ignoreWorkspaceError,
   ignoreLikelyNotCephalo,
+  showAnalysisResults,
+  closeAnalysisResults,
 } from '../../actions/workspace';
 
 import {
   activeAnalysisStepsSelector,
   isAnalysisCompleteSelector,
   isAnalysisActiveSelector,
+  getAnalysisResultsSelector,
   getStepStateSelector,
   onCanvasClickedSelector,
   onFileDroppedSelector,
@@ -73,6 +77,8 @@ interface StateProps {
   onCanvasClicked: (dispatch: Function) => (e: { X: number, Y: number }) => void;
   onFileDropped(dispatch: Function): (file: File) => void;
   getStepValue(step: Step): number | undefined;
+  areAnalysisResultsShown: boolean;
+  analysisResults: (AnalysisResult & { name: string })[];
 }
 
 interface DispatchProps {
@@ -88,6 +94,8 @@ interface DispatchProps {
   onEditLandmarkRequested(landmark: CephaloLandmark): void;
   onRemoveLandmarkRequested(landmark: CephaloLandmark): void;
   onCanvasResized(e: ResizeObserverEntry): void;
+  onShowAnalysisResultsClicked(): any;
+  onAnalysisViewerCloseRequested(): any;
 }
 
 interface MergeProps {
@@ -119,6 +127,11 @@ class App extends React.PureComponent<AppProps, {}> {
             recommendedBrowsers={props.recommendedBrowsers}
             onDialogClosed={props.onCompatibilityDialogClosed}
             isChecking={props.isCheckingCompatiblity}
+          />
+          <AnalysisResultsViewer
+            open={props.areAnalysisResultsShown}
+            results={props.analysisResults}
+            onCloseRequested={props.onAnalysisViewerCloseRequested}
           />
           <CephaloEditor
             className={cx('row', classes.editor)}
@@ -160,6 +173,8 @@ export default connect(
     onFileDropped: onFileDroppedSelector(state),
     getStepValue: getLandmarkValueSelector(state),
     onCanvasClicked: onCanvasClickedSelector(state),
+    areAnalysisResultsShown: state['cephalo.workspace.analysis.results.areShown'],
+    analysisResults: getAnalysisResultsSelector(state),
   } as StateProps),
 
   // mapDispatchToProps
@@ -176,6 +191,8 @@ export default connect(
     onAddLandmarkRequested: () => null, // @TODO
     onEditLandmarkRequested: () => null, // @TODO
     onRemoveLandmarkRequested: () => null, // @TODO,
+    onShowAnalysisResultsClicked: () => dispatch(showAnalysisResults()),
+    onAnalysisViewerCloseRequested: () => dispatch(closeAnalysisResults()),
   } as DispatchProps),
 
   (stateProps: StateProps, dispatchProps: DispatchProps) => assign(

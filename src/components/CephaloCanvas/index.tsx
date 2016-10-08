@@ -1,13 +1,13 @@
 import * as React from 'react';
 import map from 'lodash/map';
 import compact from 'lodash/compact';
-import toArray from 'lodash/toArray';
 import { findDOMNode } from 'react-dom'; 
 import { isGeometricalPoint, isGeometricalLine } from '../../utils/math';
+import { pure } from 'recompose';
 
 // declare var window: Window & { ResizeObserver: ResizeObserver };
 
-const InvertFilter = ({ id }: { id: string }) => (
+const InvertFilter = pure(({ id }: { id: string }) => (
   <filter id={id}>
     <feColorMatrix
       in="SourceGraphic" type="matrix"
@@ -19,9 +19,9 @@ const InvertFilter = ({ id }: { id: string }) => (
       `}
     />
   </filter>
-);
+));
 
-const ContrastFilter = ({ id, value = 50 }: { id: string, value: number }) => {
+const ContrastFilter = pure(({ id, value = 50 }: { id: string, value: number }) => {
   const c = 0.5 - (value / 100);
   const t = (1 - c) / 2;
   return (
@@ -38,9 +38,9 @@ const ContrastFilter = ({ id, value = 50 }: { id: string, value: number }) => {
       />
     </filter>
   );
-};
+});
 
-const BrightnessFilter = ({ id, value }: { id: string, value: number }) => (
+const BrightnessFilter = pure(({ id, value }: { id: string, value: number }) => (
   <filter id={id}>
     <feComponentTransfer>
       <feFuncR type="linear" intercept={(value - 50) / 100} slope="1"/>
@@ -48,17 +48,15 @@ const BrightnessFilter = ({ id, value }: { id: string, value: number }) => (
       <feFuncB type="linear" intercept={(value - 50) / 100} slope="1"/>
     </feComponentTransfer>
   </filter>
-);
+));
 
-const DropShadow = ({ id }: { id: string }) => (
+const DropShadow = pure(({ id }: { id: string }) => (
   <filter id={id} x="0" y="0" width="200%" height="200%">
     <feOffset result="offOut" in="SourceAlpha" dx="0" dy="0" />
     <feGaussianBlur result="blurOut" in="offOut" stdDeviation="3" />
     <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
   </filter>
-)
-
-const classes = require('./style.scss');
+));
 
 const geometricalObjectToSVG = (value: (GeometricalObject), id: string): (JSX.Element | undefined) => {
   if (isGeometricalPoint(value)) {
@@ -167,7 +165,7 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
             </g>
           </g>
         </g>
-        {compact(map(toArray(this.props.landmarks), geometricalObjectToSVG))}
+        {compact(map(this.props.landmarks, geometricalObjectToSVG))}
       </svg>
     )
   }

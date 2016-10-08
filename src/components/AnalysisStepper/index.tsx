@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { List, ListItem } from 'material-ui/List';
-import pure from 'recompose/pure';
+import { pure } from 'recompose';
 
 const classes = require('./style.scss');
 
@@ -9,7 +9,6 @@ interface AnalysisStepperProps {
   steps: Step[];
   getStepState(step: Step): StepState;
   getStepValue(step: Step): number | undefined;
-  showResults(): void;
   removeLandmark(landmark: CephaloLandmark): void;
   editLandmark(landmark: CephaloLandmark): void;
 }
@@ -53,14 +52,13 @@ export const AnalysisStepper = pure((props: AnalysisStepperProps) => {
   const {
     steps,
     getStepState,
-    showResults,
     getStepValue,
     removeLandmark, editLandmark,
   } = props;
   return (
     <List className={props.className}>
     {
-      steps.map((step) => {
+      steps.map(step => {
         const value = getStepValue(step);
         return (
           <div key={step.symbol}>

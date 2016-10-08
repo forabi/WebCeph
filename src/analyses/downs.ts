@@ -1,9 +1,8 @@
 import assign from 'lodash/assign';
 
-import { angleBetweenPoints, line, angleBetweenLines } from './helpers';
+import { angleBetweenPoints, line, angleBetweenLines, SkeletalProfile, AnalysisResultSeverity } from './helpers';
 import common, { components as commonComponents, FH_PLANE, N, Pog, A, B, Gn, S, Po } from './common';
 import { radiansToDegrees, calculateAngleBetweenPoints, isBehind } from '../utils/math';
-import { AnalysisResultType, AnalysisResultSeverity } from '../../constants';
 
 export const ANGLE_OF_CONVEXITY: CephaloAngle = assign(
    angleBetweenPoints(N, A, Pog, 'Angle of Convexity'),
@@ -26,24 +25,22 @@ export const ANGLE_OF_CONVEXITY: CephaloAngle = assign(
 
 const interpretAngleOfConvexity = (value: number, min = -5, max = 5) => {
   // @TODO: handle severity
+  const symbol = ANGLE_OF_CONVEXITY.symbol;
   const severity = Math.min(
     AnalysisResultSeverity.HIGH,
     Math.round(Math.abs(value - ((min + max) / 2)) / 3),
   );
+  let type = SkeletalProfile.normal;
   if (value < -5) {
-    return {
-      type: AnalysisResultType.CONCAVE_SKELETAL_PROFILE,
-      severity,
-    };
+    type = SkeletalProfile.concave;
   } else if (value > 5) {
-    return {
-      type: AnalysisResultType.CONVEX_SKELETAL_PROFILE,
-      severity,
-    };
+    type = SkeletalProfile.convex;
   }
   return {
-    type: AnalysisResultType.NORMAL_SKELETAL_PROFILE,
-    severity: AnalysisResultSeverity.NONE,
+    type,
+    severity,
+    value,
+    symbol,
   };
 };
 

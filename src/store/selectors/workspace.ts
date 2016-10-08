@@ -5,6 +5,8 @@ import has from 'lodash/has';
 import every from 'lodash/every';
 import includes from 'lodash/includes';
 import find from 'lodash/find';
+import map from 'lodash/map';
+import { mapResultToViewableResult } from '../../analyses/helpers';
 
 export const mappedLandmarksSelector = (state: StoreState) => state['cephalo.workspace.landmarks'];
 
@@ -111,6 +113,18 @@ export const isAnalysisCompleteSelector = createSelector(
     return every(activeAnalysis.components, step => has(mappedLandmarks, step.landmark.symbol));
   },
 );
+
+export const getAnalysisResultsSelector = createSelector(
+  activeAnalysisSelector,
+  isAnalysisCompleteSelector,
+  mappedLandmarksSelector,
+  (analysis, isComplete, values): ViewableAnalysisResult[] => {
+    if (analysis && isComplete) {
+      return map(analysis.interpret(values), mapResultToViewableResult);
+    }
+    return [];
+  }
+)
 
 import {
   loadImageFile,

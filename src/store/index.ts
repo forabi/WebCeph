@@ -87,10 +87,15 @@ const reducer = combineReducers({
     [Event.STEP_EVALUATION_STARTED]: (state, { payload }) => [...state, payload],
     [Event.STEP_EVALUATION_FINISHED]: (state, { payload }) => without(state, payload),
   }, []),
-  'cephalo.workspace.analysis.isLoading': handleActions<any, boolean>({
+  'cephalo.workspace.analysis.isLoading': handleActions<boolean, boolean>({
     [Event.FETCH_ANALYSIS_SUCCEEDED]: () => false,
     [Event.FETCH_ANALYSIS_FAILED]: () => false,
     [Event.FETCH_ANALYSIS_REQUESTED]: () => true,
+  }, false),
+  'cephalo.workspace.analysis.results.areShown': handleActions<boolean, boolean>({
+    [Event.SHOW_ANALYSIS_RESULTS_REQUESTED]: () => true,
+    [Event.RESET_WORKSPACE_REQUESTED]: () => true,
+    [Event.CLOSE_ANALYSIS_RESULTS_REQUESTED]: () => false,
   }, false),
   'cephalo.workspace.landmarks': handleActions<any, { symbol: string, value: GeometricalObject | number }>({
     [Event.ADD_LANDMARK_REQUESTED]: (state, { payload }) => assign(

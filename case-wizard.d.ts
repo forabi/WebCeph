@@ -1,6 +1,4 @@
 /// <reference path="./resize-observer.d.ts" />
-/// <reference path="./constants.ts" />
-/// <reference path="./deep-diff.d.ts" />
 
 type AngularUnit = 'degree' | 'radian';
 type LinearUnit = 'mm' | 'cm' | 'in';
@@ -77,14 +75,7 @@ interface GeometricalLine {
 
 type GeometricalObject = GeometricalLine | GeometricalPoint;
 
-
 type EvaluatedValue = GeometricalObject | number;
-
-
-interface AnalysisResult {
-  type: AnalysisResultType;
-  severity: AnalysisResultSeverity;
-}
 
 type AnalysisComponent = {
   landmark: CephaloLandmark;
@@ -92,6 +83,25 @@ type AnalysisComponent = {
   stdDev?: number;
 };
 
+interface AnalysisResult {
+  type: number;
+  severity: number;
+  symbol?: string;
+  value?: number;
+}
+
+interface BaseViewableAnalysisResult {
+  name: string;
+  indicates: string;
+  severity: string;
+}
+
+interface ViewableAnalysisResultWithValue extends BaseViewableAnalysisResult {
+  value: number;
+  symbol: string;
+}
+
+type ViewableAnalysisResult = BaseViewableAnalysisResult | ViewableAnalysisResultWithValue
 
 interface Analysis {
   id: string;
@@ -148,6 +158,7 @@ interface StoreState {
   'cephalo.workspace.analysis.activeAnalysis': Analysis | null;
   'cephalo.workspace.analysis.stepsBeingEvaluated': string[];
   'cephalo.workspace.analysis.isLoading': boolean;
+  'cephalo.workspace.analysis.results.areShown': boolean;
   'cephalo.workspace.landmarks': {
     [id: string]: number | (GeometricalObject & {
       visible?: boolean;

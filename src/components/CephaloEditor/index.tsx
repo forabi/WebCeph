@@ -47,6 +47,7 @@ interface CephaloEditorProps {
   onInvertClicked(e?: __React.MouseEvent): void;
   onPickAnotherImageClicked(...args: any[]): void;
   onIgnoreNotCephaloClicked(...args: any[]): void;
+  onShowAnalysisResultsClicked(): any;
   onEditLandmarkRequested(landmark: CephaloLandmark): void;
   onRemoveLandmarkRequested(landmark: CephaloLandmark): void;
   onIgnoreErrorClicked(...args: any[]): void;
@@ -211,7 +212,6 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
           { isAnalysisActive ? (
               <AnalysisStepper
                 className={classes.list_steps}
-                showResults={this.props.onShowAnalysisResultsClicked}
                 editLandmark={this.props.onRemoveLandmarkRequested}
                 removeLandmark={this.props.onRemoveLandmarkRequested}
                 steps={this.props.analysisSteps}
@@ -222,7 +222,7 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
               <div className={classes.list_steps} />
             )
           }
-          <RaisedButton label="Continue" disabled={!isAnalysisComplete} primary />
+          <RaisedButton label="Show results" onClick={this.props.onShowAnalysisResultsClicked} disabled={!isAnalysisComplete} primary />
         </div>
       </div>
     );
