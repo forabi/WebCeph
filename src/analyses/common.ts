@@ -98,7 +98,7 @@ export const components: AnalysisComponent[] = [
 
 export const interpretANB = (value: number, min = 0, max = 4): AnalysisResult => {
   // @TODO: handle severity
-  const symbol = ANB.symbol;
+  const relevantComponents = [ANB.symbol];
   const severity: AnalysisResultSeverity = Math.min(
     AnalysisResultSeverity.HIGH,
     Math.round(Math.abs(value - ((min + max) / 2)) / 3),
@@ -112,14 +112,13 @@ export const interpretANB = (value: number, min = 0, max = 4): AnalysisResult =>
   return {
     type,
     severity,
-    value,
-    symbol,
+    relevantComponents,
   };
 };
 
 export const interpretSNA = (value: number, min = 80, max = 84): AnalysisResult => {
   // @TODO: handle severity
-  const symbol = SNA.symbol;
+  const relevantComponents = [SNA.symbol];
   const severity = Math.min(
     AnalysisResultSeverity.HIGH,
     Math.round(Math.abs(value - ((min + max) / 2)) / 3),
@@ -133,14 +132,13 @@ export const interpretSNA = (value: number, min = 80, max = 84): AnalysisResult 
   return {
     type,
     severity,
-    value,
-    symbol,
+    relevantComponents,
   };
 };
 
 export const interpretSNB = (value: number, min = 78, max = 82): AnalysisResult => {
   // @TODO: handle severity
-  const symbol = SNB.symbol;
+  const relevantComponents = [SNB.symbol];
   let type = Mandible.normal;
   const severity = Math.min(
     AnalysisResultSeverity.HIGH,
@@ -154,8 +152,7 @@ export const interpretSNB = (value: number, min = 78, max = 82): AnalysisResult 
   return {
     type,
     severity,
-    value,
-    symbol,
+    relevantComponents,
   };
 };
 

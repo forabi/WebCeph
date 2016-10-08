@@ -89,8 +89,76 @@ export const mapLandmarkToGeometricalObject = createSelector(
 
 export const getLandmarkValueSelector = createSelector(
   manualLandmarksSelector,
-  (mappedLandmarksSelector) => (step: Step | CephaloLandmark) => mappedLandmarksSelector[step.symbol],
-)
+  (manualLandmarks) => (step: Step | CephaloLandmark) => manualLandmarks[step.symbol],
+);
+
+// export const getComputedValueSelector = createSelector(
+//   manualLandmarksSelector,
+//   (manualLandmarks) => (step: Step | CephaloLandmark) => {
+//     evaluate()
+//   }
+// )
+
+import {
+  mapSeverityToString,
+  mapTypeToIndication,
+  isSkeletalPattern,
+  isSkeletalProfile,
+  isMaxilla, isMandible
+} from '../../analyses/helpers';
+import keyBy from 'lodash/keyBy';
+import compact from 'lodash/compact';
+
+export const getViewableResultSelector = createSelector(
+  activeAnalysisSelector,
+  getLandmarkValueSelector,
+  (analysis, getValue) => {
+    return function mapResultToViewableResult(result: AnalysisResult): ViewableAnalysisResult {
+      let name = 'Unknown';
+      if (isSkeletalPattern(result.type)) {
+        name = 'Skeletal Pattern';
+      } else if (isSkeletalProfile(result.type)) {
+        name = 'Skeletal Profile';
+      } else if (isMaxilla(result.type)) {
+        name = 'Maxilla';
+      } else if (isMandible(result.type)) {
+        name = 'Mandible';
+      } else {
+        console.warn(
+          'Cannot find name for analysis result',
+          result,
+        );
+      }
+      if (result.relevantComponents && result.relevantComponents.length) {
+        const indexed = keyBy(analysis.components, c => c.landmark.symbol);
+        return {
+          name,
+          relevantComponents: compact(map(
+            result.relevantComponents,
+            c => {
+              const v = getValue(indexed[c].landmark);
+              if (typeof v !== 'number') return null;
+              return {
+                norm: indexed[c].norm,
+                stdDev: indexed[c].norm,
+                symbol: indexed[c].landmark.symbol,
+                value: v,
+              }
+            },
+          )),
+          severity: mapSeverityToString(result.severity),
+          indicates: mapTypeToIndication(result.type),
+        } as ViewableAnalysisResultWithValue;
+      } else {
+        return {
+          name,
+          severity: mapSeverityToString(result.severity),
+          indicates: mapTypeToIndication(result.type),
+        } as BaseViewableAnalysisResult;
+      }
+    };
+  }
+);
 
 export const isAnalysisActiveSelector = createSelector(
   activeAnalysisSelector,
@@ -98,7 +166,7 @@ export const isAnalysisActiveSelector = createSelector(
   (analysis, data) => (
       analysis !== null && data !== null
   ),
-)
+);
 
 export const completedStepsSelector = createSelector(
   activeAnalysisStepsSelector,
@@ -119,9 +187,10 @@ export const getAnalysisResultsSelector = createSelector(
   activeAnalysisSelector,
   isAnalysisCompleteSelector,
   manualLandmarksSelector,
-  (analysis, isComplete, values): ViewableAnalysisResult[] => {
-    if (analysis && isComplete) {
-      return map(analysis.interpret(values), mapResultToViewableResult);
+  getViewableResultSelector,
+  (analysis, isComplete, values, getViewable): ViewableAnalysisResult[] => {
+    if (analysis !== null && isComplete) {
+      return map(analysis.interpret(values), getViewable);
     }
     return [];
   }

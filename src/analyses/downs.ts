@@ -23,9 +23,9 @@ export const ANGLE_OF_CONVEXITY: CephaloAngle = assign(
    },
 );
 
-const interpretAngleOfConvexity = (value: number, min = -5, max = 5) => {
+const interpretAngleOfConvexity = (value: number, min = -5, max = 5): AnalysisResult => {
   // @TODO: handle severity
-  const symbol = ANGLE_OF_CONVEXITY.symbol;
+  const relevantComponents = [ANGLE_OF_CONVEXITY.symbol];
   const severity = Math.min(
     AnalysisResultSeverity.HIGH,
     Math.round(Math.abs(value - ((min + max) / 2)) / 3),
@@ -39,8 +39,7 @@ const interpretAngleOfConvexity = (value: number, min = -5, max = 5) => {
   return {
     type,
     severity,
-    value,
-    symbol,
+    relevantComponents,
   };
 };
 

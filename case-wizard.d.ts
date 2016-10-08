@@ -88,8 +88,8 @@ type AnalysisComponent = {
 interface AnalysisResult {
   type: number;
   severity: number;
-  symbol?: string;
-  value?: number;
+  /** A list of symbol that were used to calculate this result */
+  relevantComponents: string[];
 }
 
 interface BaseViewableAnalysisResult {
@@ -99,8 +99,11 @@ interface BaseViewableAnalysisResult {
 }
 
 interface ViewableAnalysisResultWithValue extends BaseViewableAnalysisResult {
-  value: number;
-  symbol: string;
+  relevantComponents: {
+    symbol: string;
+    value: number;
+    stdDev?: number;
+  }[];
 }
 
 type ViewableAnalysisResult = BaseViewableAnalysisResult | ViewableAnalysisResultWithValue

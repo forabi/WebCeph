@@ -246,32 +246,7 @@ export function mapTypeToIndication(value: number) {
 }
 
 export function hasResultValue(result: any): result is ViewableAnalysisResultWithValue {
-  return result.value !== undefined && result.symbol !== undefined;
-}
-
-export function mapResultToViewableResult(result: AnalysisResult): ViewableAnalysisResult {
-  let name = 'Unknown';
-  if (isSkeletalPattern(result.type)) {
-    name = 'Skeletal Pattern';
-  } else if (isSkeletalProfile(result.type)) {
-    name = 'Skeletal Profile';
-  } else if (isMaxilla(result.type)) {
-    name = 'Maxilla';
-  } else if (isMandible(result.type)) {
-    name = 'Mandible';
-  } else {
-    console.warn(
-      'Cannot find name for analysis result',
-      result,
-    );
-  }
-  return {
-    name,
-    value: result.value,
-    symbol: result.symbol,
-    severity: mapSeverityToString(result.severity),
-    indicates: mapTypeToIndication(result.type),
-  };
+  return (result as ViewableAnalysisResultWithValue).relevantComponents !== undefined;
 }
 
 export const isStepAutomatic = (step: CephaloLandmark): boolean => {

@@ -2,7 +2,7 @@ import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
 import { pure } from 'recompose';
-import { hasResultValue as hasValue } from '../../analyses/helpers'; 
+import { hasResultValue as isViewableResultWithValue } from '../../analyses/helpers'; 
 
 interface AnalysisResultsViewerProps {
   onCloseRequested: () => any;
@@ -43,7 +43,7 @@ export const AnalysisResultsViewer = pure(({ open, onCloseRequested, results }: 
             {result.severity}
           </TableRowColumn>
           <TableRowColumn>
-            {hasValue(result) !== undefined ? `${result.symbol} = ${result.value.toFixed(1)}` : '-'}
+            {isViewableResultWithValue(result) ? result.relevantComponents.map(r => `${r.symbol} = ${r.value.toFixed(1)}`) : '-'}
           </TableRowColumn>
         </TableRow>
       ))
