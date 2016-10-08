@@ -1,17 +1,21 @@
 import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { handleActions } from 'redux-actions';
-import { Event } from '../utils/constants';
+import { Event, StoreKeys } from '../utils/constants';
 import rootSaga from './sagas';
 import assign from 'lodash/assign';
+import reduce from 'lodash/reduce';
 import omit from 'lodash/omit';
-import without from 'lodash/without';
 import common from '../analyses/common';
-import isPlainObject from 'lodash/isPlainObject';
+import manualLandmarks from './reducers/manualLandmarks';
 
 declare const window: Window & { devToolsExtension?: () => any };
 
-const reducer = combineReducers({
+const newReducer = reduce([
+  manualLandmarks,
+], assign, { });
+
+const oldReducers = {
   'env.compatiblity.isIgnored': handleActions({
     [Event.IGNORE_BROWSER_COMPATIBLITY_REQUESTED]: (_, __) => true,
     [Event.ENFORCE_BROWSER_COMPATIBLITY_REQUESTED]: (_, __) => false,
@@ -83,10 +87,10 @@ const reducer = combineReducers({
   'cephalo.workspace.analysis.activeAnalysis': handleActions<Analysis | null, any>({
     [Event.SET_ACTIVE_ANALYSIS_REQUESTED]: (__, { payload }) => payload,
   }, common),
-  'cephalo.workspace.analysis.stepsBeingEvaluated': handleActions<string[], any>({
-    [Event.STEP_EVALUATION_STARTED]: (state, { payload }) => [...state, payload],
-    [Event.STEP_EVALUATION_FINISHED]: (state, { payload }) => without(state, payload),
-  }, []),
+  'cephalo.workspace.analysis.stepsBeingEvaluated': handleActions<{ [symbol: string]: true }, string>({
+    [Event.STEP_EVALUATION_STARTED]: (state, { payload }) => assign({ }, state, { [payload]: true }),
+    [Event.STEP_EVALUATION_FINISHED]: (state, { payload }) => omit(state, payload),
+  }, { }),
   'cephalo.workspace.analysis.isLoading': handleActions<boolean, boolean>({
     [Event.FETCH_ANALYSIS_SUCCEEDED]: () => false,
     [Event.FETCH_ANALYSIS_FAILED]: () => false,
@@ -97,21 +101,16 @@ const reducer = combineReducers({
     [Event.RESET_WORKSPACE_REQUESTED]: () => true,
     [Event.CLOSE_ANALYSIS_RESULTS_REQUESTED]: () => false,
   }, false),
-  'cephalo.workspace.landmarks': handleActions<any, { symbol: string, value: GeometricalObject | number }>({
-    [Event.ADD_LANDMARK_REQUESTED]: (state, { payload }) => assign(
+  [StoreKeys.manualLandmarks]: handleActions<StoreEntries.manualLandmarks, Payloads.addManualLandmark>({
+    [Event.ADD_MANUAL_LANDMARK_REQUESTED]: (state, { payload }) => assign(
       { },
       state,
       {
-        [payload.symbol]: (
-          isPlainObject(payload.value) ? assign(
-            { },
-            payload.value,
-          ) : payload.value
-        ),
+        [payload.symbol]: payload.value,
       },
     ),
-    [Event.REMOVE_LANDMARK_REQUESTED]: (state, { payload }) => omit(state, payload.symbol),
-  }, { }),
+    [Event.REMOVE_MANUAL_LANDMARK_REQUESTED]: (state, { payload }) => omit(state, payload.symbol) as StoreEntries.manualLandmarks,
+  }, { } as StoreEntries.manualLandmarks),
   'cephalo.workspace.workers': handleActions<{
     [id: string]: {
       isBusy: boolean,
@@ -142,7 +141,9 @@ const reducer = combineReducers({
       );
     },
   }, { }),
-});
+};
+
+const reducer = combineReducers(assign({ }, newReducer, oldReducers));
 
 const sagaMiddleware = createSagaMiddleware();
 

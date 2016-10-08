@@ -3,12 +3,13 @@ import { createSelector } from 'reselect';
 import filter from 'lodash/filter';
 import has from 'lodash/has';
 import every from 'lodash/every';
-import includes from 'lodash/includes';
 import find from 'lodash/find';
 import map from 'lodash/map';
 import { mapResultToViewableResult } from '../../analyses/helpers';
 
-export const mappedLandmarksSelector = (state: StoreState) => state['cephalo.workspace.landmarks'];
+import { manualLandmarksSelector } from '../reducers/manualLandmarks';
+
+export { manualLandmarksSelector };
 
 const activeAnalysisSelector = (state: StoreState) => state['cephalo.workspace.analysis.activeAnalysis'];
 
@@ -28,7 +29,7 @@ export const activeAnalysisStepsSelector = createSelector(
 
 export const expectedNextLandmarkSelector = createSelector(
   activeAnalysisStepsSelector,
-  mappedLandmarksSelector,
+  manualLandmarksSelector,
   (steps, setLandmarks) => (find(
     steps,
     x => x.type === 'point' && !has(setLandmarks, x.symbol),
@@ -37,12 +38,12 @@ export const expectedNextLandmarkSelector = createSelector(
 
 export const getStepStateSelector = createSelector(
   stepsBeingEvaluatedSelector,
-  mappedLandmarksSelector,
+  manualLandmarksSelector,
   expectedNextLandmarkSelector,
   (stepsBeingEvaluated, setLandmarks, expectedLandmark) => (landmark: CephaloLandmark): StepState => {
     if (has(setLandmarks, landmark.symbol)) {
       return 'done';
-    } else if (includes(stepsBeingEvaluated, landmark.symbol)) {
+    } else if (has(stepsBeingEvaluated, landmark.symbol)) {
       return 'evaluating';
     } else if (expectedLandmark && expectedLandmark.symbol === landmark.symbol) {
       return 'current';
@@ -53,7 +54,7 @@ export const getStepStateSelector = createSelector(
 );
 
 export const cephaloMapperSelector = createSelector(
-  mappedLandmarksSelector,
+  manualLandmarksSelector,
   (mappedLandmarks): CephaloMapper => {
     const toPoint = (cephaloPoint: CephaloPoint) => {
       return mappedLandmarks[cephaloPoint.symbol] as GeometricalPoint;
@@ -87,7 +88,7 @@ export const mapLandmarkToGeometricalObject = createSelector(
 );
 
 export const getLandmarkValueSelector = createSelector(
-  mappedLandmarksSelector,
+  manualLandmarksSelector,
   (mappedLandmarksSelector) => (step: Step | CephaloLandmark) => mappedLandmarksSelector[step.symbol],
 )
 
@@ -101,12 +102,12 @@ export const isAnalysisActiveSelector = createSelector(
 
 export const completedStepsSelector = createSelector(
   activeAnalysisStepsSelector,
-  mappedLandmarksSelector,
+  manualLandmarksSelector,
   (steps, setLandmarks) => filter(steps, s => has(setLandmarks, s.symbol)),
 );
 
 export const isAnalysisCompleteSelector = createSelector(
-  mappedLandmarksSelector,
+  manualLandmarksSelector,
   activeAnalysisSelector,
   (mappedLandmarks, activeAnalysis) => {
     if (!activeAnalysis) return false;
@@ -117,7 +118,7 @@ export const isAnalysisCompleteSelector = createSelector(
 export const getAnalysisResultsSelector = createSelector(
   activeAnalysisSelector,
   isAnalysisCompleteSelector,
-  mappedLandmarksSelector,
+  manualLandmarksSelector,
   (analysis, isComplete, values): ViewableAnalysisResult[] => {
     if (analysis && isComplete) {
       return map(analysis.interpret(values), mapResultToViewableResult);
@@ -128,7 +129,7 @@ export const getAnalysisResultsSelector = createSelector(
 
 import {
   loadImageFile,
-  addLandmark,
+  addManualLandmark,
   tryAutomaticSteps,
 } from '../../actions/workspace';
 
@@ -138,7 +139,7 @@ export const onCanvasClickedSelector = createSelector(
     return (e => {
       if (expectedLandmark) {
         dispatch(
-          addLandmark(expectedLandmark.symbol, { x: e.X, y: e.Y })
+          addManualLandmark(expectedLandmark.symbol, { x: e.X, y: e.Y })
         );
         dispatch(tryAutomaticSteps());
       }

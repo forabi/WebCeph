@@ -32,7 +32,7 @@ import {
   getStepStateSelector,
   onCanvasClickedSelector,
   onFileDroppedSelector,
-  mappedLandmarksSelector,
+  manualLandmarksSelector,
   getLandmarkValueSelector,
 } from '../../store/selectors/workspace';
 
@@ -167,7 +167,7 @@ export default connect(
     isAnalysisActive: isAnalysisActiveSelector(state),
     isAnalysisComplete: isAnalysisCompleteSelector(state),
     error: state['cephalo.workspace.error'],
-    landmarks: mappedLandmarksSelector(state),
+    landmarks: manualLandmarksSelector(state),
     analysisSteps: activeAnalysisStepsSelector(state),
     getStepState: getStepStateSelector(state),
     onFileDropped: onFileDroppedSelector(state),

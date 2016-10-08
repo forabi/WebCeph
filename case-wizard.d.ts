@@ -1,5 +1,7 @@
 /// <reference path="./resize-observer.d.ts" />
 
+const __DEBUG__: boolean;
+
 type AngularUnit = 'degree' | 'radian';
 type LinearUnit = 'mm' | 'cm' | 'in';
 type LandmarkType = 'angle' | 'point' | 'line' | 'distance';
@@ -131,6 +133,19 @@ interface CephaloMapper {
 type StepState = 'done' | 'current' | 'pending' | 'evaluating';
 type Step = CephaloLandmark & { title: string, state: StepState };
 
+namespace StoreEntries {
+  interface manualLandmarks {
+    [symbol: string]: GeometricalObject;
+  }
+}
+
+namespace Payloads {
+  interface addManualLandmark {
+    symbol: string;
+    value: GeometricalObject;
+  }
+}
+
 interface StoreState {
   'env.compatiblity.isIgnored': boolean;
   'env.compatiblity.missingFeatures': MissingBrowserFeature[];
@@ -156,14 +171,9 @@ interface StoreState {
   'cephalo.workspace.image.invert': boolean;
   'cephalo.workspace.image.contrast': number;
   'cephalo.workspace.analysis.activeAnalysis': Analysis | null;
-  'cephalo.workspace.analysis.stepsBeingEvaluated': string[];
+  'cephalo.workspace.analysis.stepsBeingEvaluated': { [symbol: string]: true; };
   'cephalo.workspace.analysis.isLoading': boolean;
   'cephalo.workspace.analysis.results.areShown': boolean;
-  'cephalo.workspace.landmarks': {
-    [id: string]: number | (GeometricalObject & {
-      visible?: boolean;
-    });
-  };
 }
 
 /** Browser compatiblity checking */

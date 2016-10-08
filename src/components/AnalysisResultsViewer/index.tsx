@@ -14,18 +14,20 @@ export const AnalysisResultsViewer = pure(({ open, onCloseRequested, results }: 
   <Dialog open={open} onRequestClose={onCloseRequested} >
   <Table>
     <TableHeader displaySelectAll={false}>
-      <TableHeaderColumn>
-        Result
-      </TableHeaderColumn>
-      <TableHeaderColumn>
-        Value
-      </TableHeaderColumn>
-      <TableHeaderColumn>
-        Severity
-      </TableHeaderColumn>
-      <TableHeaderColumn>
-        
-      </TableHeaderColumn>
+      <TableRow>
+        <TableHeaderColumn>
+          Result
+        </TableHeaderColumn>
+        <TableHeaderColumn>
+          Value
+        </TableHeaderColumn>
+        <TableHeaderColumn>
+          Severity
+        </TableHeaderColumn>
+        <TableHeaderColumn>
+          
+        </TableHeaderColumn>
+      </TableRow>
     </TableHeader>
     <TableBody displayRowCheckbox={false}>
     {

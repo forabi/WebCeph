@@ -2,9 +2,9 @@ import { Event } from '../utils/constants';
 import { createAction } from 'redux-actions';
 
 /* Tracing actions */
-export const addLandmark: (symbol: string, value: GeometricalObject | number) => any = createAction(
-  Event.ADD_LANDMARK_REQUESTED,
-  (symbol: string, value: GeometricalObject) => ({ symbol, value }),
+export const addManualLandmark: (symbol: string, value: GeometricalObject | number) => any = createAction(
+  Event.ADD_MANUAL_LANDMARK_REQUESTED,
+  (symbol: string, value: GeometricalObject): Payloads.addManualLandmark => ({ symbol, value }),
 );
 
 /** Performs steps in the cephalometric analysis that can be automatically evaluated in the current state.

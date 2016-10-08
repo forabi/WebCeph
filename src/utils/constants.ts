@@ -3,6 +3,10 @@ export enum ErrorCode {
   UNKNOWN,
 }
 
+export const StoreKeys = {
+  manualLandmarks: 'cephalo.workspace.manualLandmarks',
+}
+
 /**
  * Events are just Redux actions. 
  * The name 'event' however describes better what an action does, 
@@ -20,8 +24,8 @@ export const Event = {
 
   /* Workspace */
   CANVAS_RESIZED: 'CANVAS_RESIZED',
-  ADD_LANDMARK_REQUESTED: 'ADD_LANDMARK_REQUESTED',
-  REMOVE_LANDMARK_REQUESTED: 'REMOVE_LANDMARK_REQUESTED',
+  ADD_MANUAL_LANDMARK_REQUESTED: 'ADD_MANUAL_LANDMARK_REQUESTED',
+  REMOVE_MANUAL_LANDMARK_REQUESTED: 'REMOVE_MANUAL_LANDMARK_REQUESTED',
   SET_ACTIVE_ANALYSIS_REQUESTED: 'SET_ACTIVE_ANALYSIS_REQUESTED',
   FLIP_IMAGE_X_REQUESTED: 'FLIP_IMAGE_X_REQUESTED',
   SET_IMAGE_BRIGHTNESS_REQUESTED: 'SET_IMAGE_BRIGHTNESS_REQUESTED',

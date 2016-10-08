@@ -2,10 +2,9 @@ declare var self: DedicatedWorkerGlobalScope;
 import reject from 'lodash/reject';
 import every from 'lodash/every';
 import has from 'lodash/has';
-import includes from 'lodash/includes';
 
 import { evaluate, getStepsForAnalysis } from '../analyses/helpers';
-import { addLandmark, tryAutomaticSteps } from '../actions/workspace';
+import { addManualLandmark, tryAutomaticSteps } from '../actions/workspace';
 import { Event } from '../utils/constants';
 
 const isManual = (step: CephaloLandmark) => step.type === 'point';
@@ -33,7 +32,7 @@ const getCephaloMapper = (mappedLandmarks: { [id: string]: GeometricalObject }) 
 const getStepStateSelector = (stepsBeingEvaluated, mappedLandmarks, expectedLandmark) => (landmark: CephaloLandmark): StepState => {
   if (has(mappedLandmarks, landmark.symbol)) {
     return 'done';
-  } else if (includes(stepsBeingEvaluated, landmark.symbol)) {
+  } else if (has(stepsBeingEvaluated, landmark.symbol)) {
     return 'evaluating';
   } else if (expectedLandmark && expectedLandmark.symbol === landmark.symbol) {
     return 'current';
@@ -56,7 +55,7 @@ self.addEventListener('message', ({ data }) => {
       console.log('Found step eligible for automatic evaluation', step.symbol);
       const value = evaluate(step, cephaloMapper);
       if (value) {
-        postMessage(addLandmark(step.symbol, value));
+        postMessage(addManualLandmark(step.symbol, value));
         postMessage({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
         postMessage(tryAutomaticSteps());
       } else {

@@ -3,19 +3,18 @@ import { takeLatest, takeEvery, eventChannel, END, Channel } from 'redux-saga';
 import { put, take, fork, call, select, Effect } from 'redux-saga/effects';
 import reject from 'lodash/reject';
 import every from 'lodash/every';
+import { isStepManual } from '../../analyses/helpers';
 
 const EvaluationWorker = require('worker!../../utils/evaluation-worker');
 
 import {
-  mappedLandmarksSelector,
+  manualLandmarksSelector,
   stepsBeingEvaluatedSelector,
   expectedNextLandmarkSelector,
 } from '../selectors/workspace';
-import { addLandmark, tryAutomaticSteps } from '../../actions/workspace';
+import { addManualLandmark, tryAutomaticSteps } from '../../actions/workspace';
 
 import { evaluate } from '../../analyses/helpers';
-
-const isManual = (step: CephaloLandmark) => step.type === 'point';
 
 function evaluateInWorker(state: any) {
   const worker = new EvaluationWorker;
@@ -41,7 +40,7 @@ function evaluateInWorker(state: any) {
 }
 
 function* performAutomaticStepInWorker(): IterableIterator<Effect> {
-  const mappedLandmarks = yield select(mappedLandmarksSelector);
+  const mappedLandmarks = yield select(manualLandmarksSelector);
   const stepsBeingEvaluted = yield select(stepsBeingEvaluatedSelector);
   const expectedLandmark = yield select(expectedNextLandmarkSelector); 
   const chan: Channel<any> = yield call(evaluateInWorker, {
@@ -72,7 +71,7 @@ function* performAutomaticStepOnMainThread(): IterableIterator<Effect> {
   const steps: CephaloLandmark[] = yield select(activeAnalysisStepsSelector);
   const cephaloMapper: CephaloMapper = yield select(cephaloMapperSelector);
   const getStepState: (s: CephaloLandmark) => StepState = yield select(getStepStateSelector);
-  const eligibleSteps = reject(steps, s => isManual(s) || getStepState(s) !== 'pending');
+  const eligibleSteps = reject(steps, s => isStepManual(s) || getStepState(s) !== 'pending');
   for (const step of eligibleSteps) {
     console.info('Evaluationg step %s for automatic tracing', step.symbol);
     if (every(
@@ -83,7 +82,7 @@ function* performAutomaticStepOnMainThread(): IterableIterator<Effect> {
       yield put({ type: Event.STEP_EVALUATION_STARTED, payload: step.symbol });
       const value = evaluate(step, cephaloMapper);
       if (value) {
-        yield put(addLandmark(step.symbol, value));
+        yield put(addManualLandmark(step.symbol, value));
         yield put({ type: Event.STEP_EVALUATION_FINISHED, payload: step.symbol });
         yield put(tryAutomaticSteps());
       } else {

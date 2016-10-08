@@ -6,6 +6,7 @@ import reject from 'lodash/reject';
 import concat from 'lodash/concat';
 import assign from 'lodash/assign';
 import has from 'lodash/has';
+import every from 'lodash/every';
 
 export function getSymbolForAngle(lineA: CephaloLine, lineB: CephaloLine): string {
   return uniq([
@@ -272,3 +273,17 @@ export function mapResultToViewableResult(result: AnalysisResult): ViewableAnaly
     indicates: mapTypeToIndication(result.type),
   };
 }
+
+export const isStepAutomatic = (step: CephaloLandmark): boolean => {
+  if (step.type === 'point') {
+    return false;
+  } else if (step.type === 'line') {
+    return every(step.components, s => s.type === 'point');
+  } else if (step.type === 'angle') {
+    return every(step.components, isStepAutomatic);
+  } else if (step.type === 'distance') {
+    return true;
+  }
+  return false;
+}
+export const isStepManual = (step: CephaloLandmark) => !isStepAutomatic(step);
