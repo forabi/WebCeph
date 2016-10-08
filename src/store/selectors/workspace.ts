@@ -114,6 +114,7 @@ export const getViewableResultSelector = createSelector(
   getLandmarkValueSelector,
   (analysis, getValue) => {
     return function mapResultToViewableResult(result: AnalysisResult): ViewableAnalysisResult {
+      if (analysis === null) throw TypeError('Did not expect analysis to be null');
       let name = 'Unknown';
       if (isSkeletalPattern(result.type)) {
         name = 'Skeletal Pattern';
@@ -140,10 +141,10 @@ export const getViewableResultSelector = createSelector(
               if (typeof v !== 'number') return null;
               return {
                 norm: indexed[c].norm,
-                stdDev: indexed[c].norm,
+                stdDev: indexed[c].stdDev,
                 symbol: indexed[c].landmark.symbol,
                 value: v,
-              }
+              };
             },
           )),
           severity: mapSeverityToString(result.severity),

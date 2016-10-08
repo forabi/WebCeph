@@ -103,6 +103,7 @@ interface ViewableAnalysisResultWithValue extends BaseViewableAnalysisResult {
     symbol: string;
     value: number;
     stdDev?: number;
+    norm: number;
   }[];
 }
 

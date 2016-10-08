@@ -25,8 +25,11 @@ export const AnalysisResultsViewer = pure(({ open, onCloseRequested, results }: 
           Severity
         </TableHeaderColumn>
         <TableHeaderColumn>
-          
+          Calculated
         </TableHeaderColumn>
+        <TableRowColumn>
+          Norm
+        </TableRowColumn>
       </TableRow>
     </TableHeader>
     <TableBody displayRowCheckbox={false}>
@@ -42,9 +45,20 @@ export const AnalysisResultsViewer = pure(({ open, onCloseRequested, results }: 
           <TableRowColumn>
             {result.severity}
           </TableRowColumn>
-          <TableRowColumn>
-            {isViewableResultWithValue(result) ? result.relevantComponents.map(r => `${r.symbol} = ${r.value.toFixed(1)}`) : '-'}
-          </TableRowColumn>
+          <TableRowColumn>{
+            isViewableResultWithValue(result) ? (
+              result.relevantComponents.map(r => (
+                <div key={r.symbol}>{r.symbol} = {r.value.toFixed(1)}</div>
+              ))
+            ) : '-'
+        }</TableRowColumn>
+        <TableRowColumn>{
+            isViewableResultWithValue(result) ? (
+              result.relevantComponents.map(r => (
+                <div key={r.symbol}>{r.norm}{r.stdDev ? `±${r.stdDev.toFixed(0)}` : ''}</div>
+              ))
+            ) : '-'
+        }</TableRowColumn>
         </TableRow>
       ))
     }
