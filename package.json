@@ -6,7 +6,7 @@
     "test": "mocha src/**/*.test.* --compilers ts:ts-node/register,tsx:ts-node/register",
     "webpack:validate": "webpack-validator webpack.config.js",
     "dev": "NODE_ENV=development HOT=1 babel-node devServer.js",
-    "clean": "rm -rf build/**/*.{js,jpg,png,svg,html,log,css}",
+    "clean": "rm -rf docs/**/*.{js,jpg,png,svg,html,log,css}",
     "prod": "npm run clean && NODE_ENV=production webpack --bail --progress",
     "modernizr:build": "modernizr -c modernizr-config.json -d ./src/utils/modernizr.js"
   },
