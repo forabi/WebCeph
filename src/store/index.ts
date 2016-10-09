@@ -6,7 +6,7 @@ import rootSaga from './sagas';
 import assign from 'lodash/assign';
 import reduce from 'lodash/reduce';
 import omit from 'lodash/omit';
-import defaultAnalysis from '../analyses/bjork';
+import defaultAnalysis from '../analyses/basic';
 import manualLandmarks from './reducers/manualLandmarks';
 
 declare const window: Window & { devToolsExtension?: () => any };
