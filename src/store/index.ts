@@ -76,10 +76,10 @@ const oldReducers = {
     [Event.RESET_WORKSPACE_REQUESTED]: () => 50,
   }, 50),
   'cephalo.workspace.image.contrast': handleActions<number, any>({
-    [Event.SET_IMAGE_BRIGHTNESS_REQUESTED]: (__, { payload }) => payload,
-    [Event.LOAD_IMAGE_REQUESTED]: () => 50,
-    [Event.RESET_WORKSPACE_REQUESTED]: () => 50,
-  }, 50),
+    [Event.SET_IMAGE_CONTRAST_REQUESTED]: (__, { payload }) => payload,
+    [Event.LOAD_IMAGE_REQUESTED]: () => 1,
+    [Event.RESET_WORKSPACE_REQUESTED]: () => 1,
+  }, 1),
   'cephalo.workspace.image.invert': handleActions<boolean, any>({
     [Event.INVERT_IMAGE_REQUESTED]: (state) => !state,
     [Event.RESET_WORKSPACE_REQUESTED]: () => false,

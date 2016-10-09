@@ -89,7 +89,7 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
   };
 
   setContrast = (__: React.MouseEvent, value: number) => {
-    this.props.onBrightnessChanged(value);
+    this.props.onContrastChanged(value);
   };
 
   openFilePicker = () => this.refs.dropzone.open();
@@ -200,7 +200,7 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
                 <Slider
                   style={{ width: 200, margin: 15 }}
                   description="Contrast"
-                  min={0} max={100}
+                  min={-100} max={100}
                   defaultValue={this.props.contrast}
                   onChange={this.setContrast}
                 />

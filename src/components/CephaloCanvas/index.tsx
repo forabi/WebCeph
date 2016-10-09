@@ -21,19 +21,18 @@ const InvertFilter = pure(({ id }: { id: string }) => (
   </filter>
 ));
 
-const ContrastFilter = pure(({ id, value = 50 }: { id: string, value: number }) => {
-  const c = 0.5 - (value / 100);
+const ContrastFilter = pure(({ id, value }: { id: string, value: number }) => {
+  const c = 1 + (value / 100);
   const t = (1 - c) / 2;
   return (
     <filter id={id}>
       <feColorMatrix
         in="SourceGraphic" type="matrix"
         values={`
-          1.5 0   0   0 ${c}
-          0   1.5 0   0 ${c}
-          0   0   1.5 0 ${c}
-          0   0   0   1 0
-          ${t} ${t} ${t} 0 1
+          ${c} 0    0    0  ${t}
+          0    ${c} 0    0  ${t}
+          0    0    ${c} 0  ${t}
+          0    0    0    1  1
         `}
       />
     </filter>
@@ -150,11 +149,11 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
           <BrightnessFilter id="brightness" value={this.props.brightness || 50} />
           <DropShadow id="shadow" />
           <InvertFilter id="invert" />
-          <ContrastFilter id="contrast" value={50} />
+          <ContrastFilter id="contrast" value={this.props.contrast || 50} />
         </defs>
-        <g filter="url(#brightness)">
-          <g filter="url(#contrast)">
-            <g filter="url(#shadow)">
+        <g filter="url(#shadow)">
+          <g filter="url(#brightness)">
+            <g>
               <image
                 xlinkHref={this.props.src}
                 x={this.props.width * 0.05} y={this.props.height * 0.05}
