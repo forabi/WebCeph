@@ -6,6 +6,7 @@ TODO
   [x] Show steps
   [x] Walk through steps
   [ ] Scale factor
+  [ ] Calculate severity properly
 [ ] Automatic resizing of canvas (use transform: scale?)
 [ ] Detect and show what image types are supported
 [ ] Tell user if dropped image is not supported

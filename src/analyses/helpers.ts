@@ -190,6 +190,14 @@ export enum SkeletalProfile {
   convex,
 }
 
+export enum MandibularRoation {
+  normal = 12,
+  clockwise,
+  vertical = clockwise,
+  counterClockwise,
+  horizontal = counterClockwise,
+}
+
 const typeMap = {
   [SkeletalPattern.class1]: 'Class I',
   [SkeletalPattern.class2]: 'Class II',
@@ -203,6 +211,8 @@ const typeMap = {
   [Mandible.normal]: 'Normal',
   [Mandible.prognathic]: 'Prognathic',
   [Mandible.retrognathic]: 'Retrognathic',
+  [MandibularRoation.clockwise]: 'Clockwise',
+  [MandibularRoation.counterClockwise]: 'Counter-clockwise',
 }
 
 export enum AnalysisResultSeverity {
@@ -229,6 +239,10 @@ export function isMandible(value: number | string): value is Mandible {
 
 export function isSkeletalProfile(value: number | string): value is SkeletalProfile {
   return has(SkeletalProfile, value);
+}
+
+export function isMandiblularRotation(value: number | string): value is MandibularRoation {
+  return has(MandibularRoation, value);
 }
 
 const severityMap = {

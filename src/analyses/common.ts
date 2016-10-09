@@ -1,7 +1,8 @@
 import { 
   line, point,
-  angleBetweenPoints, getSymbolForAngle,
-  AnalysisResultSeverity, SkeletalPattern, Mandible, Maxilla
+  angleBetweenPoints, getSymbolForAngle, angleBetweenLines,
+  AnalysisResultSeverity, SkeletalPattern, Mandible, Maxilla,
+  MandibularRoation,
 } from './helpers';
 
 /**
@@ -81,6 +82,26 @@ export const ANB: CephaloAngle = {
   },
 };
 
+/**
+ * Most posterior inferior point on angle of mandible.
+ * Can also be constructed by bisecting the angle formed by intersection of mandibular plane and ramus of mandible */
+export const Go = point('Go', 'Gonion', 'Most posterior inferior point on angle of mandible');
+
+/**
+ * Lowest point on mandibular symphysis
+ */
+export const Me = point('Me', 'Menton', 'Lowest point on mandibular symphysis');
+
+/** Mandiblular Plane */
+export const MP = line(Go, Me);
+
+/**
+ * Angle between Frankfort horizontal line and the line intersecting Gonion-Menton
+ */
+export const FMPA: CephaloAngle = angleBetweenLines(FH_PLANE, MP, 'Frankfort Mandibular Plane Angle', 'FMPA');
+export const FMA = FMPA;
+
+
 export const components: AnalysisComponent[] = [
   {
     landmark: ANB,
@@ -96,6 +117,11 @@ export const components: AnalysisComponent[] = [
     landmark: SNA,
     norm: 82,
     stdDev: 2,
+  },
+  {
+    landmark: FMPA,
+    norm: 21.9,
+    stdDev: 5,
   },
 ];
 
@@ -145,7 +171,7 @@ export const interpretSNB = (value: number, min = 78, max = 82): AnalysisResult 
   let type = Mandible.normal;
   const severity = Math.min(
     AnalysisResultSeverity.HIGH,
-    Math.round(Math.abs(value - ((min + max) / 2)) / 3),
+    Math.round(Math.abs(value - ((min + max) / 2)) / 5),
   );
   if (value > max) {
     type = Mandible.prognathic;
@@ -159,10 +185,32 @@ export const interpretSNB = (value: number, min = 78, max = 82): AnalysisResult 
   };
 };
 
+export const interpretFMPA = (value: number, min = 16.9, max = 26.9): AnalysisResult => {
+  // @TODO: handle severity
+  const relevantComponents = [FMPA.symbol];
+  let type = MandibularRoation.normal;
+  let severity = AnalysisResultSeverity.NONE;
+  // const severity = Math.min(
+  //   AnalysisResultSeverity.HIGH,
+  //   Math.round(Math.abs(value - ((min + max) / 2)) / 3),
+  // );
+  if (value > max) {
+    type = MandibularRoation.clockwise;
+  } else if (value < min) {
+    type = MandibularRoation.counterClockwise;
+  }
+  return {
+    type,
+    severity,
+    relevantComponents,
+  };
+}
+
 export interface EvaluatedValues {
   SNA?: number;
   SNB?: number;
   ANB?: number;
+  FMPA?: number;
 }
 
 const analysis: Analysis = {
@@ -173,6 +221,7 @@ const analysis: Analysis = {
     if (values.ANB !== undefined) results.push(interpretANB(values.ANB as number));
     if (values.SNA !== undefined) results.push(interpretSNA(values.SNA as number));
     if (values.SNB !== undefined) results.push(interpretSNB(values.SNB as number));
+    if (values.FMPA !== undefined) results.push(interpretFMPA(values.FMPA as number));
     return results;
   }
 }
