@@ -53,9 +53,18 @@ export function calculateAngleBetweenPoints(A: GeometricalPoint, B: GeometricalP
  * @see https://www.youtube.com/watch?v=-OMbXkhHFBQ
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/atan2
  * @see https://en.wikipedia.org/wiki/Inverse_trigonometric_functions
+ * @see http://stackoverflow.com/a/3366577/1582641
  */
 export function calculateAngleBetweenTwoLines(line1: GeometricalLine, line2: GeometricalLine): number {
-  const angle1 = Math.atan2(line1.y1 - line1.y2, line1.x1 - line1.x2);
-  const angle2 = Math.atan2(line2.y1 - line2.y2, line2.x1 - line2.x2);
-  return angle1 - angle2;
+  const { x1, x2, y1, y2 } = line1;
+  const { x1: x3, x2: x4, y1: y3, y2: y4 } = line2;
+  const dx1 = x2 - x1;
+  const dy1 = y2 - y1;
+  const dx2 = x4 - x3;
+  const dy2 = y4 - y3;
+
+  const d = dx1 * dx2 + dy1 * dy2;   // dot product of the 2 vectors
+  const l2 = (dx1 ** 2 + dy1 ** 2) * (dx2 ** 2 + dy2 ** 2); // product of the squared lengths
+
+  return Math.acos(d / Math.sqrt(l2));
 }
