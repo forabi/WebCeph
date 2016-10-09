@@ -4,7 +4,7 @@ import { angleBetweenPoints, line, angleBetweenLines, SkeletalProfile, AnalysisR
 import common, { components as commonComponents, FH_PLANE, N, Pog, A, B, Gn, S, Po } from './common';
 import { radiansToDegrees, calculateAngleBetweenPoints, isBehind } from '../utils/math';
 
-export const ANGLE_OF_CONVEXITY: CephaloAngle = assign(
+const ANGLE_OF_CONVEXITY: CephaloAngle = assign(
    angleBetweenPoints(N, A, Pog, 'Angle of Convexity'),
    {
      calculate: (NA: GeometricalLine, APog: GeometricalLine) => {
@@ -13,11 +13,10 @@ export const ANGLE_OF_CONVEXITY: CephaloAngle = assign(
        const _Pog = { x: APog.x2, y: APog.y2 };
        const _NPog = { x1: _N.x, y1: _N.y, x2: _Pog.x, y2: _Pog.y }
        const _angle = calculateAngleBetweenPoints(_N, _A, _Pog);
-       // @FIXME: Downs has different values for NAPog
        if (isBehind(_A, _NPog)) {
-         return radiansToDegrees(_angle);
+         return (180 - radiansToDegrees(_angle)) * -1;
        } else {
-         return 360 - radiansToDegrees(_angle);
+         return 180 - radiansToDegrees(_angle);
        }
      }
    },
@@ -26,15 +25,20 @@ export const ANGLE_OF_CONVEXITY: CephaloAngle = assign(
 const interpretAngleOfConvexity = (value: number, min = -5, max = 5): AnalysisResult => {
   // @TODO: handle severity
   const relevantComponents = [ANGLE_OF_CONVEXITY.symbol];
-  const severity = Math.min(
-    AnalysisResultSeverity.HIGH,
-    Math.round(Math.abs(value - ((min + max) / 2)) / 3),
-  );
+  let severity = AnalysisResultSeverity.NONE;
   let type = SkeletalProfile.normal;
   if (value < -5) {
     type = SkeletalProfile.concave;
+    severity = Math.min(
+      AnalysisResultSeverity.HIGH,
+      Math.round(Math.abs(value - max) / 3),
+    );
   } else if (value > 5) {
     type = SkeletalProfile.convex;
+    severity = Math.min(
+      AnalysisResultSeverity.HIGH,
+      Math.round(Math.abs(value - min) / 3),
+    );
   }
   return {
     type,
@@ -43,13 +47,15 @@ const interpretAngleOfConvexity = (value: number, min = -5, max = 5): AnalysisRe
   };
 };
 
+export const angleOfConvexity: AnalysisComponent = {
+  landmark: ANGLE_OF_CONVEXITY,
+  norm: 0,
+  stdDev: 5.1,
+};
+
 const components: AnalysisComponent[] = [
   ...commonComponents,
-  {
-    landmark: ANGLE_OF_CONVEXITY,
-    norm: 87.8,
-    stdDev: 5.1,
-  },
+  angleOfConvexity,
   {
     landmark: angleBetweenPoints(Gn, S, Po, 'Y Axis'),
     norm: 59.4,
@@ -67,19 +73,21 @@ const components: AnalysisComponent[] = [
   },
 ];
 
+export const interpret = (values: { [id: string]: EvaluatedValue }) => {
+  const results: AnalysisResult[] = common.interpret(values);
+  // @TODO
+  if (values[ANGLE_OF_CONVEXITY.symbol] !== undefined){
+    results.push(
+      interpretAngleOfConvexity(values[ANGLE_OF_CONVEXITY.symbol] as number),
+    );
+  }
+  return results;
+};
+
 const analysis: Analysis = {
   id: 'downs',
   components,
-  interpret(values) {
-    const results: AnalysisResult[] = common.interpret(values);
-    // @TODO
-    if (values[ANGLE_OF_CONVEXITY.symbol] !== undefined){
-      results.push(
-        interpretAngleOfConvexity(values[ANGLE_OF_CONVEXITY.symbol] as number),
-      );
-    }
-    return results;
-  }
+  interpret,
 }
 
 export default analysis;

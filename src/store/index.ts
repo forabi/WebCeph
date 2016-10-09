@@ -6,7 +6,7 @@ import rootSaga from './sagas';
 import assign from 'lodash/assign';
 import reduce from 'lodash/reduce';
 import omit from 'lodash/omit';
-import common from '../analyses/common';
+import defaultAnalysis from '../analyses/basic';
 import manualLandmarks from './reducers/manualLandmarks';
 
 declare const window: Window & { devToolsExtension?: () => any };
@@ -86,7 +86,7 @@ const oldReducers = {
   }, false),
   'cephalo.workspace.analysis.activeAnalysis': handleActions<Analysis | null, any>({
     [Event.SET_ACTIVE_ANALYSIS_REQUESTED]: (__, { payload }) => payload,
-  }, common),
+  }, defaultAnalysis),
   'cephalo.workspace.analysis.stepsBeingEvaluated': handleActions<{ [symbol: string]: true }, string>({
     [Event.STEP_EVALUATION_STARTED]: (state, { payload }) => assign({ }, state, { [payload]: true }),
     [Event.STEP_EVALUATION_FINISHED]: (state, { payload }) => omit(state, payload),

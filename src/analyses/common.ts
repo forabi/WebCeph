@@ -85,14 +85,17 @@ export const components: AnalysisComponent[] = [
   {
     landmark: ANB,
     norm: 2,
+    stdDev: 2,
   },
   {
     landmark: SNB,
     norm: 80,
+    stdDev: 2,
   },
   {
     landmark: SNA,
     norm: 82,
+    stdDev: 2,
   },
 ];
 

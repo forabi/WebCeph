@@ -27,9 +27,9 @@ export const AnalysisResultsViewer = pure(({ open, onCloseRequested, results }: 
         <TableHeaderColumn>
           Calculated
         </TableHeaderColumn>
-        <TableRowColumn>
+        <TableHeaderColumn>
           Norm
-        </TableRowColumn>
+        </TableHeaderColumn>
       </TableRow>
     </TableHeader>
     <TableBody displayRowCheckbox={false}>
