@@ -5,7 +5,6 @@ import { put, take, fork, call, Effect } from 'redux-saga/effects';
 import { ImageWorkerAction } from '../../utils/constants';
 import { ImageWorkerInstance, ImageWorkerEvent, ImageWorkerResponse, ImageWorkerScaleEdit, ImageWorkerEdit } from '../../utils/image-worker.d';
 
-const ImageWorker = require('worker!../../utils/image-worker');
 const worker: ImageWorkerInstance = new ImageWorker;
 
 function processImageInWorker(file: File, actions: any[]) {
