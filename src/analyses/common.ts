@@ -46,6 +46,16 @@ export const Pog = point('Pog', 'Pogonion');
  */
 export const Gn = point('Gn', 'Gnathion');
 
+
+/**
+ * Junction between inferior surface of the cranial base and the posterior border of the ascending rami of the mandible
+ */
+export const Ar = point(
+  'Ar', 'Articulare',
+  'Junction between inferior surface of the cranial base ' +
+  'and the posterior border of the ascending rami of the mandible'
+);
+
 /**
  * Frankfort Horizontal Plane
  * Po-Or line projected to form a plane

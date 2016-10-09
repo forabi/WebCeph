@@ -44,7 +44,10 @@ const getTitleForStep = (landmark: CephaloLandmark) => {
     return `Calculate angle ${landmark.symbol}${ landmark.name ? ` (${landmark.name})` : '' }`;
   } else if (landmark.type === 'distance') {
     return `Measure distance between points ${landmark.components[0].symbol} and ${landmark.components[1].symbol}`
+  } else if (landmark.type === 'sum') {
+    return `Calculate ${landmark.name || landmark.components.map(c => c.symbol).join(' + ')}`
   }
+  console.warn('Could not get title for step of type ' + landmark.type);
   return undefined;
 }
 

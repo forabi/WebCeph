@@ -4,7 +4,7 @@ const __DEBUG__: boolean;
 
 type AngularUnit = 'degree' | 'radian';
 type LinearUnit = 'mm' | 'cm' | 'in';
-type LandmarkType = 'angle' | 'point' | 'line' | 'distance';
+type LandmarkType = 'angle' | 'point' | 'line' | 'distance' | 'sum';
 
 /**
  * A generic interface that represents any cephalometric landmark, including
@@ -55,7 +55,21 @@ interface CephaloAngle extends BaseCephaloLandmark {
   components: CephaloPoint[] | CephaloLine[] | CephaloAngle[];
 }
 
-type CephaloLandmark = CephaloPoint | CephaloLine | CephaloAngle | CephaloDistance;
+interface CephaloAngularSum extends BaseCephaloLandmark {
+  type: 'sum';
+  unit: AngularUnit ;
+  components: CephaloAngle[];
+}
+
+// interface CephaloLinearSum extends BaseCephaloLandmark {
+//   type: 'sum';
+//   unit: LinearUnit;
+//   components: CephaloLine[];
+// }
+
+type CephaloSum = CephaloAngularSum; // CephaloLinearSum |;
+
+type CephaloLandmark = CephaloPoint | CephaloLine | CephaloAngle | CephaloDistance | CephaloSum;
 
 /**
  * Describes a geometrical point in a 2D-plane

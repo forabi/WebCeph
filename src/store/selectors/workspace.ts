@@ -106,6 +106,7 @@ import {
   isSkeletalProfile,
   isMaxilla, isMandible,
   isMandiblularRotation,
+  isGrowthPattern,
 } from '../../analyses/helpers';
 import keyBy from 'lodash/keyBy';
 import compact from 'lodash/compact';
@@ -126,7 +127,9 @@ export const getViewableResultSelector = createSelector(
       } else if (isMandible(result.type)) {
         name = 'Mandible';
       } else if (isMandiblularRotation(result.type)) {
-        name = 'Mandiblular rotation';
+        name = 'Mandiblular Rotation';
+      } else if (isGrowthPattern(result.type)) {
+        name = 'Growth Pattern';
       } else {
         console.warn(
           'Cannot find name for analysis result',

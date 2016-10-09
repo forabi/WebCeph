@@ -7,6 +7,8 @@ import concat from 'lodash/concat';
 import assign from 'lodash/assign';
 import has from 'lodash/has';
 import every from 'lodash/every';
+import join from 'lodash/join';
+import reduce from 'lodash/reduce';
 
 export function getSymbolForAngle(lineA: CephaloLine, lineB: CephaloLine): string {
   return uniq([
@@ -79,6 +81,16 @@ export function distance(A: CephaloPoint, B: CephaloPoint, name?: string, unit: 
     components: [A, B],
     symbol: `distance_${A.symbol}_${B.symbol}`,
   }
+}
+
+export function angularSum(components: CephaloAngle[], name: string, symbol?: string): CephaloAngularSum {
+  return {
+    type: 'sum',
+    name,
+    unit: components[0].unit,
+    symbol: symbol || join(map(components, c => c.symbol), '+'),
+    components: components,
+  };
 }
 
 const hasComponents: (m: CephaloLandmark) => boolean = m => m.components.length > 0;
@@ -159,6 +171,8 @@ export function evaluate(landmark: CephaloLandmark, mapper: CephaloMapper): Eval
     return mapper.toLine(landmark);
   } else if (landmark.type === 'point') {
     return mapper.toPoint(landmark);
+  } else if (landmark.type === 'sum') {
+    return reduce(landmark.components, (sum, t) => sum + (evaluate(t, mapper) as number), 0);
   }
   return undefined;
 }
@@ -198,6 +212,13 @@ export enum MandibularRoation {
   horizontal = counterClockwise,
 }
 
+export enum GrowthPattern {
+  normal = 15,
+  clockwise,
+  vertical = clockwise,
+  counterClockwise,
+  horizontal = counterClockwise,
+}
 const typeMap = {
   [SkeletalPattern.class1]: 'Class I',
   [SkeletalPattern.class2]: 'Class II',
@@ -213,6 +234,10 @@ const typeMap = {
   [Mandible.retrognathic]: 'Retrognathic',
   [MandibularRoation.clockwise]: 'Clockwise',
   [MandibularRoation.counterClockwise]: 'Counter-clockwise',
+  [MandibularRoation.normal]: 'Normal',
+  [GrowthPattern.clockwise]: 'Vertical',
+  [GrowthPattern.counterClockwise]: 'Horizontal',
+  [GrowthPattern.normal]: 'Normal',
 }
 
 export enum AnalysisResultSeverity {
@@ -245,6 +270,10 @@ export function isMandiblularRotation(value: number | string): value is Mandibul
   return has(MandibularRoation, value);
 }
 
+export function isGrowthPattern(value: number | string): value is MandibularRoation {
+  return has(GrowthPattern, value);
+}
+
 const severityMap = {
   [AnalysisResultSeverity.LOW]: 'Slight',
   [AnalysisResultSeverity.MEDIUM]: 'Medium',
@@ -271,6 +300,8 @@ export const isStepAutomatic = (step: CephaloLandmark): boolean => {
   } else if (step.type === 'angle') {
     return every(step.components, isStepAutomatic);
   } else if (step.type === 'distance') {
+    return true;
+  } else if (step.type === 'sum') {
     return true;
   }
   return false;

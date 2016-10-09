@@ -29,15 +29,15 @@ const interpretAngleOfConvexity = (value: number, min = -5, max = 5): AnalysisRe
   let type = SkeletalProfile.normal;
   if (value < -5) {
     type = SkeletalProfile.concave;
-    severity = Math.min(
+    severity = Math.max(
       AnalysisResultSeverity.HIGH,
-      Math.round(Math.abs(value - max) / 3),
+      Math.round(Math.abs(value - min) / 3),
     );
   } else if (value > 5) {
     type = SkeletalProfile.convex;
     severity = Math.min(
       AnalysisResultSeverity.HIGH,
-      Math.round(Math.abs(value - min) / 3),
+      Math.round(Math.abs(value - max) / 3),
     );
   }
   return {
