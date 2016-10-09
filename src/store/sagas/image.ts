@@ -3,7 +3,9 @@ import { Event } from '../../utils/constants';
 import { takeLatest, eventChannel, END, Channel } from 'redux-saga';
 import { put, take, fork, call, Effect } from 'redux-saga/effects';
 import { ImageWorkerAction } from '../../utils/constants';
-import { ImageWorkerInstance, ImageWorkerEvent, ImageWorkerResponse, ImageWorkerScaleEdit, ImageWorkerEdit } from '../../utils/image-worker.d';
+import { ImageWorkerInstance, ImageWorkerEvent, ImageWorkerResponse } from '../../utils/image-worker.d';
+
+const ImageWorker = require('worker!../../utils/image-worker');
 
 const worker: ImageWorkerInstance = new ImageWorker;
 
