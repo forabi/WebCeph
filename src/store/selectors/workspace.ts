@@ -5,7 +5,6 @@ import has from 'lodash/has';
 import every from 'lodash/every';
 import find from 'lodash/find';
 import map from 'lodash/map';
-import { mapResultToViewableResult } from '../../analyses/helpers';
 
 import { manualLandmarksSelector } from '../reducers/manualLandmarks';
 
@@ -105,7 +104,8 @@ import {
   mapTypeToIndication,
   isSkeletalPattern,
   isSkeletalProfile,
-  isMaxilla, isMandible
+  isMaxilla, isMandible,
+  isMandiblularRotation,
 } from '../../analyses/helpers';
 import keyBy from 'lodash/keyBy';
 import compact from 'lodash/compact';
@@ -125,6 +125,8 @@ export const getViewableResultSelector = createSelector(
         name = 'Maxilla';
       } else if (isMandible(result.type)) {
         name = 'Mandible';
+      } else if (isMandiblularRotation(result.type)) {
+        name = 'Mandiblular rotation';
       } else {
         console.warn(
           'Cannot find name for analysis result',
