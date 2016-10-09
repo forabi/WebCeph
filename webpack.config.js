@@ -43,7 +43,7 @@ const sassLoaders = [
   },
 ];
 
-const buildPath = env.isProd ? '/docs' : '/';
+const buildPath = env.isProd ? '/cephalo' : '/';
 
 const config = {
   devServer: env.isDev ? {
