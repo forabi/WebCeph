@@ -100,16 +100,16 @@ export function getEdgesForLandmark(l: CephaloLandmark): CephaloLandmark[][] {
   if (!hasComponents(l)) {
     edges.push([l]);
   } else {
-    edges.unshift([...l.components, l]);
     for (const c of l.components) {
       const subedges = getEdgesForLandmark(c);
-      edges.unshift(
+      edges.push(
         concat(
             ...subedges,
             [...c.components, c],
         ),
       );
     }
+    edges.push([...l.components, l]);
   }
   return edges.map(uniq);
 }
