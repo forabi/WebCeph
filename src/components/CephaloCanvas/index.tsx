@@ -98,7 +98,6 @@ interface CephaloCanvasProps {
 /**
  * A wrapper around a canvas element.
  * Provides a declarative API for viewing landmarks on a cephalomertic image and performing common edits like brightness and contrast.
- * This component uses a React-like diffing mechanism to avoid expensive redraws of landmarks that have not changed
  */
 export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> {
   refs: { canvas: __React.ReactInstance };
