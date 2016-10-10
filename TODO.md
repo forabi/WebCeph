@@ -1,7 +1,21 @@
 TODO
 =======
+[ ] Tests
+  [ ] Test for logic:
+    [ ] Steps
+    [ ] Calculation of angles
+    [ ] Mapping of landmarks
+  [ ] Tests for analysis
+    [ ] Test interpretations
+    [ ] Test components exist
+  [ ] Tests for UI
+    [ ] Unit tests
+    [ ] Integration tests
+    [ ] Jest?
+  [ ] CI
 [ ] Namespaces
 [ ] Typings for reducers
+[ ] Selectors with corresponding reducers in one file
 [ ] Batch addManualLandmarks
 [ ] Display units in steps and results
 [ ] Fix contrast, brightness and invert filters
@@ -11,6 +25,8 @@ TODO
   [ ] Line
   [ ] Zoom in/out
   [ ] Later: freeform drawing tool?
+  [ ] Change cursor accordingly
+    [ ] Use SVG for cursor?
 [ ] Highlight geometrical object on step hover
 [ ] Highlight step on object hover
 [ ] Remove step, edit step
@@ -56,6 +72,9 @@ TODO
   [x] GeometricalAngle
   [ ] Scale factor
   [ ] Calculate severity properly
+[ ] Persiste some parts of the state
+  [ ] Compatiblity checks?
+    [ ] How to handle browser updates? 
 [ ] Automatic resizing of canvas (use transform: scale?)
 [ ] Detect and show what image types are supported
 [ ] Tell user if dropped image is not supported
