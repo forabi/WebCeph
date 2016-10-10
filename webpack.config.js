@@ -57,8 +57,8 @@ const config = {
   entry: {
     bundle: compact([
       hot('react-hot-loader/patch'),
-      hot('webpack-hot-middleware/client'),
       hot('webpack/hot/only-dev-server'),
+      hot('webpack-hot-middleware/client'),
       path.resolve(__dirname, './src/index.tsx'),
     ]),
     vendor: [
@@ -95,7 +95,6 @@ const config = {
         test: /\.tsx?$/,
         exclude: /node_modules/,
         use: compact([
-          hot('react-hot-loader/webpack'),
           prod('babel-loader'),
           {
             loader: 'ts-loader',
@@ -117,7 +116,7 @@ const config = {
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        use: [hot('react-hot-loader/webpack'), 'babel-loader'],
+        use: ['babel-loader'],
       }, {
         test: /\.css$/,
         use: localCSSLoaders,
@@ -176,7 +175,6 @@ const config = {
         },
       },
     }),
-    prod(new webpack.optimize.OccurrenceOrderPlugin(true)),
     hot(new webpack.HotModuleReplacementPlugin()),
     dashboard ? new DashboardPlugin(dashboard.setData) : null,
     fail,
@@ -205,6 +203,7 @@ const config = {
       minimize: true,
       debug: false,
     }),
+    prod(new webpack.optimize.OccurrenceOrderPlugin(true)),
     prod(new webpack.optimize.UglifyJsPlugin({
       compress: {
         // drop_console: true,

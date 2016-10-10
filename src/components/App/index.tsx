@@ -4,9 +4,9 @@ import * as injectTapEventPlugin from 'react-tap-event-plugin';
 import { connect } from 'react-redux';
 import cx from 'classnames';
 import assign from 'lodash/assign';
+import attempt from 'lodash/attempt';
 import some from 'lodash/some';
 import noop from 'lodash/noop'
-import attempt from 'lodash/attempt';
 
 import CephaloEditor from '../CephaloEditor';
 import CompatibilityChecker from '../CompatibilityChecker';
