@@ -35,4 +35,6 @@ export default {
   [KEY_MANUAL_LANDMARKS]: manualLandmarksReducer,
 };
 
-export const manualLandmarksSelector = (state: { [id: string]: any }) => state[KEY_MANUAL_LANDMARKS] as StoreEntries.manualLandmarks;
+export const manualLandmarksSelector = (state: { [id: string]: any }) => {
+  return state[KEY_MANUAL_LANDMARKS] as StoreEntries.manualLandmarks;
+};

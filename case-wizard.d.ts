@@ -82,14 +82,21 @@ interface GeometricalPoint {
 /**
  * Describes a geometrical line in a 2D-plane
  */
-interface GeometricalLine {
+interface GeometricalVector {
   x1: number,
   x2: number,
   y1: number,
   y2: number,
 }
 
-type GeometricalObject = GeometricalLine | GeometricalPoint;
+/**
+ * Describes an angle by its vectors
+ */
+interface GeometricalAngle {
+  vectors: GeometricalVector[];
+}
+
+type GeometricalObject = GeometricalVector | GeometricalPoint | GeometricalAngle;
 
 type EvaluatedValue = GeometricalObject | number;
 
@@ -139,9 +146,9 @@ interface Analysis {
  * A Mapper object maps cephalometric landmarks to geometrical objects
  */
 interface CephaloMapper {
-  toVectors(landmark: CephaloLine): GeometricalLine[];
-  toVector(landmark: CephaloLine): GeometricalLine;
+  toVector(landmark: CephaloLine): GeometricalVector;
   toPoint(landmark: CephaloPoint): GeometricalPoint;
+  toAngle(landmark: CephaloAngle): GeometricalAngle;
   /**
    * The scale factor is required to calculate linear measurements
    * It is expected to map pixels on the screen to millimeters.

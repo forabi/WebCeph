@@ -7,7 +7,7 @@ import { radiansToDegrees, calculateAngleBetweenPoints, isBehind } from '../util
 const ANGLE_OF_CONVEXITY: CephaloAngle = assign(
    angleBetweenPoints(N, A, Pog, 'Angle of Convexity'),
    {
-     calculate: (NA: GeometricalLine, APog: GeometricalLine) => {
+     calculate: (NA: GeometricalVector, APog: GeometricalVector) => {
        const _N = { x: NA.x1, y: NA.y1 };
        const _A = { x: NA.x2, y: NA.y2 };
        const _Pog = { x: APog.x2, y: APog.y2 };

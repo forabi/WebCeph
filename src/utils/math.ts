@@ -12,11 +12,11 @@ export function isGeometricalPoint(object: any): object is GeometricalPoint {
   return has(object, 'x') && has(object, 'y');
 }
 
-export function isGeometricalLine(object: any): object is GeometricalLine {
+export function isGeometricalLine(object: any): object is GeometricalVector {
   return has(object, 'x2') && has(object, 'y1') && has(object, 'x2') && has(object, 'y2');
 }
 
-export function isBehind(point: GeometricalPoint, line: GeometricalLine) {
+export function isBehind(point: GeometricalPoint, line: GeometricalVector) {
   return ((line.x2 - line.x1) * (point.y - line.y1) - (line.y2 - line.y1) * (point.x - line.x1)) > 0;
 } 
 
@@ -55,7 +55,7 @@ export function calculateAngleBetweenPoints(A: GeometricalPoint, B: GeometricalP
  * @see https://en.wikipedia.org/wiki/Inverse_trigonometric_functions
  * @see http://stackoverflow.com/a/3366577/1582641
  */
-export function calculateAngleBetweenTwoLines(line1: GeometricalLine, line2: GeometricalLine): number {
+export function calculateAngleBetweenTwoLines(line1: GeometricalVector, line2: GeometricalVector): number {
   const { x1, x2, y1, y2 } = line1;
   const { x1: x3, x2: x4, y1: y3, y2: y4 } = line2;
   const dx1 = x2 - x1;

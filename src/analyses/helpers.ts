@@ -39,7 +39,7 @@ export function angleBetweenPoints(A: CephaloPoint, B: CephaloPoint, C: CephaloP
   return assign(
     angleBetweenLines(line(A, B), line(B, C), name, undefined, unit),
     {
-      calculate: (line1: GeometricalLine, line2: GeometricalLine) => {
+      calculate: (line1: GeometricalVector, line2: GeometricalVector) => {
         const p1 = { x: line1.x1, y: line1.y1 };
         const p2 = { x: line1.x2, y: line1.y2 };
         const p3 = { x: line2.x2, y: line2.y2 };
@@ -146,15 +146,25 @@ import {
   radiansToDegrees,
 } from '../utils/math';
 
+export function computeOrMap(landmark: CephaloLandmark, mapper: CephaloMapper): number | GeometricalObject | undefined {
+  if (landmark.type === 'line') {
+    return mapper.toVector(landmark);
+  } else if (landmark.type === 'point') {
+    return mapper.toPoint(landmark);
+  } else {
+    return compute(landmark, mapper);
+  }
+}
+
 /**
  * Calculates the value of a landmark on a cephalometric radiograph
  * 
  */
-export function evaluate(landmark: CephaloLandmark, mapper: CephaloMapper): EvaluatedValue | undefined {
+export function compute(landmark: CephaloLandmark, mapper: CephaloMapper): number | undefined {
   if (landmark.calculate) {
     return landmark.calculate.apply(
       landmark, 
-      map(landmark.components, l => evaluate(l, mapper))
+      map(landmark.components, l => computeOrMap(l, mapper))
     );
   } else if (landmark.type === 'angle') {
     let result: number;
@@ -165,19 +175,14 @@ export function evaluate(landmark: CephaloLandmark, mapper: CephaloMapper): Eval
       const lines = map(landmark.components as CephaloLine[], mapper.toVector);
       result = calculateAngleBetweenTwoLines(lines[0], lines[1]);
     }
-    result = Number(result.toFixed(2));
     return landmark.unit === 'degree' ? radiansToDegrees(result) : result;
   } else if (landmark.type === 'distance') {
     const points: GeometricalPoint[] = map(landmark.components, mapper.toPoint);
     const result = calculateDistanceBetweenTwoPoints(points[0], points[1]) * mapper.scaleFactor;
     const unit = landmark.unit;
     return unit === 'mm' ? result : unit === 'cm' ? result / 10 : result / 25.4;
-  } else if (landmark.type === 'line') {
-    return mapper.toVector(landmark);
-  } else if (landmark.type === 'point') {
-    return mapper.toPoint(landmark);
   } else if (landmark.type === 'sum') {
-    return reduce(landmark.components, (sum, t) => sum + (evaluate(t, mapper) as number), 0);
+    return reduce(landmark.components, (sum, t) => sum + (compute(t, mapper) as number), 0);
   }
   return undefined;
 }
@@ -311,4 +316,14 @@ export const isStepAutomatic = (step: CephaloLandmark): boolean => {
   }
   return false;
 }
+
 export const isStepManual = (step: CephaloLandmark) => !isStepAutomatic(step);
+
+export const isStepCOmputable = (step: CephaloLandmark) => {
+  return (
+    step.type === 'sum' ||
+    step.type === 'angle' ||
+    step.type === 'distance' ||
+    typeof step.calculate === 'function'
+  );
+}
