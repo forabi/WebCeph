@@ -1,17 +1,15 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { AppContainer } from 'react-hot-loader';
 import ReduxApp from './ReduxApp';
-
-declare var System: any;
-
 const rootEl = document.getElementById('container');
 
-const render = ReduxApp => ReactDOM.render(<ReduxApp />, rootEl);
+const render = Component => ReactDOM.render(<AppContainer><Component/></AppContainer>, rootEl);
 
 render(ReduxApp);
 
 if (module.hot) {
   module.hot.accept('./ReduxApp', () => {
-    System.import('./ReduxApp').then(ReduxApp => render(ReduxApp.default));
+    render(require('./ReduxApp').default);
   });
 }
