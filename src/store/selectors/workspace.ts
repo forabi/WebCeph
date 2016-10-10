@@ -64,7 +64,6 @@ export const cephaloMapperSelector = createSelector(
     const toVector = (cephaloLine: CephaloLine) => {
       const A = toPoint(cephaloLine.components[0]);
       const B = toPoint(cephaloLine.components[1]);
-      console.log('toVector', A, B);
       return {
         x1: A.x,
         y1: A.y,
@@ -342,13 +341,10 @@ export const onCanvasClickedSelector = createSelector(
   nextManualLandmarkSelector,
   expectedLandmark => (dispatch: Function) => {
     return (e => {
-      console.log('Canvas clicked, expected', expectedLandmark);
       if (expectedLandmark) {
         dispatch(
           addManualLandmark(expectedLandmark.symbol, { x: e.X, y: e.Y })
         );
-      } else {
-        console.log('No expected landmark!');
       }
     }) as (e: { X: number, Y: number }) => void;
   },
