@@ -1,8 +1,8 @@
 import flatten from 'lodash/flatten';
 import map from 'lodash/map';
 import uniq from 'lodash/uniq';
-import filter from 'lodash/filter';
-import reject from 'lodash/reject';
+import xorWith from 'lodash/xorWith';
+import uniqWith from 'lodash/uniqWith';
 import concat from 'lodash/concat';
 import assign from 'lodash/assign';
 import has from 'lodash/has';
@@ -95,12 +95,23 @@ export function angularSum(components: CephaloAngle[], name: string, symbol?: st
 
 const hasComponents: (m: CephaloLandmark) => boolean = m => m.components.length > 0;
 
+function areEqual(l1: CephaloLandmark, l2: CephaloLandmark): boolean {
+  if (l1.type !== l2.type) return false;
+  if (l1.symbol === l2.symbol) return true;
+  if (l1.components.length === 0) return false;
+  if (l1.components.length !== l2.components.length) return false;
+  return (
+    xorWith(l1.components, l2.components, areEqual).length === 0
+  );
+}
+
+
 export function getEdgesForLandmark(l: CephaloLandmark): CephaloLandmark[][] {
   const edges: CephaloLandmark[][] = [];
   if (!hasComponents(l)) {
     edges.push([l]);
   } else {
-    edges.unshift([...l.components, l]);
+    edges.push([...l.components, l]);
     for (const c of l.components) {
       const subedges = getEdgesForLandmark(c);
       edges.unshift(
@@ -116,19 +127,8 @@ export function getEdgesForLandmark(l: CephaloLandmark): CephaloLandmark[][] {
 
 export function getStepsForLandmarks(landmarks: CephaloLandmark[]): CephaloLandmark[] {
   const edges: CephaloLandmark[][] = flatten(landmarks.map(getEdgesForLandmark));
-  const store = new Map;
-  const uniqueEdges = filter(map(
-    edges,
-    a => reject(a, (e => {
-        if (store.has(e.symbol)) {
-            return true;
-        } else {
-            store.set(e.symbol, e);
-            return false;
-        }
-    })).map(l => l.symbol)
-  ), 'length');
-  return flatten(uniqueEdges).map(symbol => store.get(symbol));
+  const uniqEdges: CephaloLandmark[] = uniqWith(flatten(edges), areEqual);
+  return uniqEdges;
 }
 
 export function getStepsForAnalysis(analysis: Analysis): CephaloLandmark[] {
@@ -161,6 +161,7 @@ export function evaluate(landmark: CephaloLandmark, mapper: CephaloMapper): Eval
       const lines: GeometricalLine[] = map(landmark.components as CephaloLine[], mapper.toLine);
       result = calculateAngleBetweenTwoLines(lines[0], lines[1]);
     }
+    result = Number(result.toFixed(2));
     return landmark.unit === 'degree' ? radiansToDegrees(result) : result;
   } else if (landmark.type === 'distance') {
     const points: GeometricalPoint[] = map(landmark.components, mapper.toPoint);

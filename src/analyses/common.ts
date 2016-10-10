@@ -114,8 +114,8 @@ export const FMA = FMPA;
 
 export const components: AnalysisComponent[] = [
   {
-    landmark: ANB,
-    norm: 2,
+    landmark: SNA,
+    norm: 82,
     stdDev: 2,
   },
   {
@@ -124,8 +124,8 @@ export const components: AnalysisComponent[] = [
     stdDev: 2,
   },
   {
-    landmark: SNA,
-    norm: 82,
+    landmark: ANB,
+    norm: 2,
     stdDev: 2,
   },
   {
