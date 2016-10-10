@@ -1,10 +1,13 @@
-import { getStepsForAnalysis } from '../../analyses/helpers';
+import { getStepsForAnalysis, flipVector, evaluate } from '../../analyses/helpers';
 import { createSelector } from 'reselect';
 import filter from 'lodash/filter';
 import has from 'lodash/has';
 import every from 'lodash/every';
 import find from 'lodash/find';
 import map from 'lodash/map';
+import assign from 'lodash/assign';
+import flatten from 'lodash/flatten';
+import mapValues from 'lodash/mapValues';
 
 import { manualLandmarksSelector } from '../reducers/manualLandmarks';
 
@@ -35,12 +38,12 @@ export const expectedNextLandmarkSelector = createSelector(
   ) || null) as CephaloLandmark | null,
 );
 
-export const getStepStateSelector = createSelector(
+export const getManualStepStateSelector = createSelector(
   stepsBeingEvaluatedSelector,
   manualLandmarksSelector,
   expectedNextLandmarkSelector,
-  (stepsBeingEvaluated, setLandmarks, expectedLandmark) => (landmark: CephaloLandmark): StepState => {
-    if (has(setLandmarks, landmark.symbol)) {
+  (stepsBeingEvaluated, manualLandmarks, expectedLandmark) => (landmark: CephaloLandmark): StepState => {
+    if (has(manualLandmarks, landmark.symbol)) {
       return 'done';
     } else if (has(stepsBeingEvaluated, landmark.symbol)) {
       return 'evaluating';
@@ -54,11 +57,12 @@ export const getStepStateSelector = createSelector(
 
 export const cephaloMapperSelector = createSelector(
   manualLandmarksSelector,
-  (mappedLandmarks): CephaloMapper => {
+  (manualLandmarks): CephaloMapper => {
     const toPoint = (cephaloPoint: CephaloPoint) => {
-      return mappedLandmarks[cephaloPoint.symbol] as GeometricalPoint;
+      return manualLandmarks[cephaloPoint.symbol] as GeometricalPoint;
     };
-    const toLine = (cephaloLine: CephaloLine) => {
+    
+    const toVector = (cephaloLine: CephaloLine) => {
       const A = toPoint(cephaloLine.components[0]);
       const B = toPoint(cephaloLine.components[1]);
       return {
@@ -66,38 +70,19 @@ export const cephaloMapperSelector = createSelector(
         y1: A.y,
         x2: B.x,
         y2: B.y,
-      }
+      };
+    };
+
+    const toVectors = (cephaloLine: CephaloLine) => {
+      return compact([
+        toVector(cephaloLine),
+        toVector(flipVector(cephaloLine)),
+      ]) as GeometricalLine[];
     };
     // @TODO: Handle scale factor
-    return { toPoint, toLine, scaleFactor: 1 / 3.2 };
+    return { toPoint, toVectors, toVector, scaleFactor: 1 / 3.2 };
   }
-)
-
-export const mapLandmarkToGeometricalObject = createSelector(
-  cephaloMapperSelector,
-  cephaloMapper => (landmark: CephaloLandmark) => {
-    const { toLine, toPoint } = cephaloMapper;
-    if (landmark.type === 'line') {
-      return toLine(landmark);
-    } else if (landmark.type === 'point') {
-      return toPoint(landmark);
-    }
-    return undefined;
-  },
 );
-
-export const getLandmarkValueSelector = createSelector(
-  manualLandmarksSelector,
-  (manualLandmarks) => (step: Step | CephaloLandmark) => manualLandmarks[step.symbol],
-);
-
-// @TODO
-// export const getComputedValueSelector = createSelector(
-//   manualLandmarksSelector,
-//   (manualLandmarks) => (step: Step | CephaloLandmark) => {
-//     evaluate()
-//   }
-// )
 
 import {
   mapSeverityToString,
@@ -110,6 +95,68 @@ import {
 } from '../../analyses/helpers';
 import keyBy from 'lodash/keyBy';
 import compact from 'lodash/compact';
+
+export const isAnalysisActiveSelector = createSelector(
+  activeAnalysisSelector,
+  imageDataSelector,
+  (analysis, data) => (
+      analysis !== null && data !== null
+  ),
+);
+
+export const completedStepsSelector = createSelector(
+  activeAnalysisStepsSelector,
+  manualLandmarksSelector,
+  (steps, setLandmarks) => filter(steps, s => has(setLandmarks, s.symbol)),
+);
+
+
+export const getPendingStepsSelector = createSelector(
+  activeAnalysisStepsSelector,
+  getManualStepStateSelector,
+  (steps, getStepState) => {
+    return filter(steps, s => getStepState(s) === 'pending');
+  },
+)
+
+const tryEvaluate = (mapper: CephaloMapper) => (s: CephaloLandmark) => {
+  try {
+    const value = evaluate(s, mapper);
+    return { id: s.symbol, value };
+  } catch (_) {
+    return undefined;
+  }
+};
+
+export const automaticLandmarksSelector = createSelector(
+  getPendingStepsSelector,
+  cephaloMapperSelector,
+  (pending, mapper) => {
+    return mapValues(keyBy(compact(flatten(map(
+      pending,
+      step => {
+        if (step.type === 'line') {
+          return [step, flipVector(step)].map(tryEvaluate(mapper));
+        }
+        return tryEvaluate(mapper)(step);
+      }
+    ))), s => s.id), v => v.value) as { [symbol: string]: EvaluatedValue } ;
+  },
+)
+
+export const getAllLandmarksSelector = createSelector(
+  manualLandmarksSelector,
+  automaticLandmarksSelector,
+  (manual, automatic) => {
+    return assign({ }, manual, automatic) as { [symbol: string]: EvaluatedValue };
+  }
+);
+
+export const getLandmarkValueSelector = createSelector(
+  getAllLandmarksSelector,
+  (allLandmarks) => (step: Step | CephaloLandmark) => allLandmarks[step.symbol],
+);
+
 
 export const getViewableResultSelector = createSelector(
   activeAnalysisSelector,
@@ -167,33 +214,19 @@ export const getViewableResultSelector = createSelector(
   }
 );
 
-export const isAnalysisActiveSelector = createSelector(
-  activeAnalysisSelector,
-  imageDataSelector,
-  (analysis, data) => (
-      analysis !== null && data !== null
-  ),
-);
-
-export const completedStepsSelector = createSelector(
-  activeAnalysisStepsSelector,
-  manualLandmarksSelector,
-  (steps, setLandmarks) => filter(steps, s => has(setLandmarks, s.symbol)),
-);
-
 export const isAnalysisCompleteSelector = createSelector(
-  manualLandmarksSelector,
+  getAllLandmarksSelector,
   activeAnalysisSelector,
-  (mappedLandmarks, activeAnalysis) => {
+  (allLandmarks, activeAnalysis) => {
     if (!activeAnalysis) return false;
-    return every(activeAnalysis.components, step => has(mappedLandmarks, step.landmark.symbol));
+    return every(activeAnalysis.components, step => has(allLandmarks, step.landmark.symbol));
   },
 );
 
 export const getAnalysisResultsSelector = createSelector(
   activeAnalysisSelector,
   isAnalysisCompleteSelector,
-  manualLandmarksSelector,
+  getAllLandmarksSelector,
   getViewableResultSelector,
   (analysis, isComplete, values, getViewable): ViewableAnalysisResult[] => {
     if (analysis !== null && isComplete) {
@@ -201,7 +234,19 @@ export const getAnalysisResultsSelector = createSelector(
     }
     return [];
   }
-)
+);
+
+export const getAnyStepStateSelector = createSelector(
+  getAllLandmarksSelector,
+  getManualStepStateSelector,
+  (allLandmarks, getManualStepState) => (step: CephaloLandmark): StepState => {
+    if (allLandmarks[step.symbol] !== undefined) {
+      return 'done';
+    } else {
+      return getManualStepState(step);
+    }
+  }
+);
 
 import {
   loadImageFile,

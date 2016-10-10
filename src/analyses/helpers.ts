@@ -135,6 +135,10 @@ export function getStepsForAnalysis(analysis: Analysis): CephaloLandmark[] {
   return getStepsForLandmarks(analysis.components.map(c => c.landmark));
 }
 
+export function flipVector(vector: CephaloLine) {
+  return line(vector.components[1], vector.components[1]);
+}
+
 import {
   calculateAngleBetweenTwoLines,
   calculateAngleBetweenPoints,
@@ -158,7 +162,7 @@ export function evaluate(landmark: CephaloLandmark, mapper: CephaloMapper): Eval
       const points: GeometricalPoint[] = map(landmark.components as CephaloPoint[], mapper.toPoint);
       result = calculateAngleBetweenPoints(points[0], points[1], points[2]);
     } else {
-      const lines: GeometricalLine[] = map(landmark.components as CephaloLine[], mapper.toLine);
+      const lines = map(landmark.components as CephaloLine[], mapper.toVector);
       result = calculateAngleBetweenTwoLines(lines[0], lines[1]);
     }
     result = Number(result.toFixed(2));
@@ -169,7 +173,7 @@ export function evaluate(landmark: CephaloLandmark, mapper: CephaloMapper): Eval
     const unit = landmark.unit;
     return unit === 'mm' ? result : unit === 'cm' ? result / 10 : result / 25.4;
   } else if (landmark.type === 'line') {
-    return mapper.toLine(landmark);
+    return mapper.toVector(landmark);
   } else if (landmark.type === 'point') {
     return mapper.toPoint(landmark);
   } else if (landmark.type === 'sum') {

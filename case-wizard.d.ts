@@ -139,7 +139,8 @@ interface Analysis {
  * A Mapper object maps cephalometric landmarks to geometrical objects
  */
 interface CephaloMapper {
-  toLine(landmark: CephaloLine): GeometricalLine;
+  toVectors(landmark: CephaloLine): GeometricalLine[];
+  toVector(landmark: CephaloLine): GeometricalLine;
   toPoint(landmark: CephaloPoint): GeometricalPoint;
   /**
    * The scale factor is required to calculate linear measurements
