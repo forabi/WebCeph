@@ -30,16 +30,11 @@ const createConfiguredStore = () => {
   );
   sagaMiddleware.run(rootSaga);
   if (module.hot) {
-    console.log('HOT!!');
     // Enable Webpack hot module replacement for reducers
     module.hot.accept('./reducers', () => {
-      console.log('HEY!');
       const nextRootReducer = require('./reducers/index').default;
-      console.log('hey!', nextRootReducer);
       store.replaceReducer(nextRootReducer);
     });
-  } else {
-    console.log('NOT HOT');
   }
   return store;
 };
