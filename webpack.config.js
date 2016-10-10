@@ -206,7 +206,7 @@ const config = {
     prod(new webpack.optimize.OccurrenceOrderPlugin(true)),
     prod(new webpack.optimize.UglifyJsPlugin({
       compress: {
-        // drop_console: true,
+        drop_console: true,
         warnings: false,
       },
     })),
