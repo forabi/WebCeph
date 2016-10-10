@@ -6,7 +6,7 @@ import cx from 'classnames';
 import assign from 'lodash/assign';
 import attempt from 'lodash/attempt';
 import some from 'lodash/some';
-import noop from 'lodash/noop'
+import noop from 'lodash/noop';
 
 import CephaloEditor from '../CephaloEditor';
 import CompatibilityChecker from '../CompatibilityChecker';
@@ -35,6 +35,11 @@ import {
   manualLandmarksSelector,
   getLandmarkValueSelector,
 } from '../../store/selectors/workspace';
+
+import {
+  getMissingFeatures,
+  isBrowserCompatible,
+} from '../../store/reducers/env/compatibility';
 
 import {
   getCurrentBrowser,
@@ -148,8 +153,8 @@ export default connect(
   (state: StoreState) => ({
     shouldCheckBrowserCompatiblity: !state['env.compatiblity.isIgnored'],
     isCheckingCompatiblity: state['env.compatiblity.isBeingChecked'],
-    missingBrowserFeatures: state['env.compatiblity.missingFeatures'],
-    isBrowserCompatible: state['env.compatiblity.missingFeatures'].length === 0,
+    missingBrowserFeatures: getMissingFeatures(state),
+    isBrowserCompatible: isBrowserCompatible(state),
     currentBrowser: getCurrentBrowser(),
     recommendedBrowsers: getRecommendedBrowsers(),
     onCompatibilityDialogClosed: noop,

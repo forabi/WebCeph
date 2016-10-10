@@ -155,6 +155,16 @@ namespace StoreEntries {
   interface manualLandmarks {
     [symbol: string]: GeometricalObject;
   }
+
+  namespace env {
+    namespace compatibility {
+      type isIgnored = boolean;
+      type isBeingChecked = boolean;
+      interface missingFeatures {
+        [id: string]: MissingBrowserFeature;
+      }
+    }
+  }
 }
 
 namespace Payloads {
@@ -162,6 +172,9 @@ namespace Payloads {
     symbol: string;
     value: GeometricalObject;
   }
+  type ignoreCompatiblity = void;
+  type isCheckingCompatiblity = void;
+  type missingFeatureDetected = MissingBrowserFeature;
 }
 
 interface StoreState {
