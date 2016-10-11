@@ -68,9 +68,10 @@ interface LandmarkProps {
 const Landmark = ({ value, fill, fillOpacity, stroke, zIndex }: LandmarkProps) => {
   const props = {
     stroke: stroke || '#fff',
-    fill: fill || '#fff',
-    opacity: fillOpacity || 1,
+    fill: fill || '#55f',
     strokeWidth: 3,
+    fillOpacity: fillOpacity || 1,
+    strokeOpacity: fillOpacity || 1,
     style: { zIndex },
   };
   if (isGeometricalPoint(value)) {
@@ -84,7 +85,6 @@ const Landmark = ({ value, fill, fillOpacity, stroke, zIndex }: LandmarkProps) =
     return (
       <line
         {...value}
-        stroke={stroke || '#fff'} strokeWidth={3} fill="#55f"
         {...props}
       />
     );
