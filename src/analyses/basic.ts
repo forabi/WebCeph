@@ -6,10 +6,10 @@ import dental from './dental';
 const analysis: Analysis = {
   id: 'basic',
   components: [
-    // ...commonComponents,
-    // angleOfConvexity,
-    // angleOfYAxis,
-    // ...bjork.components,
+    ...commonComponents,
+    angleOfConvexity,
+    angleOfYAxis,
+    ...bjork.components,
     ...dental.components,
   ],
   interpret(values) {

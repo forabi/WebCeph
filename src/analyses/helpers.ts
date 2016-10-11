@@ -81,44 +81,44 @@ export function angularSum(components: CephaloAngle[], name: string, symbol?: st
 
 const hasComponents: (m: CephaloLandmark) => boolean = m => m.components.length > 0;
 
-function areEqual(l1: CephaloLandmark, l2: CephaloLandmark): boolean {
+export function areEqualSteps(l1: CephaloLandmark, l2: CephaloLandmark): boolean {
   if (l1.type !== l2.type) return false;
   if (l1.symbol === l2.symbol) return true;
   if (l1.components.length === 0) return false;
   if (l1.components.length !== l2.components.length) return false;
   return (
-    xorWith(l1.components, l2.components, areEqual).length === 0
+    xorWith(l1.components, l2.components, areEqualSteps).length === 0
   );
 }
 
-
-export function getEdgesForLandmark(l: CephaloLandmark): CephaloLandmark[][] {
-  const edges: CephaloLandmark[][] = [];
-  if (!hasComponents(l)) {
-    edges.push([l]);
-  } else {
-    edges.push([...l.components, l]);
-    for (const c of l.components) {
-      const subedges = getEdgesForLandmark(c);
-      edges.unshift(
-        concat(
-            ...subedges,
-            [...c.components, c],
-        ),
-      );
-    }
-  }
-  return edges.map(uniq);
+export function areEqualSymbols(l1: CephaloLandmark, l2: CephaloLandmark) {
+  return l1.symbol === l2.symbol;
 }
 
-export function getStepsForLandmarks(landmarks: CephaloLandmark[]): CephaloLandmark[] {
-  const edges: CephaloLandmark[][] = flatten(landmarks.map(getEdgesForLandmark));
-  const uniqEdges: CephaloLandmark[] = uniqWith(flatten(edges), areEqual);
-  return uniqEdges;
+export function getStepsForLandmarks(landmarks: CephaloLandmark[], removeEqualSteps: boolean = true): CephaloLandmark[] {
+  return uniqWith(
+    flatten(map(
+      landmarks,
+      (landmark) => {
+        if (!landmark) {
+          __DEBUG__ && console.warn(
+            'Got unexpected value in getStepsForLandmarks. ' +
+            'Expected a Cephalo.Landmark, got ' + landmark, 
+          );
+          return [];
+        }
+        return [
+          ...getStepsForLandmarks(landmark.components),
+          landmark,
+        ];
+      },
+    )),
+    removeEqualSteps ? areEqualSteps : areEqualSymbols,
+  );
 }
 
-export function getStepsForAnalysis(analysis: Analysis): CephaloLandmark[] {
-  return getStepsForLandmarks(analysis.components.map(c => c.landmark));
+export function getStepsForAnalysis(analysis: Analysis, deduplicateVectors: boolean = true): CephaloLandmark[] {
+  return getStepsForLandmarks(analysis.components.map(c => c.landmark), deduplicateVectors);
 }
 
 export function flipVector(vector: CephaloLine) {
@@ -349,22 +349,4 @@ export const isStepComputable = (step: CephaloLandmark) => {
     step.type === 'distance' ||
     typeof step.calculate === 'function'
   );
-}
-
-/**
- * Gets all possible visual representations of a given landmark.
- * For example, given angle SNA, it may return S-N, N-A, A-N, N-S.
- * This is useful for when we need to highlight components on canvas.
- */
-export const getExtendedVisualComponents = (landmark: CephaloLandmark): CephaloLandmark[] => {
-  const additional: CephaloLandmark[] = [];
-  for (const subcomponent of landmark.components) {
-    if (subcomponent.type === 'line') {
-      additional.push(flipVector(subcomponent));
-      console.log('additional extended components', landmark.symbol);
-    } else if (subcomponent.type !== 'point') {
-      additional.push(...getExtendedVisualComponents(subcomponent));
-    }
-  }
-  return additional;
 }

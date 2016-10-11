@@ -9,12 +9,10 @@ import find from 'lodash/find';
 import map from 'lodash/map';
 import assign from 'lodash/assign';
 import uniqBy from 'lodash/uniqBy';
-import flatten from 'lodash/flatten';
+import memoize from 'lodash/memoize';
 
 import {
   getStepsForAnalysis,
-  getEdgesForLandmark,
-  flipVector,
   compute,
   line,
   isStepManual, isStepComputable,
@@ -27,7 +25,7 @@ import {
   isLowerIncisorInclination,
   isUpperIncisorInclination,
   isGrowthPattern,
-  getExtendedVisualComponents,
+  areEqualSteps,
 } from '../../analyses/helpers';
 
 import { manualLandmarksSelector } from '../reducers/manualLandmarks';
@@ -50,25 +48,50 @@ export const activeAnalysisStepsSelector = createSelector(
   }
 );
 
+export const findEqualComponentsSelector = createSelector(
+  activeAnalysisSelector,
+  (analysis) => memoize(((step: CephaloLandmark): CephaloLandmark[] => {
+    if (!analysis) return [];
+    const steps = getStepsForAnalysis(analysis, false);
+    const cs = filter(steps, s => s.symbol !== step.symbol && areEqualSteps(step, s)) || [];
+    return cs;
+  })),
+);
+
+import flatten from 'lodash/flatten';
+
+export const getExtendedVisualComponentsSelector = createSelector(
+  findEqualComponentsSelector,
+  (findEqual) => {
+    const fn = memoize((landmark: CephaloLandmark): CephaloLandmark[] => {
+      let additional: CephaloLandmark[] = [];
+      for (const subcomponent of landmark.components) {
+        if (subcomponent.type !== 'point') {
+          additional = [
+            ...additional,
+            subcomponent,
+            ...subcomponent.components,
+            ...findEqual(subcomponent),
+            ...flatten(map(subcomponent.components, fn)),
+          ];
+        }
+      }
+      return additional;
+    });
+    return fn;
+  },
+)
+
 export const getComponentsForSymbolSelector = createSelector(
   activeAnalysisStepsSelector,
-  (steps) => (symbol: string) => {
+  getExtendedVisualComponentsSelector,
+  (steps, getExtended) => memoize((symbol: string) => {
     const landmark = find(steps, { symbol });
     if (!landmark) {
       console.warn('Could not find landmark by symbol %s', symbol);
     }
-    assign(
-      { },
-      landmark,
-      { 
-        components: [
-          ...landmark.components,
-          ...getExtendedVisualComponents(landmark)
-        ],
-      }
-    );
-    return flatten(getEdgesForLandmark(landmark));
-  },
+    return [landmark, ...getExtended(landmark)];
+  }),
 );
 
 export const nextManualLandmarkSelector = createSelector(
@@ -197,22 +220,19 @@ export const automaticLandmarksSelector = createSelector(
   getPendingStepsSelector,
   cephaloMapperSelector,
   isStepEligibleForAutomaticMappingSelector,
-  (pending, mapper, isEligible) => {
+  findEqualComponentsSelector,
+  (pending, mapper, isEligible, findEqual) => {
     const result: { [symbol: string]: GeometricalObject } = { };
     for (const step of pending) {
       if (isEligible(step)) {
-        console.info('Found step eligible for automatic mapping', step.symbol);
-        if (step.type === 'line') {
-          for (const v of [step, flipVector(step)]) {
-            const r = tryMap(v, mapper);
-            if (r) {
-              result[v.symbol] = r;
-            }
-          }
-        } else {
-          const r = tryMap(step, mapper);
+        const r = tryMap(step, mapper);
+        if (r) {
+          result[step.symbol] = r;
+        };
+        for (const equalStep of findEqual(step)) {
+          const r = tryMap(equalStep, mapper);
           if (r) {
-            result[step.symbol] =  r;
+            result[equalStep.symbol] = r;
           };
         }
       }
@@ -240,11 +260,10 @@ export const getComputedValues = createSelector(
   activeAnalysisStepsSelector,
   isStepEligibleForComputationSelector,
   cephaloMapperSelector,
-  (steps, isStepEligible, mapper) => {
+  (steps, isEligible, mapper) => {
     const result: { [symbol: string]: number } = { };
     for (const step of steps) {
-      if (isStepEligible(step)) {
-        console.info('Step eligible for automatic computation', step.symbol);
+      if (isEligible(step)) {
         const value = compute(step, mapper);
         if (value) {
           result[step.symbol] = value;
