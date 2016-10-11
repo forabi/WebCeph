@@ -2,21 +2,21 @@ import assign from 'lodash/assign';
 
 import { angleBetweenPoints, line, angleBetweenLines, SkeletalProfile, AnalysisResultSeverity } from './helpers';
 import common, { components as commonComponents, FH_PLANE, N, Pog, A, B, Gn, S, Po } from './common';
-import { radiansToDegrees, calculateAngleBetweenPoints, isBehind } from '../utils/math';
+import { radiansToDegrees, calculateAngleBetweenTwoVectors, isBehind } from '../utils/math';
 
 const ANGLE_OF_CONVEXITY: CephaloAngle = assign(
    angleBetweenPoints(N, A, Pog, 'Angle of Convexity'),
    {
      calculate: (NA: GeometricalVector, APog: GeometricalVector) => {
-       const _N = { x: NA.x1, y: NA.y1 };
-       const _A = { x: NA.x2, y: NA.y2 };
+       const _A = { x: NA.x1, y: NA.y1 };
+       const _N = { x: NA.x2, y: NA.y2 };
        const _Pog = { x: APog.x2, y: APog.y2 };
        const _NPog = { x1: _N.x, y1: _N.y, x2: _Pog.x, y2: _Pog.y }
-       const _angle = calculateAngleBetweenPoints(_N, _A, _Pog);
+       const positiveValue = radiansToDegrees(Math.PI - calculateAngleBetweenTwoVectors(NA, APog));
        if (isBehind(_A, _NPog)) {
-         return (180 - radiansToDegrees(_angle)) * -1;
+         return -1 * positiveValue;
        } else {
-         return 180 - radiansToDegrees(_angle);
+         return positiveValue;
        }
      }
    },

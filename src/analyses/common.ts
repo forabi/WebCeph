@@ -8,7 +8,7 @@ import {
 } from './helpers';
 
 import {
-  calculateAngleBetweenTwoLines,
+  calculateAngleBetweenTwoVectors,
   isBehind,
   radiansToDegrees,
 } from '../utils/math';
@@ -87,15 +87,14 @@ export const SNB = angleBetweenPoints(S, N, B);
 
 /**
  * ANB (A point, nasion, B point) indicates whether the skeletal relationship between the maxilla and mandible is a normal skeletal class I (+2 degrees), a skeletal Class II (+4 degrees or more), or skeletal class III (0 or negative) relationship.
- * ANB is a custom landmark that is calculated as the SNA - SNB,
- * because otherwise it would not be a negative value in cases where it should be.
+ * ANB is a custom landmark that has a positive sign if A is in front of N-B, negative otherwise.
  */
 export const ANB: CephaloAngle = assign(
   angleBetweenLines(line(N, A), line(N, B)),
   {
     calculate(lineNA: GeometricalVector, lineNB: GeometricalVector) {
       const A = { x: lineNA.x2, y: lineNA.y2 };
-      const positiveValue = radiansToDegrees(calculateAngleBetweenTwoLines(lineNA, lineNB));
+      const positiveValue = radiansToDegrees(calculateAngleBetweenTwoVectors(lineNA, lineNB));
       if (isBehind(A, lineNB)) {
         return -1 * positiveValue;
       }

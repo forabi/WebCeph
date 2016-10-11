@@ -11,12 +11,10 @@ import join from 'lodash/join';
 import reduce from 'lodash/reduce';
 
 export function getSymbolForAngle(lineA: CephaloLine, lineB: CephaloLine): string {
-  return uniq([
-    lineA.components[0].symbol,
-    lineA.components[1].symbol,
-    lineB.components[0].symbol,
-    lineB.components[1].symbol,
-  ]).join('');
+  const A = lineA.components[1];
+  const B = lineB.components[0];
+  const C = lineB.components[1];
+  return map([A, B, C], c => c.symbol).join('');
 }
 
 /**
@@ -36,18 +34,7 @@ export function angleBetweenLines(lineA: CephaloLine, lineB: CephaloLine, name?:
  * Creates an object conforming to the Angle interface based on 3 points
  */
 export function angleBetweenPoints(A: CephaloPoint, B: CephaloPoint, C: CephaloPoint, name?: string, unit: AngularUnit = 'degree'): CephaloAngle {
-  return assign(
-    angleBetweenLines(line(A, B), line(B, C), name, undefined, unit),
-    {
-      calculate: (line1: GeometricalVector, line2: GeometricalVector) => {
-        const p1 = { x: line1.x1, y: line1.y1 };
-        const p2 = { x: line1.x2, y: line1.y2 };
-        const p3 = { x: line2.x2, y: line2.y2 };
-        const result = calculateAngleBetweenPoints(p1, p2, p3);
-        return unit === 'degree' ? radiansToDegrees(result) : result;
-      },
-    },
-  );
+  return angleBetweenLines(line(B, A), line(B, C), name, undefined, unit);
 }
 
 export function point(symbol: string, name?: string, description?: string): CephaloPoint {
@@ -140,7 +127,7 @@ export function flipVector(vector: CephaloLine) {
 }
 
 import {
-  calculateAngleBetweenTwoLines,
+  calculateAngleBetweenTwoVectors,
   calculateAngleBetweenPoints,
   calculateDistanceBetweenTwoPoints,
   radiansToDegrees,
@@ -172,7 +159,7 @@ export function compute(landmark: CephaloLandmark, mapper: CephaloMapper): numbe
       result = calculateAngleBetweenPoints(points[0], points[1], points[2]);
     } else {
       const lines = map(landmark.components as CephaloLine[], mapper.toVector);
-      result = calculateAngleBetweenTwoLines(lines[0], lines[1]);
+      result = calculateAngleBetweenTwoVectors(lines[0], lines[1]);
     }
     return landmark.unit === 'degree' ? radiansToDegrees(result) : result;
   } else if (landmark.type === 'distance') {
