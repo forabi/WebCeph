@@ -204,7 +204,7 @@ export enum SkeletalProfile {
 }
 
 /** The pattern of rotation of the mandible */
-export enum MandibularRoation {
+export enum MandibularRotation {
   normal = 12,
   clockwise,
   vertical = clockwise,
@@ -244,9 +244,9 @@ const typeMap = {
   [Mandible.normal]: 'Normal',
   [Mandible.prognathic]: 'Prognathic',
   [Mandible.retrognathic]: 'Retrognathic',
-  [MandibularRoation.clockwise]: 'Clockwise',
-  [MandibularRoation.counterClockwise]: 'Counter-clockwise',
-  [MandibularRoation.normal]: 'Normal',
+  [MandibularRotation.clockwise]: 'Clockwise',
+  [MandibularRotation.counterClockwise]: 'Counter-clockwise',
+  [MandibularRotation.normal]: 'Normal',
   [GrowthPattern.clockwise]: 'Vertical',
   [GrowthPattern.counterClockwise]: 'Horizontal',
   [GrowthPattern.normal]: 'Normal',
@@ -275,11 +275,11 @@ export function isSkeletalProfile(value: number | string): value is SkeletalProf
   return has(SkeletalProfile, value);
 }
 
-export function isMandiblularRotation(value: number | string): value is MandibularRoation {
-  return has(MandibularRoation, value);
+export function isMandiblularRotation(value: number | string): value is MandibularRotation {
+  return has(MandibularRotation, value);
 }
 
-export function isGrowthPattern(value: number | string): value is MandibularRoation {
+export function isGrowthPattern(value: number | string): value is MandibularRotation {
   return has(GrowthPattern, value);
 }
 

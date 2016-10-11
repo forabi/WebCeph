@@ -2,7 +2,9 @@ import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
 import { pure } from 'recompose';
-import { hasResultValue as isViewableResultWithValue } from '../../analyses/helpers'; 
+import { hasResultValue as isViewableResultWithValue } from '../../analyses/helpers';
+import map from 'lodash/map';
+import groupBy from 'lodash/groupBy';
 
 interface AnalysisResultsViewerProps {
   onCloseRequested: () => any;
@@ -34,30 +36,36 @@ export const AnalysisResultsViewer = pure(({ open, onCloseRequested, results }: 
     </TableHeader>
     <TableBody displayRowCheckbox={false}>
     {
-      results.map((result, i) => (
-        <TableRow key={i}>
+      map(groupBy(results, r => r.name), (results, name) => (
+        <TableRow key={name}>
           <TableRowColumn>
-            {result.name}
+            {name}
           </TableRowColumn>
           <TableRowColumn>
-            {result.indicates}
+            {results[0].indicates}
           </TableRowColumn>
           <TableRowColumn>
-            {result.severity}
+            {results[0].severity}
           </TableRowColumn>
           <TableRowColumn>{
-            isViewableResultWithValue(result) ? (
-              result.relevantComponents.map(r => (
-                <div key={r.symbol}>{r.symbol} = {r.value.toFixed(1)}</div>
-              ))
-            ) : '-'
+            map(results, (result) => {
+              if (isViewableResultWithValue(result)) {
+                return result.relevantComponents.map(r => (
+                  <div key={r.symbol}>{r.symbol} = {r.value.toFixed(1)}</div>
+                ));
+              }
+              return '-';
+            })
         }</TableRowColumn>
         <TableRowColumn>{
-            isViewableResultWithValue(result) ? (
-              result.relevantComponents.map(r => (
+          map(results, result => {
+            if (isViewableResultWithValue(result)) {
+              return result.relevantComponents.map(r => (
                 <div key={r.symbol}>{r.norm}{r.stdDev ? `±${r.stdDev.toFixed(0)}` : ''}</div>
-              ))
-            ) : '-'
+              ));
+            }
+            return '-';
+          })
         }</TableRowColumn>
         </TableRow>
       ))

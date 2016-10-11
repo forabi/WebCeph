@@ -1,5 +1,5 @@
 import { components as commonComponents } from './common';
-import { angleOfConvexity, interpret as interpretDowns } from './downs';
+import { angleOfConvexity, angleOfYAxis, interpret as interpretDowns } from './downs';
 import bjork from './bjork';
 
 const analysis: Analysis = {
@@ -7,6 +7,7 @@ const analysis: Analysis = {
   components: [
     ...commonComponents,
     angleOfConvexity,
+    angleOfYAxis,
     ...bjork.components,
   ],
   interpret(values) {

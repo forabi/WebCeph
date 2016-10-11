@@ -1,6 +1,11 @@
 import assign from 'lodash/assign';
 
-import { angleBetweenPoints, line, angleBetweenLines, SkeletalProfile, AnalysisResultSeverity } from './helpers';
+import {
+  angleBetweenPoints,
+  line, angleBetweenLines,
+  SkeletalProfile, AnalysisResultSeverity,
+  MandibularRotation,
+} from './helpers';
 import common, { components as commonComponents, FH_PLANE, N, Pog, A, B, Gn, S, Po } from './common';
 import { radiansToDegrees, calculateAngleBetweenTwoVectors, isBehind } from '../utils/math';
 
@@ -22,19 +27,46 @@ const ANGLE_OF_CONVEXITY: CephaloAngle = assign(
    },
 );
 
+const ANGLE_OF_Y_AXIS = angleBetweenLines(line(S, Gn), FH_PLANE, 'Y Axis', 'Y Axis');
+
 const interpretAngleOfConvexity = (value: number, min = -5, max = 5): AnalysisResult => {
   // @TODO: handle severity
   const relevantComponents = [ANGLE_OF_CONVEXITY.symbol];
   let severity = AnalysisResultSeverity.NONE;
   let type = SkeletalProfile.normal;
-  if (value < -5) {
+  if (value < min) {
     type = SkeletalProfile.concave;
     severity = Math.max(
       AnalysisResultSeverity.HIGH,
       Math.round(Math.abs(value - min) / 3),
     );
-  } else if (value > 5) {
+  } else if (value > max) {
     type = SkeletalProfile.convex;
+    severity = Math.min(
+      AnalysisResultSeverity.HIGH,
+      Math.round(Math.abs(value - max) / 3),
+    );
+  }
+  return {
+    type,
+    severity,
+    relevantComponents,
+  };
+};
+
+const interpretAngleOfYAxis= (value: number, min = -55.6, max = 63.2): AnalysisResult => {
+  // @TODO: handle severity
+  const relevantComponents = [ANGLE_OF_Y_AXIS.symbol];
+  let severity = AnalysisResultSeverity.NONE;
+  let type = MandibularRotation.normal;
+  if (value < min) {
+    type = MandibularRotation.counterClockwise;
+    severity = Math.max(
+      AnalysisResultSeverity.HIGH,
+      Math.round(Math.abs(value - min) / 3),
+    );
+  } else if (value > max) {
+    type = MandibularRotation.clockwise;
     severity = Math.min(
       AnalysisResultSeverity.HIGH,
       Math.round(Math.abs(value - max) / 3),
@@ -53,14 +85,16 @@ export const angleOfConvexity: AnalysisComponent = {
   stdDev: 5.1,
 };
 
+export const angleOfYAxis: AnalysisComponent = {
+  landmark: ANGLE_OF_Y_AXIS,
+  norm: 59.4,
+  stdDev: 3.8,
+};
+
 const components: AnalysisComponent[] = [
   ...commonComponents,
   angleOfConvexity,
-  {
-    landmark: angleBetweenPoints(Gn, S, Po, 'Y Axis'),
-    norm: 59.4,
-    stdDev: 3.8,
-  },
+  angleOfYAxis,
   {
     landmark: angleBetweenLines(line(A, B), line(N, Po), 'A-B Plane Angle'),
     norm: -4.6,
@@ -76,9 +110,14 @@ const components: AnalysisComponent[] = [
 export const interpret = (values: { [id: string]: EvaluatedValue }) => {
   const results: AnalysisResult[] = common.interpret(values);
   // @TODO
-  if (values[ANGLE_OF_CONVEXITY.symbol] !== undefined){
+  if (values[ANGLE_OF_CONVEXITY.symbol] !== undefined) {
     results.push(
       interpretAngleOfConvexity(values[ANGLE_OF_CONVEXITY.symbol] as number),
+    );
+  }
+  if (values[ANGLE_OF_Y_AXIS.symbol] !== undefined) {
+    results.push(
+      interpretAngleOfYAxis(values[ANGLE_OF_Y_AXIS.symbol] as number),
     );
   }
   return results;

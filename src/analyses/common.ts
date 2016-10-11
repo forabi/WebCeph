@@ -4,7 +4,7 @@ import {
   line, point,
   angleBetweenPoints, angleBetweenLines,
   AnalysisResultSeverity, SkeletalPattern, Mandible, Maxilla,
-  MandibularRoation,
+  MandibularRotation,
 } from './helpers';
 
 import {
@@ -210,16 +210,16 @@ export const interpretSNB = (value: number, min = 78, max = 82): AnalysisResult 
 export const interpretFMPA = (value: number, min = 16.9, max = 26.9): AnalysisResult => {
   // @TODO: handle severity
   const relevantComponents = [FMPA.symbol];
-  let type = MandibularRoation.normal;
+  let type = MandibularRotation.normal;
   let severity = AnalysisResultSeverity.NONE;
   // const severity = Math.min(
   //   AnalysisResultSeverity.HIGH,
   //   Math.round(Math.abs(value - ((min + max) / 2)) / 3),
   // );
   if (value > max) {
-    type = MandibularRoation.clockwise;
+    type = MandibularRotation.clockwise;
   } else if (value < min) {
-    type = MandibularRoation.counterClockwise;
+    type = MandibularRotation.counterClockwise;
   }
   return {
     type,

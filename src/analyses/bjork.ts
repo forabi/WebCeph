@@ -1,7 +1,7 @@
 import { 
   angularSum, angleBetweenPoints,
   AnalysisResultSeverity,
-  MandibularRoation, GrowthPattern,
+  MandibularRotation, GrowthPattern,
 } from './helpers';
 
 import { N, S, Ar, Go, Me } from './common';
