@@ -24,6 +24,8 @@ import {
   isSkeletalProfile,
   isMaxilla, isMandible,
   isMandiblularRotation,
+  isLowerIncisorInclination,
+  isUpperIncisorInclination,
   isGrowthPattern,
   getExtendedVisualComponents,
 } from '../../analyses/helpers';
@@ -283,6 +285,10 @@ export const getViewableResultSelector = createSelector(
         name = 'Mandiblular Rotation';
       } else if (isGrowthPattern(result.type)) {
         name = 'Growth Pattern';
+      } else if (isLowerIncisorInclination(result.type)) {
+        name = 'Lower Insicor Inclination';
+      } else if (isUpperIncisorInclination(result.type)) {
+        name = 'Upper Insicor Inclination'
       } else {
         console.warn(
           'Cannot find name for analysis result',

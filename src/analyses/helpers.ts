@@ -4,7 +4,6 @@ import uniq from 'lodash/uniq';
 import xorWith from 'lodash/xorWith';
 import uniqWith from 'lodash/uniqWith';
 import concat from 'lodash/concat';
-import assign from 'lodash/assign';
 import has from 'lodash/has';
 import every from 'lodash/every';
 import join from 'lodash/join';
@@ -220,6 +219,20 @@ export enum GrowthPattern {
   horizontal = counterClockwise,
 }
 
+export enum UpperIncisorInclination {
+  buccal = 19,
+  labial = buccal,
+  palatal,
+  normal,
+}
+
+export enum LowerIncisorInclination {
+  buccal = 22,
+  labial = buccal,
+  lingual,
+  normal,
+}
+
 export enum AnalysisResultSeverity {
   NONE = 0,
   UNKNOWN = NONE,
@@ -250,6 +263,12 @@ const typeMap = {
   [GrowthPattern.clockwise]: 'Vertical',
   [GrowthPattern.counterClockwise]: 'Horizontal',
   [GrowthPattern.normal]: 'Normal',
+  [LowerIncisorInclination.normal]: 'Normal',
+  [LowerIncisorInclination.labial]: 'Labial',
+  [LowerIncisorInclination.lingual]: 'Lingual',
+  [UpperIncisorInclination.normal]: 'Normal',
+  [UpperIncisorInclination.labial]: 'Labial',
+  [UpperIncisorInclination.palatal]: 'Palatal',
 }
 
 /** A map of the seveirty of skeletal problems to human-readable phrases */
@@ -279,8 +298,16 @@ export function isMandiblularRotation(value: number | string): value is Mandibul
   return has(MandibularRotation, value);
 }
 
-export function isGrowthPattern(value: number | string): value is MandibularRotation {
+export function isGrowthPattern(value: number | string): value is GrowthPattern {
   return has(GrowthPattern, value);
+}
+
+export function isLowerIncisorInclination(value: number | string): value is LowerIncisorInclination {
+  return has(LowerIncisorInclination, value);
+}
+
+export function isUpperIncisorInclination(value: number | string): value is UpperIncisorInclination {
+  return has(UpperIncisorInclination, value);
 }
 
 export function mapSeverityToString(value: number) {
