@@ -5,11 +5,11 @@ import {
 } from './helpers';
 import { N, S, Me, Go } from './common';
 
-const U1_APEX = point('U1 Apex', 'Apex of Upper Incisor');
-const U1_INCISAL_EDGE = point('U1 Incisal Edge', 'Apex of Upper Incisor');
+const U1_APEX = point('U1 Apex', undefined, 'Apex of Upper Incisor');
+const U1_INCISAL_EDGE = point('U1 Incisal Edge', undefined, 'Incisal Edge of Upper Incisor');
 
-const L1_APEX = point('L1 Apex', 'Apex of Lower Incisor');
-const L1_INCISAL_EDGE = point('L1 Incisal Edge', 'Apex of Lower Incisor');
+const L1_APEX = point('L1 Apex', undefined, 'Apex of Lower Incisor');
+const L1_INCISAL_EDGE = point('L1 Incisal Edge', undefined, 'Incisal Edge of Lower Incisor');
 
 /**
  * A line connecting the incisal edge and root apex of the most prominent maxillary incisor
