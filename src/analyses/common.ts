@@ -1,9 +1,17 @@
+import assign from 'lodash/assign';
+
 import { 
   line, point,
-  angleBetweenPoints, getSymbolForAngle, angleBetweenLines,
+  angleBetweenPoints, angleBetweenLines,
   AnalysisResultSeverity, SkeletalPattern, Mandible, Maxilla,
   MandibularRoation,
 } from './helpers';
+
+import {
+  calculateAngleBetweenTwoLines,
+  isBehind,
+  radiansToDegrees,
+} from '../utils/math';
 
 /**
  * Most superior point of outline of external auditory meatus
@@ -82,15 +90,20 @@ export const SNB = angleBetweenPoints(S, N, B);
  * ANB is a custom landmark that is calculated as the SNA - SNB,
  * because otherwise it would not be a negative value in cases where it should be.
  */
-export const ANB: CephaloAngle = {
-  symbol: getSymbolForAngle(line(A, N), line(N, B)),
-  type: 'angle',
-  unit: 'degree',
-  components: [SNA, SNB],
-  calculate(SNA: number, SNB: number) {
-    return SNA - SNB;
+export const ANB: CephaloAngle = assign(
+  angleBetweenLines(line(N, A), line(N, B)),
+  {
+    calculate(lineNA: GeometricalVector, lineNB: GeometricalVector) {
+      const A = { x: lineNA.x2, y: lineNA.y2 };
+      const positiveValue = radiansToDegrees(calculateAngleBetweenTwoLines(lineNA, lineNB));
+      if (isBehind(A, lineNB)) {
+        return -1 * positiveValue;
+      }
+      return positiveValue;
+    },
   },
-};
+);
+
 
 /**
  * Most posterior inferior point on angle of mandible.

@@ -56,6 +56,10 @@ interface CephaloEditorProps {
   analysisSteps: Step[];
   getStepState(step: Step): StepState;
   getStepValue(step: Step): number | undefined;
+  highlightModeOnCanvas: boolean;
+  highlightedLandmarks: { [symbol: string]: boolean };
+  onStepMouseOver(symbol: string): __React.EventHandler<__React.MouseEvent>;
+  onStepMouseOut(symbol: string): __React.EventHandler<__React.MouseEvent>;
 }
 
 interface CephaloEditorState {
@@ -126,6 +130,8 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
                 onCanvasResized={this.props.onCanvasResized}
                 onClick={this.props.onCanvasClicked}
                 landmarks={this.props.landmarks}
+                highlightedLandmarks={this.props.highlightedLandmarks}
+                highlightMode={this.props.highlightModeOnCanvas}
               />
               <Snackbar
                 open={this.props.isWorkerBusy}
@@ -217,6 +223,8 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
                 steps={this.props.analysisSteps}
                 getStepState={this.props.getStepState}
                 getStepValue={this.props.getStepValue}
+                onStepMouseOver={this.props.onStepMouseOver}
+                onStepMouseOut={this.props.onStepMouseOut}
               />
             ) : (
               <div className={classes.list_steps} />

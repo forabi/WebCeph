@@ -1,6 +1,6 @@
 import * as React from 'react';
 import map from 'lodash/map';
-import compact from 'lodash/compact';
+import sortBy from 'lodash/sortBy';
 import { findDOMNode } from 'react-dom'; 
 import { isGeometricalPoint, isGeometricalLine } from '../../utils/math';
 import { pure } from 'recompose';
@@ -57,26 +57,39 @@ const DropShadow = pure(({ id }: { id: string }) => (
   </filter>
 ));
 
-const geometricalObjectToSVG = (value: (GeometricalObject), id: string): (JSX.Element | undefined) => {
+interface LandmarkProps {
+  value: GeometricalObject;
+  stroke?: string;
+  fill?: string;
+  fillOpacity?: number;
+  zIndex: number;
+}
+
+const Landmark = ({ value, fill, fillOpacity, stroke, zIndex }: LandmarkProps) => {
+  const props = {
+    stroke: stroke || '#fff',
+    fill: fill || '#fff',
+    opacity: fillOpacity || 1,
+    strokeWidth: 3,
+    style: { zIndex },
+  };
   if (isGeometricalPoint(value)) {
     return (
       <circle
-        key={id}
-        stroke="#fff" strokeWidth={3}
-        // onMouseDown={} // @TODO
-        // onMouseUp={} // @TODO
         r={2} cx={value.x} cy={value.y}
+        {...props}
       />
     );
   } else if (isGeometricalLine(value)) {
     return (
-      <line key={id}
+      <line
         {...value}
-        stroke="#fff" strokeWidth={3} fill="#55f"
+        stroke={stroke || '#fff'} strokeWidth={3} fill="#55f"
+        {...props}
       />
     );
   } else {
-    return undefined;
+    return <span/>;
   }
 };
 
@@ -93,6 +106,8 @@ interface CephaloCanvasProps {
   landmarks: { [id: string]: GeometricalObject } | { };
   onClick?: (e: { X: number, Y: number }) => void;
   onCanvasResized?(e: ResizeObserverEntry): void;
+  highlightMode: boolean;
+  highlightedLandmarks: { [symbol: string]: boolean };
 }
 
 /**
@@ -137,33 +152,56 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
   }
 
   render() {
+    const {
+      highlightMode,
+      className,
+      src,
+      width, height,
+      contrast, brightness,
+      highlightedLandmarks: highlighted,
+    } = this.props;
     return (
       <svg
         ref="canvas" 
         onClick={this.handleClick}
-        className={this.props.className}
-        width={this.props.width} height={this.props.height}
+        className={className}
+        width={width} height={height}
       >
         <defs>
-          <BrightnessFilter id="brightness" value={this.props.brightness || 50} />
+          <BrightnessFilter id="brightness" value={brightness || 50} />
           <DropShadow id="shadow" />
           <InvertFilter id="invert" />
-          <ContrastFilter id="contrast" value={this.props.contrast || 50} />
+          <ContrastFilter id="contrast" value={contrast || 50} />
         </defs>
         <g filter="url(#shadow)">
           <g filter="url(#brightness)">
             <g>
               <image
-                xlinkHref={this.props.src}
-                x={this.props.width * 0.05} y={this.props.height * 0.05}
-                width={this.props.width * 0.9} height={this.props.height * 0.9}
+                xlinkHref={src}
+                x={width * 0.05} y={height * 0.05}
+                width={width * 0.9} height={height * 0.9}
                 filter={this.getFilterAttribute()}
                 transform={this.getTransformAttribute()}
               />
             </g>
           </g>
         </g>
-        {compact(map(this.props.landmarks, geometricalObjectToSVG))}
+        {
+          sortBy(map(
+            this.props.landmarks,
+            (landmark, symbol) => {
+              let props = {};
+              if (highlightMode) {
+                if (highlighted[symbol] === true) {
+                  props = { stroke: 'blue', fill: 'blue', zIndex: 1 };
+                } else {
+                  props = { fillOpacity: 0.5, zIndex: 0 };
+                }
+              }
+              return <Landmark {...props} key={symbol} value={landmark} />;
+            }
+          ), (i: JSX.Element) => i.props.zIndex)
+        }
       </svg>
     )
   }

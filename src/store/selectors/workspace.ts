@@ -9,9 +9,11 @@ import find from 'lodash/find';
 import map from 'lodash/map';
 import assign from 'lodash/assign';
 import uniqBy from 'lodash/uniqBy';
+import flatten from 'lodash/flatten';
 
 import {
   getStepsForAnalysis,
+  getEdgesForLandmark,
   flipVector,
   compute,
   line,
@@ -23,6 +25,7 @@ import {
   isMaxilla, isMandible,
   isMandiblularRotation,
   isGrowthPattern,
+  getExtendedVisualComponents,
 } from '../../analyses/helpers';
 
 import { manualLandmarksSelector } from '../reducers/manualLandmarks';
@@ -43,6 +46,27 @@ export const activeAnalysisStepsSelector = createSelector(
     }
     return [];
   }
+);
+
+export const getComponentsForSymbolSelector = createSelector(
+  activeAnalysisStepsSelector,
+  (steps) => (symbol: string) => {
+    const landmark = find(steps, { symbol });
+    if (!landmark) {
+      console.warn('Could not find landmark by symbol %s', symbol);
+    }
+    assign(
+      { },
+      landmark,
+      { 
+        components: [
+          ...landmark.components,
+          ...getExtendedVisualComponents(landmark)
+        ],
+      }
+    );
+    return flatten(getEdgesForLandmark(landmark));
+  },
 );
 
 export const nextManualLandmarkSelector = createSelector(

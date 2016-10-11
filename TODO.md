@@ -27,16 +27,16 @@ TODO
   * [ ] Later: freeform drawing tool?
   * [ ] Change cursor accordingly
     * [ ] Use SVG for cursor?
-* [ ] Highlight geometrical object on step hover
+* [x] Highlight geometrical object on step hover
 * [ ] Highlight step on object hover
 * [ ] Remove step, edit step
 * [ ] Show object label
 * [ ] Rename object
 * [ ] Keyboard shortucts
 * [ ] Analyses
-  * [ ] Do not store entire anlysis in store
+  * [ ] Do not store entire analysis in store
   * [ ] Ability to switch analysis
-  * [ ] Predfined
+  * [ ] Predefined
     * [ ] Basic
       * [ ] SNA, SNB, ANB
       * [ ] Growth pattern
@@ -72,7 +72,7 @@ TODO
   * [x] GeometricalAngle
   * [ ] Scale factor
   * [ ] Calculate severity properly
-* [ ] Persiste some parts of the state
+* [ ] Persist some parts of the state
   * [ ] Compatiblity checks?
     * [ ] How to handle browser updates? 
 * [ ] Automatic resizing of canvas (use transform: scale?)

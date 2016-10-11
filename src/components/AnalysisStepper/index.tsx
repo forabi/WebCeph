@@ -7,6 +7,8 @@ const classes = require('./style.scss');
 interface AnalysisStepperProps {
   className?: string,
   steps: Step[];
+  onStepMouseOver(symbol: string): __React.EventHandler<__React.MouseEvent>;
+  onStepMouseOut(symbol: string): __React.EventHandler<__React.MouseEvent>;
   getStepState(step: Step): StepState;
   getStepValue(step: Step): number | undefined;
   removeLandmark(landmark: CephaloLandmark): void;
@@ -45,7 +47,7 @@ const getTitleForStep = (landmark: CephaloLandmark) => {
   } else if (landmark.type === 'distance') {
     return `Measure distance between points ${landmark.components[0].symbol} and ${landmark.components[1].symbol}`
   } else if (landmark.type === 'sum') {
-    return `Calculate ${landmark.name || landmark.components.map(c => c.symbol).join(' + ')}`
+    return `Calculate ${landmark.name || landmark.symbol || landmark.components.map(c => c.symbol).join(' + ')}`
   }
   console.warn('Could not get title for step of type ' + landmark.type);
   return undefined;
@@ -57,19 +59,24 @@ export const AnalysisStepper = pure((props: AnalysisStepperProps) => {
     getStepState,
     getStepValue,
     removeLandmark, editLandmark,
+    onStepMouseOver, onStepMouseOut,
   } = props;
   return (
     <List className={props.className}>
     {
       steps.map(step => {
         const value = getStepValue(step);
+        const state = getStepState(step);
+        const done = state === 'done';
         return (
           <div key={step.symbol}>
             <ListItem
               primaryText={getTitleForStep(step)}
               secondaryText={getDescriptionForStep(step) || undefined}
-              leftIcon={icons[getStepState(step)]}
+              leftIcon={icons[state]}
               rightIcon={ typeof value === 'number' ? <span>{value.toFixed(1)}</span> : undefined}
+              onMouseEnter={done ? onStepMouseOver(step.symbol) : undefined}
+              onMouseLeave={done ? onStepMouseOut(step.symbol) : undefined}
             />
           </div>
         );

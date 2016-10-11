@@ -136,7 +136,7 @@ export function getStepsForAnalysis(analysis: Analysis): CephaloLandmark[] {
 }
 
 export function flipVector(vector: CephaloLine) {
-  return line(vector.components[1], vector.components[1]);
+  return line(vector.components[1], vector.components[0]);
 }
 
 import {
@@ -335,4 +335,22 @@ export const isStepComputable = (step: CephaloLandmark) => {
     step.type === 'distance' ||
     typeof step.calculate === 'function'
   );
+}
+
+/**
+ * Gets all possible visual representations of a given landmark.
+ * For example, given angle SNA, it may return S-N, N-A, A-N, N-S.
+ * This is useful for when we need to highlight components on canvas.
+ */
+export const getExtendedVisualComponents = (landmark: CephaloLandmark): CephaloLandmark[] => {
+  const additional: CephaloLandmark[] = [];
+  for (const subcomponent of landmark.components) {
+    if (subcomponent.type === 'line') {
+      additional.push(flipVector(subcomponent));
+      console.log('additional extended components', landmark.symbol);
+    } else if (subcomponent.type !== 'point') {
+      additional.push(...getExtendedVisualComponents(subcomponent));
+    }
+  }
+  return additional;
 }

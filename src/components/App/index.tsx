@@ -7,6 +7,8 @@ import assign from 'lodash/assign';
 import attempt from 'lodash/attempt';
 import some from 'lodash/some';
 import noop from 'lodash/noop';
+import isEmpty from 'lodash/isEmpty';
+import map from 'lodash/map';
 
 import CephaloEditor from '../CephaloEditor';
 import CompatibilityChecker from '../CompatibilityChecker';
@@ -22,6 +24,8 @@ import {
   ignoreLikelyNotCephalo,
   showAnalysisResults,
   closeAnalysisResults,
+  highlightStepsOnCanvas,
+  unhighlightStepsOnCanvas,
 } from '../../actions/workspace';
 
 import {
@@ -34,6 +38,7 @@ import {
   onFileDroppedSelector,
   getAllLandmarksSelector,
   getLandmarkValueSelector,
+  getComponentsForSymbolSelector,
 } from '../../store/selectors/workspace';
 
 import {
@@ -45,6 +50,10 @@ import {
   getCurrentBrowser,
   getRecommendedBrowsers,
 } from '../../store/selectors/env';
+
+import {
+  getHighlightedSteps,
+} from '../../store/reducers/workspace/canvas';
 
 import { checkBrowserCompatibility } from '../../actions/initialization';
 
@@ -84,6 +93,8 @@ interface StateProps {
   getStepValue(step: Step): number | undefined;
   areAnalysisResultsShown: boolean;
   analysisResults: (AnalysisResult & { name: string })[];
+  highlightedLandmarks: { [symbol: string]: boolean };
+  getComponentsForSymbol: (symbol: string) => CephaloLandmark[];
 }
 
 interface DispatchProps {
@@ -101,10 +112,13 @@ interface DispatchProps {
   onCanvasResized(e: ResizeObserverEntry): void;
   onShowAnalysisResultsClicked(): any;
   onAnalysisViewerCloseRequested(): any;
+  onStepMouseOver(symbol: string): __React.EventHandler<__React.MouseEvent>;
+  onStepMouseOut(symbol: string): __React.EventHandler<__React.MouseEvent>;
 }
 
 interface MergeProps {
   onCanvasClicked(e: { X: number, Y: number }): void;
+  highlightModeOnCanvas: boolean;
 }
 
 type AppProps = StateProps & DispatchProps & MergeProps;
@@ -180,6 +194,8 @@ export default connect(
     onCanvasClicked: onCanvasClickedSelector(state),
     areAnalysisResultsShown: state['cephalo.workspace.analysis.results.areShown'],
     analysisResults: getAnalysisResultsSelector(state),
+    highlightedLandmarks: getHighlightedSteps(state),
+    getComponentsForSymbol: getComponentsForSymbolSelector(state),
   } as StateProps),
 
   // mapDispatchToProps
@@ -200,12 +216,25 @@ export default connect(
     onAnalysisViewerCloseRequested: () => dispatch(closeAnalysisResults()),
   } as DispatchProps),
 
-  (stateProps: StateProps, dispatchProps: DispatchProps) => assign(
-    { },
-    stateProps,
-    dispatchProps,
-    {
-      onCanvasClicked: stateProps.onCanvasClicked(dispatchProps.dispatch),
-    } as MergeProps
-  ) as AppProps
+  (stateProps: StateProps, dispatchProps: DispatchProps) => {
+    const { dispatch } = dispatchProps;
+    const { getComponentsForSymbol: getComponents } = stateProps;
+    return assign(
+      { },
+      stateProps,
+      dispatchProps,
+      {
+        onCanvasClicked: stateProps.onCanvasClicked(dispatchProps.dispatch),
+        highlightModeOnCanvas: !isEmpty(stateProps.highlightedLandmarks),
+        onStepMouseOver: (symbol: string) => () => {
+          const symbols = map(getComponents(symbol), c => c.symbol);
+          dispatch(highlightStepsOnCanvas(symbols));
+        },
+        onStepMouseOut: (symbol: string) => () => {
+          const symbols = map(getComponents(symbol), c => c.symbol);
+          dispatch(unhighlightStepsOnCanvas(symbols));
+        }
+      } as MergeProps
+    ) as AppProps
+  }
 )(App);

@@ -173,6 +173,14 @@ namespace StoreEntries {
       }
     }
   }
+
+  namespace workspace {
+    namespace canvas {
+      interface highlightedSteps {
+        [symbol: string]: boolean;
+      }
+    }
+  }
 }
 
 namespace Payloads {
@@ -183,6 +191,7 @@ namespace Payloads {
   type ignoreCompatiblity = void;
   type isCheckingCompatiblity = void;
   type missingFeatureDetected = MissingBrowserFeature;
+  type highlightStepsOnCanvas = string[];
 }
 
 interface StoreState {
