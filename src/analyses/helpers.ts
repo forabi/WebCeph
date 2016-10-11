@@ -158,7 +158,6 @@ export function computeOrMap(landmark: CephaloLandmark, mapper: CephaloMapper): 
 
 /**
  * Calculates the value of a landmark on a cephalometric radiograph
- * 
  */
 export function compute(landmark: CephaloLandmark, mapper: CephaloMapper): number | undefined {
   if (landmark.calculate) {
@@ -187,12 +186,14 @@ export function compute(landmark: CephaloLandmark, mapper: CephaloMapper): numbe
   return undefined;
 }
 
+/** The anterior-posterior skeletal relationship of the jaws */
 export enum SkeletalPattern {
   class1 = 0,
   class2,
   class3,
 }
 
+/** The anterior-posterior position of the maxilla relative to a reference plane */
 export enum Maxilla {
   prognathic = 3,
   retrognathic,
@@ -200,6 +201,7 @@ export enum Maxilla {
   normal,
 }
 
+/** The anterior-posterior position of the mandible relative to a reference plane */
 export enum Mandible {
   // Mandible
   prognathic = 6,
@@ -214,6 +216,7 @@ export enum SkeletalProfile {
   convex,
 }
 
+/** The pattern of rotation of the mandible */
 export enum MandibularRoation {
   normal = 12,
   clockwise,
@@ -229,6 +232,18 @@ export enum GrowthPattern {
   counterClockwise,
   horizontal = counterClockwise,
 }
+
+export enum AnalysisResultSeverity {
+  NONE = 0,
+  UNKNOWN = NONE,
+  LOW = 1,
+  SLIGHT = LOW,
+  MEDIUM = 2,
+  HIGH = 3,
+  SEVERE = HIGH,
+}
+
+/** A map of interpretation results to human-readable phrases */
 const typeMap = {
   [SkeletalPattern.class1]: 'Class I',
   [SkeletalPattern.class2]: 'Class II',
@@ -250,14 +265,11 @@ const typeMap = {
   [GrowthPattern.normal]: 'Normal',
 }
 
-export enum AnalysisResultSeverity {
-  NONE = 0,
-  UNKNOWN = NONE,
-  LOW = 1,
-  SLIGHT = LOW,
-  MEDIUM = 2,
-  HIGH = 3,
-  SEVERE = HIGH,
+/** A map of the seveirty of skeletal problems to human-readable phrases */
+const severityMap = {
+  [AnalysisResultSeverity.LOW]: 'Slight',
+  [AnalysisResultSeverity.MEDIUM]: 'Medium',
+  [AnalysisResultSeverity.HIGH]: 'Severe',
 }
 
 export function isSkeletalPattern(value: number | string): value is SkeletalPattern {
@@ -284,12 +296,6 @@ export function isGrowthPattern(value: number | string): value is MandibularRoat
   return has(GrowthPattern, value);
 }
 
-const severityMap = {
-  [AnalysisResultSeverity.LOW]: 'Slight',
-  [AnalysisResultSeverity.MEDIUM]: 'Medium',
-  [AnalysisResultSeverity.HIGH]: 'Severe',
-}
-
 export function mapSeverityToString(value: number) {
   return severityMap[value] || '-';
 }
@@ -302,6 +308,7 @@ export function hasResultValue(result: any): result is ViewableAnalysisResultWit
   return (result as ViewableAnalysisResultWithValue).relevantComponents !== undefined;
 }
 
+/** Determines whether a step in a cephalometric analysis can be mapped to a geometrical object or computed as a numerical value */
 export const isStepAutomatic = (step: CephaloLandmark): boolean => {
   if (step.type === 'point') {
     return false;
@@ -317,9 +324,11 @@ export const isStepAutomatic = (step: CephaloLandmark): boolean => {
   return false;
 }
 
+/** Determines whether a step in a cephalometric analysis needs to be performed by the user  */
 export const isStepManual = (step: CephaloLandmark) => !isStepAutomatic(step);
 
-export const isStepCOmputable = (step: CephaloLandmark) => {
+/** Determines whether a step in a cephalometric analysis returns a numerical value when evaluated */
+export const isStepComputable = (step: CephaloLandmark) => {
   return (
     step.type === 'sum' ||
     step.type === 'angle' ||

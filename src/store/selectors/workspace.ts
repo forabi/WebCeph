@@ -1,5 +1,7 @@
-import { getStepsForAnalysis, flipVector, compute, line, isStepManual, isStepCOmputable } from '../../analyses/helpers';
 import { createSelector } from 'reselect';
+
+import keyBy from 'lodash/keyBy';
+import compact from 'lodash/compact';
 import filter from 'lodash/filter';
 import has from 'lodash/has';
 import every from 'lodash/every';
@@ -7,6 +9,21 @@ import find from 'lodash/find';
 import map from 'lodash/map';
 import assign from 'lodash/assign';
 import uniqBy from 'lodash/uniqBy';
+
+import {
+  getStepsForAnalysis,
+  flipVector,
+  compute,
+  line,
+  isStepManual, isStepComputable,
+  mapSeverityToString,
+  mapTypeToIndication,
+  isSkeletalPattern,
+  isSkeletalProfile,
+  isMaxilla, isMandible,
+  isMandiblularRotation,
+  isGrowthPattern,
+} from '../../analyses/helpers';
 
 import { manualLandmarksSelector } from '../reducers/manualLandmarks';
 
@@ -101,18 +118,6 @@ export const cephaloMapperSelector = createSelector(
   }
 );
 
-import {
-  mapSeverityToString,
-  mapTypeToIndication,
-  isSkeletalPattern,
-  isSkeletalProfile,
-  isMaxilla, isMandible,
-  isMandiblularRotation,
-  isGrowthPattern,
-} from '../../analyses/helpers';
-import keyBy from 'lodash/keyBy';
-import compact from 'lodash/compact';
-
 export const isAnalysisActiveSelector = createSelector(
   activeAnalysisSelector,
   imageDataSelector,
@@ -201,7 +206,7 @@ export const getAllLandmarksSelector = createSelector(
 export const isStepEligibleForComputationSelector = createSelector(
   getAllLandmarksSelector,
   (allLandmarks) => (step: CephaloLandmark) => {
-    return isStepCOmputable(step) && every(step.components, c => allLandmarks[c.symbol] !== undefined);
+    return isStepComputable(step) && every(step.components, c => allLandmarks[c.symbol] !== undefined);
   }
 )
 
