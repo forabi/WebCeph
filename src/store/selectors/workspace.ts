@@ -25,7 +25,7 @@ import {
   isLowerIncisorInclination,
   isUpperIncisorInclination,
   isGrowthPattern,
-  areEqualSteps,
+  areEqualSteps, areEqualSymbols,
 } from '../../analyses/helpers';
 
 import { manualLandmarksSelector } from '../reducers/manualLandmarks';
@@ -53,7 +53,7 @@ export const findEqualComponentsSelector = createSelector(
   (analysis) => memoize(((step: CephaloLandmark): CephaloLandmark[] => {
     if (!analysis) return [];
     const steps = getStepsForAnalysis(analysis, false);
-    const cs = filter(steps, s => s.symbol !== step.symbol && areEqualSteps(step, s)) || [];
+    const cs = filter(steps, s => !areEqualSymbols(step, s) && areEqualSteps(step, s)) || [];
     return cs;
   })),
 );
@@ -263,7 +263,7 @@ export const getComputedValues = createSelector(
     for (const step of steps) {
       if (isEligible(step)) {
         const value = compute(step, mapper);
-        if (value) {
+        if (value !== undefined) {
           result[step.symbol] = value;
         } else {
           console.warn(

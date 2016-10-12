@@ -65,7 +65,7 @@ const CompatibilityChecker = pure((props: CompatibilityCheckerProps) => (
             className={classes.browser_recommendation}
           >
             <div className={classes.browser_recommendation__browser_icon}>
-              {browserDetails[browser.id].icon}
+              <img src={browserDetails[browser.id].icon} />
             </div>
             <span className={classes.browser_recommendation__browser_name}>
               {browserDetails[browser.id].name}

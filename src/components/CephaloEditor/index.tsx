@@ -20,7 +20,9 @@ import CephaloCanvas from '../CephaloCanvas';
 import noop from 'lodash/noop';
 
 const classes = require('./style.scss');
-const DropzonePlaceholder = require('./assets/placeholder.svg').default;
+const DropzonePlaceholder: JSX.Element = require(
+  'svg-react?name=DropzonePlaceholder!./assets/placeholder.svg'
+);
 
 interface CephaloEditorProps {
   dispatch: Function;
@@ -196,16 +198,16 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
                 targetOrigin={{ horizontal: 'left', vertical: 'bottom' }}
                 onRequestClose={this.handleRequestClose}
               >
+                Brightness
                 <Slider
                   style={{ width: 200, margin: 15 }}
-                  description="Brightness"
                   min={0} max={100}
                   defaultValue={this.props.brightness}
                   onChange={this.setBrightness}
                 />
+                Contrast
                 <Slider
                   style={{ width: 200, margin: 15 }}
-                  description="Contrast"
                   min={-100} max={100}
                   defaultValue={this.props.contrast}
                   onChange={this.setContrast}

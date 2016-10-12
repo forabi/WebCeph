@@ -147,20 +147,6 @@ const config = {
         test: /\.html$/,
         use: 'html',
       },
-      {
-        test: /\.svg$/,
-        use: [
-          'babel-loader',
-          {
-            loader: 'react-svg',
-            query: {
-              svgo: {
-                plugins: [{ cleanupIDs: false, removeEmptyContainers: true }],
-              },
-            },
-          },
-        ],
-      },
     ],
   },
 
@@ -172,6 +158,28 @@ const config = {
           return {
             defaults: [autoprefixer],
           };
+        },
+        svgoConfig: {
+          plugins: [
+            { removeXMLNS: true },
+            { cleanupIDs: false },
+            { convertShapeToPath: false },
+            { removeEmptyContainers: false },
+            { removeViewBox: false },
+            { mergePaths: false },
+            { convertStyleToAttrs: false },
+            { convertPathData: false },
+            { convertTransform: false },
+            { removeUnknownsAndDefaults: false },
+            { collapseGroups: false },
+            { moveGroupAttrsToElems: false },
+            { moveElemsAttrsToGroup: false },
+            { cleanUpEnableBackground: false },
+            { removeHiddenElems: false },
+            { removeNonInheritableGroupAttrs: false },
+            { removeUselessStrokeAndFill: false },
+            { transformsWithOnePath: false },
+          ],
         },
       },
     }),
