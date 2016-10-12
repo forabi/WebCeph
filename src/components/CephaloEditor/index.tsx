@@ -20,7 +20,7 @@ import CephaloCanvas from '../CephaloCanvas';
 import noop from 'lodash/noop';
 
 const classes = require('./style.scss');
-const DropzonePlaceholder: JSX.Element = require(
+const DropzonePlaceholder: (props: any) => JSX.Element = require(
   'svg-react?name=DropzonePlaceholder!./assets/placeholder.svg'
 );
 
