@@ -196,6 +196,12 @@ namespace Payloads {
   type highlightStepsOnCanvas = string[];
 }
 
+interface EnhancedState<T> {
+  past: T[];
+  present: T,
+  future: T[];
+}
+
 interface StoreState {
   'env.compatiblity.isIgnored': boolean;
   'env.compatiblity.missingFeatures': MissingBrowserFeature[];

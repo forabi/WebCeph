@@ -3,8 +3,6 @@ import omit from 'lodash/omit';
 import { handleActions } from 'redux-actions';
 import { Event, StoreKeys } from '../../utils/constants';
 import { printUnexpectedPayloadWarning } from '../../utils/debug';
-import undoable, { distinctState } from 'redux-undo';
-import { createSelector } from 'reselect';
 
 const KEY_MANUAL_LANDMARKS = StoreKeys.manualLandmarks;
 
@@ -47,34 +45,10 @@ const manualLandmarksReducer = handleActions<StoreEntries.manualLandmarks, Paylo
 
 
 export default {
-  [KEY_MANUAL_LANDMARKS]: undoable(manualLandmarksReducer, {
-    undoType: Event.UNDO_REQUESTED,
-    redoType: Event.REDO_REQUESTED,
-    limit: 100,
-    filter: distinctState(),
-  }),
+  [KEY_MANUAL_LANDMARKS]: manualLandmarksReducer,
 };
 
-interface EnhancedState<T> {
-  past: T[];
-  present: T,
-  future: T[];
-}
 
 export const manualLandmarksSelector = (state: GenericState) => {
-  return state[KEY_MANUAL_LANDMARKS].present as StoreEntries.manualLandmarks;
+  return state[KEY_MANUAL_LANDMARKS] as StoreEntries.manualLandmarks;
 };
-
-export const manualLandmarkHistorySelector = (state: GenericState) => {
-  return state[KEY_MANUAL_LANDMARKS] as EnhancedState<StoreEntries.manualLandmarks>;
-};
-
-export const canUndoSelector = createSelector(
-  manualLandmarkHistorySelector,
-  ({ past }) => past.length > 0,
-);
-
-export const canRedoSelector = createSelector(
-  manualLandmarkHistorySelector,
-  ({ future }) => future.length > 0,
-);

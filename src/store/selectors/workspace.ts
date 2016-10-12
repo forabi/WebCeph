@@ -32,6 +32,10 @@ import { manualLandmarksSelector } from '../reducers/manualLandmarks';
 
 export { manualLandmarksSelector };
 
+export const canUndoSelector = ({ past }: EnhancedState<GenericState>) => past.length > 0;
+
+export const canRedoSelector = ({ future }: EnhancedState<GenericState>) => future.length > 0;
+
 const activeAnalysisSelector = (state: StoreState) => state['cephalo.workspace.analysis.activeAnalysis'];
 
 const imageDataSelector = (state: StoreState) => state['cephalo.workspace.image.data'];

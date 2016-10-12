@@ -2,10 +2,23 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import rootSaga from './sagas';
 import reducers from './reducers';
+import { Event } from '../utils/constants';
+import undoable, { includeAction } from 'redux-undo';
 
 declare const window: Window & { devToolsExtension?: () => any };
 
-const reducer = combineReducers(reducers);
+const reducer = undoable(
+  combineReducers(reducers),
+  {
+    undoType: Event.UNDO_REQUESTED,
+    redoType: Event.REDO_REQUESTED,
+    limit: 100,
+    filter: includeAction([
+      Event.ADD_MANUAL_LANDMARK_REQUESTED,
+      Event.REMOVE_MANUAL_LANDMARK_REQUESTED,
+    ]),
+  },
+);
 
 const sagaMiddleware = createSagaMiddleware();
 

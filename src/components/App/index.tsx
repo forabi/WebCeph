@@ -41,6 +41,8 @@ import {
   getAllLandmarksSelector,
   getLandmarkValueSelector,
   getComponentsForSymbolSelector,
+  canRedoSelector,
+  canUndoSelector,
 } from '../../store/selectors/workspace';
 
 import {
@@ -56,11 +58,6 @@ import {
 import {
   getHighlightedSteps,
 } from '../../store/reducers/workspace/canvas';
-
-import {
-  canRedoSelector,
-  canUndoSelector,
-} from '../../store/reducers/manualLandmarks';
 
 import { checkBrowserCompatibility } from '../../actions/initialization';
 
@@ -175,41 +172,44 @@ class App extends React.PureComponent<AppProps, {}> {
 
 export default connect(
   // mapStateToProps
-  (state: StoreState) => ({
-    shouldCheckBrowserCompatiblity: !state['env.compatiblity.isIgnored'],
-    isCheckingCompatiblity: state['env.compatiblity.isBeingChecked'],
-    missingBrowserFeatures: getMissingFeatures(state),
-    isBrowserCompatible: isBrowserCompatible(state),
-    currentBrowser: getCurrentBrowser(),
-    recommendedBrowsers: getRecommendedBrowsers(),
-    onCompatibilityDialogClosed: noop,
-    flipX: state['cephalo.workspace.image.flipX'],
-    flipY: state['cephalo.workspace.image.flipY'],
-    brightness: state['cephalo.workspace.image.brightness'],
-    contrast: state['cephalo.workspace.image.contrast'],
-    inverted: state['cephalo.workspace.image.invert'],
-    isLoading: state['cephalo.workspace.image.isLoading'],
-    isWorkerBusy: some(state['cephalo.workspace.workers'], 'isBusy'),
-    src: state['cephalo.workspace.image.data'],
-    isCephalo: state['cephalo.workspace.image.isCephalo'],
-    canvasHeight: state['cephalo.workspace.canvas.height'],
-    canvasWidth: state['cephalo.workspace.canvas.width'],
-    isAnalysisActive: isAnalysisActiveSelector(state),
-    isAnalysisComplete: isAnalysisCompleteSelector(state),
-    error: state['cephalo.workspace.error'],
-    landmarks: getAllLandmarksSelector(state),
-    analysisSteps: activeAnalysisStepsSelector(state),
-    getStepState: getAnyStepStateSelector(state),
-    onFileDropped: onFileDroppedSelector(state),
-    getStepValue: getLandmarkValueSelector(state),
-    onCanvasClicked: onCanvasClickedSelector(state),
-    areAnalysisResultsShown: state['cephalo.workspace.analysis.results.areShown'],
-    analysisResults: getAnalysisResultsSelector(state),
-    highlightedLandmarks: getHighlightedSteps(state),
-    getComponentsForSymbol: getComponentsForSymbolSelector(state),
-    canRedo: canRedoSelector(state),
-    canUndo: canUndoSelector(state),
-  } as StateProps),
+  (enhancedState: EnhancedState<StoreState>) => {
+    const { present: state } = enhancedState;
+    return {
+      shouldCheckBrowserCompatiblity: !state['env.compatiblity.isIgnored'],
+      isCheckingCompatiblity: state['env.compatiblity.isBeingChecked'],
+      missingBrowserFeatures: getMissingFeatures(state),
+      isBrowserCompatible: isBrowserCompatible(state),
+      currentBrowser: getCurrentBrowser(),
+      recommendedBrowsers: getRecommendedBrowsers(),
+      onCompatibilityDialogClosed: noop,
+      flipX: state['cephalo.workspace.image.flipX'],
+      flipY: state['cephalo.workspace.image.flipY'],
+      brightness: state['cephalo.workspace.image.brightness'],
+      contrast: state['cephalo.workspace.image.contrast'],
+      inverted: state['cephalo.workspace.image.invert'],
+      isLoading: state['cephalo.workspace.image.isLoading'],
+      isWorkerBusy: some(state['cephalo.workspace.workers'], 'isBusy'),
+      src: state['cephalo.workspace.image.data'],
+      isCephalo: state['cephalo.workspace.image.isCephalo'],
+      canvasHeight: state['cephalo.workspace.canvas.height'],
+      canvasWidth: state['cephalo.workspace.canvas.width'],
+      isAnalysisActive: isAnalysisActiveSelector(state),
+      isAnalysisComplete: isAnalysisCompleteSelector(state),
+      error: state['cephalo.workspace.error'],
+      landmarks: getAllLandmarksSelector(state),
+      analysisSteps: activeAnalysisStepsSelector(state),
+      getStepState: getAnyStepStateSelector(state),
+      onFileDropped: onFileDroppedSelector(state),
+      getStepValue: getLandmarkValueSelector(state),
+      onCanvasClicked: onCanvasClickedSelector(state),
+      areAnalysisResultsShown: state['cephalo.workspace.analysis.results.areShown'],
+      analysisResults: getAnalysisResultsSelector(state),
+      highlightedLandmarks: getHighlightedSteps(state),
+      getComponentsForSymbol: getComponentsForSymbolSelector(state),
+      canRedo: canRedoSelector(enhancedState),
+      canUndo: canUndoSelector(enhancedState),
+    } as StateProps;
+  },
 
   // mapDispatchToProps
   (dispatch: Function) => ({
