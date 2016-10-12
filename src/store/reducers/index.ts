@@ -84,16 +84,6 @@ const oldReducers = {
     [Event.RESET_WORKSPACE_REQUESTED]: () => true,
     [Event.CLOSE_ANALYSIS_RESULTS_REQUESTED]: () => false,
   }, false),
-  [StoreKeys.manualLandmarks]: handleActions<StoreEntries.manualLandmarks, Payloads.addManualLandmark>({
-    [Event.ADD_MANUAL_LANDMARK_REQUESTED]: (state, { payload }) => assign(
-      { },
-      state,
-      {
-        [payload.symbol]: payload.value,
-      },
-    ),
-    [Event.REMOVE_MANUAL_LANDMARK_REQUESTED]: (state, { payload }) => omit(state, payload.symbol) as StoreEntries.manualLandmarks,
-  }, { } as StoreEntries.manualLandmarks),
   'cephalo.workspace.workers': handleActions<{
     [id: string]: {
       isBusy: boolean,

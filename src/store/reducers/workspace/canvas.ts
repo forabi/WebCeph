@@ -17,7 +17,7 @@ const highlightedSteps = handleActions<StoreEntries.workspace.canvas.highlighted
       return state;
     }
     return reduce(
-      map(payload, symbol => ({ [symbol]: true })),
+      map(payload, (symbol : string) => ({ [symbol]: true })),
       assign,
       assign({ }, state),
     );
@@ -31,8 +31,8 @@ const highlightedSteps = handleActions<StoreEntries.workspace.canvas.highlighted
   }
 }, defaultState);
 
-export const getHighlightedSteps = (state: StoreState) => state[KEY_HIGHLIGHTED_STEPS];
-
 export default {
   [KEY_HIGHLIGHTED_STEPS]: highlightedSteps,
 };
+
+export const getHighlightedSteps = (state: StoreState) => state[KEY_HIGHLIGHTED_STEPS];

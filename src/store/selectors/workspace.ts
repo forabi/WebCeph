@@ -250,7 +250,7 @@ export const getAllLandmarksSelector = createSelector(
 export const isStepEligibleForComputationSelector = createSelector(
   getAllLandmarksSelector,
   (allLandmarks) => (step: CephaloLandmark) => {
-    return isStepComputable(step) && every(step.components, c => allLandmarks[c.symbol] !== undefined);
+    return isStepComputable(step) && every(step.components, (c: CephaloLandmark) => allLandmarks[c.symbol] !== undefined);
   }
 )
 
@@ -394,9 +394,12 @@ export const onCanvasClickedSelector = createSelector(
   expectedLandmark => (dispatch: Function) => {
     return (e => {
       if (expectedLandmark) {
+        __DEBUG__ && console.info('Expected next manual landmark:', expectedLandmark.symbol);
         dispatch(
           addManualLandmark(expectedLandmark.symbol, { x: e.X, y: e.Y })
         );
+      } else {
+        __DEBUG__ && console.warn('Could not find expected manual landmark');
       }
     }) as (e: { X: number, Y: number }) => void;
   },

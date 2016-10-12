@@ -16,10 +16,21 @@ TODO
 * [ ] Namespaces
 * [ ] Typings for reducers
 * [ ] Selectors with corresponding reducers in one file
+* [ ] Tracing modes: manual, assisted, automatic
+* [ ] Command palette
+* [ ] Redesign
+* [ ] Send manual tracing data to dev server in `__DEBUG__` mode, save to database
+  * [ ] Only when "Show results" clicked?
+  * [ ] Save:
+    * [ ] Date and time
+    * [ ] Hash of file?
+      * [ ] How?
+    * [ ] Symbol
+    * [ ] Analysis name
 * [ ] Batch addManualLandmarks
 * [ ] Display units in steps and results
 * [ ] Fix contrast, brightness and invert filters
-* [ ] Undo/redo
+* [x] Undo/redo
 * [ ] Mutltiple tools
   * [ ] Point
   * [ ] Line

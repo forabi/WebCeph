@@ -8,7 +8,8 @@ import Popover from 'material-ui/Popover';
 import Slider from 'material-ui/Slider';
 import IconFlip from 'material-ui/svg-icons/image/flip';
 import IconBrightness from 'material-ui/svg-icons/image/brightness-5';
-import IconControlPoint from 'material-ui/svg-icons/image/control-point';
+import IconUndo from 'material-ui/svg-icons/content/undo';
+import IconRedo from 'material-ui/svg-icons/content/redo';
 import Dialog from 'material-ui/Dialog';
 import CircularProgress from 'material-ui/CircularProgress';
 import Snackbar from 'material-ui/Snackbar';
@@ -62,6 +63,10 @@ interface CephaloEditorProps {
   highlightedLandmarks: { [symbol: string]: boolean };
   onStepMouseOver(symbol: string): __React.EventHandler<__React.MouseEvent>;
   onStepMouseOut(symbol: string): __React.EventHandler<__React.MouseEvent>;
+  performUndo(): any;
+  performRedo(): any;
+  canRedo: boolean;
+  canUndo: boolean;
 }
 
 interface CephaloEditorState {
@@ -109,11 +114,20 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
     <FlatButton label="Dismiss" onClick={this.props.onIgnoreNotCephaloClicked} />,
   ];
 
+  private performUndo = () => {
+    console.log('Undo');
+    this.props.performUndo();
+  };
+
+  private performRedo = () => {
+    console.log('Redo');
+    this.props.performRedo();
+  };
+
   render() {
     const hasImage = this.props.src !== null;
     const cannotEdit = !hasImage;
-    const isAnalysisActive = this.props.isAnalysisActive;
-    const isAnalysisComplete = this.props.isAnalysisComplete;
+    const { canUndo, canRedo, isAnalysisComplete, isAnalysisActive } = this.props;
     return (
       <div className={cx(classes.root, 'row', this.props.className)}>
         <div className={cx(classes.canvas_container, 'col-xs-12', 'col-sm-8')}>
@@ -184,7 +198,8 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
         <div className={cx(classes.sidebar, 'col-xs-12', 'col-sm-4')}>
           <Toolbar>
             <ToolbarGroup firstChild>
-              <FlatButton onClick={this.addPoint} disabled={cannotEdit} label="Add point" icon={<IconControlPoint />} />
+              <FlatButton onClick={this.performUndo} disabled={cannotEdit || !canUndo} label="Undo" icon={<IconUndo />} />
+              <FlatButton onClick={this.performRedo} disabled={cannotEdit || !canRedo} label="Redo" icon={<IconRedo />} />
               <FlatButton onClick={this.props.onFlipXClicked} disabled={cannotEdit} label="Flip" icon={<IconFlip />} />
               <FlatButton
                 disabled={cannotEdit}

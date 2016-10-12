@@ -26,6 +26,8 @@ import {
   closeAnalysisResults,
   highlightStepsOnCanvas,
   unhighlightStepsOnCanvas,
+  undo,
+  redo,
 } from '../../actions/workspace';
 
 import {
@@ -54,6 +56,11 @@ import {
 import {
   getHighlightedSteps,
 } from '../../store/reducers/workspace/canvas';
+
+import {
+  canRedoSelector,
+  canUndoSelector,
+} from '../../store/reducers/manualLandmarks';
 
 import { checkBrowserCompatibility } from '../../actions/initialization';
 
@@ -95,6 +102,8 @@ interface StateProps {
   analysisResults: (AnalysisResult & { name: string })[];
   highlightedLandmarks: { [symbol: string]: boolean };
   getComponentsForSymbol: (symbol: string) => CephaloLandmark[];
+  canRedo: boolean;
+  canUndo: boolean;
 }
 
 interface DispatchProps {
@@ -112,13 +121,15 @@ interface DispatchProps {
   onCanvasResized(e: ResizeObserverEntry): void;
   onShowAnalysisResultsClicked(): any;
   onAnalysisViewerCloseRequested(): any;
-  onStepMouseOver(symbol: string): __React.EventHandler<__React.MouseEvent>;
-  onStepMouseOut(symbol: string): __React.EventHandler<__React.MouseEvent>;
+  performUndo(): any;
+  performRedo(): any;
 }
 
 interface MergeProps {
   onCanvasClicked(e: { X: number, Y: number }): void;
   highlightModeOnCanvas: boolean;
+  onStepMouseOver(symbol: string): __React.EventHandler<__React.MouseEvent>;
+  onStepMouseOut(symbol: string): __React.EventHandler<__React.MouseEvent>;
 }
 
 type AppProps = StateProps & DispatchProps & MergeProps;
@@ -196,6 +207,8 @@ export default connect(
     analysisResults: getAnalysisResultsSelector(state),
     highlightedLandmarks: getHighlightedSteps(state),
     getComponentsForSymbol: getComponentsForSymbolSelector(state),
+    canRedo: canRedoSelector(state),
+    canUndo: canUndoSelector(state),
   } as StateProps),
 
   // mapDispatchToProps
@@ -214,6 +227,8 @@ export default connect(
     onRemoveLandmarkRequested: () => null, // @TODO,
     onShowAnalysisResultsClicked: () => dispatch(showAnalysisResults()),
     onAnalysisViewerCloseRequested: () => dispatch(closeAnalysisResults()),
+    performUndo: () => dispatch(undo()),
+    performRedo: () => dispatch(redo()),
   } as DispatchProps),
 
   (stateProps: StateProps, dispatchProps: DispatchProps) => {

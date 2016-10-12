@@ -159,6 +159,8 @@ interface CephaloMapper {
 type StepState = 'done' | 'current' | 'pending' | 'evaluating';
 type Step = CephaloLandmark & { title: string, state: StepState };
 
+type GenericState = { [id: string]: any };
+
 namespace StoreEntries {
   interface manualLandmarks {
     [symbol: string]: GeometricalObject;

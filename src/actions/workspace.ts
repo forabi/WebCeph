@@ -32,5 +32,8 @@ export const ignoreLikelyNotCephalo: () => any = createAction(
 export const showAnalysisResults: () => void = createAction(Event.SHOW_ANALYSIS_RESULTS_REQUESTED); 
 export const closeAnalysisResults: () => void = createAction(Event.CLOSE_ANALYSIS_RESULTS_REQUESTED);
 
-export const highlightStepsOnCanvas: (symbols: string[]) => void = createAction(Event.HIGHLIGHT_STEPS_ON_CANVAS_REQUESTED)
-export const unhighlightStepsOnCanvas: (symbols: string[]) => void = createAction(Event.UNHIGHLIGHT_STEPS_ON_CANVAS_REQUESTED)
+export const highlightStepsOnCanvas: (symbols: string[]) => void = createAction(Event.HIGHLIGHT_STEPS_ON_CANVAS_REQUESTED);
+export const unhighlightStepsOnCanvas: (symbols: string[]) => void = createAction(Event.UNHIGHLIGHT_STEPS_ON_CANVAS_REQUESTED);
+
+export const redo: () => void = createAction(Event.REDO_REQUESTED);
+export const undo: () => void = createAction(Event.UNDO_REQUESTED);
