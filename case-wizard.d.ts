@@ -190,11 +190,14 @@ namespace Payloads {
     symbol: string;
     value: GeometricalObject;
   }
+  type removeManualLandmark = string;
   type ignoreCompatiblity = void;
   type isCheckingCompatiblity = void;
   type missingFeatureDetected = MissingBrowserFeature;
   type highlightStepsOnCanvas = string[];
 }
+
+type DispatchFunction = ({ type: string, payload: any }) => any;
 
 interface EnhancedState<T> {
   past: T[];
@@ -232,7 +235,65 @@ interface StoreState {
   'cephalo.workspace.analysis.results.areShown': boolean;
 }
 
-/** Browser compatiblity checking */
+/* Tools */
+interface EditorTool {
+  /**
+   * Unique tool identifier
+   */
+  id: string;
+
+  /**
+   * Triggered when mouse enters the canvas.
+   * Useful for setting the mouse cursor. */
+
+  onCanvasMouseEnter?(): void;
+  /**
+   * Triggered when mouse leaves the canvas.
+   * Useful for cleaning up any tool-specific cursors */
+  onCanvasMouseLeave?(): void;
+
+  /**
+   * Triggered when the left mouse button is clicked.
+   */
+  onCanvasLeftClick?(x: number, y: number): void;
+
+  /**
+   * Triggered when the right mouse button is clicked.
+   */
+  onCanvasRightClick?(x: number, y: number): void;
+  
+  /**
+   * Triggered when the mouse scrolls over the canvas.
+   * Useful for implementing zoom functionality.
+   */
+  onCanvasScroll?(x: number, y: number, direction: number | string);
+
+  /**
+   * Triggered when the mouse enters a landmark.
+   * Useful for adding a tool-specific cursor.
+   */
+  onLandmarkMouseEnter?(symbol: string): void;
+
+  /**
+   * Triggered when the mouse enters a landmark.
+   * Useful for removing any tool-specific cursors.
+   */
+  onLandmarkMouseLeave?(symbol: string): void;
+
+  /**
+   * Triggered when a landmark is clicked.
+   * Useful for manipulating previously added landmarks.
+   */
+  onLandmarkClick?(symbol: string, e: MouseEvent): void;
+}
+
+/** An EditorToolCreate is a function that is used to create editor tools.
+ * It recieves the dispatch function as first argument.
+ * The rest arguments are tool-specific.
+ */
+type EditorToolCreator = (dispatch: DispatchFunction, ...args: any[]) => EditorTool
+
+/* Browser compatiblity checking */
 type BrowserId = 'Chrome' | 'Firefox' | 'Opera' | 'Microsoft Edge' | 'Safari';
 type OsId = 'mac' | 'windows' | 'linux' | 'chromeos' | 'ios' | 'android';
 
