@@ -25,6 +25,7 @@ import {
   isLowerIncisorInclination,
   isUpperIncisorInclination,
   isGrowthPattern,
+  isSkeletalBite,
   areEqualSteps, areEqualSymbols,
 } from '../../analyses/helpers';
 
@@ -309,7 +310,9 @@ export const getViewableResultSelector = createSelector(
       } else if (isLowerIncisorInclination(result.type)) {
         name = 'Lower Insicor Inclination';
       } else if (isUpperIncisorInclination(result.type)) {
-        name = 'Upper Insicor Inclination'
+        name = 'Upper Insicor Inclination';
+      } else if (isSkeletalBite(result.type)) {
+        name = 'Skeletal Bite';
       } else {
         console.warn(
           'Cannot find name for analysis result',

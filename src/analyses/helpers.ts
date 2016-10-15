@@ -1,9 +1,7 @@
 import flatten from 'lodash/flatten';
 import map from 'lodash/map';
-import uniq from 'lodash/uniq';
 import xorWith from 'lodash/xorWith';
 import uniqWith from 'lodash/uniqWith';
-import concat from 'lodash/concat';
 import has from 'lodash/has';
 import every from 'lodash/every';
 import join from 'lodash/join';
@@ -79,8 +77,6 @@ export function angularSum(components: CephaloAngle[], name: string, symbol?: st
   };
 }
 
-const hasComponents: (m: CephaloLandmark) => boolean = m => m.components.length > 0;
-
 export function areEqualSteps(l1: CephaloLandmark, l2: CephaloLandmark): boolean {
   if (l1.type !== l2.type) return false;
   if (l1.symbol === l2.symbol) return true;
@@ -99,7 +95,7 @@ export function getStepsForLandmarks(landmarks: CephaloLandmark[], removeEqualSt
   return uniqWith(
     flatten(map(
       landmarks,
-      (landmark) => {
+      (landmark: CephaloLandmark) => {
         if (!landmark) {
           __DEBUG__ && console.warn(
             'Got unexpected value in getStepsForLandmarks. ' +
@@ -233,6 +229,12 @@ export enum LowerIncisorInclination {
   normal,
 }
 
+export enum SkeletalBite {
+  normal = 25,
+  open,
+  closed,
+}
+
 export enum AnalysisResultSeverity {
   NONE = 0,
   UNKNOWN = NONE,
@@ -269,6 +271,9 @@ const typeMap = {
   [UpperIncisorInclination.normal]: 'Normal',
   [UpperIncisorInclination.labial]: 'Labial',
   [UpperIncisorInclination.palatal]: 'Palatal',
+  [SkeletalBite.normal]: 'Normal',
+  [SkeletalBite.open]: 'Open',
+  [SkeletalBite.closed]: 'Closed'
 }
 
 /** A map of the seveirty of skeletal problems to human-readable phrases */
@@ -308,6 +313,10 @@ export function isLowerIncisorInclination(value: number | string): value is Lowe
 
 export function isUpperIncisorInclination(value: number | string): value is UpperIncisorInclination {
   return has(UpperIncisorInclination, value);
+}
+
+export function isSkeletalBite(value: number | string): value is SkeletalBite {
+  return has(SkeletalBite, value);
 }
 
 export function mapSeverityToString(value: number) {
