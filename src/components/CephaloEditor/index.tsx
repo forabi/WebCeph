@@ -22,7 +22,7 @@ import noop from 'lodash/noop';
 
 const classes = require('./style.scss');
 const DropzonePlaceholder: (props: any) => JSX.Element = require(
-  'svg-react?name=DropzonePlaceholder!./assets/placeholder.svg'
+  'svg-react?name=DropzonePlaceholder!svgo?useConfig=svgoConfig!./assets/placeholder.svg'
 );
 
 interface CephaloEditorProps {
