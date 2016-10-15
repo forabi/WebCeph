@@ -1,8 +1,6 @@
 {
   "name": "fabric-demo",
   "dependencies": {
-    "bluebird": "registry:npm/bluebird#3.4.1+20160811213708",
-    "jimp": "registry:npm/jimp#0.2.20+20160526180746",
     "react": "registry:npm/react#15.0.1+20160601175240",
     "react-dom": "registry:npm/react-dom#15.0.1+20160826174104",
     "react-redux": "registry:npm/react-redux#4.4.0+20160614222153"
@@ -10,7 +8,6 @@
   "globalDependencies": {
     "es2015": "registry:env/es2015#1.0.0+20160526151700",
     "expect": "registry:dt/expect#1.13.4+20160316155526",
-    "fabricjs": "registry:dt/fabricjs#1.5.0+20160317120654",
     "material-ui": "registry:dt/material-ui#0.15.1+20160720000941",
     "mocha": "registry:env/mocha#2.2.5+20160723033700",
     "node": "registry:env/node#6.0.0+20160813135048",
