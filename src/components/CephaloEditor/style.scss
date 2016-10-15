@@ -91,8 +91,8 @@
     cursor: pointer;
     .dropzone_placeholder_image {
       [id="circle"] {
-        fill: rgba(0, 200, 100, 110);
-        stroke: rgba(0, 200, 100, 255);
+        fill: rgba(0, 200, 100, 110) !important;
+        stroke: rgba(0, 200, 100, 255) !important;
         transform: scale(1.05);
       }
 
@@ -111,8 +111,8 @@
 
     .dropzone_placeholder_image {
       [id="circle"] {
-        fill: rgba(255, 100, 100, 50);
-        stroke: rgba(255, 100, 100, 100);
+        fill: rgba(255, 100, 100, 50) !important;
+        stroke: rgba(255, 100, 100, 100) !important;
         transform: scale(0.7);
       }
 
