@@ -5,6 +5,7 @@ export enum ErrorCode {
 
 export const StoreKeys = {
   manualLandmarks: 'cephalo.workspace.manualLandmarks',
+  cursorStack: 'cephalo.workspace.canvas.cursorStack',
 }
 
 /**
