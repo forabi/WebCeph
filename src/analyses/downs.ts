@@ -27,7 +27,7 @@ const ANGLE_OF_CONVEXITY: CephaloAngle = assign(
    },
 );
 
-const ANGLE_OF_Y_AXIS = angleBetweenLines(line(S, Gn), FH_PLANE, 'Y Axis', 'Y Axis');
+const ANGLE_OF_Y_AXIS = angleBetweenLines(line(S, Gn, 'Y Axis'), FH_PLANE, 'Y Axis-FH Angle', 'Y-FH Angle');
 
 const interpretAngleOfConvexity = (value: number, min = -5, max = 5): AnalysisResult => {
   // @TODO: handle severity
