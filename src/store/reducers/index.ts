@@ -4,12 +4,10 @@ import reduce from 'lodash/reduce';
 import omit from 'lodash/omit';
 import { Event, StoreKeys } from '../../utils/constants';
 import defaultAnalysis from '../../analyses/basic';
-import manualLandmarks from './manualLandmarks';
 import env from './env';
 import workspace from './workspace';
 
 const newReducer = reduce([
-  manualLandmarks,
   env,
   workspace,
 ], assign, { });

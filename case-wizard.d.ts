@@ -162,10 +162,6 @@ type Step = CephaloLandmark & { title: string, state: StepState };
 type GenericState = { [id: string]: any };
 
 namespace StoreEntries {
-  interface manualLandmarks {
-    [symbol: string]: GeometricalObject;
-  }
-
   namespace env {
     namespace compatibility {
       type isIgnored = boolean;
@@ -178,9 +174,13 @@ namespace StoreEntries {
 
   namespace workspace {
     namespace canvas {
+      interface manualLandmarks {
+        [symbol: string]: GeometricalObject;
+      }
       interface highlightedSteps {
         [symbol: string]: boolean;
       }
+      type cursorStack = string[];
     }
   }
 }
@@ -195,9 +195,12 @@ namespace Payloads {
   type isCheckingCompatiblity = void;
   type missingFeatureDetected = MissingBrowserFeature;
   type highlightStepsOnCanvas = string[];
+  type setCursor = string;
+  type removeCursors = string[];
 }
 
-type DispatchFunction = ({ type: string, payload: any }) => any;
+type GenericAction = { type: string, payload: any };
+type DispatchFunction = (GenericAction) => any;
 
 interface EnhancedState<T> {
   past: T[];

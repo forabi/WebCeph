@@ -29,7 +29,7 @@ import {
   areEqualSteps, areEqualSymbols,
 } from '../../analyses/helpers';
 
-import { manualLandmarksSelector } from '../reducers/manualLandmarks';
+import { manualLandmarksSelector } from '../reducers/workspace/manualLandmarks';
 
 export { manualLandmarksSelector };
 
