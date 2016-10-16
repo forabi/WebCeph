@@ -31,7 +31,7 @@ const L1_AXIS = line(L1_APEX, L1_INCISAL_EDGE, 'Lower Incisor Axis', 'L1');
  * Incisor Mandibular Plane Angle
  * Angle between the lower incisor to the mandibular plane
  */
-const L1_MP = angleBetweenLines(line(Me, Go), L1_AXIS, 'Incisor Mandibular Plane Angle', 'FMIA');
+const L1_MP = angleBetweenLines(line(Me, Go), L1_AXIS, 'Incisor Mandibular Plane Angle', 'IMPA');
 
 const INTERINCISAL_ANGLE: CephaloAngle = angleBetweenLines(
   flipVector(U1_AXIS),
