@@ -33,7 +33,7 @@ const missingFeatures = handleActions<StoreEntries.env.compatibility.missingFeat
   }
 }, { });
 
-export const getMissingFeatures = (state: StoreState) => toArray(state[KEY_MISSING_FEATURES]);
+export const getMissingFeatures = (state: StoreState) => toArray(state[KEY_MISSING_FEATURES]) as MissingBrowserFeature[];
 
 export const isBrowserCompatible = createSelector(
   getMissingFeatures,

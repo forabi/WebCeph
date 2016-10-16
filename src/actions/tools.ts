@@ -1,12 +1,14 @@
 import {
   addUnnamedManualLandmark,
+  addManualLandmark,
   removeManualLandmark,
   showTemporarilyHiddenLandmark,
   temporarilyHideLandmark,
   setCursor, removeCursors,
   zoomIn, zoomOut,
 } from './workspace';
-import { Cursor, ScrollDirection } from '../utils/constants';
+import keyBy from 'lodash/keyBy';
+import { Cursor } from '../utils/constants';
 
 type isLandmarkRemovable = (symbol: string) => boolean;
 
@@ -51,6 +53,7 @@ export const Eraser: EditorToolCreator = (
 
 export const AddPoint: EditorToolCreator = (
   dispatch: DispatchFunction,
+  getExpectedNextManualLandmark: () => string | null,
 ) => ({
   id: 'add-point',
   onCanvasMouseEnter() {
@@ -62,7 +65,12 @@ export const AddPoint: EditorToolCreator = (
     ]));
   },
   onCanvasLeftClick(x, y) {
-    dispatch(addUnnamedManualLandmark({ x, y }));
+    const symbol = getExpectedNextManualLandmark();
+    if (symbol !== null) {
+      dispatch(addManualLandmark(symbol, { x, y }))
+    } else {
+      dispatch(addUnnamedManualLandmark({ x, y }));
+    }
   },
   onLandmarkMouseEnter(symbol) {
     dispatch(temporarilyHideLandmark(symbol));
@@ -85,16 +93,27 @@ export const Zoom: EditorToolCreator = (
     ]));
   },
   onCanvasLeftClick(x, y) {
-    dispatch(zoomIn(x, y));
+    dispatch(zoomIn(0.1 , x, y));
   },
   onCanvasRightClick(x, y) {
-    dispatch(zoomOut(x, y));
+    dispatch(zoomOut(0.1, x, y));
   },
-  onCanvasScroll(x, y, direction) {
-    if (direction === ScrollDirection.NORMAL) {
-      dispatch(zoomIn(x, y));
+  onCanvasMouseWheel(x, y, delta) {
+    const zoom = Math.abs(Math.round(delta / 100));
+    if (delta < 0) {
+      dispatch(zoomIn(zoom, x, y));
     } else {
-      dispatch(zoomOut(x, y));
+      dispatch(zoomOut(zoom, x, y));
     }
   },
 });
+
+const tools = keyBy({
+  Zoom,
+  AddPoint,
+  Eraser,
+}, (tool: EditorTool) => tool.id);
+
+export function createCompositeTool(dispatch): EditorTool {
+  return Zoom(dispatch);
+}

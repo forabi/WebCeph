@@ -6,6 +6,7 @@ export enum ErrorCode {
 export const StoreKeys = {
   manualLandmarks: 'cephalo.workspace.manualLandmarks',
   cursorStack: 'cephalo.workspace.canvas.cursorStack',
+  zoomValue: 'cephalo.workspace.canvas.zoom',
 }
 
 /**
@@ -103,9 +104,4 @@ export enum Cursor {
   ZOOM,
   ZOOM_IN,
   ZOOM_OUT,
-}
-
-export enum ScrollDirection {
-  NORMAL,
-  REVERSE,
 }

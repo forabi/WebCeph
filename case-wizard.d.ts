@@ -83,17 +83,17 @@ interface GeometricalPoint {
  * Describes a geometrical line in a 2D-plane
  */
 interface GeometricalVector {
-  x1: number,
-  x2: number,
-  y1: number,
-  y2: number,
+  readonly x1: number,
+  readonly x2: number,
+  readonly y1: number,
+  readonly y2: number,
 }
 
 /**
  * Describes an angle by its vectors
  */
 interface GeometricalAngle {
-  vectors: GeometricalVector[];
+  readonly vectors: ReadonlyArray<GeometricalVector>;
 }
 
 type GeometricalObject = GeometricalVector | GeometricalPoint | GeometricalAngle;
@@ -181,6 +181,7 @@ namespace StoreEntries {
         [symbol: string]: boolean;
       }
       type cursorStack = string[];
+      type zoom = number;
     }
   }
 }
@@ -197,6 +198,8 @@ namespace Payloads {
   type highlightStepsOnCanvas = string[];
   type setCursor = string;
   type removeCursors = string[];
+  type zoomIn = { zoom: number, x: number, y: number };
+  type zoomOut = zoomIn;
 }
 
 type GenericAction = { type: string, payload: any };
@@ -269,7 +272,7 @@ interface EditorTool {
    * Triggered when the mouse scrolls over the canvas.
    * Useful for implementing zoom functionality.
    */
-  onCanvasScroll?(x: number, y: number, direction: number | string);
+  onCanvasMouseWheel?(x: number, y: number, delta: number, direction: number | string);
 
   /**
    * Triggered when the mouse enters a landmark.

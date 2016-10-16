@@ -14,6 +14,8 @@ import CephaloEditor from '../CephaloEditor';
 import CompatibilityChecker from '../CompatibilityChecker';
 import AnalysisResultsViewer from '../AnalysisResultsViewer';
 
+import { Eraser } from '../../actions/tools';
+
 import {
   flipImageX,
   invertImage,
@@ -43,6 +45,8 @@ import {
   getComponentsForSymbolSelector,
   canRedoSelector,
   canUndoSelector,
+  getActiveEditorTool,
+  getZoomSelector,
 } from '../../store/selectors/workspace';
 
 import {
@@ -57,7 +61,7 @@ import {
 
 import {
   getHighlightedSteps,
-} from '../../store/reducers/workspace/canvas';
+} from '../../store/reducers/workspace/highlightedSteps';
 
 import { checkBrowserCompatibility } from '../../actions/initialization';
 
@@ -92,19 +96,21 @@ interface StateProps {
   error?: { message: string };
   analysisSteps: CephaloLandmark[];
   getStepState(step: Step): StepState;
-  onCanvasClicked: (dispatch: Function) => (e: { X: number, Y: number }) => void;
+  onCanvasClicked: (dispatch: Function) => (x: number, y: number) => void;
   onFileDropped(dispatch: Function): (file: File) => void;
   getStepValue(step: Step): number | undefined;
   areAnalysisResultsShown: boolean;
-  analysisResults: (AnalysisResult & { name: string })[];
+  analysisResults: ViewableAnalysisResult[];
   highlightedLandmarks: { [symbol: string]: boolean };
   getComponentsForSymbol: (symbol: string) => CephaloLandmark[];
   canRedo: boolean;
   canUndo: boolean;
+  canvasZoom: number;
 }
 
 interface DispatchProps {
   dispatch: Function;
+  activeTool: EditorTool;
   onFlipXClicked(e: __React.MouseEvent): void;
   onInvertClicked(e: __React.MouseEvent): void;
   onBrightnessChanged(value: number): void;
@@ -123,10 +129,18 @@ interface DispatchProps {
 }
 
 interface MergeProps {
-  onCanvasClicked(e: { X: number, Y: number }): void;
+  onCanvasClicked(x: number, y: number): void;
   highlightModeOnCanvas: boolean;
   onStepMouseOver(symbol: string): __React.EventHandler<__React.MouseEvent>;
   onStepMouseOut(symbol: string): __React.EventHandler<__React.MouseEvent>;
+  onCanvasLeftClick?(x: number, y: number): void;
+  onCanvasRightClick?(x: number, y: number): void;
+  onCanvasMouseWheel?(x: number, y: number, delta: number): void;
+  onCanvasMouseEnter?(): void;
+  onCanvasMouseLeave?(): void;
+  onLandmarkMouseEnter(symbol: string): void;
+  onLandmarkMouseLeave(symbol: string): void;
+  onLandmarkClick(symbol: string, e: React.MouseEvent): void;
 }
 
 type AppProps = StateProps & DispatchProps & MergeProps;
@@ -208,11 +222,12 @@ export default connect(
       getComponentsForSymbol: getComponentsForSymbolSelector(state),
       canRedo: canRedoSelector(enhancedState),
       canUndo: canUndoSelector(enhancedState),
+      canvasZoom: getZoomSelector(state),
     } as StateProps;
   },
 
   // mapDispatchToProps
-  (dispatch: Function) => ({
+  (dispatch: DispatchFunction) => ({
     dispatch,
     onFlipXClicked: () => dispatch(flipImageX()),
     onBrightnessChanged: (value: number) => dispatch(setBrightness(value)),
@@ -229,6 +244,7 @@ export default connect(
     onAnalysisViewerCloseRequested: () => dispatch(closeAnalysisResults()),
     performUndo: () => dispatch(undo()),
     performRedo: () => dispatch(redo()),
+    activeTool: Eraser(dispatch, () => true),
   } as DispatchProps),
 
   (stateProps: StateProps, dispatchProps: DispatchProps) => {
@@ -240,6 +256,14 @@ export default connect(
       dispatchProps,
       {
         onCanvasClicked: stateProps.onCanvasClicked(dispatchProps.dispatch),
+        onCanvasMouseWheel: dispatchProps.activeTool.onCanvasMouseWheel,
+        onCanvasRightClick: dispatchProps.activeTool.onCanvasRightClick,
+        onCanvasLeftClick: dispatchProps.activeTool.onCanvasLeftClick,
+        onCanvasMouseEnter: dispatchProps.activeTool.onCanvasMouseEnter,
+        onCanvasMouseLeave: dispatchProps.activeTool.onCanvasMouseLeave,
+        onLandmarkMouseEnter: dispatchProps.activeTool.onLandmarkMouseEnter,
+        onLandmarkMouseLeave: dispatchProps.activeTool.onLandmarkMouseLeave,
+        onLandmarkClick: dispatchProps.activeTool.onLandmarkClick,
         highlightModeOnCanvas: !isEmpty(stateProps.highlightedLandmarks),
         onStepMouseOver: (symbol: string) => () => {
           const symbols = map(getComponents(symbol), c => c.symbol);

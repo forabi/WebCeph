@@ -6,8 +6,8 @@ import { point, line, angleBetweenLines, AnalysisResultSeverity, SkeletalBite } 
 
 const ANS = point('ANS', 'Anterior nasal spine', 'Anterior point on maxillary bone');
 const PNS = point('PNS', 'Poseterior nasal spine', 'Posterior limit of bony palate or maxilla');
-const PPS = line(PNS, ANS, undefined, 'PPS');
-const MM = angleBetweenLines(PPS, MP, undefined, 'MM');
+const SPP = line(PNS, ANS, undefined, 'SPP');
+const MM = angleBetweenLines(SPP, MP, undefined, 'MM');
 
 const angleMM: AnalysisComponent = {
   landmark: MM,

@@ -38,6 +38,7 @@ interface CephaloEditorProps {
   inverted: boolean;
   flipX: boolean;
   flipY: boolean;
+  canvasZoom: number;
   error?: { message: string };
   canvasHeight: number;
   canvasWidth: number;
@@ -55,7 +56,10 @@ interface CephaloEditorProps {
   onRemoveLandmarkRequested(landmark: CephaloLandmark): void;
   onIgnoreErrorClicked(...args: any[]): void;
   onCanvasResized(e: ResizeObserverEntry): void;
-  onCanvasClicked(e: MouseEvent): void;
+  onCanvasClicked(x: number, y: number): void;
+  onLandmarkMouseEnter(symbol: string): void;
+  onLandmarkMouseLeave(symbol: string): void;
+  onLandmarkClick(symbol: string): void;
   analysisSteps: Step[];
   getStepState(step: Step): StepState;
   getStepValue(step: Step): number | undefined;
@@ -141,10 +145,18 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
                 inverted={this.props.inverted}
                 flipX={this.props.flipX}
                 flipY={this.props.flipY}
+                zoom={this.props.canvasZoom}
                 height={this.props.canvasHeight}
                 width={this.props.canvasWidth}
-                onCanvasResized={this.props.onCanvasResized}
-                onClick={this.props.onCanvasClicked}
+                onResized={this.props.onCanvasResized}
+                onLeftClick={this.props.onCanvasClicked}
+                onMouseWheel={this.props.onCanvasMouseWheel}
+                onMouseEnter={this.props.onCanvasMouseEnter}
+                onMouseLeave={this.props.onCanvasMouseLeave}
+                onRightClick={this.props.onCanvasRightClick}
+                onLandmarkClick={this.props.onLandmarkClick}
+                onLandmarkMouseEnter={this.props.onLandmarkMouseEnter}
+                onLandmarkMouseLeave={this.props.onLandmarkMouseLeave}
                 landmarks={this.props.landmarks}
                 highlightedLandmarks={this.props.highlightedLandmarks}
                 highlightMode={this.props.highlightModeOnCanvas}
@@ -196,42 +208,6 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
           )}
         </div>
         <div className={cx(classes.sidebar, 'col-xs-12', 'col-sm-4')}>
-          <Toolbar>
-            <ToolbarGroup firstChild>
-              <FlatButton onClick={this.performUndo} disabled={cannotEdit || !canUndo} label="Undo" icon={<IconUndo />} />
-              <FlatButton onClick={this.performRedo} disabled={cannotEdit || !canRedo} label="Redo" icon={<IconRedo />} />
-              <FlatButton onClick={this.props.onFlipXClicked} disabled={cannotEdit} label="Flip" icon={<IconFlip />} />
-              <FlatButton
-                disabled={cannotEdit}
-                label="Corrections" icon={<IconBrightness />}
-                onClick={this.handleTouchTap}
-              />
-              <Popover
-                open={this.state.open}
-                anchorEl={this.state.anchorEl}
-                anchorOrigin={{ horizontal: 'left', vertical: 'top'}}
-                targetOrigin={{ horizontal: 'left', vertical: 'bottom' }}
-                onRequestClose={this.handleRequestClose}
-              >
-                Brightness
-                <Slider
-                  style={{ width: 200, margin: 15 }}
-                  min={0} max={100}
-                  defaultValue={this.props.brightness}
-                  onChange={this.setBrightness}
-                />
-                Contrast
-                <Slider
-                  style={{ width: 200, margin: 15 }}
-                  min={-100} max={100}
-                  defaultValue={this.props.contrast}
-                  onChange={this.setContrast}
-                />
-                <Divider />
-                <Checkbox label="Invert" checked={this.props.inverted} onCheck={this.props.onInvertClicked} />
-              </Popover>
-            </ToolbarGroup>
-          </Toolbar>
           { isAnalysisActive ? (
               <AnalysisStepper
                 className={classes.list_steps}
@@ -249,6 +225,42 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
           }
           <RaisedButton label="Show results" onClick={this.props.onShowAnalysisResultsClicked} disabled={!isAnalysisComplete} primary />
         </div>
+        <Toolbar className={cx(classes.toolbar, 'col-xs-12')}>
+          <ToolbarGroup firstChild>
+            <FlatButton onClick={this.performUndo} disabled={cannotEdit || !canUndo} label="Undo" icon={<IconUndo />} />
+            <FlatButton onClick={this.performRedo} disabled={cannotEdit || !canRedo} label="Redo" icon={<IconRedo />} />
+            <FlatButton onClick={this.props.onFlipXClicked} disabled={cannotEdit} label="Flip" icon={<IconFlip />} />
+            <FlatButton
+              disabled={cannotEdit}
+              label="Corrections" icon={<IconBrightness />}
+              onClick={this.handleTouchTap}
+            />
+            <Popover
+              open={this.state.open}
+              anchorEl={this.state.anchorEl}
+              anchorOrigin={{ horizontal: 'left', vertical: 'top'}}
+              targetOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+              onRequestClose={this.handleRequestClose}
+            >
+              Brightness
+              <Slider
+                style={{ width: 200, margin: 15 }}
+                min={0} max={100}
+                defaultValue={this.props.brightness}
+                onChange={this.setBrightness}
+              />
+              Contrast
+              <Slider
+                style={{ width: 200, margin: 15 }}
+                min={-100} max={100}
+                defaultValue={this.props.contrast}
+                onChange={this.setContrast}
+              />
+              <Divider />
+              <Checkbox label="Invert" checked={this.props.inverted} onCheck={this.props.onInvertClicked} />
+            </Popover>
+          </ToolbarGroup>
+        </Toolbar>
       </div>
     );
   }

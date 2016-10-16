@@ -4,7 +4,6 @@ import sortBy from 'lodash/sortBy';
 import { findDOMNode } from 'react-dom'; 
 import { isGeometricalPoint, isGeometricalLine } from '../../utils/math';
 import { pure } from 'recompose';
-
 // declare var window: Window & { ResizeObserver: ResizeObserver };
 
 const InvertFilter = pure(({ id }: { id: string }) => (
@@ -62,17 +61,22 @@ interface LandmarkProps {
   stroke?: string;
   fill?: string;
   fillOpacity?: number;
-  zIndex: number;
+  zIndex?: number;
+  onClick: React.EventHandler<React.MouseEvent>;
+  onMouseEnter: React.EventHandler<React.MouseEvent>;
+  onMouseLeave: React.EventHandler<React.MouseEvent>;
 }
 
-const Landmark = ({ value, fill, fillOpacity, stroke, zIndex }: LandmarkProps) => {
+const Landmark = (_props: LandmarkProps) => {
+  const { value, fill, fillOpacity, zIndex, stroke, onClick, onMouseEnter, onMouseLeave } = _props;
   const props = {
+    onClick, onMouseEnter, onMouseLeave,
     stroke: stroke || '#fff',
     fill: fill || '#55f',
     strokeWidth: 3,
     fillOpacity: fillOpacity || 1,
     strokeOpacity: fillOpacity || 1,
-    style: { zIndex },
+    style: { zIndex: zIndex },
   };
   if (isGeometricalPoint(value)) {
     return (
@@ -101,11 +105,19 @@ interface CephaloCanvasProps {
   inverted?: boolean;
   flipX?: boolean;
   flipY?: boolean;
-  height: number,
-  width: number,
+  height: number;
+  width: number;
+  zoom: number;
   landmarks: { [id: string]: GeometricalObject } | { };
-  onClick?: (e: { X: number, Y: number }) => void;
-  onCanvasResized?(e: ResizeObserverEntry): void;
+  onLeftClick?(x: number, y: number): void;
+  onResized?(e: ResizeObserverEntry): void;
+  onMouseWheel?(x: number, y: number, delta: number): void;
+  onRightClick?(x: number, y: number): void;
+  onMouseEnter?(): void;
+  onMouseLeave?(): void;
+  onLandmarkMouseEnter(symbol: string): void;
+  onLandmarkMouseLeave(symbol: string): void;
+  onLandmarkClick(symbol: string, e: React.MouseEvent): void;
   highlightMode: boolean;
   highlightedLandmarks: { [symbol: string]: boolean };
 }
@@ -115,21 +127,19 @@ interface CephaloCanvasProps {
  * Provides a declarative API for viewing landmarks on a cephalomertic image and performing common edits like brightness and contrast.
  */
 export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> {
-  refs: { canvas: __React.ReactInstance };
+  refs: { canvas: React.ReactInstance };
 
-  private handleClick = (e: __React.MouseEvent) => {
-    if (this.props.onClick) {
-      const element = findDOMNode(this.refs.canvas);
-      const rect = element.getBoundingClientRect();
-      const scrollTop = document.documentElement.scrollTop;
-      const scrollLeft = document.documentElement.scrollLeft;
-      const elementLeft = rect.left + scrollLeft;  
-      const elementTop = rect.top + scrollTop;
-      this.props.onClick({
-        X: e.pageX - elementLeft,
-        Y: e.pageY - elementTop,
-      });
-    }
+  private getRelativeMousePosition = (e: { pageX: number, pageY: number }) => {
+    const element = findDOMNode(this.refs.canvas);
+    const rect = element.getBoundingClientRect();
+    const scrollTop = document.documentElement.scrollTop;
+    const scrollLeft = document.documentElement.scrollLeft;
+    const elementLeft = rect.left + scrollLeft;  
+    const elementTop = rect.top + scrollTop;
+    return {
+      x: e.pageX - elementLeft,
+      y: e.pageY - elementTop
+    };
   }
 
   private getFilterAttribute = () => {
@@ -142,6 +152,10 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
 
   private getTransformAttribute = () => {
     let t = '';
+    // let t = `scale(${this.props.zoom || 1}, ${this.props.zoom || 1})`;
+    // const zoomTranslateX = this.props.width + (this.props.width / this.props.zoom);
+    // const zoomTranslateY = this.props.height + (this.props.height / this.props.zoom);
+    // t += ` translate(-${zoomTranslateX}, -${zoomTranslateY})`;
     if (this.props.flipX) {
       t += ` scale(-1, 1) translate(-${this.props.width}, 0)`;
     }
@@ -150,6 +164,54 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
     }
     return t;
   }
+
+  private handleMouseWheel = (e: React.WheelEvent) => {
+    __DEBUG__ && console.log('Mouse wheel', e.deltaY);
+    if (typeof this.props.onMouseWheel === 'function') {
+      const { x, y } = this.getRelativeMousePosition(e);
+      this.props.onMouseWheel(x, y, e.deltaY);
+    }
+  }
+
+  private handleClick = (e: React.MouseEvent) => {
+    __DEBUG__ && console.log('Mouse down', e.button);
+    if (this.props.onLeftClick !== undefined || this.props.onRightClick !== undefined) {
+      const { x, y } = this.getRelativeMousePosition(e);
+      const which = e.button;
+      if (which === 0 && typeof this.props.onLeftClick === 'function') {
+        // Left mouse click
+        this.props.onLeftClick(x, y);
+      } else if (which === 2 && typeof this.props.onRightClick === 'function') {
+        // Right mouse click
+        this.props.onRightClick(x, y);
+      }
+    }
+  };
+
+  private handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+  };
+
+  private handleLandmarkMouseEnter = (symbol: string) => (e: React.MouseEvent) => {
+    __DEBUG__ && console.log('Landmark mouse enter', e);
+    if (typeof this.props.onLandmarkMouseEnter === 'function') {
+      this.props.onLandmarkMouseEnter(symbol);
+    }
+  };
+
+  private handleLandmarkMouseLeave = (symbol: string) => (e: React.MouseEvent) => {
+    __DEBUG__ && console.log('Landmark mouse leave', e);
+    if (typeof this.props.onLandmarkMouseLeave === 'function') {
+      this.props.onLandmarkMouseLeave(symbol);
+    }
+  };
+
+  private handleLandmarkClick = (symbol: string) => (e: React.MouseEvent) => {
+    __DEBUG__ && console.log('Landmark mouse click', e);
+    if (typeof this.props.onLandmarkClick === 'function') {
+      this.props.onLandmarkClick(symbol, e);
+    }
+  };
 
   render() {
     const {
@@ -163,9 +225,13 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
     return (
       <svg
         ref="canvas" 
-        onClick={this.handleClick}
         className={className}
         width={width} height={height}
+        onMouseDown={this.handleClick}
+        onWheel={this.handleMouseWheel}
+        onContextMenu={this.handleContextMenu}
+        onMouseEnter={this.props.onMouseEnter}
+        onMouseLeave={this.props.onMouseLeave}
       >
         <defs>
           <BrightnessFilter id="brightness" value={brightness || 50} />
@@ -189,7 +255,7 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
         {
           sortBy(map(
             this.props.landmarks,
-            (landmark, symbol) => {
+            (landmark: GeometricalObject, symbol: string) => {
               let props = {};
               if (highlightMode) {
                 if (highlighted[symbol] === true) {
@@ -198,7 +264,14 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
                   props = { fillOpacity: 0.5, zIndex: 0 };
                 }
               }
-              return <Landmark {...props} key={symbol} value={landmark} />;
+              return <Landmark
+                key={symbol}
+                onMouseEnter={this.handleLandmarkMouseEnter(symbol)}
+                onMouseLeave={this.handleLandmarkMouseLeave(symbol)}
+                onClick={this.handleLandmarkClick(symbol)}
+                value={landmark}
+                {...props}
+              />;
             }
           ), (i: JSX.Element) => i.props.zIndex)
         }

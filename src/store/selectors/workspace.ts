@@ -29,6 +29,8 @@ import {
   areEqualSteps, areEqualSymbols,
 } from '../../analyses/helpers';
 
+import { createCompositeTool } from '../../actions/tools';
+
 import { manualLandmarksSelector } from '../reducers/workspace/manualLandmarks';
 
 export { manualLandmarksSelector };
@@ -36,6 +38,15 @@ export { manualLandmarksSelector };
 export const canUndoSelector = ({ past }: EnhancedState<GenericState>) => past.length > 0;
 
 export const canRedoSelector = ({ future }: EnhancedState<GenericState>) => future.length > 0;
+
+export const activeToolsSelector = (state: StoreState) => state['cephalo.workspace.canvas.activeTools'];
+
+export const getActiveEditorTool = createSelector(
+  activeToolsSelector,
+  (ids) => createCompositeTool(...ids),
+);
+
+export const getZoomSelector = (state: StoreState) => state['cephalo.workspace.canvas.zoom'];
 
 const activeAnalysisSelector = (state: StoreState) => state['cephalo.workspace.analysis.activeAnalysis'];
 
@@ -399,16 +410,16 @@ import {
 export const onCanvasClickedSelector = createSelector(
   nextManualLandmarkSelector,
   expectedLandmark => (dispatch: Function) => {
-    return (e => {
+    return ((x, y) => {
       if (expectedLandmark) {
         __DEBUG__ && console.info('Expected next manual landmark:', expectedLandmark.symbol);
         dispatch(
-          addManualLandmark(expectedLandmark.symbol, { x: e.X, y: e.Y })
+          addManualLandmark(expectedLandmark.symbol, { x, y })
         );
       } else {
         __DEBUG__ && console.warn('Could not find expected manual landmark');
       }
-    }) as (e: { X: number, Y: number }) => void;
+    }) as (x: number, y: number) => void;
   },
 );
 

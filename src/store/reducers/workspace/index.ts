@@ -1,5 +1,6 @@
 import assign from 'lodash/assign';
 import manualLandmarks from './manualLandmarks';
-import canvas from './canvas';
+import highlightedSteps from './highlightedSteps';
+import zoom from './zoom';
 
-export default assign({ }, canvas, manualLandmarks);
+export default assign({ }, highlightedSteps, zoom, manualLandmarks);
