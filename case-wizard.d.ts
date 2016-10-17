@@ -179,7 +179,7 @@ declare namespace StoreEntries {
         [symbol: string]: boolean;
       }
       type cursorStack = string[];
-      type activeTools = { [toolId: string]: true };
+      type activeTool = string | null;
       type zoom = number;
       type zoomOffset = { x: number, y: number };
     }
@@ -201,6 +201,8 @@ declare namespace Payloads {
   type zoomIn = { zoom: number, x: number, y: number };
   type zoomOut = zoomIn;
   type setActiveTool = string;
+  type disableActiveTool = setActiveTool;
+  type enableTools = setActiveTool;
   type removeActiveTool = string;
 }
 

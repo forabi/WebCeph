@@ -34,11 +34,11 @@ import { manualLandmarksSelector } from '../reducers/workspace/manualLandmarks';
 
 export { manualLandmarksSelector };
 
+export const getActiveToolSelector = (state: GenericState) => state[StoreKeys.activeTool];
+
 export const canUndoSelector = ({ past }: EnhancedState<GenericState>) => past.length > 0;
 
 export const canRedoSelector = ({ future }: EnhancedState<GenericState>) => future.length > 0;
-
-export const activeToolsSelector = (state: StoreState) => state[StoreKeys.activeTools];
 
 export const getZoomSelector = (state: StoreState) => state[StoreKeys.zoomValue];
 
@@ -132,7 +132,13 @@ export const getManualStepStateSelector = createSelector(
 
 export const isLandmarkRemovableSelector = createSelector(
   activeAnalysisStepsSelector,
-  (steps) => (symbol: string) => isStepManual(steps[symbol]),
+  (steps) => (symbol: string) => {
+    const step = find(steps, (s: CephaloLandmark) => s.symbol === symbol);
+    if (!step) {
+      __DEBUG__ && console.warn('isLandmarkRemovable could not find a landmark with symbol %s', symbol);
+    }
+    return isStepManual(step);
+  },
 );
 
 export const cephaloMapperSelector = createSelector(

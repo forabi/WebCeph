@@ -3,6 +3,6 @@ import manualLandmarks from './manualLandmarks';
 import highlightedSteps from './highlightedSteps';
 import zoom from './zoom';
 import cursorStack from './cursorStack';
-import activeTools from './activeTools';
+import activeTool from './activeTool';
 
-export default assign({ }, highlightedSteps, zoom, manualLandmarks, cursorStack, activeTools);
+export default assign({ }, highlightedSteps, zoom, manualLandmarks, cursorStack, activeTool);

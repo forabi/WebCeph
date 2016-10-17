@@ -1,6 +1,14 @@
 import { Event, Cursor } from '../utils/constants';
 import { createAction } from 'redux-actions';
 /* Tracing actions */
+export const setActiveTool: (symbol: string) => any = createAction(
+  Event.TOGGLE_TOOL_REQUESTED,
+);
+
+export const disableActiveTool: () => any = createAction(
+  Event.DISABLE_TOOL_REQUESTED,
+);
+
 export const addManualLandmark: (symbol: string, value: GeometricalObject | number) => any = createAction(
   Event.ADD_MANUAL_LANDMARK_REQUESTED,
   (symbol: string, value: GeometricalObject): Payloads.addManualLandmark => ({ symbol, value }),

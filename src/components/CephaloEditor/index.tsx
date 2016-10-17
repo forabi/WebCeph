@@ -10,6 +10,9 @@ import IconFlip from 'material-ui/svg-icons/image/flip';
 import IconBrightness from 'material-ui/svg-icons/image/brightness-5';
 import IconUndo from 'material-ui/svg-icons/content/undo';
 import IconRedo from 'material-ui/svg-icons/content/redo';
+import IconEraser from 'material-ui/svg-icons/content/remove-circle-outline';
+import IconAddPoint from 'material-ui/svg-icons/image/control-point';
+import IconZoom from 'material-ui/svg-icons/action/zoom-in';
 import Dialog from 'material-ui/Dialog';
 import CircularProgress from 'material-ui/CircularProgress';
 import Snackbar from 'material-ui/Snackbar';
@@ -19,6 +22,7 @@ import cx from 'classnames';
 import AnalysisStepper from '../AnalysisStepper';
 import CephaloCanvas from '../CephaloCanvas';
 import noop from 'lodash/noop';
+import { Tools } from '../../utils/constants';
 
 const classes = require('./style.scss');
 const DropzonePlaceholder: (props: any) => JSX.Element = require(
@@ -46,11 +50,11 @@ interface CephaloEditorProps {
   canvasWidth: number;
   isAnalysisActive: boolean;
   isAnalysisComplete: boolean;
-  onFlipXClicked(e?: __React.MouseEvent): void;
+  onFlipXClicked(e?: React.MouseEvent<any>): void;
   onFileDropped(dispatch: Function): (file: File) => void;
   onBrightnessChanged(value: number): void;
   onContrastChanged(value: number): void;
-  onInvertClicked(e?: __React.MouseEvent): void;
+  onInvertClicked(e?: React.MouseEvent<any>): void;
   onPickAnotherImageClicked(...args: any[]): void;
   onIgnoreNotCephaloClicked(...args: any[]): void;
   onShowAnalysisResultsClicked(): any;
@@ -58,7 +62,8 @@ interface CephaloEditorProps {
   onRemoveLandmarkRequested(landmark: CephaloLandmark): void;
   onIgnoreErrorClicked(...args: any[]): void;
   onCanvasResized(e: ResizeObserverEntry): void;
-  onCanvasClicked(x: number, y: number): void;
+  onCanvasLeftClick(x: number, y: number): void;
+  onCanvasRightClick(x: number, y: number): void;
   onLandmarkMouseEnter(symbol: string): void;
   onLandmarkMouseLeave(symbol: string): void;
   onLandmarkClick(symbol: string): void;
@@ -67,10 +72,12 @@ interface CephaloEditorProps {
   getStepValue(step: Step): number | undefined;
   highlightModeOnCanvas: boolean;
   highlightedLandmarks: { [symbol: string]: boolean };
-  onStepMouseOver(symbol: string): __React.EventHandler<__React.MouseEvent>;
-  onStepMouseOut(symbol: string): __React.EventHandler<__React.MouseEvent>;
+  onStepMouseOver(symbol: string): React.EventHandler<React.MouseEvent<any>>;
+  onStepMouseOut(symbol: string): React.EventHandler<React.MouseEvent<any>>;
   performUndo(): any;
   performRedo(): any;
+  setActiveTool(symbol: string): () => void;
+  activeToolId: string | null;
   canRedo: boolean;
   canUndo: boolean;
 }
@@ -101,11 +108,11 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
     this.setState(assign({ }, this.state, { open: false, anchorEl: null }) as CephaloEditorState);
   };
 
-  setBrightness = (__: React.MouseEvent, value: number) => {
+  setBrightness = (__: React.MouseEvent<any>, value: number) => {
     this.props.onBrightnessChanged(value);
   };
 
-  setContrast = (__: React.MouseEvent, value: number) => {
+  setContrast = (__: React.MouseEvent<any>, value: number) => {
     this.props.onContrastChanged(value);
   };
 
@@ -151,11 +158,11 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
                 height={this.props.canvasHeight}
                 width={this.props.canvasWidth}
                 onResized={this.props.onCanvasResized}
-                onLeftClick={this.props.onCanvasClicked}
+                onLeftClick={this.props.onCanvasLeftClick}
+                onRightClick={this.props.onCanvasRightClick}
                 onMouseWheel={this.props.onCanvasMouseWheel}
                 onMouseEnter={this.props.onCanvasMouseEnter}
                 onMouseLeave={this.props.onCanvasMouseLeave}
-                onRightClick={this.props.onCanvasRightClick}
                 onLandmarkClick={this.props.onLandmarkClick}
                 onLandmarkMouseEnter={this.props.onLandmarkMouseEnter}
                 onLandmarkMouseLeave={this.props.onLandmarkMouseLeave}
@@ -234,6 +241,21 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
             <FlatButton onClick={this.performUndo} disabled={cannotEdit || !canUndo} label="Undo" icon={<IconUndo />} />
             <FlatButton onClick={this.performRedo} disabled={cannotEdit || !canRedo} label="Redo" icon={<IconRedo />} />
             <FlatButton onClick={this.props.onFlipXClicked} disabled={cannotEdit} label="Flip" icon={<IconFlip />} />
+            <FlatButton
+              disabled={cannotEdit || this.props.activeToolId === Tools.ERASER}
+              label="" icon={<IconEraser />}
+              onClick={this.props.setActiveTool(Tools.ERASER)}
+            />
+            <FlatButton
+              disabled={cannotEdit || this.props.activeToolId === Tools.ADD_POINT}
+              label="" icon={<IconAddPoint />}
+              onClick={this.props.setActiveTool(Tools.ADD_POINT)}
+            />
+            <FlatButton
+              disabled={cannotEdit|| this.props.activeToolId === Tools.ZOOM_WITH_CLICK}
+              label="" icon={<IconZoom />}
+              onClick={this.props.setActiveTool(Tools.ZOOM_WITH_CLICK)}
+            />
             <FlatButton
               disabled={cannotEdit}
               label="Corrections" icon={<IconBrightness />}

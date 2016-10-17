@@ -17,19 +17,14 @@ import CephaloEditor from '../CephaloEditor';
 import CompatibilityChecker from '../CompatibilityChecker';
 import AnalysisResultsViewer from '../AnalysisResultsViewer';
 
-import { createCompositeTool, Zoom, Eraser, AddPoint } from '../../actions/tools';
+import { ZoomWithWheel, ZoomWithClick, Eraser, AddPoint } from '../../actions/tools';
 
 const toolsById: { [id: string]: EditorToolCreator } = {
   [Tools.ERASER]: Eraser,
   [Tools.ADD_POINT]: AddPoint,
-  [Tools.ZOOM]: Zoom,
-}
-
-const toolsByPriority = [
-  Tools.ERASER,
-  Tools.ADD_POINT,
-  Tools.ZOOM
-];
+  [Tools.ZOOM_WITH_WHEEL]: ZoomWithWheel,
+  [Tools.ZOOM_WITH_CLICK]: ZoomWithClick,
+};
 
 import {
   flipImageX,
@@ -45,6 +40,7 @@ import {
   unhighlightStepsOnCanvas,
   undo,
   redo,
+  setActiveTool,
 } from '../../actions/workspace';
 
 import {
@@ -59,9 +55,9 @@ import {
   getComponentsForSymbolSelector,
   canRedoSelector,
   canUndoSelector,
-  activeToolsSelector,
   getZoomSelector,
   getCanvasZoomOffsetSelector,
+  getActiveToolSelector,
 } from '../../store/selectors/workspace';
 
 import {
@@ -122,13 +118,14 @@ interface StateProps {
   canvasZoom: number;
   canvasZoomX: number;
   canvasZoomY: number;
+  activeTool: (dispatch: Function) => EditorTool;
+  activeToolId: string | string;
 }
 
 interface DispatchProps {
   dispatch: Function;
-  activeTool: EditorTool;
-  onFlipXClicked(e: __React.MouseEvent): void;
-  onInvertClicked(e: __React.MouseEvent): void;
+  onFlipXClicked(e: React.MouseEvent): void;
+  onInvertClicked(e: React.MouseEvent): void;
   onBrightnessChanged(value: number): void;
   onContrastChanged(value: number): void;
   onPickAnotherImageClicked(...args: any[]): void;
@@ -142,21 +139,21 @@ interface DispatchProps {
   onAnalysisViewerCloseRequested(): any;
   performUndo(): any;
   performRedo(): any;
+  setActiveTool(symbol: string): () => void;
 }
 
 interface MergeProps {
-  onCanvasClicked(x: number, y: number): void;
   highlightModeOnCanvas: boolean;
-  onStepMouseOver(symbol: string): __React.EventHandler<__React.MouseEvent>;
-  onStepMouseOut(symbol: string): __React.EventHandler<__React.MouseEvent>;
+  onStepMouseOver(symbol: string): React.EventHandler<React.MouseEvent<any>>;
+  onStepMouseOut(symbol: string): React.EventHandler<React.MouseEvent<any>>;
   onCanvasLeftClick?(x: number, y: number): void;
   onCanvasRightClick?(x: number, y: number): void;
   onCanvasMouseWheel?(x: number, y: number, delta: number): void;
   onCanvasMouseEnter?(): void;
   onCanvasMouseLeave?(): void;
-  onLandmarkMouseEnter(symbol: string): void;
-  onLandmarkMouseLeave(symbol: string): void;
-  onLandmarkClick(symbol: string, e: React.MouseEvent): void;
+  onLandmarkMouseEnter?(symbol: string): void;
+  onLandmarkMouseLeave?(symbol: string): void;
+  onLandmarkClick?(symbol: string, e: React.MouseEvent<any>): void;
 }
 
 type AppProps = StateProps & DispatchProps & MergeProps;
@@ -204,11 +201,8 @@ export default connect(
   // mapStateToProps
   (enhancedState: EnhancedState<StoreState>) => {
     const { present: state } = enhancedState;
-    const activeTools = map(filter(
-      toolsByPriority,
-      (toolId: string) => activeToolsSelector(state)[toolId] === true
-    ), (id: string) => toolsById[id]);
-    const activeTool = partial(createCompositeTool, activeTools, state);
+    const activeToolId = getActiveToolSelector(state);
+    const activeTool = toolsById[activeToolId] === undefined ? null : partial(toolsById[activeToolId], state);
     const { x: canvasZoomX, y: canvasZoomY } = getCanvasZoomOffsetSelector(state);
     return {
       shouldCheckBrowserCompatiblity: !state['env.compatiblity.isIgnored'],
@@ -247,6 +241,7 @@ export default connect(
       canvasZoomX,
       canvasZoomY,
       activeTool,
+      activeToolId,
     } as StateProps;
   },
 
@@ -268,26 +263,19 @@ export default connect(
     onAnalysisViewerCloseRequested: () => dispatch(closeAnalysisResults()),
     performUndo: () => dispatch(undo()),
     performRedo: () => dispatch(redo()),
+    setActiveTool: (symbols: string) => () => dispatch(setActiveTool(symbols)),
   } as DispatchProps),
 
   (stateProps: StateProps, dispatchProps: DispatchProps) => {
     const { dispatch } = dispatchProps;
     const { getComponentsForSymbol: getComponents } = stateProps;
-    const activeTool: EditorTool = stateProps.activeTool(dispatch);
+    const activeTool: EditorTool = stateProps.activeTool !== null ? stateProps.activeTool(dispatch) : { };
     return assign(
       { },
       stateProps,
       dispatchProps,
+      activeTool,
       {
-        onCanvasClicked: activeTool.onCanvasLeftClick,
-        onCanvasMouseWheel: activeTool.onCanvasMouseWheel,
-        onCanvasRightClick: activeTool.onCanvasRightClick,
-        onCanvasLeftClick: activeTool.onCanvasLeftClick,
-        onCanvasMouseEnter: activeTool.onCanvasMouseEnter,
-        onCanvasMouseLeave: activeTool.onCanvasMouseLeave,
-        onLandmarkMouseEnter: activeTool.onLandmarkMouseEnter,
-        onLandmarkMouseLeave: activeTool.onLandmarkMouseLeave,
-        onLandmarkClick: activeTool.onLandmarkClick,
         highlightModeOnCanvas: !isEmpty(stateProps.highlightedLandmarks),
         onStepMouseOver: (symbol: string) => () => {
           const symbols = map(getComponents(symbol), c => c.symbol);
@@ -297,7 +285,6 @@ export default connect(
           const symbols = map(getComponents(symbol), c => c.symbol);
           dispatch(unhighlightStepsOnCanvas(symbols));
         },
-        activeTool,
       } as MergeProps
     ) as AppProps
   }

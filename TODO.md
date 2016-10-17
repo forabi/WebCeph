@@ -35,6 +35,7 @@ TODO
   * [ ] Point
   * [ ] Line
   * [ ] Zoom in/out
+    * [ ] transform="scale(scale, scale) translate((x/scale - x), (y/scale - y)) translate((width/scale - width) / 2, (height/scale - height) / 2)"
   * [ ] Later: freeform drawing tool?
   * [ ] Change cursor accordingly
     * [ ] Use SVG for cursor?

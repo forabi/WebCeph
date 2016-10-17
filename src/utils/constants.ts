@@ -4,9 +4,10 @@ export enum ErrorCode {
 }
 
 export const Tools = {
-  ADD_POINT: 'ADD_POINT',
-  ZOOM: 'ZOOM',
   ERASER: 'ERASER',
+  ADD_POINT: 'ADD_POINT',
+  ZOOM_WITH_WHEEL: 'ZOOM',
+  ZOOM_WITH_CLICK: 'ZOOM_WITH_CLICK',
 }
 
 export const StoreKeys = {
@@ -14,7 +15,7 @@ export const StoreKeys = {
   cursorStack: 'cephalo.workspace.canvas.cursorStack',
   zoomValue: 'cephalo.workspace.canvas.zoom.value',
   zoomOffset: 'cephalo.workspace.canvas.zoom.offset',
-  activeTools: 'cephalo.workspace.canvas.activeTools',
+  activeTool: 'cephalo.workspace.canvas.activeTool',
 }
 
 /**
@@ -33,6 +34,9 @@ export const Event = {
   SET_IS_CEPHALO_REQUESTED: 'SET_IS_CEPHALO_REQUESTED',
 
   /* Workspace */
+  TOGGLE_TOOL_REQUESTED: 'TOGGLE_TOOL_REQUESTED',
+  ENABLE_TOOL_REQUESTED: 'ENABLE_TOOL_REQUESTED',
+  DISABLE_TOOL_REQUESTED: 'DISABLE_TOOL_REQUESTED',
   CANVAS_RESIZED: 'CANVAS_RESIZED',
   ADD_MANUAL_LANDMARK_REQUESTED: 'ADD_MANUAL_LANDMARK_REQUESTED',
   REMOVE_MANUAL_LANDMARK_REQUESTED: 'REMOVE_MANUAL_LANDMARK_REQUESTED',

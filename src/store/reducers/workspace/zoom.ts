@@ -9,9 +9,9 @@ type ZoomOffset = StoreEntries.workspace.canvas.zoomOffset;
 const KEY_ZOOM = StoreKeys.zoomValue;
 const KEY_ZOOM_OFFSET = StoreKeys.zoomOffset;
 const defaultState: ZoomValue = 100;
-const defaultOffset: ZoomOffset = { x: -1, y: -1 };
+const defaultOffset: ZoomOffset = { x: 0, y: 0 };
 
-const canChangeZoom = (zoom, current) => {
+const canChangeZoom = (zoom: number, current: number) => {
   const change = current + zoom;
   return change >= 0 && change < 500;
 }
@@ -43,17 +43,17 @@ const zoomValueReducer = wrapWithDefaultState(
 );
 
 const zoomOffsetReducer = wrapWithDefaultState(
-  handleAction<ZoomValue, Payloads.zoomOut>(
+  handleAction<ZoomOffset, Payloads.zoomIn>(
     Event.ZOOM_IN_REQUESTED,
     (state, { type, payload }) => {
       if (payload === undefined) {
         printUnexpectedPayloadWarning(type, state);
         return state;
       }
-      if (payload.x === state.x && payload.y === state.y) {
+      if (payload.x < 0 || payload.y < 0) {
         return state;
       }
-      if (!canChangeZoom(payload.zoom, state)) {
+      if (payload.x === state.x && payload.y === state.y) {
         return state;
       }
       return { x: payload.x, y: payload.y };

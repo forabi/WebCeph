@@ -1,7 +1,6 @@
 import * as React from 'react';
 import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
-import mapValues from 'lodash/mapValues';
 import { findDOMNode } from 'react-dom'; 
 import { isGeometricalPoint, isGeometricalLine } from '../../utils/math';
 import { pure } from 'recompose';
@@ -164,25 +163,29 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
 
   private getTransformAttribute = () => {
     let t = '';
-    const zoomX = this.props.width / 2;
-    const zoomY = this.props.height / 2;
+    const zoomX = this.props.zoomX;
+    const zoomY = this.props.zoomY;
+    console.log(zoomX, zoomY);
+    // const zoomTranslateX = originX - (zoomX / zoom - zoomX);
+    // const zoomTranslateY = originY - (zoomY / zoom - zoomY);
     const originX = 0;
     const originY = 0;
     const zoom = this.props.zoom / 100;
-    const zoomTranslateX = originX - (zoomX / zoom - zoomX);
-    const zoomTranslateY = originY - (zoomY / zoom - zoomY);
-    const scale = zoom >= 0 ? zoom : 1 / Math.abs(zoom);
+    const scale = (zoom >= 0 ? zoom : 1 / Math.abs(zoom));
+    const { height, width } = this.props;
     // console.log({
     //   scale, zoom, zoomX, zoomY, originX, originY,
     //   zoomTranslateX, zoomTranslateY,
     // });
-    t = `scale(${scale}, ${scale}) translate(${originX}, ${originY})`;
-    t += ` translate(${-zoomTranslateX}, ${-zoomTranslateY})`;
+    t = `scale(${scale}, ${scale}) `;
+    t += `translate(${originX/scale - originX}, ${originY/scale - originY}) `;
+    t += `translate(${(width/scale - width) / 2}, ${(height/scale - height) / 2}) `;
+    t += `translate(${(zoomX/scale - zoomX)}, ${(zoomY/scale - zoomY)}) `;
     if (this.props.flipX) {
       t += ` scale(-1, 1) translate(-${this.props.width}, 0)`;
     }
     if (this.props.flipY) {
-      // t += ` scale(1, -1) translate(0, -${this.props.height})`;
+      t += ` scale(1, -1) translate(0, -${this.props.height})`;
     }
     return t;
   }
