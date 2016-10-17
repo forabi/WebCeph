@@ -7,15 +7,12 @@ import {
   setCursor, removeCursors,
   zoomIn, zoomOut,
 } from './workspace';
-import keyBy from 'lodash/keyBy';
 import { Cursor } from '../utils/constants';
-import { getZoomSelector, isLandmarkRemovableSelector } from '../store/selectors/workspace';
-
-type isLandmarkRemovable = (symbol: string) => boolean;
+import { getZoomSelector, isLandmarkRemovableSelector, nextManualLandmarkSelector } from '../store/selectors/workspace';
 
 export const Eraser: EditorToolCreator = (
+  state: GenericState,
   dispatch: DispatchFunction,
-  state,
 ) => {
   const isLandmarkRemovable = isLandmarkRemovableSelector(state);
   return {
@@ -56,8 +53,8 @@ export const Eraser: EditorToolCreator = (
 };
 
 export const AddPoint: EditorToolCreator = (
+  state: GenericState,
   dispatch: DispatchFunction,
-  getExpectedNextManualLandmark: () => string | null,
 ) => ({
   id: 'add-point',
   onCanvasMouseEnter() {
@@ -69,9 +66,9 @@ export const AddPoint: EditorToolCreator = (
     ]));
   },
   onCanvasLeftClick(x, y) {
-    const symbol = getExpectedNextManualLandmark();
-    if (symbol !== null) {
-      dispatch(addManualLandmark(symbol, { x, y }))
+    const landmark = nextManualLandmarkSelector(state);
+    if (landmark !== null) {
+      dispatch(addManualLandmark(landmark.symbol, { x, y }))
     } else {
       dispatch(addUnnamedManualLandmark({ x, y }));
     }
@@ -85,8 +82,8 @@ export const AddPoint: EditorToolCreator = (
 });
 
 export const Zoom: EditorToolCreator = (
+  state: GenericState,
   dispatch: DispatchFunction,
-  state,
 ) => ({
   id: 'zoom-in-out',
   onCanvasMouseEnter() {
@@ -116,12 +113,29 @@ export const Zoom: EditorToolCreator = (
   },
 });
 
-const tools = keyBy({
-  Zoom,
-  AddPoint,
-  Eraser,
-}, (tool: EditorTool) => tool.id);
+import map from 'lodash/map';
+import find from 'lodash/find';
 
-export function createCompositeTool(dispatch): EditorTool {
-  return Zoom(dispatch);
+export function createCompositeTool(
+  id: string = 'composite-tool',
+  toolCreators: EditorToolCreator[],
+  state: GenericState,
+  dispatch: DispatchFunction,
+): EditorTool {
+  const tools = map(toolCreators, (create: EditorToolCreator) => create(state, dispatch));
+  const compositeTool: EditorTool = { id };
+  map([
+    'onCanvasLeftClick',
+    'onCanvasRightClick',
+    'onCanvasMouseEnter',
+    'onCanvasMouseLeave',
+    'onCanvasMouseWheel',
+    'onLandmarkClick',
+    'onLandmarkMouseEnter',
+    'onLandmarkMouseLeave',
+  ], (fnName: string) => {
+    const tool = find(tools, (t: EditorTool) => typeof t[fnName] === 'function');
+    compositeTool[fnName] = tool ? tool[fnName] : undefined;
+  })
+  return compositeTool;
 }

@@ -295,7 +295,7 @@ interface EditorTool {
 /** An EditorToolCreate is a function that is used to create editor tools.
  * It recieves the dispatch function as first argument and the state as the second arguemtn.
  */
-type EditorToolCreator = (dispatch: DispatchFunction, state: GenericState) => EditorTool
+type EditorToolCreator = (state: GenericState, dispatch: DispatchFunction) => EditorTool
 
 /* Browser compatiblity checking */
 type BrowserId = 'Chrome' | 'Firefox' | 'Opera' | 'Microsoft Edge' | 'Safari';

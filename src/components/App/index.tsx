@@ -9,13 +9,13 @@ import some from 'lodash/some';
 import noop from 'lodash/noop';
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
-import partialRight from 'lodash/partialRight';
+import partial from 'lodash/partial';
 
 import CephaloEditor from '../CephaloEditor';
 import CompatibilityChecker from '../CompatibilityChecker';
 import AnalysisResultsViewer from '../AnalysisResultsViewer';
 
-import { Eraser, Zoom } from '../../actions/tools';
+import { createCompositeTool, Zoom, AddPoint } from '../../actions/tools';
 
 import {
   flipImageX,
@@ -192,7 +192,7 @@ export default connect(
   // mapStateToProps
   (enhancedState: EnhancedState<StoreState>) => {
     const { present: state } = enhancedState;
-    const activeTool = partialRight(Zoom, state);
+    const activeTool = partial(createCompositeTool, undefined, [AddPoint, Zoom], state);
     const { x: canvasZoomX, y: canvasZoomY } = getCanvasZoomOffsetSelector(state);
     return {
       shouldCheckBrowserCompatiblity: !state['env.compatiblity.isIgnored'],
@@ -221,7 +221,6 @@ export default connect(
       getStepState: getAnyStepStateSelector(state),
       onFileDropped: onFileDroppedSelector(state),
       getStepValue: getLandmarkValueSelector(state),
-      onCanvasClicked: onCanvasClickedSelector(state),
       areAnalysisResultsShown: state['cephalo.workspace.analysis.results.areShown'],
       analysisResults: getAnalysisResultsSelector(state),
       highlightedLandmarks: getHighlightedSteps(state),
@@ -258,13 +257,13 @@ export default connect(
   (stateProps: StateProps, dispatchProps: DispatchProps) => {
     const { dispatch } = dispatchProps;
     const { getComponentsForSymbol: getComponents } = stateProps;
-    const activeTool = stateProps.activeTool(dispatch);
+    const activeTool: EditorTool = stateProps.activeTool(dispatch);
     return assign(
       { },
       stateProps,
       dispatchProps,
       {
-        onCanvasClicked: stateProps.onCanvasClicked(dispatchProps.dispatch),
+        onCanvasClicked: activeTool.onCanvasLeftClick,
         onCanvasMouseWheel: activeTool.onCanvasMouseWheel,
         onCanvasRightClick: activeTool.onCanvasRightClick,
         onCanvasLeftClick: activeTool.onCanvasLeftClick,
