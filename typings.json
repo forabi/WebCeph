@@ -1,17 +1,10 @@
 {
-  "name": "fabric-demo",
-  "dependencies": {
-    "react": "registry:npm/react#15.0.1+20160601175240",
-    "react-dom": "registry:npm/react-dom#15.0.1+20160826174104",
-    "react-redux": "registry:npm/react-redux#4.4.0+20160614222153"
-  },
+  "name": "case-wizard",
+  "dependencies": {},
   "globalDependencies": {
     "es2015": "registry:env/es2015#1.0.0+20160526151700",
     "expect": "registry:dt/expect#1.13.4+20160316155526",
-    "material-ui": "registry:dt/material-ui#0.15.1+20160720000941",
-    "mocha": "registry:env/mocha#2.2.5+20160723033700",
     "node": "registry:env/node#6.0.0+20160813135048",
-    "react": "registry:dt/react#0.14.0+20160829191040",
-    "redux-actions": "registry:dt/redux-actions#0.8.0+20160521154116"
+    "react": "registry:dt/react#0.14.0+20160829191040"
   }
 }

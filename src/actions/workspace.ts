@@ -37,8 +37,8 @@ export const zoomIn: (zoom: number, x: number, y: number) => any = createAction(
 );
 
 export const zoomOut: (zoom: number, x: number, y: number) => any = createAction(
-  Event.ZOOM_OUT_REQUESTED,
-  (zoom: number, x: number, y: number) => ({ zoom, x, y } as Payloads.zoomOut),
+  Event.ZOOM_IN_REQUESTED,
+  (zoom: number, x: number, y: number) => ({ zoom: -zoom, x, y } as Payloads.zoomIn),
 );
 
 /** Performs steps in the cephalometric analysis that can be automatically evaluated in the current state.

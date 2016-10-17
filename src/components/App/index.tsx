@@ -9,12 +9,13 @@ import some from 'lodash/some';
 import noop from 'lodash/noop';
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
+import partialRight from 'lodash/partialRight';
 
 import CephaloEditor from '../CephaloEditor';
 import CompatibilityChecker from '../CompatibilityChecker';
 import AnalysisResultsViewer from '../AnalysisResultsViewer';
 
-import { Eraser } from '../../actions/tools';
+import { Eraser, Zoom } from '../../actions/tools';
 
 import {
   flipImageX,
@@ -47,6 +48,7 @@ import {
   canUndoSelector,
   getActiveEditorTool,
   getZoomSelector,
+  getCanvasZoomOffsetSelector,
 } from '../../store/selectors/workspace';
 
 import {
@@ -106,6 +108,8 @@ interface StateProps {
   canRedo: boolean;
   canUndo: boolean;
   canvasZoom: number;
+  canvasZoomX: number;
+  canvasZoomY: number;
 }
 
 interface DispatchProps {
@@ -188,6 +192,8 @@ export default connect(
   // mapStateToProps
   (enhancedState: EnhancedState<StoreState>) => {
     const { present: state } = enhancedState;
+    const activeTool = partialRight(Zoom, state);
+    const { x: canvasZoomX, y: canvasZoomY } = getCanvasZoomOffsetSelector(state);
     return {
       shouldCheckBrowserCompatiblity: !state['env.compatiblity.isIgnored'],
       isCheckingCompatiblity: state['env.compatiblity.isBeingChecked'],
@@ -223,6 +229,9 @@ export default connect(
       canRedo: canRedoSelector(enhancedState),
       canUndo: canUndoSelector(enhancedState),
       canvasZoom: getZoomSelector(state),
+      canvasZoomX,
+      canvasZoomY,
+      activeTool,
     } as StateProps;
   },
 
@@ -244,26 +253,26 @@ export default connect(
     onAnalysisViewerCloseRequested: () => dispatch(closeAnalysisResults()),
     performUndo: () => dispatch(undo()),
     performRedo: () => dispatch(redo()),
-    activeTool: Eraser(dispatch, () => true),
   } as DispatchProps),
 
   (stateProps: StateProps, dispatchProps: DispatchProps) => {
     const { dispatch } = dispatchProps;
     const { getComponentsForSymbol: getComponents } = stateProps;
+    const activeTool = stateProps.activeTool(dispatch);
     return assign(
       { },
       stateProps,
       dispatchProps,
       {
         onCanvasClicked: stateProps.onCanvasClicked(dispatchProps.dispatch),
-        onCanvasMouseWheel: dispatchProps.activeTool.onCanvasMouseWheel,
-        onCanvasRightClick: dispatchProps.activeTool.onCanvasRightClick,
-        onCanvasLeftClick: dispatchProps.activeTool.onCanvasLeftClick,
-        onCanvasMouseEnter: dispatchProps.activeTool.onCanvasMouseEnter,
-        onCanvasMouseLeave: dispatchProps.activeTool.onCanvasMouseLeave,
-        onLandmarkMouseEnter: dispatchProps.activeTool.onLandmarkMouseEnter,
-        onLandmarkMouseLeave: dispatchProps.activeTool.onLandmarkMouseLeave,
-        onLandmarkClick: dispatchProps.activeTool.onLandmarkClick,
+        onCanvasMouseWheel: activeTool.onCanvasMouseWheel,
+        onCanvasRightClick: activeTool.onCanvasRightClick,
+        onCanvasLeftClick: activeTool.onCanvasLeftClick,
+        onCanvasMouseEnter: activeTool.onCanvasMouseEnter,
+        onCanvasMouseLeave: activeTool.onCanvasMouseLeave,
+        onLandmarkMouseEnter: activeTool.onLandmarkMouseEnter,
+        onLandmarkMouseLeave: activeTool.onLandmarkMouseLeave,
+        onLandmarkClick: activeTool.onLandmarkClick,
         highlightModeOnCanvas: !isEmpty(stateProps.highlightedLandmarks),
         onStepMouseOver: (symbol: string) => () => {
           const symbols = map(getComponents(symbol), c => c.symbol);
@@ -272,7 +281,8 @@ export default connect(
         onStepMouseOut: (symbol: string) => () => {
           const symbols = map(getComponents(symbol), c => c.symbol);
           dispatch(unhighlightStepsOnCanvas(symbols));
-        }
+        },
+        activeTool,
       } as MergeProps
     ) as AppProps
   }

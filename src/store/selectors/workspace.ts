@@ -10,6 +10,7 @@ import map from 'lodash/map';
 import assign from 'lodash/assign';
 import uniqBy from 'lodash/uniqBy';
 import memoize from 'lodash/memoize';
+import { StoreKeys } from '../../utils/constants';
 
 import {
   getStepsForAnalysis,
@@ -46,7 +47,9 @@ export const getActiveEditorTool = createSelector(
   (ids) => createCompositeTool(...ids),
 );
 
-export const getZoomSelector = (state: StoreState) => state['cephalo.workspace.canvas.zoom'];
+export const getZoomSelector = (state: StoreState) => state[StoreKeys.zoomValue];
+
+export const getCanvasZoomOffsetSelector = (state: StoreState) => state[StoreKeys.zoomOffset];
 
 const activeAnalysisSelector = (state: StoreState) => state['cephalo.workspace.analysis.activeAnalysis'];
 
@@ -60,7 +63,7 @@ export const activeAnalysisStepsSelector = createSelector(
     if (analysis !== null) {
       return getStepsForAnalysis(analysis);
     }
-    return [];
+    return [] as CephaloLandmark[];
   }
 );
 
@@ -132,6 +135,11 @@ export const getManualStepStateSelector = createSelector(
       return 'pending';
     }
   },
+);
+
+export const isLandmarkRemovableSelector = createSelector(
+  activeAnalysisStepsSelector,
+  (steps) => (symbol: string) => isStepManual(steps[symbol]),
 );
 
 export const cephaloMapperSelector = createSelector(

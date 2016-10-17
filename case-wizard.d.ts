@@ -1,8 +1,6 @@
-/// <reference path="./resize-observer.d.ts" />
+declare const __DEBUG__: boolean;
 
-const __DEBUG__: boolean;
-
-type AngularUnit = 'degree' | 'radian';
+declare type AngularUnit = 'degree' | 'radian';
 type LinearUnit = 'mm' | 'cm' | 'in';
 type LandmarkType = 'angle' | 'point' | 'line' | 'distance' | 'sum';
 
@@ -77,7 +75,7 @@ type CephaloLandmark = CephaloPoint | CephaloLine | CephaloAngle | CephaloDistan
 interface GeometricalPoint {
   x: number,
   y: number,
-};
+}
 
 /**
  * Describes a geometrical line in a 2D-plane
@@ -140,7 +138,7 @@ interface Analysis {
    * the returned value should have a result of type CLASS_II_SKELETAL_PATTERN
    */
   interpret(values: { [id: string]: EvaluatedValue }): AnalysisResult[];
-};
+}
 
 /**
  * A Mapper object maps cephalometric landmarks to geometrical objects
@@ -161,7 +159,7 @@ type Step = CephaloLandmark & { title: string, state: StepState };
 
 type GenericState = { [id: string]: any };
 
-namespace StoreEntries {
+declare namespace StoreEntries {
   namespace env {
     namespace compatibility {
       type isIgnored = boolean;
@@ -182,11 +180,12 @@ namespace StoreEntries {
       }
       type cursorStack = string[];
       type zoom = number;
+      type zoomOffset = { x: number, y: number };
     }
   }
 }
 
-namespace Payloads {
+declare namespace Payloads {
   interface addManualLandmark {
     symbol: string;
     value: GeometricalObject;
@@ -294,10 +293,9 @@ interface EditorTool {
 }
 
 /** An EditorToolCreate is a function that is used to create editor tools.
- * It recieves the dispatch function as first argument.
- * The rest arguments are tool-specific.
+ * It recieves the dispatch function as first argument and the state as the second arguemtn.
  */
-type EditorToolCreator = (dispatch: DispatchFunction, ...args: any[]) => EditorTool
+type EditorToolCreator = (dispatch: DispatchFunction, state: GenericState) => EditorTool
 
 /* Browser compatiblity checking */
 type BrowserId = 'Chrome' | 'Firefox' | 'Opera' | 'Microsoft Edge' | 'Safari';

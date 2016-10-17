@@ -4,11 +4,19 @@ import { Event, StoreKeys } from '../../../utils/constants';
 import { printUnexpectedPayloadWarning } from '../../../utils/debug';
 
 type ZoomValue = StoreEntries.workspace.canvas.zoom;
+type ZoomOffset = StoreEntries.workspace.canvas.zoomOffset;
 
 const KEY_ZOOM = StoreKeys.zoomValue;
-const defaultState: ZoomValue = 1;
+const KEY_ZOOM_OFFSET = StoreKeys.zoomOffset;
+const defaultState: ZoomValue = 100;
+const defaultOffset: ZoomOffset = { x: -1, y: -1 };
 
-const zoomIn = handleAction<ZoomValue, Payloads.zoomIn>(
+const canChangeZoom = (zoom, current) => {
+  const change = current + zoom;
+  return change >= 0 && change < 500;
+}
+
+const zoomValue = handleAction<ZoomValue, Payloads.zoomIn>(
   Event.ZOOM_IN_REQUESTED,
   (state, { type, payload }) => {
     if (payload === undefined) {
@@ -21,37 +29,41 @@ const zoomIn = handleAction<ZoomValue, Payloads.zoomIn>(
       );
       return state;
     }
+    console.log(payload);
+    if (!canChangeZoom(payload.zoom, state)) {
+      return state;
+    }
     return state + payload.zoom;
   },
 );
 
-const zoomOut = handleAction<ZoomValue, Payloads.zoomOut>(
-  Event.ZOOM_OUT_REQUESTED,
-  (state, { type, payload }) => {
-    if (payload === undefined) {
-      printUnexpectedPayloadWarning(type, state);
-      return state;
-    }
-    if (payload.zoom === 0) {
-      __DEBUG__ && console.warn(
-        'Attempted to zoom by 0, this is a bug!'
-      );
-      return state;
-    }
-    return state - payload.zoom;
-  },
-);
-
-const zoomReducer = wrapWithDefaultState(
-  combineReducers<ZoomValue, GenericAction>(zoomIn, zoomOut),
+const zoomValueReducer = wrapWithDefaultState(
+  zoomValue,
   defaultState,
 );
 
+const zoomOffsetReducer = wrapWithDefaultState(
+  handleAction<ZoomValue, Payloads.zoomOut>(
+    Event.ZOOM_IN_REQUESTED,
+    (state, { type, payload }) => {
+      if (payload === undefined) {
+        printUnexpectedPayloadWarning(type, state);
+        return state;
+      }
+      if (payload.x === state.x && payload.y === state.y) {
+        return state;
+      }
+      if (!canChangeZoom(payload.zoom, state)) {
+        return state;
+      }
+      return { x: payload.x, y: payload.y };
+    },
+  ),
+  defaultOffset,
+);
+
+
 export default {
-  [KEY_ZOOM]: zoomReducer,
-};
-
-
-export const manualLandmarksSelector = (state: GenericState) => {
-  return state[KEY_ZOOM] as ZoomValue;
+  [KEY_ZOOM]: zoomValueReducer,
+  [KEY_ZOOM_OFFSET]: zoomOffsetReducer,
 };

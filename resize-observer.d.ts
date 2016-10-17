@@ -34,4 +34,4 @@ declare interface ResizeObserverEntry {
       /** left is padding left */
       left: number;
     };
-};
+}

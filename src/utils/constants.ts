@@ -6,7 +6,8 @@ export enum ErrorCode {
 export const StoreKeys = {
   manualLandmarks: 'cephalo.workspace.manualLandmarks',
   cursorStack: 'cephalo.workspace.canvas.cursorStack',
-  zoomValue: 'cephalo.workspace.canvas.zoom',
+  zoomValue: 'cephalo.workspace.canvas.zoom.value',
+  zoomOffset: 'cephalo.workspace.canvas.zoom.offset',
 }
 
 /**
@@ -48,7 +49,6 @@ export const Event = {
   ADD_UNKOWN_MANUAL_LANDMARK_REQUESTED: 'ADD_UNKOWN_MANUAL_LANDMARK_REQUESTED',
 
   ZOOM_IN_REQUESTED: 'ZOOM_IN_REQUESTED',
-  ZOOM_OUT_REQUESTED: 'ZOOM_OUT_REQUESTED',
 
   HIDE_LANDMARK_TEMPORARILY_REQUESTED: 'HIDE_LANDMARK_TEMPORARILY_REQUESTED',
   SHOW_TEMORARILY_HIDDEN_LANDMARK_REQUESTED: 'SHOW_TEMORARILY_HIDDEN_LANDMARK_REQUESTED',

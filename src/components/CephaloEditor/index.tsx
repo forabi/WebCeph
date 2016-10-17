@@ -39,6 +39,8 @@ interface CephaloEditorProps {
   flipX: boolean;
   flipY: boolean;
   canvasZoom: number;
+  canvasZoomX: number;
+  canvasZoomY: number;
   error?: { message: string };
   canvasHeight: number;
   canvasWidth: number;
@@ -90,7 +92,7 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
     this.props.onFileDropped(this.props.dispatch)(files[0]);
   }
 
-  handleTouchTap = (event: React.MouseEvent) => {
+  handleTouchTap = (event: React.MouseEvent<any>) => {
     event.preventDefault();
     this.setState(assign({ }, this.state, { open: true, anchorEl: event.currentTarget }) as CephaloEditorState);
   };
@@ -160,6 +162,8 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
                 landmarks={this.props.landmarks}
                 highlightedLandmarks={this.props.highlightedLandmarks}
                 highlightMode={this.props.highlightModeOnCanvas}
+                zoomX={this.props.canvasZoomX}
+                zoomY={this.props.canvasZoomY}
               />
               <Snackbar
                 open={this.props.isWorkerBusy}

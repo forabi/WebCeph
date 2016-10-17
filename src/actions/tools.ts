@@ -9,47 +9,51 @@ import {
 } from './workspace';
 import keyBy from 'lodash/keyBy';
 import { Cursor } from '../utils/constants';
+import { getZoomSelector, isLandmarkRemovableSelector } from '../store/selectors/workspace';
 
 type isLandmarkRemovable = (symbol: string) => boolean;
 
 export const Eraser: EditorToolCreator = (
   dispatch: DispatchFunction,
-  isLandmarkRemovable: isLandmarkRemovable
-) => ({
-  id: 'eraser',
+  state,
+) => {
+  const isLandmarkRemovable = isLandmarkRemovableSelector(state);
+  return {
+    id: 'eraser',
 
-  onLandmarkClick(symbol) {
-    if (isLandmarkRemovable(symbol)) {
-      dispatch(removeManualLandmark(symbol));
-    }
-  },
+    onLandmarkClick(symbol) {
+      if (isLandmarkRemovable(symbol)) {
+        dispatch(removeManualLandmark(symbol));
+      }
+    },
 
-  onLandmarkMouseEnter(symbol) {
-    if (isLandmarkRemovable(symbol)) {
-      dispatch(setCursor(Cursor.REMOVE_LANDMARK));
-    }
-    dispatch(setCursor(Cursor.REMOVE_LANDMARK_DISABLED));
-  },
+    onLandmarkMouseEnter(symbol) {
+      if (isLandmarkRemovable(symbol)) {
+        dispatch(setCursor(Cursor.REMOVE_LANDMARK));
+      }
+      dispatch(setCursor(Cursor.REMOVE_LANDMARK_DISABLED));
+    },
 
-  onLandmarkMouseLeave(_) {
-    dispatch(removeCursors([
-      Cursor.REMOVE_LANDMARK,
-      Cursor.REMOVE_LANDMARK_DISABLED,
-    ]));
-  },
+    onLandmarkMouseLeave(_) {
+      dispatch(removeCursors([
+        Cursor.REMOVE_LANDMARK,
+        Cursor.REMOVE_LANDMARK_DISABLED,
+      ]));
+    },
 
-  onCanvasMouseEnter() {
-    dispatch(setCursor(Cursor.REMOVE_LANDMARK_NO_TARGET));
-  },
+    onCanvasMouseEnter() {
+      dispatch(setCursor(Cursor.REMOVE_LANDMARK_NO_TARGET));
+    },
 
-  onCanvasMouseLeave() {
-    dispatch(removeCursors([
-      Cursor.REMOVE_LANDMARK_NO_TARGET,
-      Cursor.REMOVE_LANDMARK,
-      Cursor.REMOVE_LANDMARK_DISABLED,
-    ]));
-  },
-});
+    onCanvasMouseLeave() {
+      dispatch(removeCursors([
+        Cursor.REMOVE_LANDMARK_NO_TARGET,
+        Cursor.REMOVE_LANDMARK,
+        Cursor.REMOVE_LANDMARK_DISABLED,
+      ]));
+    },
+  };
+};
 
 export const AddPoint: EditorToolCreator = (
   dispatch: DispatchFunction,
@@ -82,6 +86,7 @@ export const AddPoint: EditorToolCreator = (
 
 export const Zoom: EditorToolCreator = (
   dispatch: DispatchFunction,
+  state,
 ) => ({
   id: 'zoom-in-out',
   onCanvasMouseEnter() {
@@ -93,14 +98,17 @@ export const Zoom: EditorToolCreator = (
     ]));
   },
   onCanvasLeftClick(x, y) {
-    dispatch(zoomIn(0.1 , x, y));
+    dispatch(zoomIn(10 , x, y));
   },
   onCanvasRightClick(x, y) {
-    dispatch(zoomOut(0.1, x, y));
+    dispatch(zoomOut(10, x, y));
   },
   onCanvasMouseWheel(x, y, delta) {
-    const zoom = Math.abs(Math.round(delta / 100));
-    if (delta < 0) {
+    const currentZoom = getZoomSelector(state);
+    const zoomIntensity = 1;
+    const zoom = (Math.round(100 * Math.abs(delta / 120)) / 100);
+    console.log('Zoom Zoom', zoom);
+    if (delta > 0) {
       dispatch(zoomIn(zoom, x, y));
     } else {
       dispatch(zoomOut(zoom, x, y));
