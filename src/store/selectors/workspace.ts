@@ -40,12 +40,7 @@ export const canUndoSelector = ({ past }: EnhancedState<GenericState>) => past.l
 
 export const canRedoSelector = ({ future }: EnhancedState<GenericState>) => future.length > 0;
 
-export const activeToolsSelector = (state: StoreState) => state['cephalo.workspace.canvas.activeTools'];
-
-export const getActiveEditorTool = createSelector(
-  activeToolsSelector,
-  (ids) => createCompositeTool(...ids),
-);
+export const activeToolsSelector = (state: StoreState) => state[StoreKeys.activeTools];
 
 export const getZoomSelector = (state: StoreState) => state[StoreKeys.zoomValue];
 

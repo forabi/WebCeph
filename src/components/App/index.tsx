@@ -10,12 +10,26 @@ import noop from 'lodash/noop';
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
 import partial from 'lodash/partial';
+import filter from 'lodash/filter';
+import { Tools } from '../../utils/constants';
 
 import CephaloEditor from '../CephaloEditor';
 import CompatibilityChecker from '../CompatibilityChecker';
 import AnalysisResultsViewer from '../AnalysisResultsViewer';
 
-import { createCompositeTool, Zoom, AddPoint } from '../../actions/tools';
+import { createCompositeTool, Zoom, Eraser, AddPoint } from '../../actions/tools';
+
+const toolsById: { [id: string]: EditorToolCreator } = {
+  [Tools.ERASER]: Eraser,
+  [Tools.ADD_POINT]: AddPoint,
+  [Tools.ZOOM]: Zoom,
+}
+
+const toolsByPriority = [
+  Tools.ERASER,
+  Tools.ADD_POINT,
+  Tools.ZOOM
+];
 
 import {
   flipImageX,
@@ -46,7 +60,7 @@ import {
   getComponentsForSymbolSelector,
   canRedoSelector,
   canUndoSelector,
-  getActiveEditorTool,
+  activeToolsSelector,
   getZoomSelector,
   getCanvasZoomOffsetSelector,
 } from '../../store/selectors/workspace';
@@ -98,7 +112,6 @@ interface StateProps {
   error?: { message: string };
   analysisSteps: CephaloLandmark[];
   getStepState(step: Step): StepState;
-  onCanvasClicked: (dispatch: Function) => (x: number, y: number) => void;
   onFileDropped(dispatch: Function): (file: File) => void;
   getStepValue(step: Step): number | undefined;
   areAnalysisResultsShown: boolean;
@@ -192,7 +205,11 @@ export default connect(
   // mapStateToProps
   (enhancedState: EnhancedState<StoreState>) => {
     const { present: state } = enhancedState;
-    const activeTool = partial(createCompositeTool, undefined, [AddPoint, Zoom], state);
+    const activeTools = map(filter(
+      toolsByPriority,
+      (toolId: string) => activeToolsSelector(state)[toolId] === true
+    ), (id: string) => toolsById[id]);
+    const activeTool = partial(createCompositeTool, activeTools, state);
     const { x: canvasZoomX, y: canvasZoomY } = getCanvasZoomOffsetSelector(state);
     return {
       shouldCheckBrowserCompatiblity: !state['env.compatiblity.isIgnored'],

@@ -3,11 +3,18 @@ export enum ErrorCode {
   UNKNOWN,
 }
 
+export const Tools = {
+  ADD_POINT: 'ADD_POINT',
+  ZOOM: 'ZOOM',
+  ERASER: 'ERASER',
+}
+
 export const StoreKeys = {
   manualLandmarks: 'cephalo.workspace.manualLandmarks',
   cursorStack: 'cephalo.workspace.canvas.cursorStack',
   zoomValue: 'cephalo.workspace.canvas.zoom.value',
   zoomOffset: 'cephalo.workspace.canvas.zoom.offset',
+  activeTools: 'cephalo.workspace.canvas.activeTools',
 }
 
 /**

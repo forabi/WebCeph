@@ -16,8 +16,6 @@ export const Eraser: EditorToolCreator = (
 ) => {
   const isLandmarkRemovable = isLandmarkRemovableSelector(state);
   return {
-    id: 'eraser',
-
     onLandmarkClick(symbol) {
       if (isLandmarkRemovable(symbol)) {
         dispatch(removeManualLandmark(symbol));
@@ -56,7 +54,6 @@ export const AddPoint: EditorToolCreator = (
   state: GenericState,
   dispatch: DispatchFunction,
 ) => ({
-  id: 'add-point',
   onCanvasMouseEnter() {
     dispatch(setCursor(Cursor.ADD_LANDMARK));
   },
@@ -85,7 +82,6 @@ export const Zoom: EditorToolCreator = (
   state: GenericState,
   dispatch: DispatchFunction,
 ) => ({
-  id: 'zoom-in-out',
   onCanvasMouseEnter() {
     dispatch(setCursor(Cursor.ZOOM));
   },
@@ -117,13 +113,12 @@ import map from 'lodash/map';
 import find from 'lodash/find';
 
 export function createCompositeTool(
-  id: string = 'composite-tool',
   toolCreators: EditorToolCreator[],
   state: GenericState,
   dispatch: DispatchFunction,
 ): EditorTool {
   const tools = map(toolCreators, (create: EditorToolCreator) => create(state, dispatch));
-  const compositeTool: EditorTool = { id };
+  const compositeTool: EditorTool = { };
   map([
     'onCanvasLeftClick',
     'onCanvasRightClick',

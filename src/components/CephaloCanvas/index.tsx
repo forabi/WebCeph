@@ -126,8 +126,8 @@ interface CephaloCanvasProps {
 }
 
 function translate(x, y, scale, zoomX, zoomY, width, height) {
-  const originX = x - x/scale;
-  const originY = y - y/scale;
+  const originX = 0; //x - x/scale;
+  const originY = 0; //y - y/scale;
   return {
     x: (x / scale) - originX,
     y: (y / scale) - originY,
@@ -188,7 +188,7 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
   }
 
   private handleMouseWheel = (e: React.WheelEvent) => {
-    __DEBUG__ && console.log('Mouse wheel');
+    // __DEBUG__ && console.log('Mouse wheel');
     if (typeof this.props.onMouseWheel === 'function') {
       const { x, y } = this.getRelativeMousePosition(e);
       this.props.onMouseWheel(x, y, e.nativeEvent.wheelDelta);
@@ -196,7 +196,7 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
   }
 
   private handleClick = (e: React.MouseEvent) => {
-    __DEBUG__ && console.log('Mouse down', e.button);
+    // __DEBUG__ && console.log('Mouse down', e.button);
     if (this.props.onLeftClick !== undefined || this.props.onRightClick !== undefined) {
       const { x, y } = this.translateCoordinates(this.getRelativeMousePosition(e));
       const which = e.button;
@@ -215,21 +215,21 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
   };
 
   private handleLandmarkMouseEnter = (symbol: string) => (e: React.MouseEvent) => {
-    __DEBUG__ && console.log('Landmark mouse enter', e);
+    // __DEBUG__ && console.log('Landmark mouse enter', e);
     if (typeof this.props.onLandmarkMouseEnter === 'function') {
       this.props.onLandmarkMouseEnter(symbol);
     }
   };
 
   private handleLandmarkMouseLeave = (symbol: string) => (e: React.MouseEvent) => {
-    __DEBUG__ && console.log('Landmark mouse leave', e);
+    // __DEBUG__ && console.log('Landmark mouse leave', e);
     if (typeof this.props.onLandmarkMouseLeave === 'function') {
       this.props.onLandmarkMouseLeave(symbol);
     }
   };
 
   private handleLandmarkClick = (symbol: string) => (e: React.MouseEvent) => {
-    __DEBUG__ && console.log('Landmark mouse click', e);
+    // __DEBUG__ && console.log('Landmark mouse click', e);
     if (typeof this.props.onLandmarkClick === 'function') {
       this.props.onLandmarkClick(symbol, e);
     }
@@ -295,6 +295,9 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
                     props = { fillOpacity: 0.5, zIndex: 0 };
                   }
                 }
+                // const scale = this.props.zoom / 100;
+                // const translateX = scale / 100; 
+                // const transform = `scale(${scale}) translate(${translateX}, ${translateY})`; 
                 return <Landmark
                   key={symbol}
                   onMouseEnter={this.handleLandmarkMouseEnter(symbol)}

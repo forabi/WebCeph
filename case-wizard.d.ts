@@ -179,6 +179,7 @@ declare namespace StoreEntries {
         [symbol: string]: boolean;
       }
       type cursorStack = string[];
+      type activeTools = { [toolId: string]: true };
       type zoom = number;
       type zoomOffset = { x: number, y: number };
     }
@@ -199,6 +200,8 @@ declare namespace Payloads {
   type removeCursors = string[];
   type zoomIn = { zoom: number, x: number, y: number };
   type zoomOut = zoomIn;
+  type setActiveTool = string;
+  type removeActiveTool = string;
 }
 
 type GenericAction = { type: string, payload: any };
@@ -242,11 +245,6 @@ interface StoreState {
 
 /* Tools */
 interface EditorTool {
-  /**
-   * Unique tool identifier
-   */
-  id: string;
-
   /**
    * Triggered when mouse enters the canvas.
    * Useful for setting the mouse cursor. */
