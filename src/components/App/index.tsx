@@ -53,7 +53,6 @@ import {
   isAnalysisActiveSelector,
   getAnalysisResultsSelector,
   getAnyStepStateSelector,
-  onCanvasClickedSelector,
   onFileDroppedSelector,
   getAllLandmarksSelector,
   getLandmarkValueSelector,

@@ -30,8 +30,6 @@ import {
   areEqualSteps, areEqualSymbols,
 } from '../../analyses/helpers';
 
-import { createCompositeTool } from '../../actions/tools';
-
 import { manualLandmarksSelector } from '../reducers/workspace/manualLandmarks';
 
 export { manualLandmarksSelector };
@@ -407,24 +405,7 @@ export const getAnyStepStateSelector = createSelector(
 
 import {
   loadImageFile,
-  addManualLandmark,
 } from '../../actions/workspace';
-
-export const onCanvasClickedSelector = createSelector(
-  nextManualLandmarkSelector,
-  expectedLandmark => (dispatch: Function) => {
-    return ((x, y) => {
-      if (expectedLandmark) {
-        __DEBUG__ && console.info('Expected next manual landmark:', expectedLandmark.symbol);
-        dispatch(
-          addManualLandmark(expectedLandmark.symbol, { x, y })
-        );
-      } else {
-        __DEBUG__ && console.warn('Could not find expected manual landmark');
-      }
-    }) as (x: number, y: number) => void;
-  },
-);
 
 const canvasHeightSelector = (state: StoreState) => state['cephalo.workspace.canvas.height'];
 const canvasWidthSelector = (state: StoreState) => state['cephalo.workspace.canvas.width'];
