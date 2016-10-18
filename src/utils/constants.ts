@@ -16,6 +16,11 @@ export const StoreKeys = {
   zoomValue: 'cephalo.workspace.canvas.zoom.value',
   zoomOffset: 'cephalo.workspace.canvas.zoom.offset',
   activeTool: 'cephalo.workspace.canvas.activeTool',
+  canvasHeight: 'cephalo.workspace.canvas.height',
+  canvasWidth: 'cephalo.workspace.canvas.width',
+  imageHeight: 'cephalo.workspace.image.height',
+  imageWidth: 'cephalo.workspace.image.width',
+  imageData: 'cephalo.workspace.image.data',
 }
 
 /**

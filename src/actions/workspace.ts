@@ -62,6 +62,10 @@ export const setContrast: (value: number) => any = createAction(Event.SET_IMAGE_
 export const invertImage: () => any = createAction(Event.INVERT_IMAGE_REQUESTED);
 export const resetWorkspace: () => any = createAction(Event.RESET_WORKSPACE_REQUESTED);
 export const ignoreWorkspaceError: () => any = createAction(Event.IGNORE_WORKSPACE_ERROR_REQUESTED);
+export const resizeCanvas: (width: number, height: number) => GenericAction = createAction(
+  Event.CANVAS_RESIZED,
+  (width: number, height: number) => ({ width, height }),
+);
 
 /**
  * Ignores the result of automatic detection of whether the image is a cephalometric radiograph

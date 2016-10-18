@@ -172,6 +172,8 @@ declare namespace StoreEntries {
 
   namespace workspace {
     namespace canvas {
+      type width = number;
+      type height = number;
       interface manualLandmarks {
         [symbol: string]: GeometricalObject;
       }
@@ -182,6 +184,11 @@ declare namespace StoreEntries {
       type activeTool = string | null;
       type zoom = number;
       type zoomOffset = { x: number, y: number };
+    }
+    namespace image {
+      type data = string | null;
+      type width = number | null;
+      type height = number | null;
     }
   }
 }
@@ -204,6 +211,10 @@ declare namespace Payloads {
   type disableActiveTool = setActiveTool;
   type enableTools = setActiveTool;
   type removeActiveTool = string;
+  type canvasResized = { width: number, height: number };
+  type imageLoadSucceeded = { data: string, height: number, width: number };
+  type imageLoadFailed = { error: { message: string } };
+  type imageLoadRequested = any;
 }
 
 type GenericAction = { type: string, payload: any };

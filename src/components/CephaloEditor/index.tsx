@@ -22,7 +22,9 @@ import cx from 'classnames';
 import AnalysisStepper from '../AnalysisStepper';
 import CephaloCanvas from '../CephaloCanvas';
 import noop from 'lodash/noop';
+import throttle from 'lodash/throttle';
 import { Tools } from '../../utils/constants';
+import { resizeCanvas } from '../../actions/workspace';
 
 const classes = require('./style.scss');
 const DropzonePlaceholder: (props: any) => JSX.Element = require(
@@ -92,8 +94,30 @@ const defaultState: CephaloEditorState = {
 };
 
 class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEditorState> {
-  refs: { dropzone: Dropzone };
+  refs: {
+    canvasContainer: React.ReactInstance,
+    dropzone: React.ReactInstance & { open: () => void; }
+  };
   state = defaultState;
+
+  ro: ResizeObserver;
+
+  handleResize = throttle((entries: ResizeObserverEntry[]) => {
+    for (let entry of entries) {
+      this.props.dispatch(resizeCanvas(entry.contentRect.width, entry.contentRect.height));
+    }
+  }, 120);
+
+  componentDidMount() {
+    this.ro = new ResizeObserver(this.handleResize);
+
+    this.ro.observe(findDOMNode(this.refs.canvasContainer));
+  };
+
+  componentWillUnmount() {
+    this.handleResize.cancel();
+    this.ro.unobserve(findDOMNode(this.refs.canvasContainer));
+  }
 
   handleDrop = (files: File[]) => {
     this.props.onFileDropped(this.props.dispatch)(files[0]);
@@ -143,7 +167,7 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
     const { canUndo, canRedo, isAnalysisComplete, isAnalysisActive } = this.props;
     return (
       <div className={cx(classes.root, 'row', this.props.className)}>
-        <div className={cx(classes.canvas_container, 'col-xs-12', 'col-sm-8')}>
+        <div ref="canvasContainer" className={cx(classes.canvas_container, 'col-xs-12', 'col-sm-8')}>
           {hasImage ? (
             <div>
               <CephaloCanvas

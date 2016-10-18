@@ -13,6 +13,7 @@ TODO
     * [ ] Integration tests
     * [ ] Jest?
   * [ ] CI
+* [ ] Fix setting points and landmarks relative to current canvas size
 * [ ] Namespaces
 * [ ] Typings for reducers
 * [ ] Selectors with corresponding reducers in one file

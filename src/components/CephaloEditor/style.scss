@@ -26,8 +26,9 @@
 }
 
 .canvas_container {
-  height: 90%;
-  max-height: 90%;
+  height: 90vh;
+  max-height: 90vh;
+  overflow: scroll;
   text-align: center;
   display: flex;
   justify-content: center;

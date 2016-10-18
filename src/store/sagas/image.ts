@@ -1,7 +1,7 @@
 import uniqueId from 'lodash/uniqueId';
 import { Event } from '../../utils/constants';
 import { takeLatest, eventChannel, END, Channel } from 'redux-saga';
-import { put, take, fork, call, Effect } from 'redux-saga/effects';
+import { put, take, cps, fork, call, Effect } from 'redux-saga/effects';
 import { ImageWorkerAction } from '../../utils/constants';
 import { ImageWorkerInstance, ImageWorkerEvent, ImageWorkerResponse } from '../../utils/image-worker.d';
 
@@ -30,7 +30,7 @@ function processImageInWorker(file: File, actions: any[]) {
   });
 }
 
-function* loadImage({ payload }: { payload: { file: File, height: number, width: number } }): IterableIterator<Effect> {
+function* loadImage({ payload }: { payload: { file: File } }): IterableIterator<Effect> {
   const { file } = payload;
   const workerId = uniqueId('worker_');
   yield put({ type: Event.WORKER_CREATED, payload: { workerId } });
@@ -51,7 +51,22 @@ function* loadImage({ payload }: { payload: { file: File, height: number, width:
         console.info('Got successful worker response', data);
         const { actionId, payload } = data.result;
         if (actionId === 0) {
-          yield put({ type: Event.LOAD_IMAGE_SUCCEEDED, payload: payload.url });
+          const img = new Image();
+          img.src = payload.url;
+          const { height, width } = yield cps((cb) => {
+            img.onload = () => {
+              const { height, width } = img;
+              cb(null, { height, width });
+            }
+          });
+          yield put({
+            type: Event.LOAD_IMAGE_SUCCEEDED,
+            payload: {
+              data: payload.url,
+              height,
+              width,
+            } as Payloads.imageLoadSucceeded,
+          });
         }
       }
     }

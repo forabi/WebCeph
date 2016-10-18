@@ -13,24 +13,12 @@ const newReducer = reduce([
 ], assign, { });
 
 const oldReducers = {
-  'cephalo.workspace.image.data': handleActions<string | null, any>({
-    [Event.LOAD_IMAGE_REQUESTED]: () => null,
-    [Event.LOAD_IMAGE_SUCCEEDED]: (_, { payload }) => payload,
-    [Event.LOAD_IMAGE_FAILED]: () => null,
-    [Event.RESET_WORKSPACE_REQUESTED]: () => null,
-  }, null),
   'cephalo.workspace.error': handleActions<{ message: string } | null, any>({
     [Event.IGNORE_WORKSPACE_ERROR_REQUESTED]: () => null,
     [Event.LOAD_IMAGE_FAILED]: (__, { payload }) => payload,
     [Event.RESET_WORKSPACE_REQUESTED]: () => null,
     [Event.LOAD_IMAGE_REQUESTED]: () => null,
   }, null),
-  'cephalo.workspace.canvas.height': handleActions<number, any>({
-    [Event.CANVAS_RESIZED]: (_, { payload }) => payload.height,
-  }, 792),
-  'cephalo.workspace.canvas.width': handleActions<number, any>({
-    [Event.CANVAS_RESIZED]: (_, { payload }) => payload.width,
-  }, 960),
   'cephalo.workspace.image.isCephalo': handleActions<boolean, any>({
     [Event.SET_IS_CEPHALO_REQUESTED]: (_, { payload }) => payload.isCephalo,
     [Event.RESET_WORKSPACE_REQUESTED]: () => true,
