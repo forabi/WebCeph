@@ -14,6 +14,11 @@ TODO
     * [ ] Jest?
   * [ ] CI
 * [ ] Fix setting points and landmarks relative to current canvas size
+* [ ] Performance
+  * [ ] Service worker
+  * [ ] HTTP/2
+  * [ ] Bundling?
+  * [ ] Investigate handling some redux action using a rAF scheduler?
 * [ ] Namespaces
 * [ ] Typings for reducers
 * [ ] Selectors with corresponding reducers in one file
@@ -40,6 +45,8 @@ TODO
   * [ ] Later: freeform drawing tool?
   * [ ] Change cursor accordingly
     * [ ] Use SVG for cursor?
+* [ ] UX
+  * [ ] Scroll step into view
 * [x] Highlight geometrical object on step hover
 * [ ] Highlight step on object hover
 * [ ] Remove step, edit step
