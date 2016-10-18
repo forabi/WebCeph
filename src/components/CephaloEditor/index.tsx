@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as Dropzone from 'react-dropzone';
+import { findDOMNode } from 'react-dom'; 
 import assign from 'lodash/assign';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -31,7 +32,8 @@ const DropzonePlaceholder: (props: any) => JSX.Element = require(
   'svg-react?name=DropzonePlaceholder!svgo?useConfig=svgoConfig!./assets/placeholder.svg'
 );
 
-interface CephaloEditorProps {
+
+export interface CephaloEditorProps {
   dispatch: Function;
   className: string;
   isLoading: boolean;
@@ -52,6 +54,13 @@ interface CephaloEditorProps {
   canvasWidth: number;
   isAnalysisActive: boolean;
   isAnalysisComplete: boolean;
+  analysisSteps: Step[];
+  highlightModeOnCanvas: boolean;
+  highlightedLandmarks: { [symbol: string]: boolean };
+  activeToolId: string | null;
+  canRedo: boolean;
+  canUndo: boolean;
+  activeCursor: string;
   onFlipXClicked(e?: React.MouseEvent<any>): void;
   onFileDropped(dispatch: Function): (file: File) => void;
   onBrightnessChanged(value: number): void;
@@ -69,19 +78,13 @@ interface CephaloEditorProps {
   onLandmarkMouseEnter(symbol: string): void;
   onLandmarkMouseLeave(symbol: string): void;
   onLandmarkClick(symbol: string): void;
-  analysisSteps: Step[];
   getStepState(step: Step): StepState;
   getStepValue(step: Step): number | undefined;
-  highlightModeOnCanvas: boolean;
-  highlightedLandmarks: { [symbol: string]: boolean };
   onStepMouseOver(symbol: string): React.EventHandler<React.MouseEvent<any>>;
   onStepMouseOut(symbol: string): React.EventHandler<React.MouseEvent<any>>;
   performUndo(): any;
   performRedo(): any;
   setActiveTool(symbol: string): () => void;
-  activeToolId: string | null;
-  canRedo: boolean;
-  canUndo: boolean;
 }
 
 interface CephaloEditorState {
@@ -187,6 +190,7 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
                 onMouseWheel={this.props.onCanvasMouseWheel}
                 onMouseEnter={this.props.onCanvasMouseEnter}
                 onMouseLeave={this.props.onCanvasMouseLeave}
+                cursor={this.props.activeCursor}
                 onLandmarkClick={this.props.onLandmarkClick}
                 onLandmarkMouseEnter={this.props.onLandmarkMouseEnter}
                 onLandmarkMouseLeave={this.props.onLandmarkMouseLeave}

@@ -12,7 +12,7 @@ export function isGeometricalPoint(object: any): object is GeometricalPoint {
   return has(object, 'x') && has(object, 'y');
 }
 
-export function isGeometricalLine(object: any): object is GeometricalVector {
+export function isGeometricalVector(object: any): object is GeometricalVector {
   return has(object, 'x2') && has(object, 'y1') && has(object, 'x2') && has(object, 'y2');
 }
 

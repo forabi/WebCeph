@@ -31,11 +31,11 @@ export const showTemporarilyHiddenLandmark: (symbol: string) => any = createActi
   Event.SHOW_TEMORARILY_HIDDEN_LANDMARK_REQUESTED,
 );
 
-export const setCursor: (cursor: Cursor) => any = createAction(
+export const setCursor: (cursor: string) => any = createAction(
   Event.SET_MOUSE_CURSOR_REQUESTED,
 );
 
-export const removeCursors: (cursors: Cursor[]) => any = createAction(
+export const removeCursors: (cursors: string[]) => any = createAction(
   Event.REMOVE_MOUSE_CURSORS_REQUESTED,
 );
 

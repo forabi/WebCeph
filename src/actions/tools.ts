@@ -52,8 +52,9 @@ export const Eraser: EditorToolCreator = (
       onLandmarkMouseEnter(symbol) {
         if (isLandmarkRemovable(symbol)) {
           dispatch(setCursor(Cursor.REMOVE_LANDMARK));
+        } else {
+          dispatch(setCursor(Cursor.REMOVE_LANDMARK_DISABLED));
         }
-        dispatch(setCursor(Cursor.REMOVE_LANDMARK_DISABLED));
       },
 
       onLandmarkMouseLeave(_) {

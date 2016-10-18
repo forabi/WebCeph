@@ -57,3 +57,7 @@ export default {
 export const cursorStackSelector = (state: GenericState) => {
   return state[KEY_CURSOR_STACK] as State;
 };
+
+export const getActiveCursor = (state: GenericState) => {
+  return state[KEY_CURSOR_STACK][0] as string | undefined;
+}

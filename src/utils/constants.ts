@@ -110,14 +110,47 @@ export enum ImageWorkerAction {
 }
 
 
-export enum Cursor {
-  ADD_LANDMARK,
-  REMOVE_LANDMARK,
-  REMOVE_LANDMARK_NO_TARGET,
-  REMOVE_LANDMARK_DISABLED,
-  SHOW_HELP,
-  MOVE_LANDMARK,
-  ZOOM,
-  ZOOM_IN,
-  ZOOM_OUT,
-}
+export const Cursor = {
+  ADD_LANDMARK: 'ADD_LANDMARK',
+  REMOVE_LANDMARK: 'REMOVE_LANDMARK',
+  REMOVE_LANDMARK_NO_TARGET: 'REMOVE_LANDMARK_NO_TARGET',
+  REMOVE_LANDMARK_DISABLED: 'REMOVE_LANDMARK_DISABLED',
+  SHOW_HELP: 'SHOW_HELP',
+  MOVE_LANDMARK: 'MOVE_LANDMARK',
+  MOVING_LANDMARK: 'MOVING_LANDMARK',
+  ZOOM: 'ZOOM',
+  ZOOM_IN: 'ZOOM_IN',
+  ZOOM_OUT: 'ZOOM_OUT',
+  EXPLAIN: 'EXPLAIN',
+};
+
+const cursorToCSSMap: { [id: string]: (null | string)[] } = {
+  [Cursor.ADD_LANDMARK]: [null, 'cell', 'crosshair'],
+  [Cursor.REMOVE_LANDMARK]: [null, 'cell', 'crosshair'],
+  [Cursor.REMOVE_LANDMARK_NO_TARGET]: [null, 'not-allowed'],
+  [Cursor.REMOVE_LANDMARK_DISABLED]: [null, 'not-allowed', 'no-drop'],
+  [Cursor.SHOW_HELP]: [null, ],
+  [Cursor.MOVE_LANDMARK]: [null, 'move'],
+  [Cursor.MOVING_LANDMARK]: [null, 'grabbing'],
+  [Cursor.ZOOM]: [null, 'zoom-in'],
+  [Cursor.ZOOM_IN]: [null, 'zoom-in'],
+  [Cursor.ZOOM_OUT]: [null, 'zoom-out'],
+  [Cursor.EXPLAIN]: [null, 'help'],
+};
+
+import memoize from 'lodash/memoize';
+
+export const mapCursor = memoize((cursor: string | undefined): string => {
+  let value: string = '';
+  if (cursor !== undefined) {
+    const customCursor = cursorToCSSMap[cursor][0];
+    if (customCursor !== null) {
+      const url = require(`url?$./cusrors/{customCursor}.svg`);
+      value = `url(${url}), `;
+    } else {
+      value = cursorToCSSMap[cursor][1] || 'auto';
+    }
+    return value;
+  }
+  return 'auto';
+});

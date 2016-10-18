@@ -10,7 +10,6 @@ import noop from 'lodash/noop';
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
 import partial from 'lodash/partial';
-import filter from 'lodash/filter';
 import { Tools } from '../../utils/constants';
 
 import CephaloEditor from '../CephaloEditor';
@@ -74,6 +73,10 @@ import {
   getHighlightedSteps,
 } from '../../store/reducers/workspace/highlightedSteps';
 
+import {
+  getActiveCursor,
+} from '../../store/reducers/workspace/cursorStack';
+
 import { checkBrowserCompatibility } from '../../actions/initialization';
 
 const classes = require('./style.scss');
@@ -105,10 +108,6 @@ interface StateProps {
   isAnalysisComplete: boolean;
   landmarks: { [id: string]: GeometricalObject } | { };
   error?: { message: string };
-  analysisSteps: CephaloLandmark[];
-  getStepState(step: Step): StepState;
-  onFileDropped(dispatch: Function): (file: File) => void;
-  getStepValue(step: Step): number | undefined;
   areAnalysisResultsShown: boolean;
   analysisResults: ViewableAnalysisResult[];
   highlightedLandmarks: { [symbol: string]: boolean };
@@ -120,10 +119,15 @@ interface StateProps {
   canvasZoomY: number;
   activeTool: (dispatch: Function) => EditorTool;
   activeToolId: string | string;
+  analysisSteps: CephaloLandmark[];
+  activeCursor: string | undefined;
+  getStepState(step: Step): StepState;
+  onFileDropped(dispatch: Function): (file: File) => void;
+  getStepValue(step: Step): number | undefined;
 }
 
 interface DispatchProps {
-  dispatch: Function;
+  dispatch(action: GenericAction): any;
   onFlipXClicked(e: React.MouseEvent): void;
   onInvertClicked(e: React.MouseEvent): void;
   onBrightnessChanged(value: number): void;
@@ -195,7 +199,7 @@ class App extends React.PureComponent<AppProps, {}> {
       </MuiThemeProvider>
     );
   };
-}
+};
 
 export default connect(
   // mapStateToProps
@@ -242,6 +246,7 @@ export default connect(
       canvasZoomY,
       activeTool,
       activeToolId,
+      activeCursor: getActiveCursor(state),
     } as StateProps;
   },
 

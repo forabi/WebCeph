@@ -2,9 +2,9 @@ import * as React from 'react';
 import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
 import { findDOMNode } from 'react-dom'; 
-import { isGeometricalPoint, isGeometricalLine } from '../../utils/math';
+import { isGeometricalPoint, isGeometricalVector } from '../../utils/math';
 import { pure } from 'recompose';
-// declare var window: Window & { ResizeObserver: ResizeObserver };
+import { mapCursor } from '../../utils/constants';
 
 const InvertFilter = pure(({ id }: { id: string }) => (
   <filter id={id}>
@@ -85,7 +85,7 @@ const Landmark = (_props: LandmarkProps) => {
         {...props}
       />
     );
-  } else if (isGeometricalLine(value)) {
+  } else if (isGeometricalVector(value)) {
     return (
       <line
         {...value}
@@ -97,7 +97,7 @@ const Landmark = (_props: LandmarkProps) => {
   }
 };
 
-interface CephaloCanvasProps {
+export interface CephaloCanvasProps {
   className?: string;
   src: string;
   brightness?: number;
@@ -110,6 +110,7 @@ interface CephaloCanvasProps {
   zoom: number;
   zoomX: number;
   zoomY: number;
+  cursor: string | undefined;
   landmarks: { [id: string]: GeometricalObject } | { };
   onLeftClick?(x: number, y: number): void;
   onResized?(e: ResizeObserverEntry): void;
@@ -245,7 +246,7 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
       this.props.zoomX, this.props.zoomY,
       this.props.width, this.props.height
     );
-  }
+  };
 
   render() {
     const {
@@ -255,6 +256,7 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
       width, height,
       contrast, brightness,
       highlightedLandmarks: highlighted,
+      cursor,
     } = this.props;
     return (
       <svg
@@ -266,6 +268,7 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
         onContextMenu={this.handleContextMenu}
         onMouseEnter={this.props.onMouseEnter}
         onMouseLeave={this.props.onMouseLeave}
+        style={{ cursor: mapCursor(cursor) }}
       >
         <defs>
           <BrightnessFilter id="brightness" value={brightness || 50} />
@@ -310,7 +313,7 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
                   {...props}
                 />;
               }
-            ), (i: JSX.Element) => i.props.zIndex)
+            ), (i: JSX.Element) => i.props.zIndex || isGeometricalPoint(i.value))
           }
         </g>
       </svg>

@@ -217,7 +217,7 @@ declare namespace Payloads {
   type imageLoadRequested = any;
 }
 
-type GenericAction = { type: string, payload: any };
+type GenericAction = { type: string, payload?: any };
 type DispatchFunction = (GenericAction) => any;
 
 interface EnhancedState<T> {
