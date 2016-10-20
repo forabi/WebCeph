@@ -4,7 +4,7 @@
   "globalDependencies": {
     "es2015": "registry:env/es2015#1.0.0+20160526151700",
     "expect": "registry:dt/expect#1.13.4+20160316155526",
-    "node": "registry:env/node#6.0.0+20160813135048",
-    "react": "registry:dt/react#0.14.0+20160829191040"
+    "react": "registry:dt/react#0.14.0+20160829191040",
+    "webpack-env": "registry:dt/webpack-env#1.12.2+20160316155526"
   }
 }
