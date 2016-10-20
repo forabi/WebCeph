@@ -136,14 +136,6 @@ const config = {
         use: [...globalCSSLoaders, ...sassLoaders],
       },
       {
-        test: /\.(jpg|png)$/,
-        use: 'file',
-      },
-      {
-        test: /\.json$/,
-        use: 'json',
-      },
-      {
         test: /\.html$/,
         use: 'html',
       },

@@ -140,7 +140,7 @@ const cursorToCSSMap: { [id: string]: (null | string)[] } = {
 
 import memoize from 'lodash/memoize';
 
-const requireCursor = require.context('./cursors', false, /.png$/i);
+const requireCursor = require.context('file!./cursors', false, /.png$/i);
 
 export const mapCursor = memoize((cursor: string | undefined): string => {
   let value: string = '';
