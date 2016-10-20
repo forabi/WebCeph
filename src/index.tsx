@@ -3,6 +3,11 @@ import * as ReactDOM from 'react-dom';
 import ReduxApp from './ReduxApp';
 
 declare var System: any;
+declare var window: Window & { ResizeObserver?: ResizeObserver };
+
+if (window.ResizeObserver === undefined) {
+  window.ResizeObserver = require('resize-observer-polyfill').default;
+}
 
 const rootEl = document.getElementById('container');
 

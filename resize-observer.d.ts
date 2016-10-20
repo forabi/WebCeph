@@ -20,18 +20,18 @@ declare class ResizeObserver {
 declare type ResizeObserverCallback = (entries: ResizeObserverEntry[], observer: ResizeObserver) => void;
 
 declare interface ResizeObserverEntry {
-    readonly target: Element;
-    readonly contentRect: {
-      /** width is content width */
-      width: number;
+  readonly target: Element;
+  readonly contentRect: {
+    /** width is content width */
+    width: number;
 
-      /** height is content height */
-      height: number;
+    /** height is content height */
+    height: number;
 
-      /** top is padding top */
-      top: number;
+    /** top is padding top */
+    top: number;
 
-      /** left is padding left */
-      left: number;
-    };
+    /** left is padding left */
+    left: number;
+  };
 }
