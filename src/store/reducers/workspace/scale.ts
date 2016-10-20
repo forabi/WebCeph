@@ -6,13 +6,13 @@ import { printUnexpectedPayloadWarning } from '../../../utils/debug';
 type ScaleValue = StoreEntries.workspace.canvas.scaleValue;
 type ScaleOrigin = StoreEntries.workspace.canvas.scaleOrigin;
 
-const KEY_SCALE = StoreKeys.zoomValue;
-const KEY_SCALE_ORIGIN = StoreKeys.zoomOffset;
-const defaultScale: ScaleValue = 100;
+const KEY_SCALE = StoreKeys.scaleValue;
+const KEY_SCALE_ORIGIN = StoreKeys.scaleOrigin;
+const defaultScale: ScaleValue = 1;
 const defaultOrigin: ScaleOrigin = null;
 
 const scaleValue = handleAction<ScaleValue, Payloads.setScale>(
-  Event.SET_SCALE,
+  Event.SET_SCALE_REQUESTED,
   (state, { type, payload }) => {
     if (payload === undefined) {
       printUnexpectedPayloadWarning(type, state);
@@ -35,7 +35,7 @@ const sacleValueReducer = wrapWithDefaultState(
 
 const scaleOriginReducer = wrapWithDefaultState(
   handleAction<ScaleOrigin, Payloads.setScale>(
-    Event.SET_SCALE,
+    Event.SET_SCALE_REQUESTED,
     (state, { type, payload }) => {
       if (payload === undefined) {
         printUnexpectedPayloadWarning(type, state);

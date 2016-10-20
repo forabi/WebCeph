@@ -13,8 +13,8 @@ export const Tools = {
 export const StoreKeys = {
   manualLandmarks: 'cephalo.workspace.manualLandmarks',
   cursorStack: 'cephalo.workspace.canvas.cursorStack',
-  zoomValue: 'cephalo.workspace.canvas.zoom.value',
-  zoomOffset: 'cephalo.workspace.canvas.zoom.offset',
+  scaleValue: 'cephalo.workspace.canvas.scale.value',
+  scaleOrigin: 'cephalo.workspace.canvas.scale.origin',
   activeTool: 'cephalo.workspace.canvas.activeTool',
   canvasHeight: 'cephalo.workspace.canvas.height',
   canvasWidth: 'cephalo.workspace.canvas.width',
@@ -64,7 +64,7 @@ export const Event = {
 
   ADD_UNKOWN_MANUAL_LANDMARK_REQUESTED: 'ADD_UNKOWN_MANUAL_LANDMARK_REQUESTED',
 
-  SET_SCALE: 'SET_SCALE',
+  SET_SCALE_REQUESTED: 'SET_SCALE_REQUESTED',
 
   HIDE_LANDMARK_TEMPORARILY_REQUESTED: 'HIDE_LANDMARK_TEMPORARILY_REQUESTED',
   SHOW_TEMORARILY_HIDDEN_LANDMARK_REQUESTED: 'SHOW_TEMORARILY_HIDDEN_LANDMARK_REQUESTED',

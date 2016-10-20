@@ -68,7 +68,7 @@ interface LandmarkProps {
 }
 
 const Landmark = (_props: LandmarkProps) => {
-  const { value, fill, fillOpacity, zIndex, stroke, onClick, onMouseEnter, onMouseLeave } = _props;
+  const { value, fill, fillOpacity, stroke, onClick, onMouseEnter, onMouseLeave } = _props;
   const props = {
     onClick, onMouseEnter, onMouseLeave,
     stroke: stroke || 'black',
@@ -76,7 +76,6 @@ const Landmark = (_props: LandmarkProps) => {
     strokeWidth: 2,
     fillOpacity: fillOpacity || 1,
     strokeOpacity: fillOpacity || 1,
-    style: { zIndex: zIndex },
   };
   if (isGeometricalPoint(value)) {
     return (
@@ -138,16 +137,18 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
   private getRelativeMousePosition = (e: React.MouseEvent<any>) => {
     const element = e.currentTarget;
     const rect = element.getBoundingClientRect();
-    const scaleX = rect.width / this.props.imageWidth;
-    const scaleY = rect.height / this.props.imageHeight;
+    const { imageHeight, imageWidth } = this.props;
+    const scaleX = rect.width / imageWidth;
+    const scaleY = rect.height / imageHeight;
     const scrollTop = document.documentElement.scrollTop;
     const scrollLeft = document.documentElement.scrollLeft;
     const elementLeft = (rect.left) + scrollLeft;  
     const elementTop = (rect.top) + scrollTop;
-    return {
-      x: e.pageX - (elementLeft),
-      y: e.pageY - (elementTop),
-    };
+    const pageX = e.pageX;
+    const pageY = e.pageY;
+    const x = (pageX - elementLeft) / scaleX;
+    const y = (pageY - elementTop)  / scaleY;
+    return { x, y };
   }
 
   private getFilterAttribute = () => {
@@ -171,8 +172,8 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
   };
 
   private getTranslate = () => {
-    const translateX = Math.abs(this.props.canvasWidth - this.props.imageWidth * this.props.scale) / 2;
-    const translateY = Math.abs(this.props.canvasHeight - this.props.imageHeight * this.props.scale) / 2;
+    const translateX = Math.abs(this.props.imageWidth - this.props.imageWidth * this.props.scale) / 2;
+    const translateY = Math.abs(this.props.imageHeight - this.props.imageHeight * this.props.scale) / 2;
     return [translateX, translateY];
   }
 
@@ -229,7 +230,7 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
       cursor,
     } = this.props;
     return (
-      <div style={{ width: canvasWidth, height: canvasHeight }}>
+      <div style={{ width: imageWidth, height: imageHeight }}>
         <svg
           ref="canvas" 
           className={className}
@@ -238,7 +239,7 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
           onContextMenu={this.handleContextMenu}
           onMouseEnter={this.props.onMouseEnter}
           onMouseLeave={this.props.onMouseLeave}
-          style={{ cursor: mapCursor(cursor) }}
+          style={{ cursor: mapCursor(cursor), overflow: 'scroll' }}
         >
           <defs>
             <BrightnessFilter id="brightness" value={brightness || 50} />
@@ -262,12 +263,12 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
                 </g>
               </g>
             </g>
-            <g transform={`translate(${this.getTranslate().join(', ')})`}>
+            <g transform={this.getTransformAttribute()}>
               {
                 sortBy(map(
                   this.props.landmarks,
                   (landmark: GeometricalObject, symbol: string) => {
-                    let props = {};
+                    let props = { };
                     if (highlightMode) {
                       if (highlighted[symbol] === true) {
                         props = { stroke: 'blue', fill: 'blue', zIndex: 1 };

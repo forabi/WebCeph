@@ -40,7 +40,7 @@ export const removeCursors: (cursors: string[]) => any = createAction(
 );
 
 export const setScale: (zoom: number, x?: number, y?: number) => any = createAction(
-  Event.SET_SCALE,
+  Event.SET_SCALE_REQUESTED,
   (scale: number, x: number, y: number) => ({ scale, x, y } as Payloads.setScale),
 );
 
