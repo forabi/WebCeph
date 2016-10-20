@@ -71,7 +71,7 @@ function* loadImage({ payload }: { payload: { file: File } }): IterableIterator<
           });
           const { present: state }: EnhancedState<StoreState> = yield select();
           const { width: canvasWidth, height: canvasHeight } = getCanvasSize(state);
-          const scale = 1 / Math.min(height / canvasHeight, width / canvasWidth);
+          const scale = 1 / Math.max(height / canvasHeight, width / canvasWidth);
           yield put(setScale(scale));
         }
       }

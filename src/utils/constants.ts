@@ -126,7 +126,7 @@ export const Cursor = {
 
 const cursorToCSSMap: { [id: string]: (null | string)[] } = {
   [Cursor.ADD_LANDMARK]: [null, 'cell', 'crosshair'],
-  [Cursor.REMOVE_LANDMARK]: ['edit-clear', 'cell', 'crosshair'],
+  [Cursor.REMOVE_LANDMARK]: ['draw-eraser', 'cell', 'crosshair'],
   [Cursor.REMOVE_LANDMARK_NO_TARGET]: [null, 'not-allowed'],
   [Cursor.REMOVE_LANDMARK_DISABLED]: [null, 'not-allowed', 'no-drop'],
   [Cursor.SHOW_HELP]: [null, ],
@@ -148,7 +148,7 @@ export const mapCursor = memoize((cursor: string | undefined): string => {
     const customCursor = cursorToCSSMap[cursor][0];
     if (customCursor !== null) {
       const url = requireCursor(`./${customCursor}.png`);
-      value = `url(${url}), auto`;
+      value = `url(${url}) 0 22, auto`;
     } else {
       value = cursorToCSSMap[cursor][1] || 'auto';
     }

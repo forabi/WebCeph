@@ -45,7 +45,7 @@ const setWidth = handleActions<
         printUnexpectedPayloadWarning(action.type, state);
         return state;
       }
-      return payload.height;
+      return payload.width;
     },
     [Event.LOAD_IMAGE_REQUESTED]: (_, __) => {
       return null;

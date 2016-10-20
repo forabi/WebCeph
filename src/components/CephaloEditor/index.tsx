@@ -149,12 +149,10 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
   ];
 
   private performUndo = () => {
-    console.log('Undo');
     this.props.performUndo();
   };
 
   private performRedo = () => {
-    console.log('Redo');
     this.props.performRedo();
   };
 
