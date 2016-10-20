@@ -4,3 +4,6 @@
 [submodule "src/layout/flexboxgrid"]
 	path = src/layout/flexboxgrid
 	url = https://github.com/kristoferjoseph/flexboxgrid.git
+[submodule "src/assets/breeze-icons"]
+	path = src/assets/breeze-icons
+	url = https://github.com/KDE/breeze-icons/
