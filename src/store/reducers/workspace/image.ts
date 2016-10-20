@@ -1,5 +1,4 @@
-import { handleAction, handleActions } from 'redux-actions';
-import { wrapWithDefaultState } from '../../helpers';
+import { handleActions } from 'redux-actions';
 import { Event, StoreKeys } from '../../../utils/constants';
 import { printUnexpectedPayloadWarning } from '../../../utils/debug';
 import { createSelector } from 'reselect';

@@ -1,9 +1,11 @@
 import uniqueId from 'lodash/uniqueId';
 import { Event } from '../../utils/constants';
 import { takeLatest, eventChannel, END, Channel } from 'redux-saga';
-import { put, take, cps, fork, call, Effect } from 'redux-saga/effects';
+import { select, put, take, cps, fork, call, Effect } from 'redux-saga/effects';
 import { ImageWorkerAction } from '../../utils/constants';
 import { ImageWorkerInstance, ImageWorkerEvent, ImageWorkerResponse } from '../../utils/image-worker.d';
+import { setScale } from '../../actions/workspace';
+import { getCanvasSize } from '../../store/reducers/workspace/canvasSize';
 
 const ImageWorker = require('worker!../../utils/image-worker');
 
@@ -67,6 +69,10 @@ function* loadImage({ payload }: { payload: { file: File } }): IterableIterator<
               width,
             } as Payloads.imageLoadSucceeded,
           });
+          const { present: state }: EnhancedState<StoreState> = yield select();
+          const { width: canvasWidth, height: canvasHeight } = getCanvasSize(state);
+          const scale = 1 / Math.min(height / canvasHeight, width / canvasWidth);
+          yield put(setScale(scale));
         }
       }
     }

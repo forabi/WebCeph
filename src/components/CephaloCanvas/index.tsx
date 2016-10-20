@@ -105,22 +105,25 @@ export interface CephaloCanvasProps {
   inverted?: boolean;
   flipX?: boolean;
   flipY?: boolean;
-  height: number;
-  width: number;
-  zoom: number;
-  zoomX: number;
-  zoomY: number;
-  cursor: string | undefined;
+  canvasHeight: number;
+  canvasWidth: number;
+  imageHeight: number;
+  imageWidth: number;
+  scale: number;
+  scaleOriginX: number;
+  scaleOriginY: number;
   landmarks: { [id: string]: GeometricalObject } | { };
+  cursor: string | undefined;
+  getCursorForLandmark(symbol: string): string;
   onLeftClick?(x: number, y: number): void;
   onResized?(e: ResizeObserverEntry): void;
   onMouseWheel?(x: number, y: number, delta: number): void;
   onRightClick?(x: number, y: number): void;
   onMouseEnter?(): void;
   onMouseLeave?(): void;
-  onLandmarkMouseEnter(symbol: string): void;
-  onLandmarkMouseLeave(symbol: string): void;
-  onLandmarkClick(symbol: string, e: React.MouseEvent): void;
+  onLandmarkMouseEnter?(symbol: string): void;
+  onLandmarkMouseLeave?(symbol: string): void;
+  onLandmarkClick?(symbol: string, e: React.MouseEvent): void;
   highlightMode: boolean;
   highlightedLandmarks: { [symbol: string]: boolean };
 }
@@ -146,8 +149,8 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
     const rect = element.getBoundingClientRect();
     const scrollTop = document.documentElement.scrollTop;
     const scrollLeft = document.documentElement.scrollLeft;
-    const elementLeft = rect.left + scrollLeft * this.props.zoom;  
-    const elementTop = rect.top + scrollTop * this.props.zoom;
+    const elementLeft = rect.left + scrollLeft * this.props.scale;  
+    const elementTop = rect.top + scrollTop * this.props.scale;
     return {
       x: e.pageX - elementLeft,
       y: e.pageY - elementTop
@@ -164,29 +167,29 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
 
   private getTransformAttribute = () => {
     let t = '';
-    const zoomX = this.props.zoomX;
-    const zoomY = this.props.zoomY;
-    console.log(zoomX, zoomY);
+    // const zoomX = this.props.zoomX;
+    // const zoomY = this.props.zoomY;
+    // console.log(zoomX, zoomY);
     // const zoomTranslateX = originX - (zoomX / zoom - zoomX);
     // const zoomTranslateY = originY - (zoomY / zoom - zoomY);
-    const originX = 0;
-    const originY = 0;
-    const zoom = this.props.zoom / 100;
-    const scale = (zoom >= 0 ? zoom : 1 / Math.abs(zoom));
-    const { height, width } = this.props;
+    // const originX = 0;
+    // const originY = 0;
+    // const zoom = this.props.scale / 100;
+    // const scale = (zoom >= 0 ? zoom : 1 / Math.abs(zoom));
+    // const { height, width } = this.props;
     // console.log({
     //   scale, zoom, zoomX, zoomY, originX, originY,
     //   zoomTranslateX, zoomTranslateY,
     // });
-    t = `scale(${scale}, ${scale}) `;
-    t += `translate(${originX/scale - originX}, ${originY/scale - originY}) `;
-    t += `translate(${(width/scale - width) / 2}, ${(height/scale - height) / 2}) `;
-    t += `translate(${(zoomX/scale - zoomX)}, ${(zoomY/scale - zoomY)}) `;
+    // t = `scale(${scale}, ${scale}) `;
+    // t += `translate(${originX/scale - originX}, ${originY/scale - originY}) `;
+    // t += `translate(${(width/scale - width) / 2}, ${(height/scale - height) / 2}) `;
+    // t += `translate(${(zoomX/scale - zoomX)}, ${(zoomY/scale - zoomY)}) `;
     if (this.props.flipX) {
-      t += ` scale(-1, 1) translate(-${this.props.width}, 0)`;
+      t += ` scale(-1, 1) translate(-${this.props.imageHeight}, 0)`;
     }
     if (this.props.flipY) {
-      t += ` scale(1, -1) translate(0, -${this.props.height})`;
+      t += ` scale(1, -1) translate(0, -${this.props.imageHeight})`;
     }
     return t;
   }
@@ -205,10 +208,8 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
       const { x, y } = this.translateCoordinates(this.getRelativeMousePosition(e));
       const which = e.button;
       if (which === 0 && typeof this.props.onLeftClick === 'function') {
-        // Left mouse click
         this.props.onLeftClick(x, y);
       } else if (which === 2 && typeof this.props.onRightClick === 'function') {
-        // Right mouse click
         this.props.onRightClick(x, y);
       }
     }
@@ -219,21 +220,18 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
   };
 
   private handleLandmarkMouseEnter = (symbol: string) => (e: React.MouseEvent) => {
-    // __DEBUG__ && console.log('Landmark mouse enter', e);
     if (typeof this.props.onLandmarkMouseEnter === 'function') {
       this.props.onLandmarkMouseEnter(symbol);
     }
   };
 
   private handleLandmarkMouseLeave = (symbol: string) => (e: React.MouseEvent) => {
-    // __DEBUG__ && console.log('Landmark mouse leave', e);
     if (typeof this.props.onLandmarkMouseLeave === 'function') {
       this.props.onLandmarkMouseLeave(symbol);
     }
   };
 
   private handleLandmarkClick = (symbol: string) => (e: React.MouseEvent) => {
-    // __DEBUG__ && console.log('Landmark mouse click', e);
     if (typeof this.props.onLandmarkClick === 'function') {
       this.props.onLandmarkClick(symbol, e);
     }
@@ -242,7 +240,7 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
   private translateCoordinates = ({ x, y }: { x: number, y: number }) => {
     return translate(
       x, y,
-      this.props.zoom / 100,
+      this.props.scale / 100,
       this.props.zoomX, this.props.zoomY,
       this.props.width, this.props.height
     );
@@ -253,70 +251,72 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
       highlightMode,
       className,
       src,
-      width, height,
+      canvasWidth, canvasHeight,
+      imageHeight, imageWidth,
       contrast, brightness,
       highlightedLandmarks: highlighted,
       cursor,
     } = this.props;
     return (
-      <svg
-        ref="canvas" 
-        className={className}
-        width={width} height={height}
-        onMouseDown={this.handleClick}
-        onWheel={this.handleMouseWheel}
-        onContextMenu={this.handleContextMenu}
-        onMouseEnter={this.props.onMouseEnter}
-        onMouseLeave={this.props.onMouseLeave}
-        style={{ cursor: mapCursor(cursor) }}
-      >
-        <defs>
-          <BrightnessFilter id="brightness" value={brightness || 50} />
-          <DropShadow id="shadow" />
-          <InvertFilter id="invert" />
-          <ContrastFilter id="contrast" value={contrast || 50} />
-        </defs>
-        <g transform={this.getTransformAttribute()}>
-          <g filter="url(#shadow)">
-            <g filter="url(#brightness)">
-              <g>
-                <image
-                  xlinkHref={src}
-                  x={width * 0.05} y={height * 0.05}
-                  width={width * 0.9} height={height * 0.9}
-                  filter={this.getFilterAttribute()}
-                />
+      <div style={{ width: canvasWidth, height: canvasHeight }}>
+        <svg
+          ref="canvas" 
+          className={className}
+          width={imageWidth} height={imageHeight}
+          viewBox={`0 0 ${imageWidth} ${imageHeight}`}
+          onMouseDown={this.handleClick}
+          onWheel={this.handleMouseWheel}
+          onContextMenu={this.handleContextMenu}
+          onMouseEnter={this.props.onMouseEnter}
+          onMouseLeave={this.props.onMouseLeave}
+          style={{ cursor: mapCursor(cursor) }}
+        >
+          <defs>
+            <BrightnessFilter id="brightness" value={brightness || 50} />
+            <DropShadow id="shadow" />
+            <InvertFilter id="invert" />
+            <ContrastFilter id="contrast" value={contrast || 50} />
+          </defs>
+          <g transform={this.getTransformAttribute()}>
+            <g filter="url(#shadow)">
+              <g filter="url(#brightness)">
+                <g>
+                  <image
+                    xlinkHref={src}
+                    x={0} y={0}
+                    width={imageWidth} height={imageHeight}
+                    filter={this.getFilterAttribute()}
+                  />
+                </g>
               </g>
             </g>
-          </g>
-          {
-            sortBy(map(
-              this.props.landmarks,
-              (landmark: GeometricalObject, symbol: string) => {
-                let props = {};
-                if (highlightMode) {
-                  if (highlighted[symbol] === true) {
-                    props = { stroke: 'blue', fill: 'blue', zIndex: 1 };
-                  } else {
-                    props = { fillOpacity: 0.5, zIndex: 0 };
+            {
+              sortBy(map(
+                this.props.landmarks,
+                (landmark: GeometricalObject, symbol: string) => {
+                  let props = {};
+                  if (highlightMode) {
+                    if (highlighted[symbol] === true) {
+                      props = { stroke: 'blue', fill: 'blue', zIndex: 1 };
+                    } else {
+                      props = { fillOpacity: 0.5, zIndex: 0 };
+                    }
                   }
+                  // @TODO: unscale points?
+                  return <Landmark
+                    key={symbol}
+                    onMouseEnter={this.handleLandmarkMouseEnter(symbol)}
+                    onMouseLeave={this.handleLandmarkMouseLeave(symbol)}
+                    onClick={this.handleLandmarkClick(symbol)}
+                    value={landmark}
+                    {...props}
+                  />;
                 }
-                // const scale = this.props.zoom / 100;
-                // const translateX = scale / 100; 
-                // const transform = `scale(${scale}) translate(${translateX}, ${translateY})`; 
-                return <Landmark
-                  key={symbol}
-                  onMouseEnter={this.handleLandmarkMouseEnter(symbol)}
-                  onMouseLeave={this.handleLandmarkMouseLeave(symbol)}
-                  onClick={this.handleLandmarkClick(symbol)}
-                  value={landmark}
-                  {...props}
-                />;
-              }
-            ), (i: JSX.Element) => i.props.zIndex || isGeometricalPoint(i.value))
-          }
-        </g>
-      </svg>
+              ), (i: JSX.Element) => i.props.zIndex || isGeometricalPoint(i.props.value))
+            }
+          </g>
+        </svg>
+      </div>
     )
   }
 }

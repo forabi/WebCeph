@@ -182,8 +182,10 @@ declare namespace StoreEntries {
       }
       type cursorStack = string[];
       type activeTool = string | null;
-      type zoom = number;
-      type zoomOffset = { x: number, y: number };
+      /** 1 indicates the original image size */
+      type scaleValue = number;
+      /** A null value indicates that the scale origin is 50% 50% */
+      type scaleOrigin = null | { x: number, y: number};
     }
     namespace image {
       type data = string | null;
@@ -205,8 +207,7 @@ declare namespace Payloads {
   type highlightStepsOnCanvas = string[];
   type setCursor = string;
   type removeCursors = string[];
-  type zoomIn = { zoom: number, x: number, y: number };
-  type zoomOut = zoomIn;
+  type setScale = { scale: number, x?: number, y?: number };
   type setActiveTool = string;
   type disableActiveTool = setActiveTool;
   type enableTools = setActiveTool;

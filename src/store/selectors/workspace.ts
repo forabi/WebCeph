@@ -40,10 +40,6 @@ export const canUndoSelector = ({ past }: EnhancedState<GenericState>) => past.l
 
 export const canRedoSelector = ({ future }: EnhancedState<GenericState>) => future.length > 0;
 
-export const getZoomSelector = (state: StoreState) => state[StoreKeys.zoomValue];
-
-export const getCanvasZoomOffsetSelector = (state: StoreState) => state[StoreKeys.zoomOffset];
-
 const activeAnalysisSelector = (state: StoreState) => state['cephalo.workspace.analysis.activeAnalysis'];
 
 const imageDataSelector = (state: StoreState) => state['cephalo.workspace.image.data'];

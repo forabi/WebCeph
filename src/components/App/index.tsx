@@ -54,8 +54,6 @@ import {
   getComponentsForSymbolSelector,
   canRedoSelector,
   canUndoSelector,
-  getZoomSelector,
-  getCanvasZoomOffsetSelector,
   getActiveToolSelector,
 } from '../../store/selectors/workspace';
 
@@ -114,9 +112,6 @@ interface StateProps {
   getComponentsForSymbol: (symbol: string) => CephaloLandmark[];
   canRedo: boolean;
   canUndo: boolean;
-  canvasZoom: number;
-  canvasZoomX: number;
-  canvasZoomY: number;
   activeTool: (dispatch: Function) => EditorTool;
   activeToolId: string | string;
   analysisSteps: CephaloLandmark[];
@@ -207,7 +202,6 @@ export default connect(
     const { present: state } = enhancedState;
     const activeToolId = getActiveToolSelector(state);
     const activeTool = toolsById[activeToolId] === undefined ? null : partial(toolsById[activeToolId], state);
-    const { x: canvasZoomX, y: canvasZoomY } = getCanvasZoomOffsetSelector(state);
     return {
       shouldCheckBrowserCompatiblity: !state['env.compatiblity.isIgnored'],
       isCheckingCompatiblity: state['env.compatiblity.isBeingChecked'],
@@ -241,9 +235,6 @@ export default connect(
       getComponentsForSymbol: getComponentsForSymbolSelector(state),
       canRedo: canRedoSelector(enhancedState),
       canUndo: canUndoSelector(enhancedState),
-      canvasZoom: getZoomSelector(state),
-      canvasZoomX,
-      canvasZoomY,
       activeTool,
       activeToolId,
       activeCursor: getActiveCursor(state),

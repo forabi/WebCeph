@@ -21,7 +21,7 @@ import Divider from 'material-ui/Divider';
 import Checkbox from 'material-ui/Checkbox';
 import cx from 'classnames';
 import AnalysisStepper from '../AnalysisStepper';
-import CephaloCanvas from '../CephaloCanvas';
+import CephaloCanvas from '../CephaloCanvas/connected';
 import noop from 'lodash/noop';
 import throttle from 'lodash/throttle';
 import { Tools } from '../../utils/constants';
@@ -46,12 +46,7 @@ export interface CephaloEditorProps {
   inverted: boolean;
   flipX: boolean;
   flipY: boolean;
-  canvasZoom: number;
-  canvasZoomX: number;
-  canvasZoomY: number;
   error?: { message: string };
-  canvasHeight: number;
-  canvasWidth: number;
   isAnalysisActive: boolean;
   isAnalysisComplete: boolean;
   analysisSteps: Step[];
@@ -113,7 +108,6 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
 
   componentDidMount() {
     this.ro = new ResizeObserver(this.handleResize);
-
     this.ro.observe(findDOMNode(this.refs.canvasContainer));
   };
 
@@ -181,9 +175,6 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
                 inverted={this.props.inverted}
                 flipX={this.props.flipX}
                 flipY={this.props.flipY}
-                zoom={this.props.canvasZoom}
-                height={this.props.canvasHeight}
-                width={this.props.canvasWidth}
                 onResized={this.props.onCanvasResized}
                 onLeftClick={this.props.onCanvasLeftClick}
                 onRightClick={this.props.onCanvasRightClick}
@@ -197,8 +188,6 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
                 landmarks={this.props.landmarks}
                 highlightedLandmarks={this.props.highlightedLandmarks}
                 highlightMode={this.props.highlightModeOnCanvas}
-                zoomX={this.props.canvasZoomX}
-                zoomY={this.props.canvasZoomY}
               />
               <Snackbar
                 open={this.props.isWorkerBusy}

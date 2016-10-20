@@ -39,14 +39,9 @@ export const removeCursors: (cursors: string[]) => any = createAction(
   Event.REMOVE_MOUSE_CURSORS_REQUESTED,
 );
 
-export const zoomIn: (zoom: number, x: number, y: number) => any = createAction(
-  Event.ZOOM_IN_REQUESTED,
-  (zoom: number, x: number, y: number) => ({ zoom, x, y } as Payloads.zoomIn),
-);
-
-export const zoomOut: (zoom: number, x: number, y: number) => any = createAction(
-  Event.ZOOM_IN_REQUESTED,
-  (zoom: number, x: number, y: number) => ({ zoom: -zoom, x, y } as Payloads.zoomIn),
+export const setScale: (zoom: number, x?: number, y?: number) => any = createAction(
+  Event.SET_SCALE,
+  (scale: number, x: number, y: number) => ({ scale, x, y } as Payloads.setScale),
 );
 
 /** Performs steps in the cephalometric analysis that can be automatically evaluated in the current state.

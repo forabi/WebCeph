@@ -5,7 +5,7 @@ import {
   showTemporarilyHiddenLandmark,
   temporarilyHideLandmark,
   setCursor, removeCursors,
-  zoomIn, zoomOut,
+  setScale,
 } from './workspace';
 import assign from 'lodash/assign';
 import { Cursor } from '../utils/constants';
@@ -25,13 +25,7 @@ export const ZoomWithWheel: EditorToolCreator = (
     ]));
   },
   onCanvasMouseWheel(x, y, delta) {
-    const zoom = (Math.round(100 * Math.abs(delta / 120)) / 100);
-    console.log('Zoom Zoom', zoom);
-    if (delta > 0) {
-      dispatch(zoomIn(zoom, x, y));
-    } else {
-      dispatch(zoomOut(zoom, x, y));
-    }
+    // @TODO
   },
 });
 
@@ -86,10 +80,10 @@ export const ZoomWithClick: EditorToolCreator = (
   ZoomWithWheel(state, dispatch),
   {
     onCanvasLeftClick(x, y) {
-      dispatch(zoomIn(10 , x, y));
+      // @TODO
     },
     onCanvasRightClick(x, y) {
-      dispatch(zoomOut(10, x, y));
+      // @TODO
     },
   } as EditorTool,
 ));

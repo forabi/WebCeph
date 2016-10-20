@@ -64,7 +64,7 @@ export const Event = {
 
   ADD_UNKOWN_MANUAL_LANDMARK_REQUESTED: 'ADD_UNKOWN_MANUAL_LANDMARK_REQUESTED',
 
-  ZOOM_IN_REQUESTED: 'ZOOM_IN_REQUESTED',
+  SET_SCALE: 'SET_SCALE',
 
   HIDE_LANDMARK_TEMPORARILY_REQUESTED: 'HIDE_LANDMARK_TEMPORARILY_REQUESTED',
   SHOW_TEMORARILY_HIDDEN_LANDMARK_REQUESTED: 'SHOW_TEMORARILY_HIDDEN_LANDMARK_REQUESTED',
@@ -107,8 +107,7 @@ export enum ImageWorkerAction {
   READ_AS_DATA_URL,
   PERFORM_EDITS,
   IS_CEPHALO,
-}
-
+};
 
 export const Cursor = {
   ADD_LANDMARK: 'ADD_LANDMARK',
@@ -124,9 +123,10 @@ export const Cursor = {
   EXPLAIN: 'EXPLAIN',
 };
 
+
 const cursorToCSSMap: { [id: string]: (null | string)[] } = {
   [Cursor.ADD_LANDMARK]: [null, 'cell', 'crosshair'],
-  [Cursor.REMOVE_LANDMARK]: [null, 'cell', 'crosshair'],
+  [Cursor.REMOVE_LANDMARK]: ['edit-clear', 'cell', 'crosshair'],
   [Cursor.REMOVE_LANDMARK_NO_TARGET]: [null, 'not-allowed'],
   [Cursor.REMOVE_LANDMARK_DISABLED]: [null, 'not-allowed', 'no-drop'],
   [Cursor.SHOW_HELP]: [null, ],
@@ -140,13 +140,15 @@ const cursorToCSSMap: { [id: string]: (null | string)[] } = {
 
 import memoize from 'lodash/memoize';
 
+const requireCursor = require.context('./cursors', false, /.png$/i);
+
 export const mapCursor = memoize((cursor: string | undefined): string => {
   let value: string = '';
   if (cursor !== undefined) {
     const customCursor = cursorToCSSMap[cursor][0];
     if (customCursor !== null) {
-      const url = require(`url?$./cusrors/{customCursor}.svg`);
-      value = `url(${url}), `;
+      const url = requireCursor(`./${customCursor}.png`);
+      value = `url(${url}), auto`;
     } else {
       value = cursorToCSSMap[cursor][1] || 'auto';
     }
