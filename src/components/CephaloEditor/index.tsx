@@ -267,7 +267,7 @@ class CephaloEditor extends React.PureComponent<CephaloEditorProps, CephaloEdito
               onClick={this.props.setActiveTool(Tools.ADD_POINT)}
             />
             <FlatButton
-              disabled={cannotEdit|| this.props.activeToolId === Tools.ZOOM_WITH_CLICK}
+              disabled={true || cannotEdit || this.props.activeToolId === Tools.ZOOM_WITH_CLICK}
               label="" icon={<IconZoom />}
               onClick={this.props.setActiveTool(Tools.ZOOM_WITH_CLICK)}
             />

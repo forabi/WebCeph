@@ -65,22 +65,33 @@ interface LandmarkProps {
   onClick: React.EventHandler<React.MouseEvent>;
   onMouseEnter: React.EventHandler<React.MouseEvent>;
   onMouseLeave: React.EventHandler<React.MouseEvent>;
+  scale?: number;
+}
+
+const getTranslateToCenter = (
+  containerWidth: number, containerHeight: number,
+  width: number, height: number,
+  scale: number
+) => {
+  const translateX = Math.abs(containerWidth - width * scale) / 2;
+  const translateY = Math.abs(containerHeight - height * scale) / 2;
+  return [translateX, translateY];
 }
 
 const Landmark = (_props: LandmarkProps) => {
-  const { value, fill, fillOpacity, stroke, onClick, onMouseEnter, onMouseLeave } = _props;
+  const { value, fill, fillOpacity, scale = 1, stroke, onClick, onMouseEnter, onMouseLeave } = _props;
   const props = {
     onClick, onMouseEnter, onMouseLeave,
     stroke: stroke || 'black',
     fill: fill || 'white',
-    strokeWidth: 2,
+    strokeWidth: 2 * scale,
     fillOpacity: fillOpacity || 1,
     strokeOpacity: fillOpacity || 1,
   };
   if (isGeometricalPoint(value)) {
     return (
       <circle
-        r={3} cx={value.x} cy={value.y}
+        r={3 * scale} cx={value.x} cy={value.y}
         {...props}
       />
     );
@@ -160,7 +171,13 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
   }
 
   private getTransformAttribute = () => {
-    const [translateX, translateY] = this.getTranslate();
+    const [translateX, translateY] = getTranslateToCenter(
+      this.props.imageWidth,
+      this.props.imageHeight,
+      this.props.imageWidth,
+      this.props.imageHeight,
+      this.props.scale,
+    );
     let t = `translate(${translateX}, ${translateY}) scale(${this.props.scale}, ${this.props.scale})`;
     if (this.props.flipX) {
       t += ` scale(-1, 1) translate(-${this.props.imageWidth}, 0)`;
@@ -170,12 +187,6 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
     }
     return t;
   };
-
-  private getTranslate = () => {
-    const translateX = Math.abs(this.props.imageWidth - this.props.imageWidth * this.props.scale) / 2;
-    const translateY = Math.abs(this.props.imageHeight - this.props.imageHeight * this.props.scale) / 2;
-    return [translateX, translateY];
-  }
 
   private handleMouseWheel = (e: React.WheelEvent) => {
     if (typeof this.props.onMouseWheel === 'function') {
@@ -276,12 +287,12 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
                         props = { fillOpacity: 0.5, zIndex: 0 };
                       }
                     }
-                    // @TODO: unscale points?
                     return <Landmark
                       key={symbol}
                       onMouseEnter={this.handleLandmarkMouseEnter(symbol)}
                       onMouseLeave={this.handleLandmarkMouseLeave(symbol)}
                       onClick={this.handleLandmarkClick(symbol)}
+                      scale={1 / this.props.scale}
                       value={landmark}
                       {...props}
                     />;
