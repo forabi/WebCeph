@@ -282,7 +282,7 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
                     let props = { };
                     if (highlightMode) {
                       if (highlighted[symbol] === true) {
-                        props = { stroke: 'blue', fill: 'blue', zIndex: 1 };
+                        props = { stroke: 'orange', fill: 'orange', zIndex: 1 };
                       } else {
                         props = { fillOpacity: 0.5, zIndex: 0 };
                       }
