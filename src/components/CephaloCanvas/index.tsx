@@ -167,24 +167,6 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
 
   private getTransformAttribute = () => {
     let t = '';
-    // const zoomX = this.props.zoomX;
-    // const zoomY = this.props.zoomY;
-    // console.log(zoomX, zoomY);
-    // const zoomTranslateX = originX - (zoomX / zoom - zoomX);
-    // const zoomTranslateY = originY - (zoomY / zoom - zoomY);
-    // const originX = 0;
-    // const originY = 0;
-    // const zoom = this.props.scale / 100;
-    // const scale = (zoom >= 0 ? zoom : 1 / Math.abs(zoom));
-    // const { height, width } = this.props;
-    // console.log({
-    //   scale, zoom, zoomX, zoomY, originX, originY,
-    //   zoomTranslateX, zoomTranslateY,
-    // });
-    // t = `scale(${scale}, ${scale}) `;
-    // t += `translate(${originX/scale - originX}, ${originY/scale - originY}) `;
-    // t += `translate(${(width/scale - width) / 2}, ${(height/scale - height) / 2}) `;
-    // t += `translate(${(zoomX/scale - zoomX)}, ${(zoomY/scale - zoomY)}) `;
     if (this.props.flipX) {
       t += ` scale(-1, 1) translate(-${this.props.imageHeight}, 0)`;
     }
@@ -195,7 +177,6 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
   }
 
   private handleMouseWheel = (e: React.WheelEvent) => {
-    // __DEBUG__ && console.log('Mouse wheel');
     if (typeof this.props.onMouseWheel === 'function') {
       const { x, y } = this.getRelativeMousePosition(e);
       this.props.onMouseWheel(x, y, e.nativeEvent.wheelDelta);
@@ -203,7 +184,6 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
   }
 
   private handleClick = (e: React.MouseEvent) => {
-    // __DEBUG__ && console.log('Mouse down', e.button);
     if (this.props.onLeftClick !== undefined || this.props.onRightClick !== undefined) {
       const { x, y } = this.translateCoordinates(this.getRelativeMousePosition(e));
       const which = e.button;
