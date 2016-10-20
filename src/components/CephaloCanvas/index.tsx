@@ -157,8 +157,14 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
     const elementTop = (rect.top) + scrollTop;
     const pageX = e.pageX;
     const pageY = e.pageY;
-    const x = (pageX - elementLeft) / scaleX;
-    const y = (pageY - elementTop)  / scaleY;
+    let x = (pageX - elementLeft) / scaleX;
+    let y = (pageY - elementTop)  / scaleY;
+    if (this.props.flipX) {
+      x = imageWidth - x;
+    }
+    if (this.props.flipY) {
+      y = imageHeight - y;
+    }
     return { x, y };
   }
 
