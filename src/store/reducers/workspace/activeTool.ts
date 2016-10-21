@@ -1,5 +1,5 @@
 import { handleAction } from 'redux-actions';
-import { wrapWithDefaultState, combineReducers } from '../../helpers';
+import { wrapWithDefaultState, reduceReducers } from '../../helpers';
 import { Event, Tools, StoreKeys } from '../../../utils/constants';
 import { printUnexpectedPayloadWarning } from '../../../utils/debug';
 
@@ -31,7 +31,7 @@ const disableActiveTool = handleAction<State, Payloads.disableActiveTool>(
 );
 
 const activeToolReducer = wrapWithDefaultState(
-  combineReducers<State, GenericAction>(setActiveTool, disableActiveTool),
+  reduceReducers<State, GenericAction>(setActiveTool, disableActiveTool),
   defaultState,
 );
 

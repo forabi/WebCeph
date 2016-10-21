@@ -16,10 +16,10 @@ export function wrapWithDefaultState<State, Action>(reducer: Reducer<State, Acti
 import reduce from 'lodash/reduce';
 
 /**
- * Creates a reducer composed of an array of reducers called in order
+ * Calls an array of reducers in order, each with the state returned from the previous reducer
  */
 
-export function combineReducers<State, Action>(...reducers: Array<Reducer<State, Action>>) {
+export function reduceReducers<State, Action>(...reducers: Array<Reducer<State, Action>>) {
   return (previous: State, current: Action) => {
     return reduce<Reducer<State, Action>, State>(
       reducers,
