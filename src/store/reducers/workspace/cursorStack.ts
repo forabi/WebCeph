@@ -1,7 +1,7 @@
 import find from 'lodash/find';
 import without from 'lodash/without';
 import { handleAction } from 'redux-actions';
-import { wrapWithDefaultState, combineReducers } from '../../helpers';
+import { wrapWithDefaultState, reduceReducers } from '../../helpers';
 import { Event, StoreKeys } from '../../../utils/constants';
 import { printUnexpectedPayloadWarning } from '../../../utils/debug';
 
@@ -45,7 +45,7 @@ const removeCursors = handleAction<State, Payloads.removeCursors>(
 );
 
 const cursorStackReducer = wrapWithDefaultState(
-  combineReducers<State, GenericAction>(addCursor, removeCursors),
+  reduceReducers<State, GenericAction>(addCursor, removeCursors),
   defaultState,
 );
 

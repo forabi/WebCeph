@@ -1,7 +1,7 @@
 import assign from 'lodash/assign';
 import omit from 'lodash/omit';
 import { handleAction } from 'redux-actions';
-import { wrapWithDefaultState, combineReducers } from '../../helpers';
+import { wrapWithDefaultState, reduceReducers } from '../../helpers';
 import { Event, StoreKeys } from '../../../utils/constants';
 import { printUnexpectedPayloadWarning } from '../../../utils/debug';
 
@@ -51,7 +51,7 @@ const removeLandmark = handleAction<ManualLandmarks, Payloads.removeManualLandma
 );
 
 const manualLandmarksReducer = wrapWithDefaultState(
-  combineReducers<ManualLandmarks, GenericAction>(addLandmark, removeLandmark),
+  reduceReducers<ManualLandmarks, GenericAction>(addLandmark, removeLandmark),
   defaultState,
 );
 

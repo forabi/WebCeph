@@ -123,6 +123,10 @@ export const MP = line(Go, Me);
 export const FMPA: CephaloAngle = angleBetweenLines(FH_PLANE, MP, 'Frankfort Mandibular Plane Angle', 'FMPA');
 export const FMA = FMPA;
 
+/**
+ * Angle between SN and the mandibular plane
+ */
+export const SN_to_MP: CephaloAngle = angleBetweenLines(line(S, N), MP, 'SN-MP', 'SN-MP');
 
 export const components: AnalysisComponent[] = [
   {
@@ -145,7 +149,28 @@ export const components: AnalysisComponent[] = [
     norm: 21.9,
     stdDev: 5,
   },
+  {
+    landmark: SN_to_MP,
+    norm: 35,
+    stdDev: 5,
+  },
 ];
+
+export const interpretSN_to_MP = (value: number, min = 30, max = 40) => {
+  const relevantComponents = [SN_to_MP.symbol];
+  const severity: AnalysisResultSeverity = AnalysisResultSeverity.NONE;
+  let type = MandibularRotation.normal;
+  if (value > max) {
+    type = MandibularRotation.clockwise;
+  } else if (value < min) {
+    type = MandibularRotation.counterClockwise;
+  }
+  return {
+    type,
+    severity,
+    relevantComponents,
+  };
+};
 
 export const interpretANB = (value: number, min = 0, max = 4): AnalysisResult => {
   // @TODO: handle severity
@@ -226,24 +251,28 @@ export const interpretFMPA = (value: number, min = 16.9, max = 26.9): AnalysisRe
     severity,
     relevantComponents,
   };
-}
-
-export interface EvaluatedValues {
-  SNA?: number;
-  SNB?: number;
-  ANB?: number;
-  FMPA?: number;
-}
+};
 
 const analysis: Analysis = {
   id: 'commons',
   components,
-  interpret(values: EvaluatedValues) {
+  interpret(values) {
     const results: AnalysisResult[] = [];
-    if (values.ANB !== undefined) results.push(interpretANB(values.ANB as number));
-    if (values.SNA !== undefined) results.push(interpretSNA(values.SNA as number));
-    if (values.SNB !== undefined) results.push(interpretSNB(values.SNB as number));
-    if (values.FMPA !== undefined) results.push(interpretFMPA(values.FMPA as number));
+    if (values[ANB.symbol] !== undefined) {
+      results.push(interpretANB(values[ANB.symbol] as number));
+    }
+    if (values[SNA.symbol] !== undefined) {
+      results.push(interpretSNA(values[SNA.symbol] as number));
+    }
+    if (values[SNB.symbol] !== undefined) {
+      results.push(interpretSNB(values[SNB.symbol] as number));
+    }
+    if (values[FMPA.symbol] !== undefined) {
+      results.push(interpretFMPA(values[FMPA.symbol] as number));
+    }
+    if (values[SN_to_MP.symbol] !== undefined) {
+      results.push(interpretSN_to_MP(values[SN_to_MP.symbol] as number));
+    }
     return results;
   }
 }
