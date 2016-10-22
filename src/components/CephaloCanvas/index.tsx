@@ -145,7 +145,7 @@ export interface CephaloCanvasProps {
 export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> {
   refs: { canvas: React.ReactInstance, image: React.ReactInstance };
 
-  private getRelativeMousePosition = (e: React.MouseEvent<any>) => {
+  private convertMousePositionRelativeToOriginalImage = (e: React.MouseEvent<any>) => {
     const element = e.currentTarget;
     const rect = element.getBoundingClientRect();
     const { imageHeight, imageWidth } = this.props;
@@ -196,14 +196,14 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
 
   private handleMouseWheel = (e: React.WheelEvent) => {
     if (typeof this.props.onMouseWheel === 'function') {
-      const { x, y } = this.getRelativeMousePosition(e);
+      const { x, y } = this.convertMousePositionRelativeToOriginalImage(e);
       this.props.onMouseWheel(x, y, e.nativeEvent.wheelDelta);
     }
   }
 
   private handleClick = (e: React.MouseEvent) => {
     if (this.props.onLeftClick !== undefined || this.props.onRightClick !== undefined) {
-      const { x, y } = this.getRelativeMousePosition(e);
+      const { x, y } = this.convertMousePositionRelativeToOriginalImage(e);
       const which = e.button;
       if (which === 0 && typeof this.props.onLeftClick === 'function') {
         this.props.onLeftClick(x, y);
