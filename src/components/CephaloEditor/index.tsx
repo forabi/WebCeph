@@ -27,11 +27,10 @@ import throttle from 'lodash/throttle';
 import { Tools } from '../../utils/constants';
 import { resizeCanvas } from '../../actions/workspace';
 
-const classes = require('./style.scss');
+const classes = require('./style.scss') as { [className: string]: any };
 const DropzonePlaceholder = require(
   'svg-react?name=DropzonePlaceholder!svgo?useConfig=svgoConfig!./assets/placeholder.svg'
 ) as (props: any) => JSX.Element;
-
 
 export interface CephaloEditorProps {
   dispatch: Function;
