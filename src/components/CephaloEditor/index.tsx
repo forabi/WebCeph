@@ -28,9 +28,9 @@ import { Tools } from '../../utils/constants';
 import { resizeCanvas } from '../../actions/workspace';
 
 const classes = require('./style.scss');
-const DropzonePlaceholder: (props: any) => JSX.Element = require(
+const DropzonePlaceholder = require(
   'svg-react?name=DropzonePlaceholder!svgo?useConfig=svgoConfig!./assets/placeholder.svg'
-);
+) as (props: any) => JSX.Element;
 
 
 export interface CephaloEditorProps {
