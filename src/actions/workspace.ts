@@ -1,4 +1,4 @@
-import { Event, Cursor } from '../utils/constants';
+import { Event } from '../utils/constants';
 import { createAction } from 'redux-actions';
 /* Tracing actions */
 export const setActiveTool: (symbol: string) => any = createAction(
@@ -39,7 +39,7 @@ export const removeCursors: (cursors: string[]) => any = createAction(
   Event.REMOVE_MOUSE_CURSORS_REQUESTED,
 );
 
-export const setScale: (zoom: number, x?: number, y?: number) => any = createAction(
+export const setScale: (zoom: number, x?: number, y?: number) => Action<Payloads.setScale> = createAction(
   Event.SET_SCALE_REQUESTED,
   (scale: number, x: number, y: number) => ({ scale, x, y } as Payloads.setScale),
 );
