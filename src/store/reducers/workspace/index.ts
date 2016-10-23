@@ -1,21 +1,13 @@
 import assign from 'lodash/assign';
-import manualLandmarks from './manualLandmarks';
-import highlightedSteps from './highlightedSteps';
-import scale from './scale';
-import cursorStack from './cursorStack';
-import activeTool from './activeTool';
-import canvasSize, { getCanvasSize } from './canvasSize';
+import canvas from './canvas';
 import image, { getImageSize } from './image';
+import workers from './workers';
 
 export default assign(
   { }, 
   image,
-  canvasSize,
-  manualLandmarks,
-  highlightedSteps,
-  cursorStack,
-  activeTool,
-  scale,
+  canvas,
+  workers,
 );
 
 export { getCanvasSize, getImageSize };

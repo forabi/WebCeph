@@ -3,14 +3,15 @@ import assign from 'lodash/assign';
 import omit from 'lodash/omit';
 import map from 'lodash/map';
 import reduce from 'lodash/reduce';
-import { printUnexpectedPayloadWarning } from '../../../utils/debug';
-import { Event } from '../../../utils/constants';
+import { printUnexpectedPayloadWarning } from 'utils/debug';
+import { Event, StoreKeys } from 'utils/constants';
 
-export const KEY_HIGHLIGHTED_STEPS =  'cephalo.workspace.canvas.highlightedSteps';
+export const KEY_HIGHLIGHTED_STEPS =  StoreKeys.highlightedSteps;
 
-const defaultState = { };
+type State = StoreEntries.workspace.canvas.highlightedSteps;
+const defaultState: State = { };
 
-const highlightedSteps = handleActions<StoreEntries.workspace.canvas.highlightedSteps, Payloads.highlightStepsOnCanvas>({
+const highlightedSteps = handleActions<State, Payloads.highlightStepsOnCanvas>({
   [Event.HIGHLIGHT_STEPS_ON_CANVAS_REQUESTED]: (state, { payload, type }) => {
     if (payload === undefined) {
       printUnexpectedPayloadWarning(type, state);
@@ -35,4 +36,4 @@ export default {
   [KEY_HIGHLIGHTED_STEPS]: highlightedSteps,
 };
 
-export const getHighlightedSteps = (state: StoreState) => state[KEY_HIGHLIGHTED_STEPS];
+export const getHighlightedSteps = (state: GenericState) => state[KEY_HIGHLIGHTED_STEPS] as State;

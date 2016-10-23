@@ -5,7 +5,7 @@ import { wrapWithDefaultState, reduceReducers } from '../../helpers';
 import { Event, StoreKeys } from '../../../utils/constants';
 import { printUnexpectedPayloadWarning } from '../../../utils/debug';
 
-type ManualLandmarks = StoreEntries.workspace.canvas.manualLandmarks;
+type ManualLandmarks = StoreEntries.workspace.analysis.tracing.landmarks.manual;
 
 const KEY_MANUAL_LANDMARKS = StoreKeys.manualLandmarks;
 const defaultState: ManualLandmarks = { };

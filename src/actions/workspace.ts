@@ -1,5 +1,6 @@
 import { Event } from '../utils/constants';
 import { createAction } from 'redux-actions';
+
 /* Tracing actions */
 export const setActiveTool: (symbol: string) => any = createAction(
   Event.TOGGLE_TOOL_REQUESTED,

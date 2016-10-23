@@ -12,7 +12,7 @@ export const Tools = {
 
 export const StoreKeys = {
   manualLandmarks: 'cephalo.workspace.manualLandmarks',
-  cursorStack: 'cephalo.workspace.canvas.cursorStack',
+  highlightedSteps: 'cephalo.workspace.canvas.highlightedSteps',
   scaleValue: 'cephalo.workspace.canvas.scale.value',
   scaleOrigin: 'cephalo.workspace.canvas.scale.origin',
   activeTool: 'cephalo.workspace.canvas.activeTool',
@@ -65,9 +65,6 @@ export const Event = {
 
   REDO_REQUESTED: 'REDO_REQUESTED',
   UNDO_REQUESTED: 'UNDO_REQUESTED',
-
-  SET_MOUSE_CURSOR_REQUESTED: 'SET_MOUSE_CURSOR_REQUESTED',
-  REMOVE_MOUSE_CURSORS_REQUESTED: 'REMOVE_MOUSE_CURSORS_REQUESTED',
 
   ADD_UNKOWN_MANUAL_LANDMARK_REQUESTED: 'ADD_UNKOWN_MANUAL_LANDMARK_REQUESTED',
 

@@ -171,28 +171,58 @@ declare namespace StoreEntries {
   }
 
   namespace workspace {
+    namespace analysis {
+      type activeId = string;
+      type isLoading = boolean;
+      namespace results {
+        type areShown = boolean;
+      }
+      namespace tracing {
+        type mode = 'auto' | 'manual' | 'assisted';
+        namespace landmarks {
+          type manual = {
+            [symbol: string]: GeometricalObject;
+          };
+        }
+        namespace steps {
+          type skipped = {
+            [symbol: string]: boolean;
+          };
+        }
+      }
+    }
     namespace canvas {
       type width = number;
       type height = number;
-      interface manualLandmarks {
-        [symbol: string]: GeometricalObject;
-      }
       interface highlightedSteps {
         [symbol: string]: boolean;
       }
-      type cursorStack = string[];
       type activeTool = string | null;
       /** 1 indicates the original image size */
       type scaleValue = number;
       /** A null value indicates that the scale origin is 50% 50% */
-      type scaleOrigin = null | { x: number, y: number};
+      type scaleOrigin = null | { x: number, y: number };
     }
     namespace image {
+      type type = 'lateral_cephalo' | 'frontal_cephalo' | 'panoramic' | null;
       type data = string | null;
       type width = number | null;
       type height = number | null;
       type loadError = { message: string; } | null;
+      namespace suggestions {
+        type shouldFlipX = boolean;
+        type shouldFlipY = boolean;
+        type probablyOfType = workspace.image.type;
+      }
     }
+    type workers = Array<{
+      type: 'image_worker' | 'tracing_worker';
+      isBusy: boolean;
+      error: null | {
+        message: string;
+        code: number;
+      }; 
+    }>;
   }
 }
 

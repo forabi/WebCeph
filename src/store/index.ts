@@ -4,6 +4,7 @@ import rootSaga from './sagas';
 import reducers from './reducers';
 import { Event } from '../utils/constants';
 import undoable, { includeAction } from 'redux-undo';
+import analyticsMiddleware from './middleware/analytics';
 
 declare const window: Window & { devToolsExtension?: () => any };
 
@@ -24,6 +25,7 @@ const sagaMiddleware = createSagaMiddleware();
 
 const middlewares = [
   sagaMiddleware,
+  analyticsMiddleware,
 ];
 
 function addDevTools() {

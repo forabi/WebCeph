@@ -2,17 +2,14 @@ import { handleActions } from 'redux-actions';
 import assign from 'lodash/assign';
 import reduce from 'lodash/reduce';
 import omit from 'lodash/omit';
-import { Event, StoreKeys } from '../../utils/constants';
-import defaultAnalysis from '../../analyses/basic';
+import { Event, StoreKeys } from 'utils/constants';
+import defaultAnalysis from 'analyses/basic';
 import env from './env';
 import workspace from './workspace';
-import image from './image';
-
 
 const newReducer = reduce([
   env,
   workspace,
-  image,
 ], assign, { });
 
 const oldReducers = {

@@ -14,7 +14,7 @@ import {
   isImageFlippedX,
   isImageFlippedY,
   isImageInverted,
-} from '../../store/reducers/workspace/image';
+} from 'store/reducers/workspace/image';
 import {
   getCanvasSize,
   getScale,
@@ -23,7 +23,7 @@ import {
   getHighlightedLandmarks,
   getActiveEditorToolCreator,
   getCursorForCanvas,
-} from 'store/workspace';
+} from 'store/reducers/canvas';
 import assign from 'lodash/assign';
 import partial from 'lodash/partial';
 

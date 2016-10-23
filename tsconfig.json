@@ -29,14 +29,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "store/*": [
+      "*": [
         "*",
-        "src/store/reducers/*",
-        "src/store/*"
-      ],
-      "utils/*": [
-        "*",
-        "src/utils/*"
+        "src/*"
       ]
     }
   },

@@ -13,7 +13,7 @@ TODO
     * [ ] Integration tests
     * [ ] Jest?
   * [ ] CI
-* [ ] Fix setting points and landmarks relative to current canvas size
+* [x] Fix setting points and landmarks relative to current canvas size
 * [ ] Performance
   * [ ] Service worker
   * [ ] HTTP/2
@@ -33,6 +33,11 @@ TODO
       * [ ] How?
     * [ ] Symbol
     * [ ] Analysis name
+* [ ] Draggable points
+* [ ] Remove step
+* [ ] Edit step
+* [ ] Labels for landmarks
+* [ ] Extend lines for angle intersection, draw arcs for angles
 * [ ] Batch addManualLandmarks
 * [ ] Display units in steps and results
 * [ ] Fix contrast, brightness and invert filters
@@ -46,11 +51,9 @@ TODO
   * [ ] Change cursor accordingly
     * [ ] Use SVG for cursor?
 * [ ] UX
-  * [ ] Scroll step into view
+  * [ ] Scroll current step into view
 * [x] Highlight geometrical object on step hover
 * [ ] Highlight step on object hover
-* [ ] Remove step, edit step
-* [ ] Show object label
 * [ ] Rename object
 * [ ] Keyboard shortucts
 * [ ] Analyses
@@ -95,7 +98,14 @@ TODO
 * [ ] Persist some parts of the state
   * [ ] Compatiblity checks?
     * [ ] How to handle browser updates? 
-* [ ] Automatic resizing of canvas (use transform: scale?)
+* [ ] Export
+  * [ ] Results as image
+  * [ ] Canvas as image
+  * [ ] Custom file format (manual landmarks, image corrections...)
+    * [ ] Embed image?
+  * [ ] Printing (nice to have)
+* [x] Automatic resizing of canvas (use transform: scale?)
 * [ ] Detect and show what image types are supported
 * [ ] Tell user if dropped image is not supported
 * [ ] Nice to have: support for DICOM images
+* [ ] Nice to have: 

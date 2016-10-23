@@ -9,7 +9,11 @@ import {
 } from './workspace';
 import assign from 'lodash/assign';
 import { Cursor } from '../utils/constants';
-import { isLandmarkRemovableSelector, nextManualLandmarkSelector } from '../store/selectors/workspace';
+import {
+  isLandmarkRemovableSelector,
+  nextManualLandmarkSelector,
+  isAnalysisCompleteSelector,
+} from '../store/selectors/workspace';
 
 
 export const ZoomWithWheel: EditorToolCreator = (
@@ -95,7 +99,9 @@ export const AddPoint: EditorToolCreator = (
   ZoomWithWheel(state, dispatch),
   {
     onCanvasMouseEnter() {
-      dispatch(setCursor(Cursor.ADD_LANDMARK));
+      if (!isAnalysisCompleteSelector(state)) {
+        dispatch(setCursor(Cursor.ADD_LANDMARK));
+      }
     },
     onCanvasMouseLeave() {
       dispatch(removeCursors([
@@ -118,3 +124,12 @@ export const AddPoint: EditorToolCreator = (
     },
   } as EditorTool,
 ));
+
+export const Select: EditorToolCreator = (
+  state: GenericState,
+  dispatch: DispatchFunction,
+) => {
+  return assign(
+    ZoomWithWheel
+  );
+};
