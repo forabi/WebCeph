@@ -26,7 +26,19 @@
     "noUnusedLocals": true,
     "noImplicitThis": true,
     "skipLibCheck": true,
-    "skipDefaultLibCheck": true
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "store/*": [
+        "*",
+        "src/store/reducers/*",
+        "src/store/*"
+      ],
+      "utils/*": [
+        "*",
+        "src/utils/*"
+      ]
+    }
   },
   "compileOnSave": true,
   "exclude": [

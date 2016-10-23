@@ -9,8 +9,8 @@
   background-color: white;
   display: flex;
   flex-direction: column;
-  height: 90%;
-  max-height: 90%;
+  height: 90vh;
+  max-height: 90vh;
   & > * {
     flex-shrink: 0;
   }
@@ -22,7 +22,7 @@
 }
 
 .toolbar {
-  height: 10%;
+  height: 10vh;
 }
 
 .canvas_container {

@@ -1,11 +1,31 @@
 import { connect } from 'react-redux';
-import CephaloCanvas, { CephaloCanvasProps } from './index';
-import { getImageSize, getCanvasSize } from '../../store/reducers/workspace';
-import { getScale, getScaleOrigin } from '../../store/reducers/workspace/scale';
-
-interface ConnectedProps {
-  className?: string;
-} 
+import CephaloCanvas from './index';
+import {
+  ConnectableProps,
+  MergeProps,
+  StateProps,
+  DispatchProps,
+} from './props';
+import {
+  getImageSize,
+  getImageData,
+  getImageBrightness,
+  getImageContrast,
+  isImageFlippedX,
+  isImageFlippedY,
+  isImageInverted,
+} from '../../store/reducers/workspace/image';
+import {
+  getCanvasSize,
+  getScale,
+  getScaleOrigin,
+  getAllLandmarks,
+  getHighlightedLandmarks,
+  getActiveEditorToolCreator,
+  getCursorForCanvas,
+} from 'store/workspace';
+import assign from 'lodash/assign';
+import partial from 'lodash/partial';
 
 const mapStateToProps = (enhancedState: EnhancedState<StoreState>) => {
   const state = enhancedState.present;
@@ -15,23 +35,39 @@ const mapStateToProps = (enhancedState: EnhancedState<StoreState>) => {
   return {
     canvasHeight, 
     canvasWidth,
+    src: getImageData(state),
     imageWidth,
     imageHeight,
     scale: getScale(state),
     scaleOriginX: origin === null ? '50%' : origin.x,
     scaleOriginY: origin === null ? '50%' : origin.y,
-  } as CephaloCanvasProps;
+    brightness: getImageBrightness(state),
+    contrast: getImageContrast(state),
+    isFlippedX: isImageFlippedX(state),
+    isFlippedY: isImageFlippedY(state),
+    landmarks: getAllLandmarks(state),
+    isInverted: isImageInverted(state),
+    isHighlightModeActive: true,
+    highlightedLandmarks: getHighlightedLandmarks(state),
+    activeTool: partial(getActiveEditorToolCreator, state),
+    cursor: getCursorForCanvas(state),
+  } as StateProps;
 };
 
-const mapDispatchToProps = (dispatch: DispatchFunction) => {
-  return {
-    dispatch,
-  };
+const mapDispatchToProps = undefined;
+
+const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps): ConnectableProps => {
+  return assign(
+    { },
+    stateProps,
+    dispatchProps,
+    stateProps.activeTool(dispatchProps.dispatch) as MergeProps,
+  );
 };
 
 const connected = connect(
-  mapStateToProps, mapDispatchToProps
-)(CephaloCanvas) as React.SFCFactory<ConnectedProps>;
+  mapStateToProps, mapDispatchToProps, mergeProps
+)(CephaloCanvas) as React.SFCFactory<ConnectableProps>;
 
 
 export default connected;

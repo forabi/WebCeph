@@ -191,6 +191,7 @@ declare namespace StoreEntries {
       type data = string | null;
       type width = number | null;
       type height = number | null;
+      type loadError = { message: string; } | null;
     }
   }
 }
@@ -214,7 +215,7 @@ declare namespace Payloads {
   type removeActiveTool = string;
   type canvasResized = { width: number, height: number };
   type imageLoadSucceeded = { data: string, height: number, width: number };
-  type imageLoadFailed = { error: { message: string } };
+  type imageLoadFailed = { message: string; };
   type imageLoadRequested = any;
 }
 
@@ -262,12 +263,11 @@ interface StoreState {
 interface EditorTool {
   /**
    * Triggered when mouse enters the canvas.
-   * Useful for setting the mouse cursor. */
-
+   */
   onCanvasMouseEnter?(): void;
   /**
    * Triggered when mouse leaves the canvas.
-   * Useful for cleaning up any tool-specific cursors */
+   */
   onCanvasMouseLeave?(): void;
 
   /**
@@ -288,13 +288,11 @@ interface EditorTool {
 
   /**
    * Triggered when the mouse enters a landmark.
-   * Useful for adding a tool-specific cursor.
    */
   onLandmarkMouseEnter?(symbol: string): void;
 
   /**
    * Triggered when the mouse enters a landmark.
-   * Useful for removing any tool-specific cursors.
    */
   onLandmarkMouseLeave?(symbol: string): void;
 
@@ -303,6 +301,12 @@ interface EditorTool {
    * Useful for manipulating previously added landmarks.
    */
   onLandmarkClick?(symbol: string, e: MouseEvent): void;
+
+  /**
+   * Called every time the mouse enters a landmark.
+   * Useful for implementing tool-specific cursors.
+   */
+  getCursorForLandmark?(symbol: string): string;
 }
 
 /** An EditorToolCreate is a function that is used to create editor tools.

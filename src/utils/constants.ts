@@ -21,6 +21,13 @@ export const StoreKeys = {
   imageHeight: 'cephalo.workspace.image.height',
   imageWidth: 'cephalo.workspace.image.width',
   imageData: 'cephalo.workspace.image.data',
+  imageLoadError: 'cephalo.workspace.image.load.error',
+  imageIsLoading: 'cephalo.workspace.image.load.isLoading',
+  imageBrightness: 'cephalo.workspace.image.corrections.brightness',
+  imageContrast: 'cephalo.workspace.image.corrections.contrast',
+  imageInvert: 'cephalo.workspace.image.corrections.invert',
+  imageFlipX: 'cephalo.workspace.image.corrections.flipX',
+  imageFlipY: 'cephalo.workspace.image.corrections.flipY',
 }
 
 /**

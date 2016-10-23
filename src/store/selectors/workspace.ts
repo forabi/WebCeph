@@ -42,7 +42,7 @@ export const canRedoSelector = ({ future }: EnhancedState<GenericState>) => futu
 
 const activeAnalysisSelector = (state: StoreState) => state['cephalo.workspace.analysis.activeAnalysis'];
 
-const imageDataSelector = (state: StoreState) => state['cephalo.workspace.image.data'];
+const imageDataSelector = (state: GenericState) => state[StoreKeys.imageData];
 
 export const stepsBeingEvaluatedSelector = (state: StoreState) => state['cephalo.workspace.analysis.stepsBeingEvaluated'];
 

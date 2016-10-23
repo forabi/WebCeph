@@ -109,33 +109,6 @@ const Landmark = (_props: LandmarkProps) => {
 
 export interface CephaloCanvasProps {
   className?: string;
-  src: string;
-  brightness?: number;
-  contrast?: number;
-  inverted?: boolean;
-  flipX?: boolean;
-  flipY?: boolean;
-  canvasHeight: number;
-  canvasWidth: number;
-  imageHeight: number;
-  imageWidth: number;
-  scale: number;
-  scaleOriginX: number;
-  scaleOriginY: number;
-  landmarks: { [id: string]: GeometricalObject } | { };
-  cursor: string | undefined;
-  getCursorForLandmark(symbol: string): string;
-  onLeftClick?(x: number, y: number): void;
-  onResized?(e: ResizeObserverEntry): void;
-  onMouseWheel?(x: number, y: number, delta: number): void;
-  onRightClick?(x: number, y: number): void;
-  onMouseEnter?(): void;
-  onMouseLeave?(): void;
-  onLandmarkMouseEnter?(symbol: string): void;
-  onLandmarkMouseLeave?(symbol: string): void;
-  onLandmarkClick?(symbol: string, e: React.MouseEvent): void;
-  highlightMode: boolean;
-  highlightedLandmarks: { [symbol: string]: boolean };
 }
 
 /**
@@ -159,10 +132,10 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
     const pageY = e.pageY;
     let x = (pageX - elementLeft) / scaleX;
     let y = (pageY - elementTop)  / scaleY;
-    if (this.props.flipX) {
+    if (this.props.isFlippedX) {
       x = imageWidth - x;
     }
-    if (this.props.flipY) {
+    if (this.props.isFlippedY) {
       y = imageHeight - y;
     }
     return { x, y };
@@ -170,7 +143,7 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
 
   private getFilterAttribute = () => {
     let f = '';
-    if (this.props.inverted) {
+    if (this.props.isInverted) {
       f += " url(#invert)";
     }
     return f;
@@ -185,10 +158,10 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
       this.props.scale,
     );
     let t = `translate(${translateX}, ${translateY}) scale(${this.props.scale}, ${this.props.scale})`;
-    if (this.props.flipX) {
+    if (this.props.isFlippedX) {
       t += ` scale(-1, 1) translate(-${this.props.imageWidth}, 0)`;
     }
-    if (this.props.flipY) {
+    if (this.props.isFlippedY) {
       t += ` scale(1, -1) translate(0, -${this.props.imageHeight})`;
     }
     return t;
@@ -237,7 +210,7 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
 
   render() {
     const {
-      highlightMode,
+      isHighlightModeActive,
       className,
       src,
       canvasWidth, canvasHeight,
@@ -286,7 +259,7 @@ export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> 
                   this.props.landmarks,
                   (landmark: GeometricalObject, symbol: string) => {
                     let props = { };
-                    if (highlightMode) {
+                    if (isHighlightModeActive) {
                       if (highlighted[symbol] === true) {
                         props = { stroke: 'orange', fill: 'orange', zIndex: 1 };
                       } else {

@@ -6,19 +6,16 @@ import { Event, StoreKeys } from '../../utils/constants';
 import defaultAnalysis from '../../analyses/basic';
 import env from './env';
 import workspace from './workspace';
+import image from './image';
+
 
 const newReducer = reduce([
   env,
   workspace,
+  image,
 ], assign, { });
 
 const oldReducers = {
-  'cephalo.workspace.error': handleActions<{ message: string } | null, any>({
-    [Event.IGNORE_WORKSPACE_ERROR_REQUESTED]: () => null,
-    [Event.LOAD_IMAGE_FAILED]: (__, { payload }) => payload,
-    [Event.RESET_WORKSPACE_REQUESTED]: () => null,
-    [Event.LOAD_IMAGE_REQUESTED]: () => null,
-  }, null),
   'cephalo.workspace.image.isCephalo': handleActions<boolean, any>({
     [Event.SET_IS_CEPHALO_REQUESTED]: (_, { payload }) => payload.isCephalo,
     [Event.RESET_WORKSPACE_REQUESTED]: () => true,
@@ -26,31 +23,6 @@ const oldReducers = {
   'cephalo.workspace.image.shouldFlipX': handleActions<boolean, any>({
     [Event.LOAD_IMAGE_REQUESTED]: () => false,
     [Event.SET_IS_CEPHALO_REQUESTED]: (state, { payload }) => payload.shouldFlipX || state,
-    [Event.RESET_WORKSPACE_REQUESTED]: () => false,
-  }, false),
-  'cephalo.workspace.image.isLoading': handleActions<boolean, any>({
-    [Event.LOAD_IMAGE_REQUESTED]: () => true,
-    [Event.LOAD_IMAGE_FAILED]: () => false,
-    [Event.LOAD_IMAGE_SUCCEEDED]: () => false,
-    [Event.RESET_WORKSPACE_REQUESTED]: () => false,
-  }, false),
-  'cephalo.workspace.image.flipX': handleActions<boolean, any>({
-    [Event.FLIP_IMAGE_X_REQUESTED]: (state: boolean) => !state,
-    [Event.LOAD_IMAGE_REQUESTED]: () => false,
-    [Event.RESET_WORKSPACE_REQUESTED]: () => false,
-  }, false),
-  'cephalo.workspace.image.brightness': handleActions<number, any>({
-    [Event.SET_IMAGE_BRIGHTNESS_REQUESTED]: (__, { payload }) => payload,
-    [Event.LOAD_IMAGE_REQUESTED]: () => 50,
-    [Event.RESET_WORKSPACE_REQUESTED]: () => 50,
-  }, 50),
-  'cephalo.workspace.image.contrast': handleActions<number, any>({
-    [Event.SET_IMAGE_CONTRAST_REQUESTED]: (__, { payload }) => payload,
-    [Event.LOAD_IMAGE_REQUESTED]: () => 1,
-    [Event.RESET_WORKSPACE_REQUESTED]: () => 1,
-  }, 1),
-  'cephalo.workspace.image.invert': handleActions<boolean, any>({
-    [Event.INVERT_IMAGE_REQUESTED]: (state) => !state,
     [Event.RESET_WORKSPACE_REQUESTED]: () => false,
   }, false),
   'cephalo.workspace.analysis.activeAnalysis': handleActions<Analysis | null, any>({
