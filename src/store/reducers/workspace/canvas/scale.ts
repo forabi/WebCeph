@@ -1,7 +1,7 @@
 import { handleAction } from 'redux-actions';
-import { wrapWithDefaultState } from '../../helpers';
-import { Event, StoreKeys } from '../../../utils/constants';
-import { printUnexpectedPayloadWarning } from '../../../utils/debug';
+import { wrapWithDefaultState } from 'store/helpers';
+import { Event, StoreKeys } from 'utils/constants';
+import { printUnexpectedPayloadWarning } from 'utils/debug';
 
 type ScaleValue = StoreEntries.workspace.canvas.scaleValue;
 type ScaleOrigin = StoreEntries.workspace.canvas.scaleOrigin;

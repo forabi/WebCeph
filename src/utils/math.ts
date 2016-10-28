@@ -8,10 +8,12 @@ export function degreesToRadians(value: number): number {
   return value *  Math.PI / 180;
 }
 
+/** Checks whether an object conforms to the GeometricalPoint interface */
 export function isGeometricalPoint(object: any): object is GeometricalPoint {
   return has(object, 'x') && has(object, 'y');
 }
 
+/** Checks whether an object conforms to the GeometricalVector interface */
 export function isGeometricalVector(object: any): object is GeometricalVector {
   return has(object, 'x2') && has(object, 'y1') && has(object, 'x2') && has(object, 'y2');
 }

@@ -11,7 +11,7 @@ import {
   calculateAngleBetweenTwoVectors,
   isBehind,
   radiansToDegrees,
-} from '../utils/math';
+} from 'utils/math';
 
 /**
  * Most superior point of outline of external auditory meatus

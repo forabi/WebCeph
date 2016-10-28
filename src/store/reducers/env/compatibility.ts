@@ -1,27 +1,35 @@
 import assign from 'lodash/assign';
 import { handleActions } from 'redux-actions';
-import { Event } from '../../../utils/constants';
-import { printUnexpectedPayloadWarning } from '../../../utils/debug';
+import { Event, StoreKeys } from 'utils/constants';
+import { printUnexpectedPayloadWarning } from 'utils/debug';
 import { createSelector } from 'reselect';
 import toArray from 'lodash/toArray';
 
-export const KEY_IS_IGNORED =  'env.compatiblity.isIgnored';
-export const KEY_IS_BEING_CHEKED = 'env.compatiblity.isBeingChecked';
-export const KEY_MISSING_FEATURES = 'env.compatiblity.missingFeatures';
+const KEY_IS_IGNORED =  StoreKeys.compatibilityIsIgnored;
+const KEY_IS_BEING_CHEKED = StoreKeys.compatiblityIsBeingChcecked;
+const KEY_MISSING_FEATURES = StoreKeys.missingFeatures;
 
-const isIgnored = handleActions<StoreEntries.env.compatibility.isIgnored, Payloads.ignoreCompatiblity>({
+type MissingFeatures = StoreEntries.env.compatibility.missingFeatures;
+type IsBeingChecked = StoreEntries.env.compatibility.isBeingChecked;
+type IsIgnored = StoreEntries.env.compatibility.isIgnored;
+
+
+const isIgnored = handleActions<
+  IsIgnored,
+  Payloads.ignoreCompatiblityCheck | Payloads.enforceCompatibilityCheck
+>({
   [Event.IGNORE_BROWSER_COMPATIBLITY_REQUESTED]: (_, __) => true,
   [Event.ENFORCE_BROWSER_COMPATIBLITY_REQUESTED]: (_, __) => false,
 }, false);
 
 
-const isBeingChecked = handleActions<StoreEntries.env.compatibility.isBeingChecked, Payloads.isCheckingCompatiblity>({
+const isBeingChecked = handleActions<IsBeingChecked, Payloads.isCheckingCompatiblity>({
   [Event.BROWSER_COMPATIBLITY_CHECK_REQUESTED]: (_, __) => true,
   [Event.BROWSER_COMPATIBLITY_CHECK_SUCCEEDED]: (_, __) => false,
   [Event.BROWSER_COMPATIBLITY_CHECK_FAILED]: (_, __) => false,
 }, false);
 
-const missingFeatures = handleActions<StoreEntries.env.compatibility.missingFeatures, Payloads.missingFeatureDetected>({
+const missingFeatures = handleActions<MissingFeatures, Payloads.missingFeatureDetected>({
   [Event.BROWSER_COMPATIBLITY_CHECK_MISSING_FEATURE_DETECTED]: (state, { type, payload }) => {
     if (payload === undefined) {
       printUnexpectedPayloadWarning(type, state);
@@ -33,7 +41,7 @@ const missingFeatures = handleActions<StoreEntries.env.compatibility.missingFeat
   }
 }, { });
 
-export const getMissingFeatures = (state: StoreState) => toArray(state[KEY_MISSING_FEATURES]) as MissingBrowserFeature[];
+export const getMissingFeatures = (state: GenericState) => toArray(state[KEY_MISSING_FEATURES]) as MissingBrowserFeature[];
 
 export const isBrowserCompatible = createSelector(
   getMissingFeatures,

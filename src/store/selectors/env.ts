@@ -1,6 +1,6 @@
 import filter from 'lodash/filter';
 import memoize from 'lodash/memoize';
-import browserDetails, { currentBrowser } from '../../utils/browsers';
+import browserDetails, { currentBrowser } from 'utils/browsers';
 
 export const getCurrentBrowser = () => currentBrowser;
 
@@ -28,7 +28,7 @@ const recommendedBrowsers: BrowserRecommendation[] = [
 ];
 
 export const getRecommendedBrowsers = memoize(() => filter(recommendedBrowsers, b => {
-  if (browserDetails[b.id].isApplicable) {
+  if (browserDetails[b.id] !== undefined && typeof browserDetails[b.id].isApplicable === 'function') {
     return browserDetails[b.id].isApplicable();
   }
   return true;

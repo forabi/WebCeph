@@ -1,6 +1,6 @@
 import { handleActions } from 'redux-actions';
-import { Event, StoreKeys } from '../../../utils/constants';
-import { printUnexpectedPayloadWarning } from '../../../utils/debug';
+import { Event, StoreKeys } from 'utils/constants';
+import { printUnexpectedPayloadWarning } from 'utils/debug';
 import { createSelector } from 'reselect';
 
 type Height = StoreEntries.workspace.image.height;
@@ -175,6 +175,11 @@ export const getImageHeight = (state: GenericState) => {
 export const getImageData = (state: GenericState) => {
   return state[KEY_IMAGE_DATA] as Data;
 };
+
+export const hasImage = createSelector(
+  getImageData,
+  (data) => data !== null,
+);
 
 export const getImageSize = createSelector(
   getImageWidth,

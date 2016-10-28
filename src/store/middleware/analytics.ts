@@ -1,6 +1,6 @@
-import { Event } from '../../utils/constants';
+import { Event } from 'utils/constants';
 import find from 'lodash/find';
-import { Store, Dispatch } from 'redux';
+import { Store, Dispatch, Middleware } from 'redux';
 
 const loggable = [
   Event.ADD_MANUAL_LANDMARK_REQUESTED,
@@ -13,9 +13,9 @@ const isLoggable = (type: string) => {
     loggable,
     type
   ) !== null;
-}
+};
 
-export default (store: Store<any>) => (next: Dispatch<any>) => (action: Action<any>) => {
+const middleware: Middleware = (store: Store<any>) => (next: Dispatch<any>) => (action: Action<any>) => {
   const { type, payload } = action;
   if (isLoggable(type)) {
     console.log('It works!', type, payload, store.getState());  
@@ -23,3 +23,5 @@ export default (store: Store<any>) => (next: Dispatch<any>) => (action: Action<a
   }
   return next(action);
 };
+
+export default middleware;

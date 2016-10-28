@@ -1,4 +1,4 @@
-import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
+import { createStore, applyMiddleware, combineReducers, compose, Middleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import rootSaga from './sagas';
 import reducers from './reducers';
@@ -23,10 +23,13 @@ const reducer = undoable(
 
 const sagaMiddleware = createSagaMiddleware();
 
-const middlewares = [
+const middlewares: Middleware[] = [
   sagaMiddleware,
-  analyticsMiddleware,
 ];
+
+if (__DEBUG__) {
+  middlewares.push(analyticsMiddleware);
+}
 
 function addDevTools() {
   if (process.env.NODE_ENV !== 'production' && !!window.devToolsExtension) {

@@ -1,9 +1,9 @@
 import assign from 'lodash/assign';
 import omit from 'lodash/omit';
 import { handleAction } from 'redux-actions';
-import { wrapWithDefaultState, reduceReducers } from '../../helpers';
-import { Event, StoreKeys } from '../../../utils/constants';
-import { printUnexpectedPayloadWarning } from '../../../utils/debug';
+import { wrapWithDefaultState, reduceReducers } from 'store/helpers';
+import { Event, StoreKeys } from 'utils/constants';
+import { printUnexpectedPayloadWarning } from 'utils/debug';
 
 type ManualLandmarks = StoreEntries.workspace.analysis.tracing.landmarks.manual;
 
@@ -59,7 +59,6 @@ export default {
   [KEY_MANUAL_LANDMARKS]: manualLandmarksReducer,
 };
 
-
-export const manualLandmarksSelector = (state: GenericState) => {
+export const getManualLandmarks = (state: GenericState) => {
   return state[KEY_MANUAL_LANDMARKS] as ManualLandmarks;
 };

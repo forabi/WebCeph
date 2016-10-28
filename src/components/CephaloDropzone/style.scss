@@ -1,0 +1,92 @@
+.dropzone {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .dropzone_placeholder {
+    white-space: pre-wrap;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-size: 50% 50%;
+    background-position: center;
+    background-color: #EEEEEE;
+    user-select: none;
+    -webkit-user-select: none;
+    
+  }
+
+  .dropzone_placeholder_text {
+    font-size: calc(0.8em + 1vw);
+    color: gray;
+    margin: 25px 0;
+  }
+
+  .dropzone_placeholder_image {
+    max-width: 75%;
+    max-height: 65%;
+    margin-bottom: 40px;
+    [id="circle"], [id="cephalo"], [id="incorrect"] {
+      transition-property: fill stroke transform opacity;
+      transition-duration: 0.3s;
+      transform-origin: center center;
+    }
+
+    [id="incorrect"] {
+      fill: rgba(255, 100, 100, 50);
+    }
+
+    [id="incorrect"], [id="correct"] {
+      opacity: 0;
+    }
+  }
+
+  &.dropzone__active {
+    cursor: pointer;
+    .dropzone_placeholder_image {
+      [id="circle"] {
+        fill: rgba(0, 200, 100, 110) !important;
+        stroke: rgba(0, 200, 100, 255) !important;
+        transform: scale(1.05);
+      }
+
+      [id="cephalo"] {
+        transform: rotate(-10deg) scale(0.85);
+      }
+
+      [id="correct"] {
+        opacity: 1;
+      }
+    }
+  }
+
+  &.dropzone__reject {
+    cursor: no-drop !important;
+
+    .dropzone_placeholder_image {
+      [id="circle"] {
+        fill: rgba(255, 100, 100, 50) !important;
+        stroke: rgba(255, 100, 100, 100) !important;
+        transform: scale(0.7);
+      }
+
+      [id="cephalo"] {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      [id="incorrect"] {
+        opacity: 1;
+        transition-delay: 0.1s;
+        transition-duration: 0.2s;
+        transform: scale(0.7);
+      }
+    }
+  }
+}

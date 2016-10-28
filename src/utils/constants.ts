@@ -3,16 +3,14 @@ export enum ErrorCode {
   UNKNOWN,
 }
 
-export const Tools = {
-  ERASER: 'ERASER',
-  ADD_POINT: 'ADD_POINT',
-  ZOOM_WITH_WHEEL: 'ZOOM',
-  ZOOM_WITH_CLICK: 'ZOOM_WITH_CLICK',
-}
-
 export const StoreKeys = {
-  manualLandmarks: 'cephalo.workspace.manualLandmarks',
-  highlightedSteps: 'cephalo.workspace.canvas.highlightedSteps',
+  compatibilityIsIgnored: 'env.compatiblity.isIgnored',
+  compatiblityIsBeingChcecked: 'env.compatiblity.isBeingChecked',
+  missingFeatures: 'env.compatiblity.missingFeatures',
+  manualLandmarks: 'cephalo.workspace.analysis.tracing.landmarks.manual',
+  tracingMode: 'cephalo.workspace.analysis.tracing.mode',
+  skippedSteps: 'cephalo.workspace.analysis.tracing.steps.skipped',
+  highlightedStep: 'cephalo.workspace.canvas.highlightedStep',
   scaleValue: 'cephalo.workspace.canvas.scale.value',
   scaleOrigin: 'cephalo.workspace.canvas.scale.origin',
   activeTool: 'cephalo.workspace.canvas.activeTool',
@@ -28,6 +26,11 @@ export const StoreKeys = {
   imageInvert: 'cephalo.workspace.image.corrections.invert',
   imageFlipX: 'cephalo.workspace.image.corrections.flipX',
   imageFlipY: 'cephalo.workspace.image.corrections.flipY',
+  activeAnalysisId: 'cephalo.workspace.analysis.activeId',
+  areResultsShown: 'cephalo.workspace.analysis.resutls.areShown',
+  isAnalysisLoading: 'cephalo.workspace.analysis.isLoading',
+  analysisLoadError: 'cephalo.workspace.analysis.loadError',
+  workers: 'cephalo.workspace.workers',
 }
 
 /**
@@ -73,13 +76,17 @@ export const Event = {
   HIDE_LANDMARK_TEMPORARILY_REQUESTED: 'HIDE_LANDMARK_TEMPORARILY_REQUESTED',
   SHOW_TEMORARILY_HIDDEN_LANDMARK_REQUESTED: 'SHOW_TEMORARILY_HIDDEN_LANDMARK_REQUESTED',
 
-  HIGHLIGHT_STEPS_ON_CANVAS_REQUESTED: 'HIGHLIGHT_STEPS_ON_CANVAS_REQUESTED',
-  UNHIGHLIGHT_STEPS_ON_CANVAS_REQUESTED: 'UNHIGHLIGHT_STEPS_ON_CANVAS_REQUESTED',
+  HIGHLIGHT_STEP_ON_CANVAS_REQUESTED: 'HIGHLIGHT_STEP_ON_CANVAS_REQUESTED',
+  UNHIGHLIGHT_STEP_ON_CANVAS_REQUESTED: 'UNHIGHLIGHT_STEP_ON_CANVAS_REQUESTED',
 
   /* Analysis fetching */
   FETCH_ANALYSIS_REQUESTED: 'FETCH_ANALYSIS_REQUESTED',
   FETCH_ANALYSIS_SUCCEEDED: 'FETCH_ANALYSIS_SUCCEEDED',
   FETCH_ANALYSIS_FAILED: 'FETCH_ANALYSIS_FAILED',
+
+  SET_TRACING_MODE_REQUESTED: 'SET_TRACING_MODE_REQUESTED',
+  SKIP_MANUAL_STEP_REQUESTED: 'SKIP_MANUAL_STEP_REQUESTED',
+  UNSKIP_MANUAL_STEP_REQUESTED: 'UNSKIP_MANUAL_STEP_REQUESTED',
 
   /* Automatic tracing */
   TRY_AUTOMATIC_STEPS_REQUESTED: 'TRY_AUTOMATIC_STEPS_REQUESTED',
@@ -114,6 +121,7 @@ export enum ImageWorkerAction {
 };
 
 export const Cursor = {
+  SELECT: 'SELECT',
   ADD_LANDMARK: 'ADD_LANDMARK',
   REMOVE_LANDMARK: 'REMOVE_LANDMARK',
   REMOVE_LANDMARK_NO_TARGET: 'REMOVE_LANDMARK_NO_TARGET',
@@ -126,8 +134,8 @@ export const Cursor = {
   EXPLAIN: 'EXPLAIN',
 };
 
-
 const cursorToCSSMap: { [id: string]: (null | string)[] } = {
+  [Cursor.SELECT]: [null],
   [Cursor.ADD_LANDMARK]: [null, 'cell', 'crosshair'],
   [Cursor.REMOVE_LANDMARK]: ['draw-eraser', 'cell', 'crosshair'],
   [Cursor.REMOVE_LANDMARK_NO_TARGET]: [null, 'not-allowed'],
@@ -141,6 +149,8 @@ const cursorToCSSMap: { [id: string]: (null | string)[] } = {
 };
 
 import memoize from 'lodash/memoize';
+
+declare var require: __WebpackModuleApi.RequireFunction;
 
 const requireCursor = require.context('file!./cursors', false, /.png$/i);
 

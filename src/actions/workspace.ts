@@ -32,14 +32,6 @@ export const showTemporarilyHiddenLandmark: (symbol: string) => any = createActi
   Event.SHOW_TEMORARILY_HIDDEN_LANDMARK_REQUESTED,
 );
 
-export const setCursor: (cursor: string) => any = createAction(
-  Event.SET_MOUSE_CURSOR_REQUESTED,
-);
-
-export const removeCursors: (cursors: string[]) => any = createAction(
-  Event.REMOVE_MOUSE_CURSORS_REQUESTED,
-);
-
 export const setScale: (zoom: number, x?: number, y?: number) => Action<Payloads.setScale> = createAction(
   Event.SET_SCALE_REQUESTED,
   (scale: number, x: number, y: number) => ({ scale, x, y } as Payloads.setScale),
@@ -51,14 +43,14 @@ export const setScale: (zoom: number, x?: number, y?: number) => Action<Payloads
 export const tryAutomaticSteps: () => any = createAction(Event.TRY_AUTOMATIC_STEPS_REQUESTED);
 
 /* Image editing actions */
-export const loadImageFile: (options: { file: File, height: number, width: number }) => any = createAction(Event.LOAD_IMAGE_REQUESTED);
-export const flipImageX: () => any = createAction(Event.FLIP_IMAGE_X_REQUESTED);
+export const loadImageFile: (file: File) => Action<Payloads.imageLoadRequested> = createAction(Event.LOAD_IMAGE_REQUESTED);
+export const flipX: () => any = createAction(Event.FLIP_IMAGE_X_REQUESTED);
 export const setBrightness: (value: number) => any = createAction(Event.SET_IMAGE_BRIGHTNESS_REQUESTED);
 export const setContrast: (value: number) => any = createAction(Event.SET_IMAGE_CONTRAST_REQUESTED);
-export const invertImage: () => any = createAction(Event.INVERT_IMAGE_REQUESTED);
+export const invertColors: () => any = createAction(Event.INVERT_IMAGE_REQUESTED);
 export const resetWorkspace: () => any = createAction(Event.RESET_WORKSPACE_REQUESTED);
 export const ignoreWorkspaceError: () => any = createAction(Event.IGNORE_WORKSPACE_ERROR_REQUESTED);
-export const resizeCanvas: (width: number, height: number) => GenericAction = createAction(
+export const updateCanvasSize: (width: number, height: number) => GenericAction = createAction(
   Event.CANVAS_RESIZED,
   (width: number, height: number) => ({ width, height }),
 );
@@ -74,8 +66,8 @@ export const ignoreLikelyNotCephalo: () => any = createAction(
 export const showAnalysisResults: () => void = createAction(Event.SHOW_ANALYSIS_RESULTS_REQUESTED); 
 export const closeAnalysisResults: () => void = createAction(Event.CLOSE_ANALYSIS_RESULTS_REQUESTED);
 
-export const highlightStepsOnCanvas: (symbols: string[]) => void = createAction(Event.HIGHLIGHT_STEPS_ON_CANVAS_REQUESTED);
-export const unhighlightStepsOnCanvas: (symbols: string[]) => void = createAction(Event.UNHIGHLIGHT_STEPS_ON_CANVAS_REQUESTED);
+export const highlightStep: (symbol: string) => Action<Payloads.highlightStep> = createAction(Event.HIGHLIGHT_STEP_ON_CANVAS_REQUESTED);
+export const unhighlightStep: (symbol: string) => Action<Payloads.unhighlightStep> = createAction(Event.UNHIGHLIGHT_STEP_ON_CANVAS_REQUESTED);
 
 export const redo: () => void = createAction(Event.REDO_REQUESTED);
 export const undo: () => void = createAction(Event.UNDO_REQUESTED);

@@ -1,13 +1,22 @@
 import assign from 'lodash/assign';
-import scale from './scale';
-import canvasSize from './canvasSize';
-import activeTool from './activeTool';
-import highlightedSteps from './highlightedSteps';
+import scale, { getScale, getScaleOrigin } from './scale';
+import canvasSize, { getCanvasSize } from './canvasSize';
+import activeTool, { getActiveToolId, createActiveTool } from './activeTool';
+import highlightedStep, { getHighlightedLandmarks } from './highlightedStep';
 
 export default assign(
   { }, 
   canvasSize,
-  highlightedSteps,
+  highlightedStep,
   activeTool,
   scale,
 );
+
+export {
+  getCanvasSize,
+  getScale,
+  getScaleOrigin,
+  getActiveToolId,
+  createActiveTool,
+  getHighlightedLandmarks,
+};

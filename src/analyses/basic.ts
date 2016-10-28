@@ -4,9 +4,24 @@ import bjork from './bjork';
 import dental from './dental';
 import { point, line, angleBetweenLines, AnalysisResultSeverity, SkeletalBite } from './helpers';
 
+/**
+ * Anterior point on maxillary bone
+ */
 const ANS = point('ANS', 'Anterior nasal spine', 'Anterior point on maxillary bone');
+
+/**
+ * Posterior limit of bony palate or maxilla
+ */
 const PNS = point('PNS', 'Poseterior nasal spine', 'Posterior limit of bony palate or maxilla');
+
+/**
+ * 
+ */
 const SPP = line(PNS, ANS, undefined, 'SPP');
+
+/**
+ * 
+ */
 const MM = angleBetweenLines(SPP, MP, undefined, 'MM');
 
 const angleMM: AnalysisComponent = {
@@ -28,7 +43,7 @@ const interpretMM = (value: number, min = 22, max = 30): AnalysisResult => {
     severity,
     relevantComponents: [MM.symbol],
   };
-} 
+};
 
 const analysis: Analysis = {
   id: 'basic',

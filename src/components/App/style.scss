@@ -1,10 +1,35 @@
 .root {
-  height: 100vh;
-  max-height: 100vh;
+
 }
 
-.editor {
+.container {
+  display: flex;
   height: 100vh;
   max-height: 100vh;
-  flex-grow: 1;
+  flex-direction: column;
+  flex-wrap: wrap;
+  .menu {
+
+  }
+
+
+  .command_palette {
+
+  }
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+  }
+
+  .main {
+    flex-grow: 1;
+  }
+
+  .stepper {
+    width: 25%;
+    flex-grow: 0;
+  }
+
 }

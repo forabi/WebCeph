@@ -6,6 +6,7 @@ import has from 'lodash/has';
 import every from 'lodash/every';
 import join from 'lodash/join';
 import reduce from 'lodash/reduce';
+import isPlainObject from 'lodash/isPlainObject';
 
 export function getSymbolForAngle(lineA: CephaloLine, lineB: CephaloLine): string {
   const A = lineA.components[1];
@@ -85,11 +86,11 @@ export function areEqualSteps(l1: CephaloLandmark, l2: CephaloLandmark): boolean
   return (
     xorWith(l1.components, l2.components, areEqualSteps).length === 0
   );
-}
+};
 
 export function areEqualSymbols(l1: CephaloLandmark, l2: CephaloLandmark) {
   return l1.symbol === l2.symbol;
-}
+};
 
 export function getStepsForLandmarks(landmarks: CephaloLandmark[], removeEqualSteps: boolean = true): CephaloLandmark[] {
   return uniqWith(
@@ -111,15 +112,15 @@ export function getStepsForLandmarks(landmarks: CephaloLandmark[], removeEqualSt
     )),
     removeEqualSteps ? areEqualSteps : areEqualSymbols,
   );
-}
+};
 
 export function getStepsForAnalysis(analysis: Analysis, deduplicateVectors: boolean = true): CephaloLandmark[] {
   return getStepsForLandmarks(analysis.components.map(c => c.landmark), deduplicateVectors);
-}
+};
 
 export function flipVector(vector: CephaloLine) {
   return line(vector.components[1], vector.components[0]);
-}
+};
 
 import {
   calculateAngleBetweenTwoVectors,
@@ -137,7 +138,7 @@ export function computeOrMap(landmark: CephaloLandmark, mapper: CephaloMapper): 
     return compute(landmark, mapper);
   }
 }
-
+;
 /**
  * Calculates the value of a landmark on a cephalometric radiograph
  */
@@ -166,14 +167,14 @@ export function compute(landmark: CephaloLandmark, mapper: CephaloMapper): numbe
     return reduce(landmark.components, (sum, t) => sum + (compute(t, mapper) as number), 0);
   }
   return undefined;
-}
+};
 
 /** The anterior-posterior skeletal relationship of the jaws */
 export enum SkeletalPattern {
   class1 = 0,
   class2,
   class3,
-}
+};
 
 /** The anterior-posterior position of the maxilla relative to a reference plane */
 export enum Maxilla {
@@ -181,7 +182,7 @@ export enum Maxilla {
   retrognathic,
   /** Indicates the maxilla is neither retrognathic nor prognathic */
   normal,
-}
+};
 
 /** The anterior-posterior position of the mandible relative to a reference plane */
 export enum Mandible {
@@ -190,13 +191,13 @@ export enum Mandible {
   retrognathic,
   /** Indicates the mandible is neither retrognathic nor prognathic */
   normal,
-}
+};
 
 export enum SkeletalProfile {
   normal = 9,
   concave,
   convex,
-}
+};
 
 /** The pattern of rotation of the mandible */
 export enum MandibularRotation {
@@ -205,7 +206,7 @@ export enum MandibularRotation {
   vertical = clockwise,
   counterClockwise,
   horizontal = counterClockwise,
-}
+};
 
 export enum GrowthPattern {
   normal = 15,
@@ -213,27 +214,27 @@ export enum GrowthPattern {
   vertical = clockwise,
   counterClockwise,
   horizontal = counterClockwise,
-}
+};
 
 export enum UpperIncisorInclination {
   buccal = 19,
   labial = buccal,
   palatal,
   normal,
-}
+};
 
 export enum LowerIncisorInclination {
   buccal = 22,
   labial = buccal,
   lingual,
   normal,
-}
+};
 
 export enum SkeletalBite {
   normal = 25,
   open,
   closed,
-}
+};
 
 export enum AnalysisResultSeverity {
   NONE = 0,
@@ -243,7 +244,7 @@ export enum AnalysisResultSeverity {
   MEDIUM = 2,
   HIGH = 3,
   SEVERE = HIGH,
-}
+};
 
 /** A map of interpretation results to human-readable phrases */
 const typeMap = {
@@ -274,62 +275,62 @@ const typeMap = {
   [SkeletalBite.normal]: 'Normal',
   [SkeletalBite.open]: 'Open',
   [SkeletalBite.closed]: 'Closed'
-}
+};
 
 /** A map of the seveirty of skeletal problems to human-readable phrases */
 const severityMap = {
   [AnalysisResultSeverity.LOW]: 'Slight',
   [AnalysisResultSeverity.MEDIUM]: 'Medium',
   [AnalysisResultSeverity.HIGH]: 'Severe',
-}
+};
 
 export function isSkeletalPattern(value: number | string): value is SkeletalPattern {
   return has(SkeletalPattern, value);
-}
+};
 
 export function isMaxilla(value: number | string): value is Maxilla {
   return has(Maxilla, value);
-}
+};
 
 export function isMandible(value: number | string): value is Mandible {
   return has(Mandible, value);
-}
+};
 
 export function isSkeletalProfile(value: number | string): value is SkeletalProfile {
   return has(SkeletalProfile, value);
-}
+};
 
 export function isMandiblularRotation(value: number | string): value is MandibularRotation {
   return has(MandibularRotation, value);
-}
+};
 
 export function isGrowthPattern(value: number | string): value is GrowthPattern {
   return has(GrowthPattern, value);
-}
+};
 
 export function isLowerIncisorInclination(value: number | string): value is LowerIncisorInclination {
   return has(LowerIncisorInclination, value);
-}
+};
 
 export function isUpperIncisorInclination(value: number | string): value is UpperIncisorInclination {
   return has(UpperIncisorInclination, value);
-}
+};
 
 export function isSkeletalBite(value: number | string): value is SkeletalBite {
   return has(SkeletalBite, value);
-}
+};
 
 export function mapSeverityToString(value: number) {
   return severityMap[value] || '-';
-}
+};
 
 export function mapTypeToIndication(value: number) {
   return typeMap[value] || '-';
-}
+};
 
 export function hasResultValue(result: any): result is ViewableAnalysisResultWithValue {
-  return (result as ViewableAnalysisResultWithValue).relevantComponents !== undefined;
-}
+  return isPlainObject(result) && result.relevantComponents !== undefined;
+};
 
 /** Determines whether a step in a cephalometric analysis can be mapped to a geometrical object or computed as a numerical value */
 export const isStepAutomatic = (step: CephaloLandmark): boolean => {
@@ -345,7 +346,7 @@ export const isStepAutomatic = (step: CephaloLandmark): boolean => {
     return true;
   }
   return false;
-}
+};
 
 /** Determines whether a step in a cephalometric analysis needs to be performed by the user  */
 export const isStepManual = (step: CephaloLandmark) => !isStepAutomatic(step);
@@ -358,4 +359,4 @@ export const isStepComputable = (step: CephaloLandmark) => {
     step.type === 'distance' ||
     typeof step.calculate === 'function'
   );
-}
+};

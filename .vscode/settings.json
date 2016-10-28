@@ -10,6 +10,7 @@
     "**/.svn": true,
     "**/.hg": true,
     "**/.DS_Store": true,
-    "**/.docs": true
+    "**/.docs": true,
+    "src/assets": true
   }
 }

@@ -4,8 +4,8 @@ import Dialog from 'material-ui/Dialog';
 import ListItem from 'material-ui/List/ListItem';
 import List from 'material-ui/List/List';
 
-import featureDetails from '../../utils/features';
-import browserDetails from '../../utils/browsers';
+import featureDetails from 'utils/features';
+import browserDetails from 'utils/browsers';
 
 interface CompatibilityCheckerProps {
   open: boolean;

@@ -10,13 +10,9 @@ import noop from 'lodash/noop';
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
 import partial from 'lodash/partial';
-import { Tools } from '../../utils/constants';
+import { Tools } from 'utils/constants';
 
-import CephaloEditor from '../CephaloEditor';
-import CompatibilityChecker from '../CompatibilityChecker';
-import AnalysisResultsViewer from '../AnalysisResultsViewer';
-
-import { ZoomWithWheel, ZoomWithClick, Eraser, AddPoint } from '../../actions/tools';
+import { ZoomWithWheel, ZoomWithClick, Eraser, AddPoint } from 'actions/tools';
 
 const toolsById: { [id: string]: EditorToolCreator } = {
   [Tools.ERASER]: Eraser,
@@ -26,8 +22,8 @@ const toolsById: { [id: string]: EditorToolCreator } = {
 };
 
 import {
-  flipImageX,
-  invertImage,
+  flipX,
+  invertColors,
   setBrightness,
   setContrast,
   resetWorkspace,
@@ -35,12 +31,13 @@ import {
   ignoreLikelyNotCephalo,
   showAnalysisResults,
   closeAnalysisResults,
-  highlightStepsOnCanvas,
-  unhighlightStepsOnCanvas,
+  highlightStep,
+  unhighlightStep,
   undo,
   redo,
   setActiveTool,
-} from '../../actions/workspace';
+  loadImageFile,
+} from 'actions/workspace';
 
 import {
   activeAnalysisStepsSelector,
@@ -48,38 +45,37 @@ import {
   isAnalysisActiveSelector,
   getAnalysisResultsSelector,
   getAnyStepStateSelector,
-  onFileDroppedSelector,
   getAllLandmarksSelector,
   getLandmarkValueSelector,
   getComponentsForSymbolSelector,
   canRedoSelector,
   canUndoSelector,
   getActiveToolSelector,
-} from '../../store/selectors/workspace';
+} from 'store/selectors/workspace';
 
 import {
   getMissingFeatures,
   isBrowserCompatible,
-} from '../../store/reducers/env/compatibility';
+} from 'store/reducers/env/compatibility';
 
 import {
   getCurrentBrowser,
   getRecommendedBrowsers,
-} from '../../store/selectors/env';
+} from 'store/selectors/env';
 
 import {
   getHighlightedSteps,
-} from '../../store/reducers/workspace/highlightedSteps';
+} from 'store/reducers/workspace/canvas/highlightedSteps';
 
 import {
   getActiveCursor,
-} from '../../store/reducers/workspace/cursorStack';
+} from 'store/reducers/workspace/cursorStack';
 
-import { checkBrowserCompatibility } from '../../actions/initialization';
+import { checkBrowserCompatibility } from 'actions/initialization';
 
 const classes = require('./style.scss');
 
-require('../../layout/_index.scss');
+require('layout/_index.scss');
 
 attempt(injectTapEventPlugin);
 
@@ -117,12 +113,12 @@ interface StateProps {
   analysisSteps: CephaloLandmark[];
   activeCursor: string | undefined;
   getStepState(step: Step): StepState;
-  onFileDropped(dispatch: Function): (file: File) => void;
   getStepValue(step: Step): number | undefined;
 }
 
 interface DispatchProps {
   dispatch(action: GenericAction): any;
+  onFileDropped(file: File): any;
   onFlipXClicked(e: React.MouseEvent): void;
   onInvertClicked(e: React.MouseEvent): void;
   onBrightnessChanged(value: number): void;
@@ -143,8 +139,8 @@ interface DispatchProps {
 
 interface MergeProps {
   highlightModeOnCanvas: boolean;
-  onStepMouseOver(symbol: string): React.EventHandler<React.MouseEvent<any>>;
-  onStepMouseOut(symbol: string): React.EventHandler<React.MouseEvent<any>>;
+  onStepMouseOver(symbol: string): React.EventHandler<React.MouseEvent>;
+  onStepMouseOut(symbol: string): React.EventHandler<React.MouseEvent>;
   onCanvasLeftClick?(x: number, y: number): void;
   onCanvasRightClick?(x: number, y: number): void;
   onCanvasMouseWheel?(x: number, y: number, delta: number): void;
@@ -152,7 +148,7 @@ interface MergeProps {
   onCanvasMouseLeave?(): void;
   onLandmarkMouseEnter?(symbol: string): void;
   onLandmarkMouseLeave?(symbol: string): void;
-  onLandmarkClick?(symbol: string, e: React.MouseEvent<any>): void;
+  onLandmarkClick?(symbol: string, e: React.MouseEvent): void;
 }
 
 type AppProps = StateProps & DispatchProps & MergeProps;
@@ -227,7 +223,6 @@ export default connect(
       landmarks: getAllLandmarksSelector(state),
       analysisSteps: activeAnalysisStepsSelector(state),
       getStepState: getAnyStepStateSelector(state),
-      onFileDropped: onFileDroppedSelector(state),
       getStepValue: getLandmarkValueSelector(state),
       areAnalysisResultsShown: state['cephalo.workspace.analysis.results.areShown'],
       analysisResults: getAnalysisResultsSelector(state),
@@ -244,10 +239,10 @@ export default connect(
   // mapDispatchToProps
   (dispatch: DispatchFunction) => ({
     dispatch,
-    onFlipXClicked: () => dispatch(flipImageX()),
+    onFlipXClicked: () => dispatch(flipX()),
     onBrightnessChanged: (value: number) => dispatch(setBrightness(value)),
     onContrastChanged: (value: number) => dispatch(setContrast(value)),
-    onInvertClicked: () => dispatch(invertImage()),
+    onInvertClicked: () => dispatch(invertColors()),
     onPickAnotherImageClicked: () => dispatch(resetWorkspace()),
     onIgnoreNotCephaloClicked: () => dispatch(ignoreLikelyNotCephalo()),
     onIgnoreErrorClicked: () => dispatch(ignoreWorkspaceError()),
@@ -260,6 +255,7 @@ export default connect(
     performUndo: () => dispatch(undo()),
     performRedo: () => dispatch(redo()),
     setActiveTool: (symbols: string) => () => dispatch(setActiveTool(symbols)),
+    onFileDropped: (file: File) => dispatch(loadImageFile(file)),
   } as DispatchProps),
 
   (stateProps: StateProps, dispatchProps: DispatchProps) => {
@@ -275,11 +271,11 @@ export default connect(
         highlightModeOnCanvas: !isEmpty(stateProps.highlightedLandmarks),
         onStepMouseOver: (symbol: string) => () => {
           const symbols = map(getComponents(symbol), c => c.symbol);
-          dispatch(highlightStepsOnCanvas(symbols));
+          dispatch(highlightStep(symbols));
         },
         onStepMouseOut: (symbol: string) => () => {
           const symbols = map(getComponents(symbol), c => c.symbol);
-          dispatch(unhighlightStepsOnCanvas(symbols));
+          dispatch(unhighlightStep(symbols));
         },
       } as MergeProps
     ) as AppProps

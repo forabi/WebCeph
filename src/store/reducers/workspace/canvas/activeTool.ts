@@ -1,14 +1,16 @@
 import { handleAction } from 'redux-actions';
-import { wrapWithDefaultState, reduceReducers } from '../../helpers';
-import { Event, Tools, StoreKeys } from '../../../utils/constants';
-import { printUnexpectedPayloadWarning } from '../../../utils/debug';
+import { wrapWithDefaultState, reduceReducers } from 'store/helpers';
+import { Event, StoreKeys } from 'utils/constants';
+import Tools, { ToolsIds } from 'editorTools';
+import { printUnexpectedPayloadWarning } from 'utils/debug';
+import { createSelector } from 'reselect';
 
-type State = StoreEntries.workspace.canvas.activeTool;
+type ToolId = StoreEntries.workspace.canvas.activeTool;
 
 const KEY_ACTIVE_TOOL = StoreKeys.activeTool;
-const defaultState: State = Tools.ADD_POINT;
+const defaultTool: ToolId = ToolsIds.ADD_POINT;
 
-const setActiveTool = handleAction<State, Payloads.setActiveTool>(
+const setActiveTool = handleAction<ToolId, Payloads.setActiveTool>(
   Event.TOGGLE_TOOL_REQUESTED,
   (state, { type, payload: symbol }) => {
     if (symbol === undefined) {
@@ -19,20 +21,20 @@ const setActiveTool = handleAction<State, Payloads.setActiveTool>(
   },
 );
 
-const disableActiveTool = handleAction<State, Payloads.disableActiveTool>(
+const disableActiveTool = handleAction<ToolId, Payloads.disableActiveTool>(
   Event.DISABLE_TOOL_REQUESTED,
   (state, { type, payload }) => {
     if (payload !== undefined) {
       printUnexpectedPayloadWarning(type, state);
       return state;
     }
-    return null;
+    return defaultTool;
   },
 );
 
 const activeToolReducer = wrapWithDefaultState(
-  reduceReducers<State, GenericAction>(setActiveTool, disableActiveTool),
-  defaultState,
+  reduceReducers<ToolId, GenericAction>(setActiveTool, disableActiveTool),
+  defaultTool,
 );
 
 export default {
@@ -40,6 +42,12 @@ export default {
 };
 
 
-export const activeToolSelector = (state: GenericState) => {
-  return state[KEY_ACTIVE_TOOL] as State;
+export const getActiveToolId = (state: GenericState): ToolId => {
+  return state[KEY_ACTIVE_TOOL];
 };
+
+export const createActiveTool = createSelector(
+  getActiveToolId,
+  (id): EditorToolCreator => Tools[id],
+);
+

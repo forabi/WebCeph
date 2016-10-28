@@ -33,6 +33,7 @@ TODO
       * [ ] How?
     * [ ] Symbol
     * [ ] Analysis name
+* [ ] Internationalization
 * [ ] Draggable points
 * [ ] Remove step
 * [ ] Edit step

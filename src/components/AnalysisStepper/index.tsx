@@ -1,19 +1,9 @@
 import * as React from 'react';
 import { List, ListItem } from 'material-ui/List';
 import { pure } from 'recompose';
+import Props from './props';
 
 const classes = require('./style.scss');
-
-interface AnalysisStepperProps {
-  className?: string,
-  steps: Step[];
-  onStepMouseOver(symbol: string): __React.EventHandler<__React.MouseEvent>;
-  onStepMouseOut(symbol: string): __React.EventHandler<__React.MouseEvent>;
-  getStepState(step: Step): StepState;
-  getStepValue(step: Step): number | undefined;
-  removeLandmark(landmark: CephaloLandmark): void;
-  editLandmark(landmark: CephaloLandmark): void;
-}
 
 import IconPlayArrow from 'material-ui/svg-icons/av/play-arrow';
 import IconHourglass from 'material-ui/svg-icons/action/hourglass-empty';
@@ -49,17 +39,18 @@ const getTitleForStep = (landmark: CephaloLandmark) => {
   } else if (landmark.type === 'sum') {
     return `Calculate ${landmark.name || landmark.symbol || landmark.components.map(c => c.symbol).join(' + ')}`
   }
-  console.warn('Could not get title for step of type ' + landmark.type);
+  console.warn('Could not get title for step of type ' + landmark.type as string);
   return undefined;
 }
 
-export const AnalysisStepper = pure((props: AnalysisStepperProps) => {
+export const AnalysisStepper = pure((props: Props) => {
   const {
     steps,
     getStepState,
     getStepValue,
-    removeLandmark, editLandmark,
-    onStepMouseOver, onStepMouseOut,
+    isStepRemovable,
+    onRemoveLandmarkClick, onEditLandmarkClick,
+    onStepMouseEnter, onStepMouseLeave,
   } = props;
   return (
     <List className={props.className}>
@@ -67,16 +58,20 @@ export const AnalysisStepper = pure((props: AnalysisStepperProps) => {
       steps.map(step => {
         const value = getStepValue(step);
         const state = getStepState(step);
-        const done = state === 'done';
+        const isDone = state === 'done';
+        const isRemovable = isDone && isStepRemovable(step);
         return (
           <div key={step.symbol}>
             <ListItem
               primaryText={getTitleForStep(step)}
               secondaryText={getDescriptionForStep(step) || undefined}
               leftIcon={icons[state]}
-              rightIcon={ typeof value === 'number' ? <span>{value.toFixed(1)}</span> : undefined}
-              onMouseEnter={done ? onStepMouseOver(step.symbol) : undefined}
-              onMouseLeave={done ? onStepMouseOut(step.symbol) : undefined}
+              rightIcon={
+                (typeof value === 'number' ? 
+                  <span>{value.toFixed(1)}</span> : undefined)
+              }
+              onMouseEnter={isDone ? () => onStepMouseEnter(step.symbol) : undefined}
+              onMouseLeave={isDone ? () => onStepMouseLeave(step.symbol) : undefined}
             />
           </div>
         );

@@ -1,60 +1,13 @@
 import * as React from 'react';
 import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
-import { findDOMNode } from 'react-dom'; 
-import { isGeometricalPoint, isGeometricalVector } from '../../utils/math';
-import { pure } from 'recompose';
-import { mapCursor } from '../../utils/constants';
-
-const InvertFilter = pure(({ id }: { id: string }) => (
-  <filter id={id}>
-    <feColorMatrix
-      in="SourceGraphic" type="matrix"
-      values={`
-        -1  0  0  0 1
-         0 -1  0  0 1
-         0  0 -1  0 1
-         1  1  1 0  1
-      `}
-    />
-  </filter>
-));
-
-const ContrastFilter = pure(({ id, value }: { id: string, value: number }) => {
-  const c = 1 + (value / 100);
-  const t = (1 - c) / 2;
-  return (
-    <filter id={id}>
-      <feColorMatrix
-        in="SourceGraphic" type="matrix"
-        values={`
-          ${c} 0    0    0  ${t}
-          0    ${c} 0    0  ${t}
-          0    0    ${c} 0  ${t}
-          0    0    0    1  1
-        `}
-      />
-    </filter>
-  );
-});
-
-const BrightnessFilter = pure(({ id, value }: { id: string, value: number }) => (
-  <filter id={id}>
-    <feComponentTransfer>
-      <feFuncR type="linear" intercept={(value - 50) / 100} slope="1"/>
-      <feFuncG type="linear" intercept={(value - 50) / 100} slope="1"/>
-      <feFuncB type="linear" intercept={(value - 50) / 100} slope="1"/>
-    </feComponentTransfer>
-  </filter>
-));
-
-const DropShadow = pure(({ id }: { id: string }) => (
-  <filter id={id} x="0" y="0" width="200%" height="200%">
-    <feOffset result="offOut" in="SourceAlpha" dx="0" dy="0" />
-    <feGaussianBlur result="blurOut" in="offOut" stdDeviation="3" />
-    <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
-  </filter>
-));
+import { isGeometricalPoint, isGeometricalVector } from 'utils/math';
+import { mapCursor } from 'utils/constants';
+import BrightnessFilter from './filters/Brightness';
+import ContrastFilter from './filters/Contrast';
+import InvertFilter from './filters/Invert';
+import DropShadow from './filters/DropShadow';
+import Props from './props';
 
 interface LandmarkProps {
   value: GeometricalObject;
@@ -107,19 +60,15 @@ const Landmark = (_props: LandmarkProps) => {
   }
 };
 
-export interface CephaloCanvasProps {
-  className?: string;
-}
-
 /**
  * A wrapper around a canvas element.
  * Provides a declarative API for viewing landmarks on a cephalomertic image and performing common edits like brightness and contrast.
  */
-export class CephaloCanvas extends React.PureComponent<CephaloCanvasProps, { }> {
+export class CephaloCanvas extends React.PureComponent<Props, { }> {
   refs: { canvas: React.ReactInstance, image: React.ReactInstance };
 
-  private convertMousePositionRelativeToOriginalImage = (e: React.MouseEvent<any>) => {
-    const element = e.currentTarget;
+  private convertMousePositionRelativeToOriginalImage = (e: React.MouseEvent) => {
+    const element = e.currentTarget as Element;
     const rect = element.getBoundingClientRect();
     const { imageHeight, imageWidth } = this.props;
     const scaleX = rect.width / imageWidth;

@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import ReduxApp from './ReduxApp';
 
 declare var System: any;
+declare var module: __WebpackModuleApi.Module;
 declare var window: Window & { ResizeObserver?: ResizeObserver };
 
 if (window.ResizeObserver === undefined) {
@@ -11,12 +12,12 @@ if (window.ResizeObserver === undefined) {
 
 const rootEl = document.getElementById('container');
 
-const render = ReduxApp => ReactDOM.render(<ReduxApp />, rootEl);
+const render = (App: typeof ReduxApp) => ReactDOM.render(<App />, rootEl);
 
 render(ReduxApp);
 
 if (module.hot) {
   module.hot.accept('./ReduxApp', () => {
-    System.import('./ReduxApp').then(ReduxApp => render(ReduxApp.default));
+    System.import('./ReduxApp').then((App: { default: typeof ReduxApp }) => render(App.default));
   });
 }

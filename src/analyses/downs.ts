@@ -1,5 +1,4 @@
 import assign from 'lodash/assign';
-
 import {
   angleBetweenPoints,
   line, angleBetweenLines,

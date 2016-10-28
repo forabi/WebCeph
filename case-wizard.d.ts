@@ -158,6 +158,19 @@ type StepState = 'done' | 'current' | 'pending' | 'evaluating';
 type Step = CephaloLandmark & { title: string, state: StepState };
 
 type GenericState = { [id: string]: any };
+type GenericError = { message: string, code?: number };
+
+interface WorkerDetails {
+  id: string;
+  type: 'image_worker' | 'tracing_worker';
+  isBusy: boolean;
+  error: null | {
+    message: string;
+    code: number;
+  }; 
+}
+
+type TracingMode = 'auto' | 'manual' | 'assisted';
 
 declare namespace StoreEntries {
   namespace env {
@@ -172,13 +185,14 @@ declare namespace StoreEntries {
 
   namespace workspace {
     namespace analysis {
-      type activeId = string;
+      type activeId = string | null;
       type isLoading = boolean;
+      type loadError = GenericError | null;
       namespace results {
         type areShown = boolean;
       }
       namespace tracing {
-        type mode = 'auto' | 'manual' | 'assisted';
+        type mode = TracingMode;
         namespace landmarks {
           type manual = {
             [symbol: string]: GeometricalObject;
@@ -187,17 +201,15 @@ declare namespace StoreEntries {
         namespace steps {
           type skipped = {
             [symbol: string]: boolean;
-          };
+          } | { };
         }
       }
     }
     namespace canvas {
       type width = number;
       type height = number;
-      interface highlightedSteps {
-        [symbol: string]: boolean;
-      }
-      type activeTool = string | null;
+      type highlightedStep = string | null; 
+      type activeTool = string;
       /** 1 indicates the original image size */
       type scaleValue = number;
       /** A null value indicates that the scale origin is 50% 50% */
@@ -208,21 +220,14 @@ declare namespace StoreEntries {
       type data = string | null;
       type width = number | null;
       type height = number | null;
-      type loadError = { message: string; } | null;
+      type loadError = GenericError | null;
       namespace suggestions {
         type shouldFlipX = boolean;
         type shouldFlipY = boolean;
         type probablyOfType = workspace.image.type;
       }
     }
-    type workers = Array<{
-      type: 'image_worker' | 'tracing_worker';
-      isBusy: boolean;
-      error: null | {
-        message: string;
-        code: number;
-      }; 
-    }>;
+    type workers = { [workerId: string]: WorkerDetails } | { };
   }
 }
 
@@ -232,10 +237,15 @@ declare namespace Payloads {
     value: GeometricalObject;
   }
   type removeManualLandmark = string;
-  type ignoreCompatiblity = void;
+  type ignoreCompatiblityCheck = void;
+  type enforceCompatibilityCheck = void;
   type isCheckingCompatiblity = void;
+  type setTracingMode = TracingMode;
+  type skipStep = string;
+  type unskipStep = skipStep;
   type missingFeatureDetected = MissingBrowserFeature;
-  type highlightStepsOnCanvas = string[];
+  type highlightStep = string;
+  type unhighlightStep = void;
   type setCursor = string;
   type removeCursors = string[];
   type setScale = { scale: number, x?: number, y?: number };
@@ -246,7 +256,13 @@ declare namespace Payloads {
   type canvasResized = { width: number, height: number };
   type imageLoadSucceeded = { data: string, height: number, width: number };
   type imageLoadFailed = { message: string; };
-  type imageLoadRequested = any;
+  type imageLoadRequested = File;
+  type analysisLoadFailed = GenericError;
+  type analysisLoadRequested = string;
+  type analysisLoadSucceeded = string;
+  type addWorker = WorkerDetails;
+  type removeWorker = string;
+  type updateWorkerStatus = WorkerDetails;
 }
 
 type GenericAction = { type: string, payload?: any };
@@ -290,6 +306,9 @@ interface StoreState {
 }
 
 /* Tools */
+/** An Editor Tool is just a collection of functions that consume state and dispatch actions.
+ * The functions are collected to simplify the canvas logic and make it easier to switch the behavior of mouse actions on the canvas.
+ */
 interface EditorTool {
   /**
    * Triggered when mouse enters the canvas.
@@ -336,7 +355,9 @@ interface EditorTool {
    * Called every time the mouse enters a landmark.
    * Useful for implementing tool-specific cursors.
    */
-  getCursorForLandmark?(symbol: string): string;
+  getCursorForLandmark?(symbol: string): string | undefined;
+
+  getCursorForCanvas?(): string | undefined;
 }
 
 /** An EditorToolCreate is a function that is used to create editor tools.

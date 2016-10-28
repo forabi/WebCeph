@@ -4,8 +4,8 @@ import keys from 'lodash/keys';
 import noop from 'lodash/noop';
 import each from 'lodash/each';
 
-import { Event } from '../../utils/constants';
-import featureDetails from '../../utils/features';
+import { Event } from 'utils/constants';
+import featureDetails from 'utils/features';
 
 interface CheckResult {
   feature: string;
@@ -14,7 +14,7 @@ interface CheckResult {
 
 function performModernizrTests() {
   // Lazily load Modernizr to start performing feature tests
-  const Modernizr = require('exports?Modernizr!../../utils/modernizr.js');
+  const Modernizr = require('exports?Modernizr!utils/modernizr.js');
 
   return eventChannel(emit => {
     /** This is used to keep track of number of features completed. See below. */

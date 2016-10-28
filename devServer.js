@@ -4,6 +4,7 @@ const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const webpackConfig = require('./webpack.config');
+const analyticsRouter = require('./analytics');
 const env = require('./env');
 
 const router = new express.Router();
@@ -23,6 +24,8 @@ if (env.isDevelopment) {
     heartbeat: 10 * 1000,
     reload: true,
   }));
+
+  router.use('/analytics', analyticsRouter);
 } else if (env.isProduction) {
   router.use('/', express.static(
     './build',

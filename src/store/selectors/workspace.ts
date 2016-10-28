@@ -10,7 +10,7 @@ import map from 'lodash/map';
 import assign from 'lodash/assign';
 import uniqBy from 'lodash/uniqBy';
 import memoize from 'lodash/memoize';
-import { StoreKeys } from '../../utils/constants';
+import { StoreKeys } from 'utils/constants';
 
 import {
   getStepsForAnalysis,
@@ -28,23 +28,16 @@ import {
   isGrowthPattern,
   isSkeletalBite,
   areEqualSteps, areEqualSymbols,
-} from '../../analyses/helpers';
+} from 'analyses/helpers';
 
-import { manualLandmarksSelector } from '../reducers/workspace/manualLandmarks';
+import { manualLandmarksSelector } from 'store/reducers/workspace/manualLandmarks';
 
 export { manualLandmarksSelector };
 
 export const getActiveToolSelector = (state: GenericState) => state[StoreKeys.activeTool];
 
-export const canUndoSelector = ({ past }: EnhancedState<GenericState>) => past.length > 0;
-
-export const canRedoSelector = ({ future }: EnhancedState<GenericState>) => future.length > 0;
 
 const activeAnalysisSelector = (state: StoreState) => state['cephalo.workspace.analysis.activeAnalysis'];
-
-const imageDataSelector = (state: GenericState) => state[StoreKeys.imageData];
-
-export const stepsBeingEvaluatedSelector = (state: StoreState) => state['cephalo.workspace.analysis.stepsBeingEvaluated'];
 
 export const activeAnalysisStepsSelector = createSelector(
   activeAnalysisSelector,
@@ -100,31 +93,6 @@ export const getComponentsForSymbolSelector = createSelector(
   }),
 );
 
-export const nextManualLandmarkSelector = createSelector(
-  activeAnalysisStepsSelector,
-  manualLandmarksSelector,
-  (steps, manualLandmarks) => (find(
-    steps,
-    x => isStepManual(x) && !has(manualLandmarks, x.symbol),
-  ) || null) as CephaloLandmark | null,
-);
-
-export const getManualStepStateSelector = createSelector(
-  stepsBeingEvaluatedSelector,
-  manualLandmarksSelector,
-  nextManualLandmarkSelector,
-  (stepsBeingEvaluated, manualLandmarks, next) => (landmark: CephaloLandmark): StepState => {
-    if (has(manualLandmarks, landmark.symbol)) {
-      return 'done';
-    } else if (has(stepsBeingEvaluated, landmark.symbol)) {
-      return 'evaluating';
-    } else if (next && next.symbol === landmark.symbol) {
-      return 'current'
-    } else {
-      return 'pending';
-    }
-  },
-);
 
 export const isLandmarkRemovableSelector = createSelector(
   activeAnalysisStepsSelector,
@@ -388,36 +356,4 @@ export const getAnalysisResultsSelector = createSelector(
     }
     return [];
   }
-);
-
-export const getAnyStepStateSelector = createSelector(
-  getAllLandmarksSelector,
-  getManualStepStateSelector,
-  getComputedValues,
-  (allLandmarks, getManualStepState, computed) => (step: CephaloLandmark): StepState => {
-    if (allLandmarks[step.symbol] !== undefined) {
-      return 'done';
-    } else if (computed[step.symbol] !== undefined) {
-      return 'done';
-    } else {
-      return getManualStepState(step);
-    }
-  }
-);
-
-import {
-  loadImageFile,
-} from '../../actions/workspace';
-
-const canvasHeightSelector = (state: StoreState) => state['cephalo.workspace.canvas.height'];
-const canvasWidthSelector = (state: StoreState) => state['cephalo.workspace.canvas.width'];
-
-export const onFileDroppedSelector = createSelector(
-  canvasHeightSelector,
-  canvasWidthSelector,
-  (height, width) => (dispatch: Function) => {
-    return ((file: File) => {
-      dispatch(loadImageFile({ file, height, width }));
-    }) as (file: File) => void;
-  },
 );
