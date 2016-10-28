@@ -25,6 +25,7 @@ import {
   tryMap,
   resolveIndication,
   resolveSeverity,
+  isCephaloPoint,
 } from 'analyses/helpers';
 
 type AnalysisId = StoreEntries.workspace.analysis.activeId;
@@ -181,7 +182,7 @@ export const isStepEligibleForAutomaticMapping = createSelector(
   (getManualStepState) => function isStepEligibleForAutomaticMapping(s: CephaloLandmark): boolean {
     if (isStepManual(s)) return false;
     return every(s.components, c => {
-      if (c.type === 'point') {
+      if (isCephaloPoint(c)) {
         const state = getManualStepState(c);
         return state === 'done';
       }
@@ -226,7 +227,10 @@ export const getAllLandmarks = createSelector(
 export const isStepEligibleForComputation = createSelector(
   getAllLandmarks,
   (allLandmarks) => (step: CephaloLandmark) => {
-    return isStepComputable(step) && every(step.components, (c: CephaloLandmark) => allLandmarks[c.symbol] !== undefined);
+    return (
+      isStepComputable(step) && 
+      every(step.components, (c: CephaloLandmark) => allLandmarks[c.symbol] !== undefined)
+    );
   }
 );
 
@@ -361,8 +365,8 @@ export const getCategorizedAnalysisResults = createSelector(
         severity: resolveSeverity(resultsInCategory),
         relevantComponents: flatten(map(
           resultsInCategory,
-          (r) => (flatten(map(
-            map(r.relevantComponents, findStep),
+          ({ relevantComponents }) => (flatten(map(
+            map(relevantComponents, findStep),
             ({ symbol }: CephaloLandmark) => {
               const { stdDev, norm } = findComponent(symbol) as AnalysisComponent;
               return {
