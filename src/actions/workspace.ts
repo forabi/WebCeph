@@ -1,16 +1,16 @@
-import { Event } from '../utils/constants';
+import { Event } from 'utils/constants';
 import { createAction } from 'redux-actions';
 
 /* Tracing actions */
-export const setActiveTool: (symbol: string) => any = createAction(
+export const setActiveTool: (symbol: string) => Action<Payloads.setActiveTool> = createAction(
   Event.TOGGLE_TOOL_REQUESTED,
 );
 
-export const disableActiveTool: () => any = createAction(
+export const disableActiveTool: () => Action<Payloads.disableActiveTool> = createAction(
   Event.DISABLE_TOOL_REQUESTED,
 );
 
-export const addManualLandmark: (symbol: string, value: GeometricalObject | number) => any = createAction(
+export const addManualLandmark: (symbol: string, value: GeometricalObject | number) => Action<Payloads.addManualLandmark> = createAction(
   Event.ADD_MANUAL_LANDMARK_REQUESTED,
   (symbol: string, value: GeometricalObject): Payloads.addManualLandmark => ({ symbol, value }),
 );
@@ -19,9 +19,9 @@ export const addUnnamedManualLandmark: (value: GeometricalObject | number) => an
   Event.ADD_UNKOWN_MANUAL_LANDMARK_REQUESTED,
 );
 
-export const removeManualLandmark: (symbol: string) => any = createAction(
+export const removeManualLandmark: (symbol: string) => Action<Payloads.removeManualLandmark> = createAction(
   Event.REMOVE_MANUAL_LANDMARK_REQUESTED,
-  (symbol: string): Payloads.removeManualLandmark => (symbol),
+  (symbol: string): Payloads.removeManualLandmark => symbol,
 );
 
 export const temporarilyHideLandmark: (symbol: string) => any = createAction(
@@ -34,7 +34,7 @@ export const showTemporarilyHiddenLandmark: (symbol: string) => any = createActi
 
 export const setScale: (zoom: number, x?: number, y?: number) => Action<Payloads.setScale> = createAction(
   Event.SET_SCALE_REQUESTED,
-  (scale: number, x: number, y: number) => ({ scale, x, y } as Payloads.setScale),
+  (scale: number, x: number, y: number): Payloads.setScale => ({ scale, x, y }),
 );
 
 /** Performs steps in the cephalometric analysis that can be automatically evaluated in the current state.
@@ -44,30 +44,21 @@ export const tryAutomaticSteps: () => any = createAction(Event.TRY_AUTOMATIC_STE
 
 /* Image editing actions */
 export const loadImageFile: (file: File) => Action<Payloads.imageLoadRequested> = createAction(Event.LOAD_IMAGE_REQUESTED);
-export const flipX: () => any = createAction(Event.FLIP_IMAGE_X_REQUESTED);
-export const setBrightness: (value: number) => any = createAction(Event.SET_IMAGE_BRIGHTNESS_REQUESTED);
-export const setContrast: (value: number) => any = createAction(Event.SET_IMAGE_CONTRAST_REQUESTED);
-export const invertColors: () => any = createAction(Event.INVERT_IMAGE_REQUESTED);
-export const resetWorkspace: () => any = createAction(Event.RESET_WORKSPACE_REQUESTED);
-export const ignoreWorkspaceError: () => any = createAction(Event.IGNORE_WORKSPACE_ERROR_REQUESTED);
-export const updateCanvasSize: (width: number, height: number) => GenericAction = createAction(
+export const flipX: () => Action<Payloads.flipImageX> = createAction(Event.FLIP_IMAGE_X_REQUESTED);
+export const setBrightness: (value: number) => Action<Payloads.setBrightness> = createAction(Event.SET_IMAGE_BRIGHTNESS_REQUESTED);
+export const setContrast: (value: number) => Action<Payloads.setContrast> = createAction(Event.SET_IMAGE_CONTRAST_REQUESTED);
+export const invertColors: () => Action<Payloads.invertColors> = createAction(Event.INVERT_IMAGE_REQUESTED);
+export const resetWorkspace: () => Action<Payloads.resetWorkspace> = createAction(Event.RESET_WORKSPACE_REQUESTED);
+export const updateCanvasSize: (width: number, height: number) => Action<Payloads.updateCanvasSize> = createAction(
   Event.CANVAS_RESIZED,
   (width: number, height: number) => ({ width, height }),
 );
 
-/**
- * Ignores the result of automatic detection of whether the image is a cephalometric radiograph
- */
-export const ignoreLikelyNotCephalo: () => any = createAction(
-  Event.SET_IS_CEPHALO_REQUESTED,
-  () => ({ isCephalo: true }),
-);
-
-export const showAnalysisResults: () => void = createAction(Event.SHOW_ANALYSIS_RESULTS_REQUESTED); 
-export const closeAnalysisResults: () => void = createAction(Event.CLOSE_ANALYSIS_RESULTS_REQUESTED);
+export const showAnalysisResults: () => Action<Payloads.showAnalysisResults> = createAction(Event.SHOW_ANALYSIS_RESULTS_REQUESTED); 
+export const hideAnalysisResults: () => Action<Payloads.hideAnalysisResults> = createAction(Event.CLOSE_ANALYSIS_RESULTS_REQUESTED);
 
 export const highlightStep: (symbol: string) => Action<Payloads.highlightStep> = createAction(Event.HIGHLIGHT_STEP_ON_CANVAS_REQUESTED);
 export const unhighlightStep: (symbol: string) => Action<Payloads.unhighlightStep> = createAction(Event.UNHIGHLIGHT_STEP_ON_CANVAS_REQUESTED);
 
-export const redo: () => void = createAction(Event.REDO_REQUESTED);
-export const undo: () => void = createAction(Event.UNDO_REQUESTED);
+export const redo: () => Action<Payloads.undo> = createAction(Event.REDO_REQUESTED);
+export const undo: () => Action<Payloads.redo> = createAction(Event.UNDO_REQUESTED);

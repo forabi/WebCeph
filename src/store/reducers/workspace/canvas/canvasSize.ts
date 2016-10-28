@@ -13,7 +13,7 @@ const defaultWidth: Height = 750;
 const defaultHeight: Width = 550;
 
 const setHeight = wrapWithDefaultState(
-  handleAction<Height, Payloads.canvasResized>(
+  handleAction<Height, Payloads.updateCanvasSize>(
     Event.CANVAS_RESIZED,
     (state, { type, payload }) => {
       if (payload === undefined) {
@@ -27,7 +27,7 @@ const setHeight = wrapWithDefaultState(
 );
 
 const setWidth = wrapWithDefaultState(
-  handleAction<Width, Payloads.canvasResized>(
+  handleAction<Width, Payloads.updateCanvasSize>(
     Event.CANVAS_RESIZED,
     (state, { type, payload }) => {
       if (payload === undefined) {

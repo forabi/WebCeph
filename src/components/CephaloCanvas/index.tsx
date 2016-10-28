@@ -25,7 +25,7 @@ const getTranslateToCenter = (
   containerWidth: number, containerHeight: number,
   width: number, height: number,
   scale: number
-) => {
+): [number, number] => {
   const translateX = Math.abs(containerWidth - width * scale) / 2;
   const translateY = Math.abs(containerHeight - height * scale) / 2;
   return [translateX, translateY];
@@ -106,7 +106,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
       this.props.imageHeight,
       this.props.scale,
     );
-    let t = `translate(${translateX}, ${translateY}) scale(${this.props.scale}, ${this.props.scale})`;
+    let t = `scale(${this.props.scale}, ${this.props.scale}) translate(${translateX}, ${translateY})`;
     if (this.props.isFlippedX) {
       t += ` scale(-1, 1) translate(-${this.props.imageWidth}, 0)`;
     }
@@ -139,13 +139,13 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
     e.preventDefault();
   };
 
-  private handleLandmarkMouseEnter = (symbol: string) => (e: React.MouseEvent) => {
+  private handleLandmarkMouseEnter = (symbol: string) => (_: React.MouseEvent) => {
     if (typeof this.props.onLandmarkMouseEnter === 'function') {
       this.props.onLandmarkMouseEnter(symbol);
     }
   };
 
-  private handleLandmarkMouseLeave = (symbol: string) => (e: React.MouseEvent) => {
+  private handleLandmarkMouseLeave = (symbol: string) => (_: React.MouseEvent) => {
     if (typeof this.props.onLandmarkMouseLeave === 'function') {
       this.props.onLandmarkMouseLeave(symbol);
     }
@@ -153,7 +153,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
 
   private handleLandmarkClick = (symbol: string) => (e: React.MouseEvent) => {
     if (typeof this.props.onLandmarkClick === 'function') {
-      this.props.onLandmarkClick(symbol, e);
+      this.props.onLandmarkClick(symbol, e.nativeEvent as MouseEvent);
     }
   };
 
@@ -166,7 +166,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
       imageHeight, imageWidth,
       contrast, brightness,
       highlightedLandmarks: highlighted,
-      cursor,
+      getCursorForCanvas = () => undefined,
     } = this.props;
     return (
       <div style={{ width: imageWidth, height: imageHeight }}>
@@ -176,9 +176,9 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
           width={imageWidth} height={imageHeight}
           onWheel={this.handleMouseWheel}
           onContextMenu={this.handleContextMenu}
-          onMouseEnter={this.props.onMouseEnter}
-          onMouseLeave={this.props.onMouseLeave}
-          style={{ cursor: mapCursor(cursor), overflow: 'scroll' }}
+          onMouseEnter={this.props.onCanvasMouseEnter}
+          onMouseLeave={this.props.onCanvasMouseLeave}
+          style={{ cursor: mapCursor(getCursorForCanvas()), overflow: 'scroll' }}
         >
           <defs>
             <BrightnessFilter id="brightness" value={brightness || 50} />

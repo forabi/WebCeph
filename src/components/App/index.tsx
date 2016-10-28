@@ -30,7 +30,7 @@ import {
   ignoreWorkspaceError,
   ignoreLikelyNotCephalo,
   showAnalysisResults,
-  closeAnalysisResults,
+  hideAnalysisResults,
   highlightStep,
   unhighlightStep,
   undo,
@@ -251,7 +251,7 @@ export default connect(
     onEditLandmarkRequested: () => null, // @TODO
     onRemoveLandmarkRequested: () => null, // @TODO,
     onShowAnalysisResultsClicked: () => dispatch(showAnalysisResults()),
-    onAnalysisViewerCloseRequested: () => dispatch(closeAnalysisResults()),
+    onAnalysisViewerCloseRequested: () => dispatch(hideAnalysisResults()),
     performUndo: () => dispatch(undo()),
     performRedo: () => dispatch(redo()),
     setActiveTool: (symbols: string) => () => dispatch(setActiveTool(symbols)),

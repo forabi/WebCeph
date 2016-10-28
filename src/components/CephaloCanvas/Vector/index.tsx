@@ -12,11 +12,16 @@ interface VectorProps {
   y2: number;
   stroke: string;
   strokeWidth: number;
-}
+};
+
+const defaultProps = {
+  stroke: 'white',
+  strokeWidth: 3,
+};
 
 const Vector = pure((props: VectorProps) => {
   return (
-    <line {...props} />
+    <line {...defaultProps} {...props} />
   );
 });
 

@@ -236,6 +236,16 @@ declare namespace Payloads {
     symbol: string;
     value: GeometricalObject;
   }
+  type undo = void;
+  type redo = void;
+  type flipImageX = void;
+  type invertColors = void;
+  type setContrast = number;
+  type setBrightness = number;
+  type resetWorkspace = void;
+  type showAnalysisResults = void;
+  type hideAnalysisResults = void;
+
   type removeManualLandmark = string;
   type ignoreCompatiblityCheck = void;
   type enforceCompatibilityCheck = void;
@@ -253,7 +263,7 @@ declare namespace Payloads {
   type disableActiveTool = setActiveTool;
   type enableTools = setActiveTool;
   type removeActiveTool = string;
-  type canvasResized = { width: number, height: number };
+  type updateCanvasSize = { width: number, height: number };
   type imageLoadSucceeded = { data: string, height: number, width: number };
   type imageLoadFailed = { message: string; };
   type imageLoadRequested = File;
