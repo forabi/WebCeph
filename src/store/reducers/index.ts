@@ -8,7 +8,4 @@ const reducers = assign(
   env,
 );
 
-export const canUndo = ({ past }: EnhancedState<GenericState>) => past.length > 0;
-export const canRedo = ({ future }: EnhancedState<GenericState>) => future.length > 0;
-
 export default reducers;

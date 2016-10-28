@@ -1,33 +1,47 @@
-import { connect } from 'react-redux';
-import noop from 'lodash/noop';
-import { StateProps, DispatchProps, UnconnectableProps } from './props';
-import CephaloToolbar from './index';
-import { setBrightness, setContrast, flipX, invertColors, redo, undo } from 'actions/workspace';
 import {
-  getActiveToolId,
-  getBrightness,
-  getContrast,
-  isImageInverted,
+  connect,
+  MapStateToProps,
+  MapDispatchToPropsFunction,
+} from 'react-redux';
+import noop from 'lodash/noop';
+import { StateProps, DispatchProps, OwnProps } from './props';
+import CephaloToolbar from './index';
+import {
+  setBrightness,
+  setContrast,
+  setActiveTool,
+  flipX,
+  invertColors,
+  redo, undo,
+} from 'actions/workspace';
+import {
   canEdit,
   canRedo,
   canUndo,
-  setActiveTool,
-} from 'store/selectors';
+} from 'store/reducers/workspace';
+import {
+  getImageBrightness,
+  getImageContrast,
+  isImageInverted,
+} from 'store/reducers/workspace/image';
+import {
+  getActiveToolId,
+} from 'store/reducers/workspace/canvas';
 
-const mapStateToProps = (EnhancedState: EnhancedState<StoreState>): StateProps => {
-  const state = EnhancedState.present;
+const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (enhancedState: EnhancedState<StoreState>): StateProps => {
+  const state = enhancedState.present;
   return {
     activeToolId: getActiveToolId(state),
-    brightness: getBrightness(state),
-    contrast: getContrast(state),
+    brightness: getImageBrightness(state),
+    contrast: getImageContrast(state),
     isImageInverted: isImageInverted(state),
     canEdit: canEdit(state),
-    canRedo: canRedo(state),
-    canUndo: canUndo(state),
+    canRedo: canRedo(enhancedState),
+    canUndo: canUndo(enhancedState),
   };
 };
 
-const mapDispatchToProps = (dispatch: DispatchFunction): DispatchProps => {
+const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = (dispatch: DispatchFunction): DispatchProps => {
   return {
     onBrightnessChange: (value) => dispatch(setBrightness(value)),
     onContrastChange: (value) => dispatch(setContrast(value)),
@@ -42,4 +56,4 @@ const mapDispatchToProps = (dispatch: DispatchFunction): DispatchProps => {
 
 export default connect(
   mapStateToProps, mapDispatchToProps
-)(CephaloToolbar) as React.SFCFactory<UnconnectableProps>;
+)(CephaloToolbar);

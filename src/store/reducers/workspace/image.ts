@@ -163,7 +163,6 @@ export default {
   [KEY_IMAGE_LOAD_ERROR]: setLoadError,
 };
 
-
 export const getImageWidth = (state: GenericState) => {
   return state[KEY_IMAGE_WIDTH] as Width;
 };

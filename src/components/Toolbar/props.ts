@@ -21,10 +21,10 @@ export interface DispatchProps {
 
 export type ConnectableProps = StateProps & DispatchProps;
 
-export interface UnconnectableProps {
+export interface OwnProps {
   className?: string;
 };
 
-export type Props = ConnectableProps & UnconnectableProps;
+export type Props = ConnectableProps & OwnProps;
 
 export default Props;
