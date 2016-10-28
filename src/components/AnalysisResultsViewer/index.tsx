@@ -2,18 +2,12 @@ import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
 import { pure } from 'recompose';
-import { doesResultHaveValue as isViewableResultWithValue } from 'analyses/helpers';
 import map from 'lodash/map';
-import groupBy from 'lodash/groupBy';
+import Props from './props';
+import { mapSeverityToString, mapIndicationToString } from './strings';
 
-interface AnalysisResultsViewerProps {
-  onCloseRequested: () => any;
-  open: boolean;
-  results: ViewableAnalysisResult[];
-}
-
-export const AnalysisResultsViewer = pure(({ open, onCloseRequested, results }: AnalysisResultsViewerProps) => (
-  <Dialog open={open} onRequestClose={onCloseRequested} >
+export const AnalysisResultsViewer = pure(({ open, onRequestClose, results }: Props) => (
+  <Dialog open={open} onRequestClose={onRequestClose} >
     <Table>
       <TableHeader displaySelectAll={false}>
         <TableRow>
@@ -36,36 +30,31 @@ export const AnalysisResultsViewer = pure(({ open, onCloseRequested, results }: 
       </TableHeader>
       <TableBody displayRowCheckbox={false}>
       {
-        map(groupBy(results, r => r.name), (results, name) => (
-          <TableRow key={name}>
+        map(results, ({ category, indicates, severity, relevantComponents }) => (
+          <TableRow key={category}>
             <TableRowColumn>
-              {name}
+              {category}
             </TableRowColumn>
             <TableRowColumn>
-              {results[0].indicates}
+              {mapIndicationToString(indicates) || '-'}
             </TableRowColumn>
             <TableRowColumn>
-              {results[0].severity}
+              {mapSeverityToString(severity) || '-'}
             </TableRowColumn>
             <TableRowColumn>{
-              map(results, (result) => {
-                if (isViewableResultWithValue(result)) {
-                  return result.relevantComponents.map(r => (
-                    <div key={r.symbol}>{r.symbol} = {r.value.toFixed(1)}</div>
-                  ));
-                }
-                return '-';
-              })
+              map(relevantComponents, ({ symbol, value }) => (
+                <div key={symbol}>
+                  {symbol} = {value.toFixed(1)}
+                </div>
+              ))
             }</TableRowColumn>
             <TableRowColumn>{
-              map(results, result => {
-                if (isViewableResultWithValue(result)) {
-                  return result.relevantComponents.map(r => (
-                    <div key={r.symbol}>{r.norm}{r.stdDev ? `±${r.stdDev.toFixed(0)}` : ''}</div>
-                  ));
-                }
-                return '-';
-              })
+              map(relevantComponents, ({ stdDev, symbol, norm }) => (
+                <div key={symbol}>
+                  {norm}
+                  {stdDev ? `±${stdDev.toFixed(0)}` : ''}
+                </div>
+              ))
             }</TableRowColumn>
           </TableRow>
         ))

@@ -5,6 +5,7 @@ import find from 'lodash/find';
 import every from 'lodash/every';
 import memoize from 'lodash/memoize';
 import flatten from 'lodash/flatten';
+import groupBy from 'lodash/groupBy';
 import map from 'lodash/map';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 import tracing, {
@@ -22,6 +23,8 @@ import {
   isStepComputable,
   compute,
   tryMap,
+  resolveIndication,
+  resolveSeverity,
 } from 'analyses/helpers';
 
 type AnalysisId = StoreEntries.workspace.analysis.activeId;
@@ -101,6 +104,19 @@ export const getActiveAnalysis = createSelector(
     return null;
   }
 );
+
+export const findAnalysisComponentBySymbol = createSelector(
+  getActiveAnalysis,
+  (analysis) => memoize((symbol: string) => {
+    if (analysis !== null) {
+      return find(
+        analysis.components,
+        (c) => symbol === c.landmark.symbol
+      ) || null;
+    }
+    return null;
+  }),
+)
 
 export const getActiveAnalysisSteps = createSelector(
   getActiveAnalysis,
@@ -237,9 +253,9 @@ export const getComputedValues = createSelector(
   },
 );
 
-export const getLandmarkValueSelector = createSelector(
+export const getComputedValueBySymbol = createSelector(
   getComputedValues,
-  (computedValues) => (step: Step | CephaloLandmark) => computedValues[step.symbol] || undefined,
+  (computedValues) => (symbol: string) => computedValues[symbol] || undefined,
 );
 
 export const getStepState = createSelector(
@@ -294,7 +310,6 @@ export const getAllPossibleNestedComponents = createSelector(
   },
 );
 
-
 export const getComponentWithAllPossibleNestedComponents = createSelector(
   findStepBySymbol,
   getAllPossibleNestedComponents,
@@ -313,18 +328,56 @@ export const getComponentWithAllPossibleNestedComponents = createSelector(
   }),
 );
 
+export const getAllLandmarksAndValues = createSelector(
+  getAllLandmarks,
+  getComputedValues,
+  (landmarks, values): { [symbol: string]: EvaluatedValue } => assign({ }, landmarks, values),
+);
+
 export const getAnalysisResults = createSelector(
   getActiveAnalysis,
   isAnalysisComplete,
-  getAllLandmarks,
-  getComputedValues,
-  (analysis, isComplete, landmarks, computedValues) => {
+  getAllLandmarksAndValues,
+  (analysis, isComplete, evaluatedValues) => {
     if (analysis !== null && isComplete) {
-      return analysis.interpret(assign({ }, landmarks, computedValues));
+      return analysis.interpret(evaluatedValues);
     }
     return [];
   }
 );
+
+export const getCategorizedAnalysisResults = createSelector(
+  getAnalysisResults,
+  findStepBySymbol,
+  getComputedValueBySymbol,
+  findAnalysisComponentBySymbol,
+  getAllLandmarksAndValues,
+  (results, findStep, getValue, findComponent, evaluatedValues): CategorizedAnalysisResults => {
+    return map(
+      groupBy(results, result => result.type),
+      (resultsInCategory: AnalysisResult[], category: string) => ({
+        category,
+        indicates: resolveIndication(resultsInCategory, evaluatedValues),
+        severity: resolveSeverity(resultsInCategory),
+        relevantComponents: flatten(map(
+          resultsInCategory,
+          (r) => (flatten(map(
+            map(r.relevantComponents, findStep),
+            ({ symbol }: CephaloLandmark) => {
+              const { stdDev, norm } = findComponent(symbol) as AnalysisComponent;
+              return {
+                symbol: symbol,
+                value: getValue(symbol) as number,
+                stdDev,
+                norm,
+              };
+            }
+          ))),
+        )),
+      }),
+    );
+  },
+)
 
 export {
   isLandmarkRemovable,

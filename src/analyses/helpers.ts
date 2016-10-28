@@ -313,10 +313,6 @@ export function isSkeletalBite(value: number | string): value is SkeletalBite {
   return has(SkeletalBite, value);
 };
 
-export function doesResultHaveValue(result: any): result is ViewableAnalysisResultWithValue {
-  return isPlainObject(result) && result.relevantComponents !== undefined;
-};
-
 export function getDisplayNameForResult({ type }: AnalysisResult) {
   if (isSkeletalPattern(type)) {
     return 'Skeletal Pattern';
@@ -371,4 +367,26 @@ export const isStepComputable = (step: CephaloLandmark) => {
     step.type === 'distance' ||
     typeof step.calculate === 'function'
   );
+};
+
+/**
+ * Tries to return the most reasonable severity value given contradicting interpretations of the evaluated values of an analysis
+ */
+export function resolveSeverity(results: AnalysisResult[]) {
+  return reduce<AnalysisResult, AnalysisResultSeverity>(
+    results,
+    (previousValue, result) => {
+      // @TODO: improve the logic
+      return result.severity > previousValue ? result.severity : previousValue;
+    },
+    results[0].severity,
+  );
+};
+
+/**
+ * Tries to return the most reasonable indication given contradicting interpretations of the evaluated values of an analysis
+ */
+export function resolveIndication(results: AnalysisResult[], values: { [symbol: string]: EvaluatedValue }) {
+  // @TODO: improve the logic
+  return results[0].type;
 };

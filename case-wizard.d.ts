@@ -111,22 +111,23 @@ interface AnalysisResult {
   relevantComponents: string[];
 }
 
+type CategorizedAnalysisResults = ReadonlyArray<{
+  category: string;
+  indicates?: number;
+  severity?: number;
+  relevantComponents: ReadonlyArray<{
+    symbol: string;
+    value: number;
+    norm?: number;
+    stdDev?: number;
+  }>;
+}>
+
 interface BaseViewableAnalysisResult {
   name: string;
   indicates: string;
   severity: string;
 }
-
-interface ViewableAnalysisResultWithValue extends BaseViewableAnalysisResult {
-  relevantComponents: {
-    symbol: string;
-    value: number;
-    stdDev?: number;
-    norm: number;
-  }[];
-}
-
-type ViewableAnalysisResult = BaseViewableAnalysisResult | ViewableAnalysisResultWithValue
 
 interface Analysis {
   id: string;

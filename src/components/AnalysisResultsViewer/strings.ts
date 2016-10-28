@@ -48,10 +48,10 @@ const severityMap = {
   [AnalysisResultSeverity.HIGH]: 'Severe',
 };
 
-export function mapSeverityToString(value: number) {
-  return severityMap[value] || null;
+export function mapSeverityToString(value?: number) {
+  return value !== undefined ? severityMap[value] : null;
 };
 
-export function mapTypeToIndication(value: number) {
-  return typeMap[value] || null;
+export function mapIndicationToString(value?: number) {
+  return value !== undefined ? typeMap[value] : null;
 };
