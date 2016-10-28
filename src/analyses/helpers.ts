@@ -122,6 +122,18 @@ export function flipVector(vector: CephaloLine) {
   return line(vector.components[1], vector.components[0]);
 };
 
+export function isCephaloPoint(object: any): object is CephaloPoint {
+  return isPlainObject(object) && object.type === 'point';
+};
+
+export function isCephaloLine(object: any): object is CephaloLine {
+  return isPlainObject(object) && object.type === 'line';
+};
+
+export function isCephaloAngle(object: any): object is CephaloAngle {
+  return isPlainObject(object) && object.type === 'angle';
+};
+
 import {
   calculateAngleBetweenTwoVectors,
   calculateAngleBetweenPoints,
@@ -137,8 +149,24 @@ export function computeOrMap(landmark: CephaloLandmark, mapper: CephaloMapper): 
   } else {
     return compute(landmark, mapper);
   }
-}
-;
+};
+
+/**
+ * Tries mapping a CephaloLanmark with the specified CephaloMapper.
+ * Returns the GeometricalObject the landmark maps to.
+ * Returns undefined if the landmark type is not mappable.
+ */
+export function tryMap(landmark: CephaloLandmark, mapper: CephaloMapper): GeometricalObject | undefined {
+  if (isCephaloAngle(landmark)) {
+    return mapper.toAngle(landmark);
+  } else if (isCephaloLine(landmark)) {
+    return mapper.toVector(landmark);
+  } else if (isCephaloPoint(landmark)) {
+    return mapper.toPoint(landmark);
+  }
+  return undefined;
+};
+
 /**
  * Calculates the value of a landmark on a cephalometric radiograph
  */
@@ -159,6 +187,9 @@ export function compute(landmark: CephaloLandmark, mapper: CephaloMapper): numbe
     }
     return landmark.unit === 'degree' ? radiansToDegrees(result) : result;
   } else if (landmark.type === 'distance') {
+    if (mapper.scaleFactor === null) {
+      return undefined;
+    }
     const points: GeometricalPoint[] = map(landmark.components, mapper.toPoint);
     const result = calculateDistanceBetweenTwoPoints(points[0], points[1]) * mapper.scaleFactor;
     const unit = landmark.unit;
@@ -246,44 +277,6 @@ export enum AnalysisResultSeverity {
   SEVERE = HIGH,
 };
 
-/** A map of interpretation results to human-readable phrases */
-const typeMap = {
-  [SkeletalPattern.class1]: 'Class I',
-  [SkeletalPattern.class2]: 'Class II',
-  [SkeletalPattern.class3]: 'Class III',
-  [SkeletalProfile.concave]: 'Concave',
-  [SkeletalProfile.convex]: 'Convex',
-  [SkeletalProfile.normal]: 'Normal',
-  [Maxilla.normal]: 'Normal',
-  [Maxilla.prognathic]: 'Prognathic',
-  [Maxilla.retrognathic]: 'Retrognathic',
-  [Mandible.normal]: 'Normal',
-  [Mandible.prognathic]: 'Prognathic',
-  [Mandible.retrognathic]: 'Retrognathic',
-  [MandibularRotation.clockwise]: 'Clockwise',
-  [MandibularRotation.counterClockwise]: 'Counter-clockwise',
-  [MandibularRotation.normal]: 'Normal',
-  [GrowthPattern.clockwise]: 'Vertical',
-  [GrowthPattern.counterClockwise]: 'Horizontal',
-  [GrowthPattern.normal]: 'Normal',
-  [LowerIncisorInclination.normal]: 'Normal',
-  [LowerIncisorInclination.labial]: 'Labial',
-  [LowerIncisorInclination.lingual]: 'Lingual',
-  [UpperIncisorInclination.normal]: 'Normal',
-  [UpperIncisorInclination.labial]: 'Labial',
-  [UpperIncisorInclination.palatal]: 'Palatal',
-  [SkeletalBite.normal]: 'Normal',
-  [SkeletalBite.open]: 'Open',
-  [SkeletalBite.closed]: 'Closed'
-};
-
-/** A map of the seveirty of skeletal problems to human-readable phrases */
-const severityMap = {
-  [AnalysisResultSeverity.LOW]: 'Slight',
-  [AnalysisResultSeverity.MEDIUM]: 'Medium',
-  [AnalysisResultSeverity.HIGH]: 'Severe',
-};
-
 export function isSkeletalPattern(value: number | string): value is SkeletalPattern {
   return has(SkeletalPattern, value);
 };
@@ -320,17 +313,36 @@ export function isSkeletalBite(value: number | string): value is SkeletalBite {
   return has(SkeletalBite, value);
 };
 
-export function mapSeverityToString(value: number) {
-  return severityMap[value] || '-';
-};
-
-export function mapTypeToIndication(value: number) {
-  return typeMap[value] || '-';
-};
-
-export function hasResultValue(result: any): result is ViewableAnalysisResultWithValue {
+export function doesResultHaveValue(result: any): result is ViewableAnalysisResultWithValue {
   return isPlainObject(result) && result.relevantComponents !== undefined;
 };
+
+export function getDisplayNameForResult({ type }: AnalysisResult) {
+  if (isSkeletalPattern(type)) {
+    return 'Skeletal Pattern';
+  } else if (isSkeletalProfile(type)) {
+    return 'Skeletal Profile';
+  } else if (isMaxilla(type)) {
+    return 'Maxilla';
+  } else if (isMandible(type)) {
+    return 'Mandible';
+  } else if (isMandiblularRotation(type)) {
+    return 'Mandiblular Rotation';
+  } else if (isGrowthPattern(type)) {
+    return 'Growth Pattern';
+  } else if (isLowerIncisorInclination(type)) {
+    return 'Lower Insicor Inclination';
+  } else if (isUpperIncisorInclination(type)) {
+    return 'Upper Insicor Inclination';
+  } else if (isSkeletalBite(type)) {
+    return 'Skeletal Bite';
+  }
+  console.warn(
+    `Cannot find name for analysis result of type ${type}`,
+  );
+  return null;
+};
+
 
 /** Determines whether a step in a cephalometric analysis can be mapped to a geometrical object or computed as a numerical value */
 export const isStepAutomatic = (step: CephaloLandmark): boolean => {

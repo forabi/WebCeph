@@ -151,7 +151,7 @@ interface CephaloMapper {
    * The scale factor is required to calculate linear measurements
    * It is expected to map pixels on the screen to millimeters.
    */
-  scaleFactor: number;
+  scaleFactor: number | null;
 }
 
 type StepState = 'done' | 'current' | 'pending' | 'evaluating';
@@ -193,6 +193,7 @@ declare namespace StoreEntries {
       }
       namespace tracing {
         type mode = TracingMode;
+        type scaleFactor = number | null;
         namespace landmarks {
           type manual = {
             [symbol: string]: GeometricalObject;
@@ -251,6 +252,8 @@ declare namespace Payloads {
   type enforceCompatibilityCheck = void;
   type isCheckingCompatiblity = void;
   type setTracingMode = TracingMode;
+  type setScaleFactor = number;
+  type unsetScaleFactor = void;
   type skipStep = string;
   type unskipStep = skipStep;
   type missingFeatureDetected = MissingBrowserFeature;

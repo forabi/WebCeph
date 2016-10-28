@@ -1,12 +1,28 @@
 import { handleActions } from 'redux-actions';
-import { printUnexpectedPayloadWarning } from 'utils/debug';
 import assign from 'lodash/assign';
-import tracing, { isLandmarkRemovable, getManualLandmarks } from './tracing';
-import { createSelector } from 'reselect';
-import { StoreKeys, Event } from 'utils/constants';
-import { getStepsForAnalysis, isStepManual } from 'analyses/helpers';
 import filter from 'lodash/filter';
 import find from 'lodash/find';
+import every from 'lodash/every';
+import memoize from 'lodash/memoize';
+import flatten from 'lodash/flatten';
+import map from 'lodash/map';
+import { printUnexpectedPayloadWarning } from 'utils/debug';
+import tracing, {
+  isLandmarkRemovable,
+  getManualLandmarks,
+  getCephaloMapper,
+} from './tracing';
+import { createSelector } from 'reselect';
+import { StoreKeys, Event } from 'utils/constants';
+import {
+  getStepsForAnalysis,
+  areEqualSteps,
+  areEqualSymbols,
+  isStepManual,
+  isStepComputable,
+  compute,
+  tryMap,
+} from 'analyses/helpers';
 
 type AnalysisId = StoreEntries.workspace.analysis.activeId;
 type LoadError = StoreEntries.workspace.analysis.loadError;
@@ -126,8 +142,108 @@ export const getManualStepState = createSelector(
   },
 );
 
+export const getPendingSteps = createSelector(
+  getActiveAnalysisSteps,
+  getManualStepState,
+  (steps, getStepState) => {
+    return filter(steps, s => getStepState(s) === 'pending');
+  },
+);
+
+export const findEqualComponents = createSelector(
+  getActiveAnalysis,
+  (analysis) => memoize(((step: CephaloLandmark): CephaloLandmark[] => {
+    if (!analysis) return [];
+    const steps = getStepsForAnalysis(analysis, false);
+    const cs = filter(steps, s => !areEqualSymbols(step, s) && areEqualSteps(step, s)) || [];
+    return cs;
+  })),
+);
+
+export const isStepEligibleForAutomaticMapping = createSelector(
+  getManualStepState,
+  (getManualStepState) => function isStepEligibleForAutomaticMapping(s: CephaloLandmark): boolean {
+    if (isStepManual(s)) return false;
+    return every(s.components, c => {
+      if (c.type === 'point') {
+        const state = getManualStepState(c);
+        return state === 'done';
+      }
+      return isStepEligibleForAutomaticMapping(c);
+    });
+  },
+);
+
+export const getAutomaticLandmarks = createSelector(
+  getPendingSteps,
+  getCephaloMapper,
+  isStepEligibleForAutomaticMapping,
+  findEqualComponents,
+  (pending, mapper, isEligible, findEqual) => {
+    const result: { [symbol: string]: GeometricalObject } = { };
+    for (const step of pending) {
+      if (isEligible(step)) {
+        const r = tryMap(step, mapper);
+        if (r) {
+          result[step.symbol] = r;
+        };
+        for (const equalStep of findEqual(step)) {
+          const r = tryMap(equalStep, mapper);
+          if (r) {
+            result[equalStep.symbol] = r;
+          };
+        }
+      }
+    }
+    return result;
+  },
+);
+
+export const getAllLandmarks = createSelector(
+  getManualLandmarks,
+  getAutomaticLandmarks,
+  (manual, automatic) => {
+    return assign({ }, manual, automatic);
+  }
+);
+
+export const isStepEligibleForComputation = createSelector(
+  getAllLandmarks,
+  (allLandmarks) => (step: CephaloLandmark) => {
+    return isStepComputable(step) && every(step.components, (c: CephaloLandmark) => allLandmarks[c.symbol] !== undefined);
+  }
+);
+
+export const getComputedValues = createSelector(
+  getActiveAnalysisSteps,
+  isStepEligibleForComputation,
+  getCephaloMapper,
+  (steps, isEligible, mapper) => {
+    const result: { [symbol: string]: number } = { };
+    for (const step of steps) {
+      if (isEligible(step)) {
+        const value = compute(step, mapper);
+        if (value !== undefined) {
+          result[step.symbol] = value;
+        } else {
+          console.warn(
+            `Step ${step.symbol} was eligible for automatic ` + 
+            `computation but a value could not be computed.`,
+          );
+        }
+      }
+    }
+    return result;
+  },
+);
+
+export const getLandmarkValueSelector = createSelector(
+  getComputedValues,
+  (computedValues) => (step: Step | CephaloLandmark) => computedValues[step.symbol] || undefined,
+);
+
 export const getStepState = createSelector(
-  getAllLandmarksSelector,
+  getAllLandmarks,
   getManualStepState,
   getComputedValues,
   (allLandmarks, getManualStepState, computedValues) => (step: CephaloLandmark): StepState => {
@@ -138,6 +254,75 @@ export const getStepState = createSelector(
     } else {
       return getManualStepState(step);
     }
+  }
+);
+
+export const isAnalysisComplete = createSelector(
+  getActiveAnalysis,
+  getAllLandmarks,
+  getComputedValues,
+  (analysis, allLandmarks, computedValues): boolean => {
+    if (analysis !== null) {
+      return every(analysis.components, step => {
+        return (
+          allLandmarks[step.landmark.symbol] !== undefined ||
+          computedValues[step.landmark.symbol] !== undefined
+        );
+      });
+    }
+    return false;
+  },
+);
+
+export const getAllPossibleNestedComponents = createSelector(
+  findEqualComponents,
+  (findEqual) => {
+    const fn = memoize((landmark: CephaloLandmark): CephaloLandmark[] => {
+      let additional: CephaloLandmark[] = [];
+      for (const subcomponent of landmark.components) {
+        additional = [
+          ...additional,
+          subcomponent,
+          ...subcomponent.components,
+          ...findEqual(subcomponent),
+          ...flatten(map(subcomponent.components, fn)),
+        ];
+      }
+      return additional;
+    });
+    return fn;
+  },
+);
+
+
+export const getComponentWithAllPossibleNestedComponents = createSelector(
+  findStepBySymbol,
+  getAllPossibleNestedComponents,
+  (findBySymbol, getAllNested) => memoize((symbol: string): CephaloLandmark[] => {
+    const landmark = findBySymbol(symbol);
+    if (landmark !== null) {
+      return [landmark, ...getAllNested(landmark)];
+    } else {
+      __DEBUG__ && console.warn(
+        `Tried to get nested components for landmark ${symbol}, ` +  
+        `but the active analysis does not have a landmark with that symbol. ` +
+        `Returning an empty array.`,
+      );
+      return [];
+    }
+  }),
+);
+
+export const getAnalysisResults = createSelector(
+  getActiveAnalysis,
+  isAnalysisComplete,
+  getAllLandmarks,
+  getComputedValues,
+  (analysis, isComplete, landmarks, computedValues) => {
+    if (analysis !== null && isComplete) {
+      return analysis.interpret(assign({ }, landmarks, computedValues));
+    }
+    return [];
   }
 );
 

@@ -8,6 +8,7 @@ export const StoreKeys = {
   compatiblityIsBeingChcecked: 'env.compatiblity.isBeingChecked',
   missingFeatures: 'env.compatiblity.missingFeatures',
   manualLandmarks: 'cephalo.workspace.analysis.tracing.landmarks.manual',
+  scaleFactor: 'cephalo.workspace.analysis.tracing.scaleFactor',
   tracingMode: 'cephalo.workspace.analysis.tracing.mode',
   skippedSteps: 'cephalo.workspace.analysis.tracing.steps.skipped',
   highlightedStep: 'cephalo.workspace.canvas.highlightedStep',
@@ -44,9 +45,6 @@ export const Event = {
   WORKER_CREATED: 'WORKER_CREATED',
   WORKER_TERMINATED: 'WORKER_TERMINATED',
   WORKER_STATUS_CHANGED: 'WORKER_STATUS_CHANGED',
-
-  /* SMARTS! */
-  SET_IS_CEPHALO_REQUESTED: 'SET_IS_CEPHALO_REQUESTED',
 
   /* Workspace */
   TOGGLE_TOOL_REQUESTED: 'TOGGLE_TOOL_REQUESTED',
@@ -87,6 +85,8 @@ export const Event = {
   SET_TRACING_MODE_REQUESTED: 'SET_TRACING_MODE_REQUESTED',
   SKIP_MANUAL_STEP_REQUESTED: 'SKIP_MANUAL_STEP_REQUESTED',
   UNSKIP_MANUAL_STEP_REQUESTED: 'UNSKIP_MANUAL_STEP_REQUESTED',
+  SET_SCALE_FACTOR_REQUESTED: 'SET_SCALE_FACTOR_REQUESTED',
+  UNSET_SCALE_FACTOR_REQUESTED: 'UNSET_SCALE_FACTOR_REQUESTED',
 
   /* Automatic tracing */
   TRY_AUTOMATIC_STEPS_REQUESTED: 'TRY_AUTOMATIC_STEPS_REQUESTED',

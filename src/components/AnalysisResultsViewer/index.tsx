@@ -2,7 +2,7 @@ import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
 import { pure } from 'recompose';
-import { hasResultValue as isViewableResultWithValue } from 'analyses/helpers';
+import { doesResultHaveValue as isViewableResultWithValue } from 'analyses/helpers';
 import map from 'lodash/map';
 import groupBy from 'lodash/groupBy';
 
