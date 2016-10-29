@@ -105,7 +105,7 @@ type AnalysisComponent = {
 };
 
 interface AnalysisResult {
-  type: number;
+  indication: number;
   severity: number;
   /** A list of symbol that were used to calculate this result */
   relevantComponents: string[];
@@ -113,7 +113,7 @@ interface AnalysisResult {
 
 type CategorizedAnalysisResults = ReadonlyArray<{
   category: string;
-  indicates?: number;
+  indication?: number;
   severity?: number;
   relevantComponents: ReadonlyArray<{
     symbol: string;

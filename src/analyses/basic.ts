@@ -31,15 +31,15 @@ const angleMM: AnalysisComponent = {
 }
 
 const interpretMM = (value: number, min = 22, max = 30): AnalysisResult => {
-  let type = SkeletalBite.normal;
+  let indication = SkeletalBite.normal;
   let severity = AnalysisResultSeverity.NONE;
   if (value < min) {
-    type = SkeletalBite.closed;
+    indication = SkeletalBite.closed;
   } else if (value > max) {
-    type = SkeletalBite.open;
+    indication = SkeletalBite.open;
   }
   return {
-    type,
+    indication,
     severity,
     relevantComponents: [MM.symbol],
   };

@@ -30,13 +30,13 @@ export const AnalysisResultsViewer = pure(({ open, onRequestClose, results }: Pr
       </TableHeader>
       <TableBody displayRowCheckbox={false}>
       {
-        map(results, ({ category, indicates, severity, relevantComponents }) => (
+        map(results, ({ category, indication, severity, relevantComponents }) => (
           <TableRow key={category}>
             <TableRowColumn>
               {category}
             </TableRowColumn>
             <TableRowColumn>
-              {mapIndicationToString(indicates) || '-'}
+              {mapIndicationToString(indication) || '-'}
             </TableRowColumn>
             <TableRowColumn>
               {mapSeverityToString(severity) || '-'}

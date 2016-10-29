@@ -47,32 +47,32 @@ const interpretAngleOfConvexity = (value: number, min = -5, max = 5): AnalysisRe
     );
   }
   return {
-    type,
+    indication,
     severity,
     relevantComponents,
   };
 };
 
-const interpretAngleOfYAxis= (value: number, min = -55.6, max = 63.2): AnalysisResult => {
+const interpretAngleOfYAxis = (value: number, min = -55.6, max = 63.2): AnalysisResult => {
   // @TODO: handle severity
   const relevantComponents = [ANGLE_OF_Y_AXIS.symbol];
   let severity = AnalysisResultSeverity.NONE;
-  let type = MandibularRotation.normal;
+  let indication = MandibularRotation.normal;
   if (value < min) {
-    type = MandibularRotation.counterClockwise;
+    indication = MandibularRotation.counterClockwise;
     severity = Math.max(
       AnalysisResultSeverity.HIGH,
       Math.round(Math.abs(value - min) / 3),
     );
   } else if (value > max) {
-    type = MandibularRotation.clockwise;
+    indication = MandibularRotation.clockwise;
     severity = Math.min(
       AnalysisResultSeverity.HIGH,
       Math.round(Math.abs(value - max) / 3),
     );
   }
   return {
-    type,
+    indication,
     severity,
     relevantComponents,
   };

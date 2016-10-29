@@ -31,16 +31,16 @@ export const sumOfBjork: AnalysisComponent = {
 
 export const interpretSumOfBjork = (value: number, min = 390, max = 402): AnalysisResult[] => {
   let severity = AnalysisResultSeverity.NONE;
-  let type = GrowthPattern.normal;
+  let indication = GrowthPattern.normal;
   // @TODO: handle severity
   if (value < min) {
-    type = GrowthPattern.horizontal;
+    indication = GrowthPattern.horizontal;
   } else if (value > max) {
-    type = GrowthPattern.vertical;
+    indication = GrowthPattern.vertical;
   }
   // @TODO: report mandibular rotation?
   return [{
-    type,
+    indication,
     severity,
     relevantComponents: [BJORK_SUM.symbol],
   }];

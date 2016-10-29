@@ -156,17 +156,17 @@ export const components: AnalysisComponent[] = [
   },
 ];
 
-export const interpretSN_to_MP = (value: number, min = 30, max = 40) => {
+export const interpretSN_to_MP = (value: number, min = 30, max = 40): AnalysisResult => {
   const relevantComponents = [SN_to_MP.symbol];
   const severity: AnalysisResultSeverity = AnalysisResultSeverity.NONE;
-  let type = MandibularRotation.normal;
+  let indication = MandibularRotation.normal;
   if (value > max) {
-    type = MandibularRotation.clockwise;
+    indication = MandibularRotation.clockwise;
   } else if (value < min) {
-    type = MandibularRotation.counterClockwise;
+    indication = MandibularRotation.counterClockwise;
   }
   return {
-    type,
+    indication,
     severity,
     relevantComponents,
   };
@@ -179,14 +179,14 @@ export const interpretANB = (value: number, min = 0, max = 4): AnalysisResult =>
     AnalysisResultSeverity.HIGH,
     Math.round(Math.abs(value - ((min + max) / 2)) / 3),
   );
-  let type = SkeletalPattern.class1;
+  let indication = SkeletalPattern.class1;
   if (value > max) {
-    type = SkeletalPattern.class2;
+    indication = SkeletalPattern.class2;
   } else if (value < min) {
-    type = SkeletalPattern.class3;
+    indication = SkeletalPattern.class3;
   }
   return {
-    type,
+    indication,
     severity,
     relevantComponents,
   };
@@ -199,14 +199,14 @@ export const interpretSNA = (value: number, min = 80, max = 84): AnalysisResult 
     AnalysisResultSeverity.HIGH,
     Math.round(Math.abs(value - ((min + max) / 2)) / 3),
   );
-  let type = Maxilla.normal;
+  let indication = Maxilla.normal;
   if (value > max) {
-    type = Maxilla.prognathic;
+    indication = Maxilla.prognathic;
   } else if (value < min) {
-    type = Maxilla.retrognathic;
+    indication = Maxilla.retrognathic;
   }
   return {
-    type,
+    indication,
     severity,
     relevantComponents,
   };
@@ -215,18 +215,18 @@ export const interpretSNA = (value: number, min = 80, max = 84): AnalysisResult 
 export const interpretSNB = (value: number, min = 78, max = 82): AnalysisResult => {
   // @TODO: handle severity
   const relevantComponents = [SNB.symbol];
-  let type = Mandible.normal;
+  let indication = Mandible.normal;
   const severity = Math.min(
     AnalysisResultSeverity.HIGH,
     Math.round(Math.abs(value - ((min + max) / 2)) / 5),
   );
   if (value > max) {
-    type = Mandible.prognathic;
+    indication = Mandible.prognathic;
   } else if (value < min) {
-    type = Mandible.retrognathic;
+    indication = Mandible.retrognathic;
   }
   return {
-    type,
+    indication,
     severity,
     relevantComponents,
   };
@@ -235,19 +235,19 @@ export const interpretSNB = (value: number, min = 78, max = 82): AnalysisResult 
 export const interpretFMPA = (value: number, min = 16.9, max = 26.9): AnalysisResult => {
   // @TODO: handle severity
   const relevantComponents = [FMPA.symbol];
-  let type = MandibularRotation.normal;
+  let indication = MandibularRotation.normal;
   let severity = AnalysisResultSeverity.NONE;
   // const severity = Math.min(
   //   AnalysisResultSeverity.HIGH,
   //   Math.round(Math.abs(value - ((min + max) / 2)) / 3),
   // );
   if (value > max) {
-    type = MandibularRotation.clockwise;
+    indication = MandibularRotation.clockwise;
   } else if (value < min) {
-    type = MandibularRotation.counterClockwise;
+    indication = MandibularRotation.counterClockwise;
   }
   return {
-    type,
+    indication,
     severity,
     relevantComponents,
   };

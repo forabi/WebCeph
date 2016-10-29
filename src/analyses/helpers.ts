@@ -313,28 +313,28 @@ export function isSkeletalBite(value: number | string): value is SkeletalBite {
   return has(SkeletalBite, value);
 };
 
-export function getDisplayNameForResult({ type }: AnalysisResult) {
-  if (isSkeletalPattern(type)) {
+export function getDisplayNameForResult({ indication }: AnalysisResult) {
+  if (isSkeletalPattern(indication)) {
     return 'Skeletal Pattern';
-  } else if (isSkeletalProfile(type)) {
+  } else if (isSkeletalProfile(indication)) {
     return 'Skeletal Profile';
-  } else if (isMaxilla(type)) {
+  } else if (isMaxilla(indication)) {
     return 'Maxilla';
-  } else if (isMandible(type)) {
+  } else if (isMandible(indication)) {
     return 'Mandible';
-  } else if (isMandiblularRotation(type)) {
+  } else if (isMandiblularRotation(indication)) {
     return 'Mandiblular Rotation';
-  } else if (isGrowthPattern(type)) {
+  } else if (isGrowthPattern(indication)) {
     return 'Growth Pattern';
-  } else if (isLowerIncisorInclination(type)) {
+  } else if (isLowerIncisorInclination(indication)) {
     return 'Lower Insicor Inclination';
-  } else if (isUpperIncisorInclination(type)) {
+  } else if (isUpperIncisorInclination(indication)) {
     return 'Upper Insicor Inclination';
-  } else if (isSkeletalBite(type)) {
+  } else if (isSkeletalBite(indication)) {
     return 'Skeletal Bite';
   }
   console.warn(
-    `Cannot find name for analysis result of type ${type}`,
+    `Cannot find name for analysis result of type ${indication}`,
   );
   return null;
 };
@@ -388,5 +388,5 @@ export function resolveSeverity(results: AnalysisResult[]) {
  */
 export function resolveIndication(results: AnalysisResult[], values: { [symbol: string]: EvaluatedValue }) {
   // @TODO: improve the logic
-  return results[0].type;
+  return results[0].indication;
 };

@@ -358,10 +358,10 @@ export const getCategorizedAnalysisResults = createSelector(
   getAllLandmarksAndValues,
   (results, findStep, getValue, findComponent, evaluatedValues): CategorizedAnalysisResults => {
     return map(
-      groupBy(results, result => result.type),
+      groupBy(results, result => result.indication),
       (resultsInCategory: AnalysisResult[], category: string) => ({
         category,
-        indicates: resolveIndication(resultsInCategory, evaluatedValues),
+        indication: resolveIndication(resultsInCategory, evaluatedValues),
         severity: resolveSeverity(resultsInCategory),
         relevantComponents: flatten(map(
           resultsInCategory,

@@ -74,16 +74,16 @@ const analysis: Analysis = {
 
     if (values[L1_MP.symbol] !== undefined) {
       let severity = AnalysisResultSeverity.NONE;
-      let type = LowerIncisorInclination.normal;
+      let indication = LowerIncisorInclination.normal;
       const value = values[L1_MP.symbol] as number;
       const { norm, stdDev } = angleBetweenLowerIncisorToMP;
       if (value < norm - stdDev) {
-        type = LowerIncisorInclination.lingual;
+        indication = LowerIncisorInclination.lingual;
       } else if (value > norm + stdDev) {
-        type = LowerIncisorInclination.labial;
+        indication = LowerIncisorInclination.labial;
       }
       results.push({
-        type,
+        indication,
         severity,
         relevantComponents: [L1_MP.symbol],
       });
@@ -91,16 +91,16 @@ const analysis: Analysis = {
     
     if (values[U1_SN.symbol] !== undefined) {
       let severity = AnalysisResultSeverity.NONE;
-      let type = UpperIncisorInclination.normal;
+      let indication = UpperIncisorInclination.normal;
       const value = values[U1_SN.symbol] as number;
       const { norm, stdDev } = angleBetweenUpperIncisorToSN;
       if (value < norm - stdDev) {
-        type = UpperIncisorInclination.palatal;
+        indication = UpperIncisorInclination.palatal;
       } else if (value > norm + stdDev) {
-        type = UpperIncisorInclination.labial;
+        indication = UpperIncisorInclination.labial;
       }
       results.push({
-        type,
+        indication,
         severity,
         relevantComponents: [U1_SN.symbol],
       });
