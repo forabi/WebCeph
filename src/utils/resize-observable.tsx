@@ -3,6 +3,7 @@ import each from 'lodash/each';
 import assign from 'lodash/assign';
 
 interface Props {
+  className?: string;
   onResize(e: ResizeObserverEntry): any;
 }
 
@@ -33,7 +34,7 @@ export default class ResizeObservableComponent extends React.PureComponent<Props
 
   render() {
     return (
-      <div ref="target">
+      <div className={this.props.className} ref="target">
         {this.props.children}
       </div>
     );

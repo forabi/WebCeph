@@ -5,9 +5,12 @@ import CephaloDropzone from 'components/CephaloDropzone/connected';
 import Props from './props';
 import { pure } from 'recompose';
 
-const CephaloCanvasContainer = pure(({ hasImage, onResize }: Props) => {
+const CephaloCanvasContainer = pure(({ className, hasImage, onResize }: Props) => {
   return (
-    <ResizeObservable onResize={({ contentRect: { width, height } }) => onResize(width, height)}>
+    <ResizeObservable
+      className={className}
+      onResize={({ contentRect: { width, height } }) => onResize(width, height)}
+    >
       {hasImage ? <CephaloCanvas /> : <CephaloDropzone />}
     </ResizeObservable>
   );
