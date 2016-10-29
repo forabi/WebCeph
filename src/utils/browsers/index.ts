@@ -1,4 +1,7 @@
 import bowser from 'bowser';
+import filter from 'lodash/filter';
+import memoize from 'lodash/memoize';
+import keyBy from 'lodash/keyBy';
 
 const ChromeIcon: string = require('url!./icons/chrome.svg');
 const FirefoxIcon: string = require('url!./icons/firefox.svg');
@@ -7,54 +10,66 @@ const OperaIcon: string = require('url!./icons/opera.svg');
 const SafariIcon: string = require('url!./icons/safari-ios.svg');
 
 interface BrowserDetails {
-  name: string;
+  id: string;
   downloadUrl: string;
   icon: string;
-  isApplicable?(): boolean;
+  isApplicable?: boolean | (() => boolean);
 }
 
 const _current = bowser;
 
-export const details = {
-  Chrome: {
-    name: 'Chrome',
+export const recommendedBrowsers: BrowserDetails[] = [
+  {
+    id: 'Chrome',
     downloadUrl: 'https://google.com/chrome',
     icon: ChromeIcon,
   },
-  Firefox: {
-    name: 'Firefox',
+  {
+    id: 'Firefox',
     downloadUrl: 'https://getfirefox.com/',
     icon: FirefoxIcon,
   },
-  Opera: {
-    name: 'Opera',
+  {
+    id: 'Opera',
     downloadUrl: 'https://opera.com/',
     icon: OperaIcon,
   },
-  'Microsoft Edge': {
-    name: 'Edge',
+  {
+    id: 'Microsoft Edge',
     downloadUrl: 'https://www.microsoft.com/windows/microsoft-edge',
     icon: EdgeIcon,
     isApplicable() {
       return _current.windows && _current.osversion === '10';
     }
   },
-  Safari: {
-    name: 'Safari',
+  {
+    id: 'Safari',
     downloadUrl: 'https://www.apple.com/safari/',
     icon: SafariIcon,
     isApplicable() {
       return _current.mac;
     }
   },
-} as { [id: string]: BrowserDetails };
+];
 
+export const browsersById = keyBy(recommendedBrowsers, b => b.id);
 
 export const currentBrowser: Browser = {
   id: _current.name as BrowserId,
-  name: details[_current.name] ? details[_current.name].name : 'Unknown',
-  downloadUrl: details[_current.name] ? details[_current.name].downloadUrl : '',
+  downloadUrl: browsersById[_current.name] ? browsersById[_current.name].downloadUrl : '',
   version: _current.version,
-}
+};
 
-export default details;
+export const getApplicapleBrowsers = memoize(
+  (excludeCurrentBrowser: boolean = true) => filter(browsersById, (browser, id) => {
+    if (excludeCurrentBrowser && id === currentBrowser.id) return false;
+    if (typeof browser.isApplicable === 'function') {
+      return browser.isApplicable();
+    } else if (typeof browser.isApplicable === 'boolean') {
+      return browser.isApplicable;
+    }
+    return false;
+  }),
+);
+
+export default recommendedBrowsers;

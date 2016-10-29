@@ -393,8 +393,6 @@ type MissingBrowserFeature = BrowserFeature & { available: false };
 
 interface Browser {
   id: BrowserId | string;
-  /** Display name for the browser */
-  name: string;
   /**
    * The current version of the browser
    */
@@ -403,10 +401,4 @@ interface Browser {
    * URL to the download page of the browser
    */
   downloadUrl: string;
-}
-
-interface BrowserRecommendation {
-  id: BrowserId;
-  /** Display name for the browser */
-  name: string;
 }

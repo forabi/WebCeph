@@ -41,12 +41,14 @@ const missingFeatures = handleActions<MissingFeatures, Payloads.missingFeatureDe
   }
 }, { });
 
-export const getMissingFeatures = (state: GenericState) => toArray(state[KEY_MISSING_FEATURES]) as MissingBrowserFeature[];
+export const isCheckingCompatiblity = (state: GenericState): IsBeingChecked => state[KEY_IS_BEING_CHEKED];
+
+export const getMissingFeatures = (state: GenericState) => toArray(state[KEY_MISSING_FEATURES] as MissingFeatures);
 
 export const isBrowserCompatible = createSelector(
   getMissingFeatures,
   (missing) => missing.length === 0,
-)
+);
 
 export default {
   [KEY_IS_IGNORED]: isIgnored,

@@ -11,6 +11,7 @@ import {
   ConnectableProps,
   StateProps,
   DispatchProps,
+  OwnProps,
   AdditionalPropsToMerge,
 } from './props';
 import {
@@ -26,8 +27,6 @@ import {
   highlightStep,
   unhighlightStep,
 } from 'actions/workspace';
-
-type OwnProps = { };
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (enhancedState: EnhancedState<StoreState>) => {
   const { present: state } = enhancedState;

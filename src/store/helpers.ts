@@ -1,3 +1,4 @@
+import reduce from 'lodash/reduce';
 type Reducer<State, Action> = (state: State, action: Action) => State;
 
 /**
@@ -11,9 +12,7 @@ export function wrapWithDefaultState<State, Action>(reducer: Reducer<State, Acti
     }
     return newState;
   };
-}
-
-import reduce from 'lodash/reduce';
+};
 
 /**
  * Calls an array of reducers in order, each with the state returned from the previous reducer
@@ -27,4 +26,4 @@ export function reduceReducers<State, Action>(...reducers: Array<Reducer<State, 
       previous,
     );
   };
-}
+};
