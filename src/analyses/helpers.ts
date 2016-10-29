@@ -267,7 +267,7 @@ export enum SkeletalBite {
   closed,
 };
 
-export enum AnalysisResultSeverity {
+export enum ProblemSeverity {
   NONE = 0,
   UNKNOWN = NONE,
   LOW = 1,
@@ -313,7 +313,7 @@ export function isSkeletalBite(value: number | string): value is SkeletalBite {
   return has(SkeletalBite, value);
 };
 
-export function getDisplayNameForResult({ indication }: AnalysisResult) {
+export function getDisplayNameForResult({ indication }: AnalysisInterpretation) {
   if (isSkeletalPattern(indication)) {
     return 'Skeletal Pattern';
   } else if (isSkeletalProfile(indication)) {
@@ -372,8 +372,8 @@ export const isStepComputable = (step: CephaloLandmark) => {
 /**
  * Tries to return the most reasonable severity value given contradicting interpretations of the evaluated values of an analysis
  */
-export function resolveSeverity(results: AnalysisResult[]) {
-  return reduce<AnalysisResult, AnalysisResultSeverity>(
+export function resolveSeverity(results: AnalysisInterpretation[]) {
+  return reduce<AnalysisInterpretation, ProblemSeverity>(
     results,
     (previousValue, result) => {
       // @TODO: improve the logic
@@ -386,7 +386,7 @@ export function resolveSeverity(results: AnalysisResult[]) {
 /**
  * Tries to return the most reasonable indication given contradicting interpretations of the evaluated values of an analysis
  */
-export function resolveIndication(results: AnalysisResult[], values: { [symbol: string]: EvaluatedValue }) {
+export function resolveIndication(results: AnalysisInterpretation[], values: { [symbol: string]: EvaluatedValue }) {
   // @TODO: improve the logic
   return results[0].indication;
 };

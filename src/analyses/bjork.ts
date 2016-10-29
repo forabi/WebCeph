@@ -1,6 +1,6 @@
 import { 
   angularSum, angleBetweenPoints,
-  AnalysisResultSeverity,
+  ProblemSeverity,
   GrowthPattern,
 } from './helpers';
 
@@ -29,8 +29,8 @@ export const sumOfBjork: AnalysisComponent = {
   stdDev: 6,
 };
 
-export const interpretSumOfBjork = (value: number, min = 390, max = 402): AnalysisResult[] => {
-  let severity = AnalysisResultSeverity.NONE;
+export const interpretSumOfBjork = (value: number, min = 390, max = 402): AnalysisInterpretation[] => {
+  let severity = ProblemSeverity.NONE;
   let indication = GrowthPattern.normal;
   // @TODO: handle severity
   if (value < min) {
@@ -52,7 +52,7 @@ const analysis: Analysis = {
     sumOfBjork,
   ],
   interpret(values) {
-    const results: AnalysisResult[] = [];
+    const results: AnalysisInterpretation[] = [];
     if (values[BJORK_SUM.symbol] !== undefined){
       results.push(...interpretSumOfBjork(values[BJORK_SUM.symbol] as number));
     }

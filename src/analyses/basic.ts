@@ -2,7 +2,7 @@ import { MP, components as commonComponents } from './common';
 import { angleOfConvexity, angleOfYAxis, interpret as interpretDowns } from './downs';
 import bjork from './bjork';
 import dental from './dental';
-import { point, line, angleBetweenLines, AnalysisResultSeverity, SkeletalBite } from './helpers';
+import { point, line, angleBetweenLines, ProblemSeverity, SkeletalBite } from './helpers';
 
 /**
  * Anterior point on maxillary bone
@@ -30,9 +30,9 @@ const angleMM: AnalysisComponent = {
   stdDev: 4,
 }
 
-const interpretMM = (value: number, min = 22, max = 30): AnalysisResult => {
+const interpretMM = (value: number, min = 22, max = 30): AnalysisInterpretation => {
   let indication = SkeletalBite.normal;
-  let severity = AnalysisResultSeverity.NONE;
+  let severity = ProblemSeverity.NONE;
   if (value < min) {
     indication = SkeletalBite.closed;
   } else if (value > max) {

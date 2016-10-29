@@ -3,7 +3,7 @@ import assign from 'lodash/assign';
 import { 
   line, point,
   angleBetweenPoints, angleBetweenLines,
-  AnalysisResultSeverity, SkeletalPattern, Mandible, Maxilla,
+  ProblemSeverity, SkeletalPattern, Mandible, Maxilla,
   MandibularRotation,
 } from './helpers';
 
@@ -156,9 +156,9 @@ export const components: AnalysisComponent[] = [
   },
 ];
 
-export const interpretSN_to_MP = (value: number, min = 30, max = 40): AnalysisResult => {
+export const interpretSN_to_MP = (value: number, min = 30, max = 40): AnalysisInterpretation => {
   const relevantComponents = [SN_to_MP.symbol];
-  const severity: AnalysisResultSeverity = AnalysisResultSeverity.NONE;
+  const severity: ProblemSeverity = ProblemSeverity.NONE;
   let indication = MandibularRotation.normal;
   if (value > max) {
     indication = MandibularRotation.clockwise;
@@ -172,11 +172,11 @@ export const interpretSN_to_MP = (value: number, min = 30, max = 40): AnalysisRe
   };
 };
 
-export const interpretANB = (value: number, min = 0, max = 4): AnalysisResult => {
+export const interpretANB = (value: number, min = 0, max = 4): AnalysisInterpretation => {
   // @TODO: handle severity
   const relevantComponents = [ANB.symbol];
-  const severity: AnalysisResultSeverity = Math.min(
-    AnalysisResultSeverity.HIGH,
+  const severity: ProblemSeverity = Math.min(
+    ProblemSeverity.HIGH,
     Math.round(Math.abs(value - ((min + max) / 2)) / 3),
   );
   let indication = SkeletalPattern.class1;
@@ -192,11 +192,11 @@ export const interpretANB = (value: number, min = 0, max = 4): AnalysisResult =>
   };
 };
 
-export const interpretSNA = (value: number, min = 80, max = 84): AnalysisResult => {
+export const interpretSNA = (value: number, min = 80, max = 84): AnalysisInterpretation => {
   // @TODO: handle severity
   const relevantComponents = [SNA.symbol];
   const severity = Math.min(
-    AnalysisResultSeverity.HIGH,
+    ProblemSeverity.HIGH,
     Math.round(Math.abs(value - ((min + max) / 2)) / 3),
   );
   let indication = Maxilla.normal;
@@ -212,12 +212,12 @@ export const interpretSNA = (value: number, min = 80, max = 84): AnalysisResult 
   };
 };
 
-export const interpretSNB = (value: number, min = 78, max = 82): AnalysisResult => {
+export const interpretSNB = (value: number, min = 78, max = 82): AnalysisInterpretation => {
   // @TODO: handle severity
   const relevantComponents = [SNB.symbol];
   let indication = Mandible.normal;
   const severity = Math.min(
-    AnalysisResultSeverity.HIGH,
+    ProblemSeverity.HIGH,
     Math.round(Math.abs(value - ((min + max) / 2)) / 5),
   );
   if (value > max) {
@@ -232,11 +232,11 @@ export const interpretSNB = (value: number, min = 78, max = 82): AnalysisResult 
   };
 };
 
-export const interpretFMPA = (value: number, min = 16.9, max = 26.9): AnalysisResult => {
+export const interpretFMPA = (value: number, min = 16.9, max = 26.9): AnalysisInterpretation => {
   // @TODO: handle severity
   const relevantComponents = [FMPA.symbol];
   let indication = MandibularRotation.normal;
-  let severity = AnalysisResultSeverity.NONE;
+  let severity = ProblemSeverity.NONE;
   // const severity = Math.min(
   //   AnalysisResultSeverity.HIGH,
   //   Math.round(Math.abs(value - ((min + max) / 2)) / 3),
@@ -257,7 +257,7 @@ const analysis: Analysis = {
   id: 'commons',
   components,
   interpret(values) {
-    const results: AnalysisResult[] = [];
+    const results: AnalysisInterpretation[] = [];
     if (values[ANB.symbol] !== undefined) {
       results.push(interpretANB(values[ANB.symbol] as number));
     }

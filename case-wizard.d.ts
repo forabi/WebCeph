@@ -104,7 +104,7 @@ type AnalysisComponent = {
   stdDev?: number;
 };
 
-interface AnalysisResult {
+interface AnalysisInterpretation {
   indication: number;
   severity: number;
   /** A list of symbol that were used to calculate this result */
@@ -138,7 +138,7 @@ interface Analysis {
    * For example, given a computed value of 7 for angle ANB,
    * the returned value should have a result of type CLASS_II_SKELETAL_PATTERN
    */
-  interpret(values: { [id: string]: EvaluatedValue }): AnalysisResult[];
+  interpret(values: { [id: string]: EvaluatedValue }): AnalysisInterpretation[];
 }
 
 /**

@@ -7,7 +7,7 @@ import {
   SkeletalBite,
   LowerIncisorInclination,
   UpperIncisorInclination,
-  AnalysisResultSeverity,
+  ProblemSeverity,
 } from 'analyses/helpers';
 
 /** A map of interpretation results to human-readable phrases */
@@ -43,9 +43,9 @@ const typeMap = {
 
 /** A map of the seveirty of skeletal problems to human-readable phrases */
 const severityMap = {
-  [AnalysisResultSeverity.LOW]: 'Slight',
-  [AnalysisResultSeverity.MEDIUM]: 'Medium',
-  [AnalysisResultSeverity.HIGH]: 'Severe',
+  [ProblemSeverity.LOW]: 'Slight',
+  [ProblemSeverity.MEDIUM]: 'Medium',
+  [ProblemSeverity.HIGH]: 'Severe',
 };
 
 export function mapSeverityToString(value?: number) {

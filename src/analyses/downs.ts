@@ -2,7 +2,7 @@ import assign from 'lodash/assign';
 import {
   angleBetweenPoints,
   line, angleBetweenLines,
-  SkeletalProfile, AnalysisResultSeverity,
+  SkeletalProfile, ProblemSeverity,
   MandibularRotation,
 } from './helpers';
 import common, { components as commonComponents, FH_PLANE, N, Pog, A, B, Gn, S, Po } from './common';
@@ -28,21 +28,21 @@ const ANGLE_OF_CONVEXITY: CephaloAngle = assign(
 
 const ANGLE_OF_Y_AXIS = angleBetweenLines(line(S, Gn, 'Y Axis'), FH_PLANE, 'Y Axis-FH Angle', 'Y-FH Angle');
 
-const interpretAngleOfConvexity = (value: number, min = -5, max = 5): AnalysisResult => {
+const interpretAngleOfConvexity = (value: number, min = -5, max = 5): AnalysisInterpretation => {
   // @TODO: handle severity
   const relevantComponents = [ANGLE_OF_CONVEXITY.symbol];
-  let severity = AnalysisResultSeverity.NONE;
+  let severity = ProblemSeverity.NONE;
   let type = SkeletalProfile.normal;
   if (value < min) {
     type = SkeletalProfile.concave;
     severity = Math.max(
-      AnalysisResultSeverity.HIGH,
+      ProblemSeverity.HIGH,
       Math.round(Math.abs(value - min) / 3),
     );
   } else if (value > max) {
     type = SkeletalProfile.convex;
     severity = Math.min(
-      AnalysisResultSeverity.HIGH,
+      ProblemSeverity.HIGH,
       Math.round(Math.abs(value - max) / 3),
     );
   }
@@ -53,21 +53,21 @@ const interpretAngleOfConvexity = (value: number, min = -5, max = 5): AnalysisRe
   };
 };
 
-const interpretAngleOfYAxis = (value: number, min = -55.6, max = 63.2): AnalysisResult => {
+const interpretAngleOfYAxis = (value: number, min = -55.6, max = 63.2): AnalysisInterpretation => {
   // @TODO: handle severity
   const relevantComponents = [ANGLE_OF_Y_AXIS.symbol];
-  let severity = AnalysisResultSeverity.NONE;
+  let severity = ProblemSeverity.NONE;
   let indication = MandibularRotation.normal;
   if (value < min) {
     indication = MandibularRotation.counterClockwise;
     severity = Math.max(
-      AnalysisResultSeverity.HIGH,
+      ProblemSeverity.HIGH,
       Math.round(Math.abs(value - min) / 3),
     );
   } else if (value > max) {
     indication = MandibularRotation.clockwise;
     severity = Math.min(
-      AnalysisResultSeverity.HIGH,
+      ProblemSeverity.HIGH,
       Math.round(Math.abs(value - max) / 3),
     );
   }
@@ -107,7 +107,7 @@ const components: AnalysisComponent[] = [
 ];
 
 export const interpret = (values: { [id: string]: EvaluatedValue }) => {
-  const results: AnalysisResult[] = common.interpret(values);
+  const results: AnalysisInterpretation[] = common.interpret(values);
   // @TODO
   if (values[ANGLE_OF_CONVEXITY.symbol] !== undefined) {
     results.push(

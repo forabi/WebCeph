@@ -1,7 +1,7 @@
 import {
   line, point, angleBetweenLines, flipVector,
   UpperIncisorInclination, LowerIncisorInclination,
-  AnalysisResultSeverity
+  ProblemSeverity
 } from './helpers';
 import { N, S, Me, Go } from './common';
 
@@ -67,13 +67,13 @@ const analysis: Analysis = {
     angleBetweenLowerIncisorToMP,
   ],
   interpret(values) {
-    const results: AnalysisResult[] = [];
+    const results: AnalysisInterpretation[] = [];
     if (values[INTERINCISAL_ANGLE.symbol] !== undefined) {
       // @TODO
     }
 
     if (values[L1_MP.symbol] !== undefined) {
-      let severity = AnalysisResultSeverity.NONE;
+      let severity = ProblemSeverity.NONE;
       let indication = LowerIncisorInclination.normal;
       const value = values[L1_MP.symbol] as number;
       const { norm, stdDev } = angleBetweenLowerIncisorToMP;
@@ -90,7 +90,7 @@ const analysis: Analysis = {
     }
     
     if (values[U1_SN.symbol] !== undefined) {
-      let severity = AnalysisResultSeverity.NONE;
+      let severity = ProblemSeverity.NONE;
       let indication = UpperIncisorInclination.normal;
       const value = values[U1_SN.symbol] as number;
       const { norm, stdDev } = angleBetweenUpperIncisorToSN;
@@ -104,6 +104,10 @@ const analysis: Analysis = {
         severity,
         relevantComponents: [U1_SN.symbol],
       });
+    }
+
+    if (values[INTERINCISAL_ANGLE.symbol] !== undefined) {
+      
     }
     return results;
   }
