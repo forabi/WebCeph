@@ -14,9 +14,12 @@ import {
   AdditionalPropsToMerge,
 } from './props';
 import {
-  getStepState,
-  getStepValue,
+  getStepStateBySymbol,
+  getComputedValueBySymbol,
 } from 'store/reducers/workspace/analysis';
+import {
+  isLandmarkRemovable,
+} from 'store/reducers/workspace/analysis/tracing'
 
 import {
   removeManualLandmark,
@@ -30,8 +33,9 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (enhancedState: E
   const { present: state } = enhancedState;
   return {
     steps: [],
-    getStepState: getStepState(state),
-    getStepValue: getStepValue(state),
+    getStepState: getStepStateBySymbol(state),
+    getStepValue: getComputedValueBySymbol(state),
+    isStepRemovable: isLandmarkRemovable(state),
   };
 };
 

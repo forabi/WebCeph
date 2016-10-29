@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { List, ListItem } from 'material-ui/List';
-import { pure } from 'recompose';
-import Props from './props';
-
-const classes = require('./style.scss');
-
 import IconPlayArrow from 'material-ui/svg-icons/av/play-arrow';
 import IconHourglass from 'material-ui/svg-icons/action/hourglass-empty';
 import IconDone from 'material-ui/svg-icons/action/done';
+import { pure } from 'recompose';
+import Props from './props';
+import { getDescriptionForStep, getTitleForStep } from './strings';
+
+const classes = require('./style.scss');
 
 const ICON_DONE       = <IconDone color="green"/>;
 const ICON_CURRENT    = <IconPlayArrow color="blue" />;
@@ -20,28 +20,6 @@ const icons: { [id: string]: JSX.Element } = {
   pending: ICON_PENDING,
   evaluating: ICON_EVALUATING,
 };
-
-import { descriptions } from './strings';
-
-const getDescriptionForStep = (landmark: CephaloLandmark) => {
-  return descriptions[landmark.symbol] || landmark.description || null;
-}
-
-const getTitleForStep = (landmark: CephaloLandmark) => {
-  if (landmark.type === 'point') {
-    return `Set point ${landmark.symbol}${ landmark.name ? ` (${landmark.name})` : '' }`;
-  } else if (landmark.type === 'line') {
-    return `Draw line ${landmark.symbol}${ landmark.name ? ` (${landmark.name})` : '' }`;
-  } else if (landmark.type === 'angle') {
-    return `Calculate angle ${landmark.symbol}${ landmark.name ? ` (${landmark.name})` : '' }`;
-  } else if (landmark.type === 'distance') {
-    return `Measure distance between points ${landmark.components[0].symbol} and ${landmark.components[1].symbol}`
-  } else if (landmark.type === 'sum') {
-    return `Calculate ${landmark.name || landmark.symbol || landmark.components.map(c => c.symbol).join(' + ')}`
-  }
-  console.warn('Could not get title for step of type ' + landmark.type as string);
-  return undefined;
-}
 
 export const AnalysisStepper = pure((props: Props) => {
   const {
@@ -56,10 +34,10 @@ export const AnalysisStepper = pure((props: Props) => {
     <List className={props.className}>
     {
       steps.map(step => {
-        const value = getStepValue(step);
-        const state = getStepState(step);
+        const value = getStepValue(step.symbol);
+        const state = getStepState(step.symbol);
         const isDone = state === 'done';
-        const isRemovable = isDone && isStepRemovable(step);
+        const isRemovable = isDone && isStepRemovable(step.symbol);
         return (
           <div key={step.symbol}>
             <ListItem

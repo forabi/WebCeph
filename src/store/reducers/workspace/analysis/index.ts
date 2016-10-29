@@ -148,10 +148,10 @@ export const getExpectedNextManualLandmark = createSelector(
 export const getManualStepState = createSelector(
   getManualLandmarks,
   getExpectedNextManualLandmark,
-  (manualLandmarks, next) => (landmark: CephaloLandmark): StepState => {
-    if (manualLandmarks[landmark.symbol] !== undefined) {
+  (manualLandmarks, next) => (symbol: string): StepState => {
+    if (manualLandmarks[symbol] !== undefined) {
       return 'done';
-    } else if (next && next.symbol === landmark.symbol) {
+    } else if (next && next.symbol === symbol) {
       return 'current'
     } else {
       return 'pending';
@@ -163,7 +163,7 @@ export const getPendingSteps = createSelector(
   getActiveAnalysisSteps,
   getManualStepState,
   (steps, getStepState) => {
-    return filter(steps, s => getStepState(s) === 'pending');
+    return filter(steps, s => getStepState(s.symbol) === 'pending');
   },
 );
 
@@ -183,7 +183,7 @@ export const isStepEligibleForAutomaticMapping = createSelector(
     if (isStepManual(s)) return false;
     return every(s.components, c => {
       if (isCephaloPoint(c)) {
-        const state = getManualStepState(c);
+        const state = getManualStepState(c.symbol);
         return state === 'done';
       }
       return isStepEligibleForAutomaticMapping(c);
@@ -262,17 +262,17 @@ export const getComputedValueBySymbol = createSelector(
   (computedValues) => (symbol: string) => computedValues[symbol] || undefined,
 );
 
-export const getStepState = createSelector(
+export const getStepStateBySymbol = createSelector(
   getAllLandmarks,
   getManualStepState,
   getComputedValues,
-  (allLandmarks, getManualStepState, computedValues) => (step: CephaloLandmark): StepState => {
-    if (allLandmarks[step.symbol] !== undefined) {
+  (allLandmarks, getManualStepState, computedValues) => (symbol: string): StepState => {
+    if (allLandmarks[symbol] !== undefined) {
       return 'done';
-    } else if (computedValues[step.symbol] !== undefined) {
+    } else if (computedValues[symbol] !== undefined) {
       return 'done';
     } else {
-      return getManualStepState(step);
+      return getManualStepState(symbol);
     }
   }
 );

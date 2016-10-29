@@ -4,8 +4,9 @@ export interface OwnProps {
 
 export interface StateProps {
   steps: Step[];
-  getStepState(step: Step): StepState;
-  getStepValue(step: Step): number | undefined;
+  getStepState(symbol: string): StepState;
+  getStepValue(symbol: string): number | undefined;
+  isStepRemovable(symbol: string): boolean;
 }
 
 export interface DispatchProps {
