@@ -24,10 +24,14 @@ import {
   getCanvasSize,
   getScale,
   getScaleOrigin,
-  getAllLandmarks,
-  getHighlightedLandmarks,
   createActiveTool,
 } from 'store/reducers/workspace/canvas';
+import {
+  getHighlightedLandmarks,
+} from 'store/reducers/workspace';
+import {
+  getAllLandmarks,
+} from 'store/reducers/workspace/analysis';
 import assign from 'lodash/assign';
 import partial from 'lodash/partial';
 
@@ -39,14 +43,14 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (enhancedState: E
   const { height: canvasHeight, width: canvasWidth } = getCanvasSize(state);
   const { height: imageHeight, width: imageWidth } = getImageSize(state);
   return {
-    canvasHeight, 
+    canvasHeight,
     canvasWidth,
-    src: getImageData(state),
-    imageWidth,
-    imageHeight,
+    src: getImageData(state) as string,
+    imageWidth: imageWidth as number,
+    imageHeight: imageHeight as number,
     scale: getScale(state),
-    scaleOriginX: origin === null ? '50%' : origin.x,
-    scaleOriginY: origin === null ? '50%' : origin.y,
+    scaleOriginX: origin !== null ? origin.x : null,
+    scaleOriginY: origin !== null ? origin.y : null,
     brightness: getImageBrightness(state),
     contrast: getImageContrast(state),
     isFlippedX: isImageFlippedX(state),

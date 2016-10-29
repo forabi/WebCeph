@@ -6,6 +6,7 @@ import every from 'lodash/every';
 import memoize from 'lodash/memoize';
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
+import compact from 'lodash/compact';
 import map from 'lodash/map';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 import tracing, {
@@ -330,6 +331,21 @@ export const getComponentWithAllPossibleNestedComponents = createSelector(
       return [];
     }
   }),
+);
+
+export const getLandmarkWithAllNestedLandmarks = createSelector(
+  findStepBySymbol,
+  getComponentWithAllPossibleNestedComponents,
+  getCephaloMapper,
+  (findStep, getWithNested, mapper) => (symbol: string) => {
+    return compact(map(getWithNested(symbol), l => {
+      const step = findStep(l.symbol);
+      if (step !== null) {
+        return tryMap(step, mapper);
+      }
+      return undefined;
+    })) as GeometricalObject[];
+  },
 );
 
 export const getAllLandmarksAndValues = createSelector(

@@ -165,7 +165,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
       canvasWidth, canvasHeight,
       imageHeight, imageWidth,
       contrast, brightness,
-      highlightedLandmarks: highlighted,
+      getLandmarksToHighlight: highlighted,
       getCursorForCanvas = () => undefined,
     } = this.props;
     return (

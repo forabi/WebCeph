@@ -10,11 +10,10 @@ export interface StateProps {
   imageHeight: number;
   imageWidth: number; 
   scale: number;
-  scaleOriginX: number;
-  scaleOriginY: number;
+  scaleOriginX: number | null;
+  scaleOriginY: number | null;
   landmarks: { [symbol: string]: GeometricalObject } | { };
-  isHighlightModeActive: boolean;
-  highlightedLandmarks: { [symbol: string]: boolean };
+  highlightedLandmarks: GeometricalObject[];
   activeTool: (dispatch: DispatchFunction) => EditorTool;
 };
 

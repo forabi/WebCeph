@@ -43,17 +43,3 @@ export default {
 };
 
 export const getHighlightedStep = (state: GenericState) => state[KEY_HIGHLIGHTED_STEP] as State;
-
-export const getHighlightedLandmarks = createSelector(
-  getHighlightedStep,
-  findStepBySymbol,
-  (highlightedStep, findStepBySymbol): CephaloLandmark[] => {
-    if (highlightedStep !== null) { 
-      const step = findStepBySymbol(highlightedStep);
-      if (step !== null) {
-        return getStepsForLandmarks([step]);
-      }
-    }
-    return [];
-  }
-);
