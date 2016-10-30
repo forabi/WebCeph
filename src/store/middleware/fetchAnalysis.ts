@@ -3,25 +3,29 @@ import { Store, Dispatch, Middleware } from 'redux';
 
 declare const require: __WebpackModuleApi.RequireFunction;
 
-const middleware: Middleware = (_: Store<any>) => (next: Dispatch<any>) => (action: Action<any>) => {
+require.context('analyses', false, /.ts$/i);
+
+const middleware: Middleware = (_: Store<any>) => (next: Dispatch<any>) => async (action: Action<any>) => {
   const { type, payload } = action;
-  if (type === Event.SET_ACTIVE_ANALYSIS_REQUESTED) {
-    try {
-      const analysisId: Payloads.analysisLoadRequested = payload;
-      require.ensure([`analyses/${analysisId}`], (_) => {
+  if (type === Event.SET_ANALYSIS_REQUESTED) {
+    const analysisId: Payloads.analysisLoadRequested = payload;
+    require.ensure([], (require) => {
+      try {
+        // const analysis: Analysis = require(`analyses/${analysisId}`);
+        // __DEBUG__ && console.log('Fetched!', analysis, typeof analysis, analysis);
         return next({
-          type: Event.FETCH_ANALYSIS_SUCCEEDED,
+          type: Event.SET_ANALYSIS_SUCCEEDED,
           payload: payload as Payloads.analysisLoadSucceeded,
         });
-      });
-      return;
-    } catch (e) {
-      return next({
-        type: Event.FETCH_ANALYSIS_FAILED,
-        error: true,
-        payload: { message: e.message } as Payloads.analysisLoadFailed,
-      });
-    }
+      } catch (e) {
+        console.log('Failed', e);
+        return next({
+          type: Event.SET_ANALYSIS_FAILED,
+          error: true,
+          payload: { message: e.message } as Payloads.analysisLoadFailed,
+        });
+      }
+    });
   } else {
     return next(action);
   }

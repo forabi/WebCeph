@@ -1,3 +1,13 @@
+.root {
+  display: flex;
+  flex-direction: column;
+}
+
+.list {
+  flex-grow: 1;
+  overflow-y: scroll;
+}
+
 @keyframes spin {
     from {
       transform: rotate(0deg);

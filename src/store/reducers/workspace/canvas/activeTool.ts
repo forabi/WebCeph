@@ -46,7 +46,7 @@ export const getActiveToolId = (state: GenericState): ToolId => {
   return state[KEY_ACTIVE_TOOL];
 };
 
-export const createActiveTool = createSelector(
+export const getActiveToolCreator = createSelector(
   getActiveToolId,
   (id): EditorToolCreator => Tools[id],
 );

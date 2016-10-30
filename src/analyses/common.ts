@@ -254,7 +254,7 @@ export const interpretFMPA = (value: number, min = 16.9, max = 26.9): AnalysisIn
 };
 
 const analysis: Analysis = {
-  id: 'commons',
+  id: 'common',
   components,
   interpret(values) {
     const results: AnalysisInterpretation[] = [];

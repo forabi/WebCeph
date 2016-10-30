@@ -1,9 +1,10 @@
 .dropzone {
-  height: 100%;
-  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-size: 50% 50%;
+  background-position: center;
+  background-color: #EEEEEE;
 
   .dropzone_placeholder {
     white-space: pre-wrap;
@@ -11,15 +12,9 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    height: 100%;
-    width: 100%;
-    background-repeat: no-repeat;
-    background-size: 50% 50%;
-    background-position: center;
-    background-color: #EEEEEE;
+    max-height: 80%;
+    max-width: 80%;
     user-select: none;
-    -webkit-user-select: none;
-    
   }
 
   .dropzone_placeholder_text {

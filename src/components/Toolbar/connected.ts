@@ -3,14 +3,13 @@ import {
   MapStateToProps,
   MapDispatchToPropsFunction,
 } from 'react-redux';
-import noop from 'lodash/noop';
 import { StateProps, DispatchProps, OwnProps } from './props';
 import CephaloToolbar from './index';
 import {
   setBrightness,
   setContrast,
   setActiveTool,
-  flipX,
+  flipX, flipY,
   invertColors,
   redo, undo,
 } from 'actions/workspace';
@@ -46,7 +45,7 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = 
     onBrightnessChange: (value) => dispatch(setBrightness(value)),
     onContrastChange: (value) => dispatch(setContrast(value)),
     onFlipXClick: () => dispatch(flipX()),
-    onFlipYClick: noop,
+    onFlipYClick: () => dispatch(flipY()),
     onInvertToggle: () => dispatch(invertColors()),
     onRedoClick: () => dispatch(redo()),
     onUndoClick: () => dispatch(undo()),

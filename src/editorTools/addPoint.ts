@@ -10,9 +10,9 @@ import {
 } from 'actions/workspace';
 
 import {
-  nextManualLandmarkSelector,
-  isAnalysisCompleteSelector,
-} from '../store/selectors/workspace';
+  getExpectedNextManualLandmark,
+  isAnalysisComplete,
+} from 'store/reducers/workspace/analysis';
 
 export const createAddPoint: EditorToolCreator = (
   state: GenericState,
@@ -21,7 +21,7 @@ export const createAddPoint: EditorToolCreator = (
   createZoomWithWheel(state, dispatch),
   {
     onCanvasMouseEnter() {
-      if (!isAnalysisCompleteSelector(state)) {
+      if (!isAnalysisComplete(state)) {
         // @TODO
       }
     },
@@ -29,7 +29,7 @@ export const createAddPoint: EditorToolCreator = (
       // @TODO
     },
     onCanvasLeftClick(x, y) {
-      const landmark = nextManualLandmarkSelector(state);
+      const landmark = getExpectedNextManualLandmark(state);
       if (landmark !== null) {
         dispatch(addManualLandmark(landmark.symbol, { x, y }))
       } else {
@@ -37,10 +37,10 @@ export const createAddPoint: EditorToolCreator = (
       }
     },
     onLandmarkMouseEnter(symbol) {
-      dispatch(temporarilyHideLandmark(symbol));
+      // dispatch(temporarilyHideLandmark(symbol));
     },
     onLandmarkMouseLeave(symbol) {
-      dispatch(showTemporarilyHiddenLandmark(symbol));
+      // dispatch(showTemporarilyHiddenLandmark(symbol));
     },
     getCursorForCanvas() {
       return Cursor.ADD_LANDMARK;

@@ -6,6 +6,7 @@ import IconDone from 'material-ui/svg-icons/action/done';
 import { pure } from 'recompose';
 import Props from './props';
 import { getDescriptionForStep, getTitleForStep } from './strings';
+import * as cx from 'classnames';
 
 const classes = require('./style.scss');
 
@@ -31,31 +32,33 @@ export const AnalysisStepper = pure((props: Props) => {
     onStepMouseEnter, onStepMouseLeave,
   } = props;
   return (
-    <List className={props.className}>
-    {
-      steps.map(step => {
-        const value = getStepValue(step.symbol);
-        const state = getStepState(step.symbol);
-        const isDone = state === 'done';
-        const isRemovable = isDone && isStepRemovable(step.symbol);
-        return (
-          <div key={step.symbol}>
-            <ListItem
-              primaryText={getTitleForStep(step)}
-              secondaryText={getDescriptionForStep(step) || undefined}
-              leftIcon={icons[state]}
-              rightIcon={
-                (typeof value === 'number' ? 
-                  <span>{value.toFixed(1)}</span> : undefined)
-              }
-              onMouseEnter={isDone ? () => onStepMouseEnter(step.symbol) : undefined}
-              onMouseLeave={isDone ? () => onStepMouseLeave(step.symbol) : undefined}
-            />
-          </div>
-        );
-      })
-    }
-    </List>
+    <div className={cx(classes.root, props.className)}>
+      <List className={classes.list}>
+      {
+        steps.map(step => {
+          const value = getStepValue(step.symbol);
+          const state = getStepState(step.symbol);
+          const isDone = state === 'done';
+          const isRemovable = isDone && isStepRemovable(step.symbol);
+          return (
+            <div key={step.symbol}>
+              <ListItem
+                primaryText={getTitleForStep(step)}
+                secondaryText={getDescriptionForStep(step) || undefined}
+                leftIcon={icons[state]}
+                rightIcon={
+                  (typeof value === 'number' ? 
+                    <span>{value.toFixed(1)}</span> : undefined)
+                }
+                onMouseEnter={isDone ? () => onStepMouseEnter(step.symbol) : undefined}
+                onMouseLeave={isDone ? () => onStepMouseLeave(step.symbol) : undefined}
+              />
+            </div>
+          );
+        })
+      }
+      </List>
+    </div>
   );
 });
 

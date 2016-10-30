@@ -1,6 +1,6 @@
 import createSelect from './select';
-import Eraser from './eraser';
-import AddPoint from './addPoint';
+import createEraser from './eraser';
+import createAddPoint from './addPoint';
 import createZoomWithClick from './zoomWithClick';
 
 export const ToolsIds = {
@@ -16,8 +16,8 @@ export const ToolsIds = {
  */
  const ToolsById: { [id: string]: EditorToolCreator } = {
   [ToolsIds.SELECT]: createSelect,
-  [ToolsIds.ERASER]: Eraser,
-  [ToolsIds.ADD_POINT]: AddPoint,
+  [ToolsIds.ERASER]: createEraser,
+  [ToolsIds.ADD_POINT]: createAddPoint,
   [ToolsIds.ZOOM_WITH_CLICK]: createZoomWithClick,
 };
 

@@ -1,13 +1,17 @@
 .root {
-
+  height: 100vh;
+  max-height: 100vh;
+  width: 100vw;
+  max-width: 100vw;
+  display: flex;
+  flex-direction: column;
 }
 
 .container {
   display: flex;
-  height: 100vh;
-  max-height: 100vh;
   flex-direction: column;
-  flex-wrap: wrap;
+  flex-wrap: no-wrap;
+  flex-grow: 1;
   .menu {
 
   }
@@ -25,11 +29,22 @@
 
   .main {
     flex-grow: 1;
+    flex-basis: 75%;
   }
 
-  .stepper {
-    width: 25%;
+  .sidebar {
+    width: 25vw;
+    max-width: 25vw;
     flex-grow: 0;
+    display: flex;
+    flex-direction: column;
+    .selector {
+      flex-grow: 0;
+      width: 100%;
+    }
+    .stepper {
+      flex-grow: 1;
+    }
   }
 
 }

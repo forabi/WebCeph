@@ -32,7 +32,7 @@ export const showTemporarilyHiddenLandmark: (symbol: string) => any = createActi
   Event.SHOW_TEMORARILY_HIDDEN_LANDMARK_REQUESTED,
 );
 
-export const setScale: (zoom: number, x?: number, y?: number) => Action<Payloads.setScale> = createAction(
+export const setScale: (scale: number, x?: number, y?: number) => Action<Payloads.setScale> = createAction(
   Event.SET_SCALE_REQUESTED,
   (scale: number, x: number, y: number): Payloads.setScale => ({ scale, x, y }),
 );
@@ -45,6 +45,7 @@ export const tryAutomaticSteps: () => any = createAction(Event.TRY_AUTOMATIC_STE
 /* Image editing actions */
 export const loadImageFile: (file: File) => Action<Payloads.imageLoadRequested> = createAction(Event.LOAD_IMAGE_REQUESTED);
 export const flipX: () => Action<Payloads.flipImageX> = createAction(Event.FLIP_IMAGE_X_REQUESTED);
+export const flipY: () => Action<Payloads.flipImageY> = createAction(Event.FLIP_IMAGE_Y_REQUESTED);
 export const setBrightness: (value: number) => Action<Payloads.setBrightness> = createAction(Event.SET_IMAGE_BRIGHTNESS_REQUESTED);
 export const setContrast: (value: number) => Action<Payloads.setContrast> = createAction(Event.SET_IMAGE_CONTRAST_REQUESTED);
 export const invertColors: () => Action<Payloads.invertColors> = createAction(Event.INVERT_IMAGE_REQUESTED);
@@ -54,6 +55,8 @@ export const updateCanvasSize: (width: number, height: number) => Action<Payload
   (width: number, height: number) => ({ width, height }),
 );
 
+export const setAnalysis: (id: string) => Action<Payloads.analysisLoadRequested> = createAction(Event.SET_ANALYSIS_REQUESTED);
+
 export const showAnalysisResults: () => Action<Payloads.showAnalysisResults> = createAction(Event.SHOW_ANALYSIS_RESULTS_REQUESTED); 
 export const hideAnalysisResults: () => Action<Payloads.hideAnalysisResults> = createAction(Event.CLOSE_ANALYSIS_RESULTS_REQUESTED);
 
@@ -62,3 +65,7 @@ export const unhighlightStep: (symbol: string) => Action<Payloads.unhighlightSte
 
 export const redo: () => Action<Payloads.undo> = createAction(Event.REDO_REQUESTED);
 export const undo: () => Action<Payloads.redo> = createAction(Event.UNDO_REQUESTED);
+
+export const addWorker: (details: Payloads.addWorker) => Action<Payloads.addWorker> = createAction(Event.WORKER_CREATED);
+export const updateWorker: (details: Payloads.updateWorkerStatus) => Action<Payloads.updateWorkerStatus> = createAction(Event.WORKER_STATUS_CHANGED);
+export const removeWorker: (details: Payloads.removeWorker) => Action<Payloads.removeWorker> = createAction(Event.WORKER_TERMINATED)

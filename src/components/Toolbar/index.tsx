@@ -1,10 +1,8 @@
 import * as React from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
-import Popover from 'material-ui/Popover';
 import Slider from 'material-ui/Slider';
 import IconFlip from 'material-ui/svg-icons/image/flip';
-import IconBrightness from 'material-ui/svg-icons/image/brightness-5';
 import IconUndo from 'material-ui/svg-icons/content/undo';
 import IconRedo from 'material-ui/svg-icons/content/redo';
 import IconEraser from 'material-ui/svg-icons/content/remove-circle-outline';
@@ -13,7 +11,7 @@ import IconZoom from 'material-ui/svg-icons/action/zoom-in';
 import Divider from 'material-ui/Divider';
 import Checkbox from 'material-ui/Checkbox';
 
-import { Tools } from 'utils/constants';
+import { ToolsIds } from 'editorTools';
 
 import ToolbarProps from './props';
 
@@ -34,58 +32,50 @@ const CephaloEditorToolbar = (props: ToolbarProps) => {
 
   const cannotEdit = !canEdit;
   return (
-    <Toolbar className={props.className}>
-      <ToolbarGroup firstChild>
-        <FlatButton onClick={onRedoClick} disabled={cannotEdit || !canUndo} label="Undo" icon={<IconUndo/>} />
-        <FlatButton onClick={onUndoClick} disabled={cannotEdit || !canRedo} label="Redo" icon={<IconRedo/>} />
+    <div className={props.className}>
+      <div>
+        <FlatButton onClick={onUndoClick} disabled={cannotEdit || !canUndo} label="Undo" icon={<IconUndo/>} />
+        <FlatButton onClick={onRedoClick} disabled={cannotEdit || !canRedo} label="Redo" icon={<IconRedo/>} />
         <FlatButton onClick={onFlipXClick} disabled={cannotEdit} label="Flip" icon={<IconFlip/>} />
         <FlatButton
-          disabled={cannotEdit || activeToolId === Tools.ERASER}
+          disabled={cannotEdit || activeToolId === ToolsIds.ERASER}
           label="" icon={<IconEraser />}
-          onClick={setActiveTool(Tools.ERASER)}
+          onClick={() => setActiveTool(ToolsIds.ERASER)}
         />
         <FlatButton
-          disabled={cannotEdit || activeToolId === Tools.ADD_POINT}
+          disabled={cannotEdit || activeToolId === ToolsIds.ADD_POINT}
           label="" icon={<IconAddPoint />}
-          onClick={setActiveTool(Tools.ADD_POINT)}
+          onClick={() => setActiveTool(ToolsIds.ADD_POINT)}
         />
         <FlatButton
-          disabled={true || cannotEdit || activeToolId === Tools.ZOOM_WITH_CLICK}
+          disabled={true || cannotEdit || activeToolId === ToolsIds.ZOOM_WITH_CLICK}
           label="" icon={<IconZoom />}
-          onClick={setActiveTool(Tools.ZOOM_WITH_CLICK)}
+          onClick={() => setActiveTool(ToolsIds.ZOOM_WITH_CLICK)}
         />
-        <FlatButton
-          disabled={cannotEdit}
-          label="Corrections" icon={<IconBrightness />}
-          onClick={this.handleTouchTap}
-        />
-        <Popover
-          open={this.state.open}
-          anchorEl={this.state.anchorEl}
-          anchorOrigin={{ horizontal: 'left', vertical: 'top'}}
-          targetOrigin={{ horizontal: 'left', vertical: 'bottom' }}
-          onRequestClose={this.handleRequestClose}
-        >
-          Brightness
-          <Slider
-            style={{ width: 200, margin: 15 }}
-            min={0} max={100}
-            defaultValue={brightness}
-            onChange={(_, v) => onBrightnessChange(v)}
-          />
-          Contrast
-          <Slider
-            style={{ width: 200, margin: 15 }}
-            min={-100} max={100}
-            defaultValue={contrast}
-            onChange={(_, v) => onContrastChange(v)}
-          />
-          <Divider />
-          <Checkbox label="Invert" checked={isImageInverted} onCheck={onInvertToggle} />
-        </Popover>
-      </ToolbarGroup>
-    </Toolbar>
+      </div>
+    </div>
   );
 };
+
+const Corrections = () => (
+  <div>
+    Brightness
+    <Slider
+      style={{ width: 200, margin: 15 }}
+      min={0} max={100}
+      defaultValue={brightness}
+      onChange={(_, v) => onBrightnessChange(v)}
+    />
+    Contrast
+    <Slider
+      style={{ width: 200, margin: 15 }}
+      min={-100} max={100}
+      defaultValue={contrast}
+      onChange={(_, v) => onContrastChange(v)}
+    />
+    <Divider />
+    <Checkbox label="Invert" checked={isImageInverted} onCheck={onInvertToggle} />
+  </div>
+);
 
 export default CephaloEditorToolbar;

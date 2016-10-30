@@ -17,6 +17,7 @@ import {
 import {
   getStepStateBySymbol,
   getComputedValueBySymbol,
+  getActiveAnalysisSteps,
 } from 'store/reducers/workspace/analysis';
 import {
   isLandmarkRemovable,
@@ -31,7 +32,7 @@ import {
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (enhancedState: EnhancedState<StoreState>) => {
   const { present: state } = enhancedState;
   return {
-    steps: [],
+    steps: getActiveAnalysisSteps(state),
     getStepState: getStepStateBySymbol(state),
     getStepValue: getComputedValueBySymbol(state),
     isStepRemovable: isLandmarkRemovable(state),
@@ -47,17 +48,8 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = 
   }
 );
 
-const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> = (stateProps, dispatchProps): ConnectableProps => {
-  return assign(
-    { },
-    stateProps,
-    dispatchProps,
-    { } as AdditionalPropsToMerge,
-  );
-};
-
 const connected = connect<StateProps, DispatchProps, OwnProps>(
-  mapStateToProps, mapDispatchToProps, mergeProps
+  mapStateToProps, mapDispatchToProps,
 )(AnalysisStepper);
 
 

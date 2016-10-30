@@ -3,7 +3,7 @@ export interface OwnProps {
 }
 
 export interface StateProps {
-  steps: Step[];
+  steps: CephaloLandmark[];
   getStepState(symbol: string): StepState;
   getStepValue(symbol: string): number | undefined;
   isStepRemovable(symbol: string): boolean;

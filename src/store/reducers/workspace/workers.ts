@@ -27,7 +27,7 @@ const workersReducer = handleActions<
       const workerId = payload.id;
       if (workerId === undefined) {
         __DEBUG__ && console.error(
-          `Did not expect ${action.type} to be dispatched` +
+          `Did not expect ${action.type} to be dispatched ` +
           `with payload that does not have an 'id' property. ` +
           `We do not know how to add this worker. ` +
           `Returning current state.`,
@@ -36,7 +36,7 @@ const workersReducer = handleActions<
       }
       if (has(state, workerId)) {
         __DEBUG__ && console.error(
-          `Did not expect ${action.type} to be dispatched` +
+          `Did not expect ${action.type} to be dispatched ` +
           `with a worker that is already registered. ` +
           `Returning current state.`,
         );
@@ -52,7 +52,7 @@ const workersReducer = handleActions<
       }
       if (!has(state, workerId)) {
         __DEBUG__ && console.error(
-          `Did not expect ${action.type} to be dispatched` +
+          `Did not expect ${action.type} to be dispatched ` +
           `with a worker that has not been registered previously. ` +
           `Returning current state.`,
         );
@@ -69,7 +69,7 @@ const workersReducer = handleActions<
       const workerId = patch.id;
       if (workerId === undefined) {
         __DEBUG__ && console.error(
-          `Did not expect ${action.type} to be dispatched` +
+          `Did not expect ${action.type} to be dispatched ` +
           `with payload that does not have an 'id' property. ` +
           `We do not know which worker to update. ` +
           `Returning current state.`,
@@ -78,7 +78,7 @@ const workersReducer = handleActions<
       }
       if (workerId === undefined) {
         __DEBUG__ && console.error(
-          `Did not expect ${action.type} to be dispatched` +
+          `Did not expect ${action.type} to be dispatched ` +
           `with a worker that has not been registered previously. ` +
           `Returning current state.`,
         );

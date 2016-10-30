@@ -115,7 +115,7 @@ const flipX = handleActions<boolean, boolean>({
 }, false);
 
 const flipY = handleActions<boolean, boolean>({
-  [Event.FLIP_IMAGE_X_REQUESTED]: (state: boolean) => !state,
+  [Event.FLIP_IMAGE_Y_REQUESTED]: (state: boolean) => !state,
   [Event.LOAD_IMAGE_REQUESTED]: () => false,
   [Event.RESET_WORKSPACE_REQUESTED]: () => false,
 }, false);

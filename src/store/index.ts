@@ -5,6 +5,7 @@ import reducers from './reducers';
 import { Event } from '../utils/constants';
 import undoable, { includeAction } from 'redux-undo';
 import analyticsMiddleware from './middleware/analytics';
+import fetchAnalysis from './middleware/fetchAnalysis';
 
 declare const window: Window & { devToolsExtension?: () => any };
 
@@ -25,6 +26,7 @@ const sagaMiddleware = createSagaMiddleware();
 
 const middlewares: Middleware[] = [
   sagaMiddleware,
+  fetchAnalysis,
 ];
 
 if (__DEBUG__) {

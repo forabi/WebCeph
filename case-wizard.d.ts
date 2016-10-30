@@ -160,15 +160,21 @@ type Step = CephaloLandmark & { title: string, state: StepState };
 
 type GenericState = { [id: string]: any };
 type GenericError = { message: string, code?: number };
+type WorkerType = 'image_worker' | 'tracing_worker';
 
-interface WorkerDetails {
+interface WorkerIntrinsicDetails {
   id: string;
-  type: 'image_worker' | 'tracing_worker';
+  type: WorkerType;
+}
+
+type WorkerDetails = WorkerIntrinsicDetails & {
   isBusy: boolean;
-  error: null | {
-    message: string;
-    code: number;
-  }; 
+  error: null | GenericError; 
+};
+
+type WorkerUpdate = {
+  isBusy?: boolean;
+  error?: null | GenericError;
 }
 
 type TracingMode = 'auto' | 'manual' | 'assisted';
@@ -241,6 +247,7 @@ declare namespace Payloads {
   type undo = void;
   type redo = void;
   type flipImageX = void;
+  type flipImageY = void;
   type invertColors = void;
   type setContrast = number;
   type setBrightness = number;
@@ -276,7 +283,7 @@ declare namespace Payloads {
   type analysisLoadSucceeded = string;
   type addWorker = WorkerDetails;
   type removeWorker = string;
-  type updateWorkerStatus = WorkerDetails;
+  type updateWorkerStatus = { id: string; } & WorkerUpdate;
 }
 
 type GenericAction = { type: string, payload?: any };
@@ -347,7 +354,7 @@ interface EditorTool {
    * Triggered when the mouse scrolls over the canvas.
    * Useful for implementing zoom functionality.
    */
-  onCanvasMouseWheel?(x: number, y: number, delta: number, direction: number | string);
+  onCanvasMouseWheel?(x: number, y: number, delta: number);
 
   /**
    * Triggered when the mouse enters a landmark.

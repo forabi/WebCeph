@@ -19,7 +19,7 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
   render() {
     const {
       onFilesDropped,
-      supportedImageTypes = ['image/jpg', 'image/png', 'image/bmp'],
+      supportedImageTypes = ['image/jpeg', 'image/png', 'image/bmp'],
       allowsMultipleFiles = false,
     } = this.props;
     return (

@@ -24,7 +24,7 @@ import {
   getCanvasSize,
   getScale,
   getScaleOrigin,
-  createActiveTool,
+  getActiveToolCreator,
 } from 'store/reducers/workspace/canvas';
 import {
   getHighlightedLandmarks,
@@ -33,7 +33,7 @@ import {
   getAllLandmarks,
 } from 'store/reducers/workspace/analysis';
 import assign from 'lodash/assign';
-import partial from 'lodash/partial';
+import curry from 'lodash/curry';
 
 type OwnProps = { };
 
@@ -59,23 +59,24 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (enhancedState: E
     isInverted: isImageInverted(state),
     isHighlightModeActive: true,
     highlightedLandmarks: getHighlightedLandmarks(state),
-    activeTool: partial(createActiveTool, state),
+    activeTool: curry(getActiveToolCreator(state))(state),
   };
 };
 
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = (dispatch) => ({ dispatch });
 
-const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> = (stateProps, dispatchProps): ConnectableProps => {
+const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> = (stateProps, dispatchProps, ownProps): ConnectableProps => {
   return assign(
     { },
+    ownProps,
     stateProps,
     dispatchProps,
-    stateProps.activeTool(dispatchProps.dispatch) as AdditionalPropsToMerge,
+    stateProps.activeTool(dispatchProps.dispatch),
   );
 };
 
 const connected = connect<StateProps, DispatchProps, OwnProps>(
-  mapStateToProps, mapDispatchToProps, mergeProps
+  mapStateToProps, mapDispatchToProps, mergeProps,
 )(CephaloCanvas);
 
 

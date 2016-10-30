@@ -32,15 +32,15 @@ const interpretAngleOfConvexity = (value: number, min = -5, max = 5): AnalysisIn
   // @TODO: handle severity
   const relevantComponents = [ANGLE_OF_CONVEXITY.symbol];
   let severity = ProblemSeverity.NONE;
-  let type = SkeletalProfile.normal;
+  let indication = SkeletalProfile.normal;
   if (value < min) {
-    type = SkeletalProfile.concave;
+    indication = SkeletalProfile.concave;
     severity = Math.max(
       ProblemSeverity.HIGH,
       Math.round(Math.abs(value - min) / 3),
     );
   } else if (value > max) {
-    type = SkeletalProfile.convex;
+    indication = SkeletalProfile.convex;
     severity = Math.min(
       ProblemSeverity.HIGH,
       Math.round(Math.abs(value - max) / 3),

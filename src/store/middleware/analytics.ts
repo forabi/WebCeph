@@ -9,10 +9,10 @@ const loggable = [
 ];
 
 const isLoggable = (type: string) => {
-  return find(
+  return Boolean(find(
     loggable,
     type
-  ) !== null;
+  ));
 };
 
 const middleware: Middleware = (store: Store<any>) => (next: Dispatch<any>) => (action: Action<any>) => {

@@ -178,6 +178,10 @@ const config = {
     hot(new webpack.HotModuleReplacementPlugin()),
     dashboard ? new DashboardPlugin(dashboard.setData) : null,
     fail,
+    new webpack.optimize.CommonsChunkPlugin({
+      names: ['common'],
+      minSize: 100000,
+    }),
     new WebpackHTMLPlugin({
       filename: 'index.html',
       template: path.resolve(__dirname, 'src/index.html'),

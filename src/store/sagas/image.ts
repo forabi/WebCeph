@@ -4,8 +4,8 @@ import { takeLatest, eventChannel, END, Channel } from 'redux-saga';
 import { select, put, take, cps, fork, call, Effect } from 'redux-saga/effects';
 import { ImageWorkerAction } from 'utils/constants';
 import { ImageWorkerInstance, ImageWorkerEvent, ImageWorkerResponse } from 'utils/image-worker.d';
-import { setScale } from 'actions/workspace';
-import { getCanvasSize } from 'store/reducers/workspace/canvasSize';
+import { setScale, addWorker, updateWorker } from 'actions/workspace';
+import { getCanvasSize } from 'store/reducers/workspace/canvas';
 
 const ImageWorker = require('worker!utils/image-worker');
 
@@ -32,10 +32,15 @@ function processImageInWorker(file: File, actions: any[]) {
   });
 }
 
-function* loadImage({ payload }: { payload: { file: File } }): IterableIterator<Effect> {
-  const { file } = payload;
+function* loadImage({ payload }: Action<Payloads.imageLoadRequested>): IterableIterator<Effect> {
+  const file = payload;
   const workerId = uniqueId('worker_');
-  yield put({ type: Event.WORKER_CREATED, payload: { workerId } });
+  yield put(addWorker({
+    id: workerId,
+    type: 'image_worker',
+    isBusy: true,
+    error: null,
+  }));
   const actions = [
     {
       type: ImageWorkerAction.READ_AS_DATA_URL,
@@ -43,7 +48,7 @@ function* loadImage({ payload }: { payload: { file: File } }): IterableIterator<
   ];
   const chan: Channel<ImageWorkerResponse> = yield call(processImageInWorker, file, actions);
   try {
-    yield put({ type: Event.WORKER_STATUS_CHANGED, payload: { workerId, isBusy: true } });
+    yield put({ type: Event.WORKER_STATUS_CHANGED, payload: { id: workerId, isBusy: true } });
     while (true) {
       const data: ImageWorkerResponse = yield take(chan);
       if (data.error) {
@@ -85,13 +90,7 @@ function* loadImage({ payload }: { payload: { file: File } }): IterableIterator<
     });
   } finally {
     chan.close();
-    yield put({
-      type: Event.WORKER_STATUS_CHANGED,
-      payload: {
-        workerId,
-        isBusy: false,
-      },
-    });
+    yield put(updateWorker({ id: workerId, isBusy: false }));
   }
 }
 
