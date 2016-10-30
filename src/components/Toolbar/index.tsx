@@ -29,7 +29,7 @@ const CephaloEditorToolbar = (props: ToolbarProps) => {
     onRedoClick,
     // onFlipYClick,
     onInvertToggle,
-    setActiveTool,
+    onToolButtonClick,
   } = props;
 
   const cannotEdit = !canEdit;
@@ -41,17 +41,17 @@ const CephaloEditorToolbar = (props: ToolbarProps) => {
       <FlatButton
         disabled={cannotEdit || activeToolId === ToolsIds.ERASER}
         label="" icon={<IconEraser />}
-        onClick={() => setActiveTool(ToolsIds.ERASER)}
+        onClick={() => onToolButtonClick(ToolsIds.ERASER)}
       />
       <FlatButton
         disabled={cannotEdit || activeToolId === ToolsIds.ADD_POINT}
         label="" icon={<IconAddPoint />}
-        onClick={() => setActiveTool(ToolsIds.ADD_POINT)}
+        onClick={() => onToolButtonClick(ToolsIds.ADD_POINT)}
       />
       <FlatButton
         disabled={true || cannotEdit || activeToolId === ToolsIds.ZOOM_WITH_CLICK}
         label="" icon={<IconZoom />}
-        onClick={() => setActiveTool(ToolsIds.ZOOM_WITH_CLICK)}
+        onClick={() => onToolButtonClick(ToolsIds.ZOOM_WITH_CLICK)}
       />
     </div>
   );

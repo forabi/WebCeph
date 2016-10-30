@@ -49,7 +49,7 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = 
     onInvertToggle: () => dispatch(invertColors()),
     onRedoClick: () => dispatch(redo()),
     onUndoClick: () => dispatch(undo()),
-    setActiveTool: (id) => dispatch(setActiveTool(id)),
+    onToolButtonClick: (id) => dispatch(setActiveTool(id)),
   };
 };
 
