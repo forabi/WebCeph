@@ -7,6 +7,7 @@ import { pure } from 'recompose';
 import Props from './props';
 import { getDescriptionForStep, getTitleForStep } from './strings';
 import * as cx from 'classnames';
+import map from 'lodash/map';
 
 const classes = require('./style.scss');
 
@@ -35,7 +36,7 @@ export const AnalysisStepper = pure((props: Props) => {
     <div className={cx(classes.root, props.className)}>
       <List className={classes.list}>
       {
-        steps.map(step => {
+        map(steps, step => {
           const value = getStepValue(step.symbol);
           const state = getStepState(step.symbol);
           const isDone = state === 'done';

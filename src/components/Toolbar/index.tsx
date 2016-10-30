@@ -1,6 +1,5 @@
 import * as React from 'react';
 import FlatButton from 'material-ui/FlatButton';
-import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
 import Slider from 'material-ui/Slider';
 import IconFlip from 'material-ui/svg-icons/image/flip';
 import IconUndo from 'material-ui/svg-icons/content/undo';
@@ -10,6 +9,9 @@ import IconAddPoint from 'material-ui/svg-icons/image/control-point';
 import IconZoom from 'material-ui/svg-icons/action/zoom-in';
 import Divider from 'material-ui/Divider';
 import Checkbox from 'material-ui/Checkbox';
+import * as cx from 'classnames';
+
+const classes = require('./style.scss');
 
 import { ToolsIds } from 'editorTools';
 
@@ -32,27 +34,25 @@ const CephaloEditorToolbar = (props: ToolbarProps) => {
 
   const cannotEdit = !canEdit;
   return (
-    <div className={props.className}>
-      <div>
-        <FlatButton onClick={onUndoClick} disabled={cannotEdit || !canUndo} label="Undo" icon={<IconUndo/>} />
-        <FlatButton onClick={onRedoClick} disabled={cannotEdit || !canRedo} label="Redo" icon={<IconRedo/>} />
-        <FlatButton onClick={onFlipXClick} disabled={cannotEdit} label="Flip" icon={<IconFlip/>} />
-        <FlatButton
-          disabled={cannotEdit || activeToolId === ToolsIds.ERASER}
-          label="" icon={<IconEraser />}
-          onClick={() => setActiveTool(ToolsIds.ERASER)}
-        />
-        <FlatButton
-          disabled={cannotEdit || activeToolId === ToolsIds.ADD_POINT}
-          label="" icon={<IconAddPoint />}
-          onClick={() => setActiveTool(ToolsIds.ADD_POINT)}
-        />
-        <FlatButton
-          disabled={true || cannotEdit || activeToolId === ToolsIds.ZOOM_WITH_CLICK}
-          label="" icon={<IconZoom />}
-          onClick={() => setActiveTool(ToolsIds.ZOOM_WITH_CLICK)}
-        />
-      </div>
+    <div className={cx(classes.root, props.className)}>
+      <FlatButton onClick={onUndoClick} disabled={cannotEdit || !canUndo} label="Undo" icon={<IconUndo/>} />
+      <FlatButton onClick={onRedoClick} disabled={cannotEdit || !canRedo} label="Redo" icon={<IconRedo/>} />
+      <FlatButton onClick={onFlipXClick} disabled={cannotEdit} label="Flip" icon={<IconFlip/>} />
+      <FlatButton
+        disabled={cannotEdit || activeToolId === ToolsIds.ERASER}
+        label="" icon={<IconEraser />}
+        onClick={() => setActiveTool(ToolsIds.ERASER)}
+      />
+      <FlatButton
+        disabled={cannotEdit || activeToolId === ToolsIds.ADD_POINT}
+        label="" icon={<IconAddPoint />}
+        onClick={() => setActiveTool(ToolsIds.ADD_POINT)}
+      />
+      <FlatButton
+        disabled={true || cannotEdit || activeToolId === ToolsIds.ZOOM_WITH_CLICK}
+        label="" icon={<IconZoom />}
+        onClick={() => setActiveTool(ToolsIds.ZOOM_WITH_CLICK)}
+      />
     </div>
   );
 };
