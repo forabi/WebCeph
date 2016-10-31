@@ -188,8 +188,8 @@ export function tryMap(landmark: CephaloLandmark, mapper: CephaloMapper): Geomet
 export function compute(landmark: CephaloLandmark, mapper: CephaloMapper): number | undefined {
   if (landmark.calculate) {
     return landmark.calculate.apply(
-      landmark, 
-      map(landmark.components, l => computeOrMap(l, mapper))
+      landmark,
+      [mapper, ...map(landmark.components, l => computeOrMap(l, mapper))]
     );
   } else if (landmark.type === 'angle') {
     let result: number;

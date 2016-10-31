@@ -153,6 +153,7 @@ interface CephaloMapper {
    * It is expected to map pixels on the screen to millimeters.
    */
   scaleFactor: number | null;
+  isBehind(point: GeometricalPoint, line: GeometricalVector): boolean;
 }
 
 type StepState = 'done' | 'current' | 'pending' | 'evaluating';

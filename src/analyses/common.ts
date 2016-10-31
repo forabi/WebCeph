@@ -9,7 +9,6 @@ import {
 
 import {
   calculateAngleBetweenTwoVectors,
-  isBehind,
   radiansToDegrees,
 } from 'utils/math';
 
@@ -92,10 +91,10 @@ export const SNB = angleBetweenPoints(S, N, B);
 export const ANB: CephaloAngle = assign(
   angleBetweenLines(line(N, A), line(N, B)),
   {
-    calculate(lineNA: GeometricalVector, lineNB: GeometricalVector) {
-      const A = { x: lineNA.x2, y: lineNA.y2 };
-      const positiveValue = radiansToDegrees(calculateAngleBetweenTwoVectors(lineNA, lineNB));
-      if (isBehind(A, lineNB)) {
+    calculate(mapper: CephaloMapper, lineNA: GeometricalVector, lineNB: GeometricalVector) {
+      const _A = { x: lineNA.x2, y: lineNA.y2 };
+      const positiveValue = Math.abs(radiansToDegrees(calculateAngleBetweenTwoVectors(lineNA, lineNB)));
+      if (mapper.isBehind(_A, lineNB)) {
         return -1 * positiveValue;
       }
       return positiveValue;

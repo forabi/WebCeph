@@ -7,38 +7,38 @@ import {
   Mandible,
 } from './helpers';
 import common, { components as commonComponents, FH_PLANE, N, Pog, A, B, Gn, S, Po } from './common';
-import { radiansToDegrees, calculateAngleBetweenTwoVectors, isBehind } from '../utils/math';
+import { radiansToDegrees, calculateAngleBetweenTwoVectors } from '../utils/math';
 
 const ANGLE_OF_CONVEXITY: CephaloAngle = assign(
    angleBetweenPoints(N, A, Pog, 'Angle of Convexity'),
    {
-     calculate: (NA: GeometricalVector, APog: GeometricalVector) => {
+     calculate: (mapper: CephaloMapper, NA: GeometricalVector, APog: GeometricalVector) => {
        const _A = { x: NA.x1, y: NA.y1 };
        const _N = { x: NA.x2, y: NA.y2 };
        const _Pog = { x: APog.x2, y: APog.y2 };
        const _NPog = { x1: _N.x, y1: _N.y, x2: _Pog.x, y2: _Pog.y }
-       const positiveValue = radiansToDegrees(Math.PI - calculateAngleBetweenTwoVectors(NA, APog));
-       if (isBehind(_A, _NPog)) {
+       const positiveValue = Math.abs(radiansToDegrees(Math.PI - calculateAngleBetweenTwoVectors(NA, APog)));
+       if (mapper.isBehind(_A, _NPog)) {
          return -1 * positiveValue;
        } else {
          return positiveValue;
        }
-     }
+     },
    },
 );
 
 const ANGLE_OF_Y_AXIS = angleBetweenLines(line(S, Gn, 'Y Axis'), FH_PLANE, 'Y Axis-FH Angle', 'Y-FH Angle');
 
-const AB_PLANE_ANGLE = assign(
+const AB_PLANE_ANGLE: CephaloAngle = assign(
   angleBetweenLines(line(B, A), line(Pog, N), 'A-B Plane Angle'),
   {
-    calculate(lineBA: GeometricalVector, linePogN: GeometricalVector) {
+    calculate(mapper: CephaloMapper, lineBA: GeometricalVector, linePogN: GeometricalVector) {
       const A = { x: lineBA.x2, y: lineBA.y2 };
-      const value = radiansToDegrees(calculateAngleBetweenTwoVectors(lineBA, linePogN));
-      if (!isBehind(A, linePogN)) {
-        return -value;
+      const positiveValue = Math.abs(radiansToDegrees(calculateAngleBetweenTwoVectors(lineBA, linePogN)));
+      if (!mapper.isBehind(A, linePogN)) {
+        return -1 * positiveValue;
       }
-      return value;
+      return positiveValue;
     },
   },
 );

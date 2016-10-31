@@ -3,13 +3,15 @@ import omit from 'lodash/omit';
 import map from 'lodash/map';
 import every from 'lodash/every';
 import uniqBy from 'lodash/uniqBy';
+import negate from 'lodash/negate';
 import { handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
 import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 import manualLandmarks, { getManualLandmarks } from './manualLandmarks';
+import { isImageFlippedX } from 'store/reducers/workspace/image';
 import { line, isCephaloPoint, isCephaloLine, isCephaloAngle } from 'analyses/helpers';
-import { isGeometricalPoint } from 'utils/math';
+import { isGeometricalPoint, isBehind } from 'utils/math';
 
 type SkippedSteps = StoreEntries.workspace.analysis.tracing.steps.skipped;
 type TracingMode = StoreEntries.workspace.analysis.tracing.mode;
@@ -100,7 +102,8 @@ export const getScaleFactor = (state: GenericState): ScaleFactor => state[KEY_SC
 export const getCephaloMapper = createSelector(
   getManualLandmarks,
   getScaleFactor,
-  (manualLandmarks, scaleFactor): CephaloMapper => {
+  isImageFlippedX,
+  (manualLandmarks, scaleFactor, isFlippedX): CephaloMapper => {
     const toPoint = (cephaloPoint: CephaloPoint) => {
       const { symbol } = cephaloPoint;
       if (__DEBUG__  && !isCephaloPoint(cephaloPoint)) {
@@ -120,7 +123,7 @@ export const getCephaloMapper = createSelector(
       }
       return geoLandmark as GeometricalPoint;
     };
-    
+
     const toVector = (cephaloLine: CephaloLine) => {
       const { symbol } = cephaloLine;
       if (__DEBUG__  && !isCephaloLine(cephaloLine)) {
@@ -184,11 +187,13 @@ export const getCephaloMapper = createSelector(
         vectors: map(vectors, toVector),
       };
     };
+
     return {
       toPoint,
       toVector,
       toAngle,
       scaleFactor,
+      isBehind: isFlippedX ? negate(isBehind) : isBehind,
     };
   }
 );
