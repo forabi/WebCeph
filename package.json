@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "tslint": "tslint src/**/*.ts{,x}",
+    "eslint": "eslint *.js src",
+    "lint": "npm run tslint && npm run eslint",
     "test": "mocha src/**/*.test.* --compilers ts:ts-node/register,tsx:ts-node/register",
     "webpack:validate": "webpack-validator webpack.config.js",
     "dev": "NODE_ENV=development HOT=1 babel-node devServer.js",
@@ -92,6 +95,8 @@
     "svgo-loader": "^1.1.0",
     "ts-loader": "^0.9.1",
     "ts-node": "^1.4.3",
+    "tslint": "^3.15.1",
+    "tslint-react": "^1.1.0",
     "typescript": "^2.0.3",
     "typings": "^1.4.0",
     "url-loader": "^0.5.7",
