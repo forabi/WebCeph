@@ -4,6 +4,7 @@ import {
   line, angleBetweenLines,
   SkeletalProfile, ProblemSeverity,
   MandibularRotation,
+  Mandible,
 } from './helpers';
 import common, { components as commonComponents, FH_PLANE, N, Pog, A, B, Gn, S, Po } from './common';
 import { radiansToDegrees, calculateAngleBetweenTwoVectors, isBehind } from '../utils/math';
@@ -27,6 +28,20 @@ const ANGLE_OF_CONVEXITY: CephaloAngle = assign(
 );
 
 const ANGLE_OF_Y_AXIS = angleBetweenLines(line(S, Gn, 'Y Axis'), FH_PLANE, 'Y Axis-FH Angle', 'Y-FH Angle');
+
+const AB_PLANE_ANGLE = assign(
+  angleBetweenLines(line(B, A), line(Pog, N), 'A-B Plane Angle'),
+  {
+    calculate(lineBA: GeometricalVector, linePogN: GeometricalVector) {
+      const A = { x: lineBA.x2, y: lineBA.y2 };
+      const value = radiansToDegrees(calculateAngleBetweenTwoVectors(lineBA, linePogN));
+      if (!isBehind(A, linePogN)) {
+        return -value;
+      }
+      return value;
+    },
+  },
+);
 
 const interpretAngleOfConvexity = (value: number, min = -5, max = 5): AnalysisInterpretation => {
   // @TODO: handle severity
@@ -78,6 +93,31 @@ const interpretAngleOfYAxis = (value: number, min = -55.6, max = 63.2): Analysis
   };
 };
 
+const interpretValueOfABPlaneAngle = (value: number, min = -9.2, max = 0): AnalysisInterpretation => {
+  // @TODO: handle severity
+  const relevantComponents = [AB_PLANE_ANGLE.symbol];
+  let severity = ProblemSeverity.NONE;
+  let indication = Mandible.normal;
+  if (value < min) {
+    indication = Mandible.retrognathic;
+    severity = Math.max(
+      ProblemSeverity.HIGH,
+      Math.round(Math.abs(value - min) / 3),
+    );
+  } else if (value > max) {
+    indication = Mandible.prognathic;
+    severity = Math.min(
+      ProblemSeverity.HIGH,
+      Math.round(Math.abs(value - max) / 3),
+    );
+  }
+  return {
+    indication,
+    severity,
+    relevantComponents,
+  };
+};
+
 export const angleOfConvexity: AnalysisComponent = {
   landmark: ANGLE_OF_CONVEXITY,
   norm: 0,
@@ -90,15 +130,17 @@ export const angleOfYAxis: AnalysisComponent = {
   stdDev: 3.8,
 };
 
+export const angleOfABPlane: AnalysisComponent = {
+  landmark: AB_PLANE_ANGLE,
+  norm: -4.6,
+  stdDev: 4.6,
+};
+
 const components: AnalysisComponent[] = [
   ...commonComponents,
   angleOfConvexity,
   angleOfYAxis,
-  {
-    landmark: angleBetweenLines(line(A, B), line(N, Po), 'A-B Plane Angle'),
-    norm: -4.6,
-    stdDev: 4.6,
-  },
+  angleOfABPlane,
   {
     landmark: angleBetweenLines(FH_PLANE, line(Pog, N), 'Facial Angle', 'FH-NPog'),
     norm: 87.8,
@@ -109,14 +151,24 @@ const components: AnalysisComponent[] = [
 export const interpret = (values: { [id: string]: EvaluatedValue }) => {
   const results: AnalysisInterpretation[] = common.interpret(values);
   // @TODO
-  if (values[ANGLE_OF_CONVEXITY.symbol] !== undefined) {
+  const valueOfAngleOfConexity = values[ANGLE_OF_CONVEXITY.symbol];
+  if (typeof valueOfAngleOfConexity === 'number') {
     results.push(
-      interpretAngleOfConvexity(values[ANGLE_OF_CONVEXITY.symbol] as number),
+      interpretAngleOfConvexity(valueOfAngleOfConexity),
     );
   }
-  if (values[ANGLE_OF_Y_AXIS.symbol] !== undefined) {
+
+  const valueOfAngleOfYAxis = values[ANGLE_OF_Y_AXIS.symbol];
+  if (typeof valueOfAngleOfYAxis === 'number') {
     results.push(
-      interpretAngleOfYAxis(values[ANGLE_OF_Y_AXIS.symbol] as number),
+      interpretAngleOfYAxis(valueOfAngleOfYAxis),
+    );
+  }
+
+  const valueOfABPlangeAngle = values[AB_PLANE_ANGLE.symbol];
+  if (typeof valueOfABPlangeAngle === 'number') {
+    results.push(
+      interpretValueOfABPlaneAngle(valueOfABPlangeAngle),
     );
   }
   return results;
