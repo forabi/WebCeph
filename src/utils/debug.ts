@@ -6,3 +6,12 @@ export function printUnexpectedPayloadWarning(type: string, state: any) {
     state,
   );
 }
+
+export const delay = (timeout: number, resolveValue: any) => {
+  return new Promise((resolve) => {
+    setTimeout(
+      resolve.bind(null, resolveValue),
+      timeout,
+    );
+  });
+};
