@@ -15,7 +15,8 @@ if (__DEBUG__) {
 }
 
 window.addEventListener('beforeunload', e => {
-  if (hasUnsavedWork((store.getState().present))) {
+  const { present, past } = store.getState();
+  if (hasUnsavedWork(present) || hasUnsavedWork(past)) {
     const confirmationMessage = (
       'Are you sure you want to close this window?'
     );

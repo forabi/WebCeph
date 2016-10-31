@@ -64,7 +64,7 @@ function* loadImage({ payload }: Action<Payloads.imageLoadRequested>): IterableI
             img.onload = () => {
               const { height, width } = img;
               cb(null, { height, width });
-            }
+            };
           });
           yield put({
             type: Event.LOAD_IMAGE_SUCCEEDED,
