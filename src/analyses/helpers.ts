@@ -2,28 +2,39 @@ import flatten from 'lodash/flatten';
 import map from 'lodash/map';
 import xorWith from 'lodash/xorWith';
 import uniqWith from 'lodash/uniqWith';
+import uniqBy from 'lodash/uniqBy';
 import has from 'lodash/has';
 import every from 'lodash/every';
 import join from 'lodash/join';
 import reduce from 'lodash/reduce';
 import isPlainObject from 'lodash/isPlainObject';
 
-export function getSymbolForAngle(lineA: CephaloLine, lineB: CephaloLine): string {
-  const A = lineA.components[1];
-  const B = lineB.components[0];
-  const C = lineB.components[1];
-  return map([A, B, C], c => c.symbol).join('');
+export function getSymbolForAngle(line1: CephaloLine, line2: CephaloLine): string {
+  const A = line1.components[0]; // N
+  const B = line1.components[1]; // S
+  const C = line2.components[0]; // N
+  const D = line2.components[1]; // A
+  if (A.symbol === C.symbol || B.symbol === D.symbol) {
+    const uniqArray = uniqBy([B, C, D, A], p => p.symbol);
+    return map(uniqArray, c => c.symbol).join('');
+  } else {
+    return map([line1, line2], c => c.symbol).join(',');
+  }
 }
 
 /**
  * Creates an object conforming to the Angle interface based on 2 lines
  */
-export function angleBetweenLines(lineA: CephaloLine, lineB: CephaloLine, name?: string, symbol?: string, unit: AngularUnit = 'degree'): CephaloAngle {
+export function angleBetweenLines(
+  lineA: CephaloLine, lineB: CephaloLine,
+  name?: string, symbol?: string,
+  unit: AngularUnit = 'degree'
+): CephaloAngle {
   return {
     type: 'angle',
     symbol: symbol || getSymbolForAngle(lineA, lineB),
     unit,
-    name, 
+    name,
     components: [lineA, lineB],
   };
 }
@@ -31,7 +42,11 @@ export function angleBetweenLines(lineA: CephaloLine, lineB: CephaloLine, name?:
 /**
  * Creates an object conforming to the Angle interface based on 3 points
  */
-export function angleBetweenPoints(A: CephaloPoint, B: CephaloPoint, C: CephaloPoint, name?: string, unit: AngularUnit = 'degree'): CephaloAngle {
+export function angleBetweenPoints(
+  A: CephaloPoint, B: CephaloPoint, C: CephaloPoint,
+  name?: string,
+  unit: AngularUnit = 'degree'
+): CephaloAngle {
   return angleBetweenLines(line(B, A), line(B, C), name, undefined, unit);
 }
 
