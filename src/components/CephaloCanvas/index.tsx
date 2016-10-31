@@ -111,13 +111,13 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
 
   private getTransformAttribute = () => {
     const [translateX, translateY] = getTranslateToCenter(
-      this.props.imageWidth,
-      this.props.imageHeight,
+      Math.max(this.props.canvasWidth, this.props.imageWidth),
+      Math.max(this.props.canvasHeight, this.props.imageHeight),
       this.props.imageWidth,
       this.props.imageHeight,
       this.props.scale,
     );
-    let t = `scale(${this.props.scale}, ${this.props.scale}) translate(${translateX}, ${translateY})`;
+    let t = ` translate(${translateX}, ${translateY}) scale(${this.props.scale}, ${this.props.scale})`;
     if (this.props.isFlippedX) {
       t += ` scale(-1, 1) translate(-${this.props.imageWidth}, 0)`;
     }
@@ -179,17 +179,19 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
       highlightedLandmarks: highlighted,
       getCursorForCanvas = () => undefined,
     } = this.props;
+    const minHeight = Math.max(canvasHeight, imageHeight);
+    const minWidth = Math.max(canvasWidth, imageWidth); 
     return (
-      <div style={{ width: imageWidth, height: imageHeight }}>
+      <div style={{ height: minHeight, width: minWidth }}>
         <svg
           ref="canvas" 
           className={cx(classes.canvas, className)}
-          width={imageWidth} height={imageHeight}
+          width={minWidth} height={minHeight}
           onWheel={this.handleMouseWheel}
           onContextMenu={this.handleContextMenu}
           onMouseEnter={this.props.onCanvasMouseEnter}
           onMouseLeave={this.props.onCanvasMouseLeave}
-          style={{ cursor: mapCursor(getCursorForCanvas()), overflow: 'scroll' }}
+          style={{ cursor: mapCursor(getCursorForCanvas()) }}
         >
           <defs>
             <BrightnessFilter id="brightness" value={brightness} />
