@@ -40,18 +40,21 @@ const CephaloEditorToolbar = (props: ToolbarProps) => {
       <FlatButton onClick={onFlipXClick} disabled={cannotEdit} label="Flip" icon={<IconFlip/>} />
       <FlatButton
         disabled={cannotEdit || activeToolId === ToolsIds.ERASER}
-        label="" icon={<IconEraser />}
-        onClick={() => onToolButtonClick(ToolsIds.ERASER)}
+        label=""
+        icon={<IconEraser />}
+        onClick={onToolButtonClick.bind(null, ToolsIds.ERASER)}
       />
       <FlatButton
         disabled={cannotEdit || activeToolId === ToolsIds.ADD_POINT}
-        label="" icon={<IconAddPoint />}
-        onClick={() => onToolButtonClick(ToolsIds.ADD_POINT)}
+        label=""
+        icon={<IconAddPoint />}
+        onClick={onToolButtonClick.bind(null, ToolsIds.ADD_POINT)}
       />
       <FlatButton
         disabled={true || cannotEdit || activeToolId === ToolsIds.ZOOM_WITH_CLICK}
-        label="" icon={<IconZoom />}
-        onClick={() => onToolButtonClick(ToolsIds.ZOOM_WITH_CLICK)}
+        label=""
+        icon={<IconZoom />}
+        onClick={onToolButtonClick.bind(null, ToolsIds.ZOOM_WITH_CLICK)}
       />
     </div>
   );

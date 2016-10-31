@@ -17,10 +17,10 @@ const ICON_PENDING    = <IconHourglass />;
 const ICON_EVALUATING = <IconHourglass className={classes.icon_pending__evaluating} />;
 
 const icons: { [id: string]: JSX.Element } = {
-  done: ICON_DONE,
   current: ICON_CURRENT,
-  pending: ICON_PENDING,
+  done: ICON_DONE,
   evaluating: ICON_EVALUATING,
+  pending: ICON_PENDING,
 };
 
 export const AnalysisStepper = pure((props: Props) => {

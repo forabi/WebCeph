@@ -258,20 +258,25 @@ const analysis: Analysis = {
   components,
   interpret(values) {
     const results: AnalysisInterpretation[] = [];
-    if (values[ANB.symbol] !== undefined) {
-      results.push(interpretANB(values[ANB.symbol] as number));
+    const valueOfANB = values[ANB.symbol];
+    if (typeof valueOfANB === 'number') {
+      results.push(interpretANB(valueOfANB));
     }
-    if (values[SNA.symbol] !== undefined) {
-      results.push(interpretSNA(values[SNA.symbol] as number));
+    const valueOfSNA = values[SNA.symbol];
+    if (typeof valueOfSNA === 'number') {
+      results.push(interpretSNA(valueOfSNA));
     }
-    if (values[SNB.symbol] !== undefined) {
-      results.push(interpretSNB(values[SNB.symbol] as number));
+    const valueOfSNB = values[SNB.symbol];
+    if (typeof valueOfSNB === 'number') {
+      results.push(interpretSNB(valueOfSNB));
     }
-    if (values[FMPA.symbol] !== undefined) {
-      results.push(interpretFMPA(values[FMPA.symbol] as number));
+    const valueOfFMPA = values[FMPA.symbol];
+    if (typeof valueOfFMPA === 'number') {
+      results.push(interpretFMPA(valueOfFMPA));
     }
-    if (values[SN_to_MP.symbol] !== undefined) {
-      results.push(interpretSN_to_MP(values[SN_to_MP.symbol] as number));
+    const valueOfSN_to_MP = values[SN_to_MP.symbol];
+    if (typeof valueOfSN_to_MP === 'number') {
+      results.push(interpretSN_to_MP(valueOfSN_to_MP));
     }
     return results;
   }

@@ -1,12 +1,12 @@
-import createSelect from './select';
-import createEraser from './eraser';
 import createAddPoint from './addPoint';
+import createEraser from './eraser';
+import createSelect from './select';
 import createZoomWithClick from './zoomWithClick';
 
 export const ToolsIds = {
-  SELECT: 'SELECT',
-  ERASER: 'ERASER',
   ADD_POINT: 'ADD_POINT',
+  ERASER: 'ERASER',
+  SELECT: 'SELECT',
   ZOOM_WITH_CLICK: 'ZOOM_WITH_CLICK',
 };
 

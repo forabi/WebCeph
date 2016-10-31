@@ -1,8 +1,8 @@
-import { MP, components as commonComponents } from './common';
-import { angleOfConvexity, angleOfYAxis, interpret as interpretDowns } from './downs';
 import bjork from './bjork';
+import { MP, components as commonComponents } from './common';
 import dental from './dental';
-import { point, line, angleBetweenLines, ProblemSeverity, SkeletalBite } from './helpers';
+import { angleOfConvexity, angleOfYAxis, interpret as interpretDowns } from './downs';
+import { ProblemSeverity, SkeletalBite, angleBetweenLines, line, point } from './helpers';
 
 /**
  * Anterior point on maxillary bone
@@ -28,7 +28,7 @@ const angleMM: AnalysisComponent = {
   landmark: MM,
   norm: 26,
   stdDev: 4,
-}
+};
 
 const interpretMM = (value: number, min = 22, max = 30): AnalysisInterpretation => {
   let indication = SkeletalBite.normal;
@@ -61,11 +61,12 @@ const analysis: Analysis = {
       ...bjork.interpret(values),
       ...dental.interpret(values),
     ];
-    if (values[MM.symbol] !== undefined) {
-      results.push(interpretMM(values[MM.symbol] as number));
+    const valueOfMM = values[MM.symbol];
+    if (typeof valueOfMM === 'number') {
+      results.push(interpretMM(valueOfMM));
     }
     return results;
-  }
-}
+  },
+};
 
 export default analysis;

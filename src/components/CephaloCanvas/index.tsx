@@ -1,14 +1,19 @@
 import * as React from 'react';
-import map from 'lodash/map';
-import sortBy from 'lodash/sortBy';
-import { isGeometricalPoint, isGeometricalVector } from 'utils/math';
-import { mapCursor } from 'utils/constants';
+
 import BrightnessFilter from './filters/Brightness';
 import ContrastFilter from './filters/Contrast';
-import InvertFilter from './filters/Invert';
 import DropShadow from './filters/DropShadow';
-import Props from './props';
+import InvertFilter from './filters/Invert';
+
 import * as cx from 'classnames';
+
+import Props from './props';
+
+import map from 'lodash/map';
+import sortBy from 'lodash/sortBy';
+
+import { mapCursor } from 'utils/constants';
+import { isGeometricalPoint, isGeometricalVector } from 'utils/math';
 
 const classes = require('./style.scss');
 
@@ -18,9 +23,9 @@ interface LandmarkProps {
   fill?: string;
   fillOpacity?: number;
   zIndex?: number;
-  onClick: React.EventHandler<React.MouseEvent>;
-  onMouseEnter: React.EventHandler<React.MouseEvent>;
-  onMouseLeave: React.EventHandler<React.MouseEvent>;
+  onClick: React.EventHandler<React.MouseEvent<MouseEvent>>;
+  onMouseEnter: React.EventHandler<React.MouseEvent<MouseEvent>>;
+  onMouseLeave: React.EventHandler<React.MouseEvent<MouseEvent>>;
   scale?: number;
 }
 
@@ -47,7 +52,9 @@ const Landmark = (_props: LandmarkProps) => {
   if (isGeometricalPoint(value)) {
     return (
       <circle
-        r={3 * scale} cx={value.x} cy={value.y}
+        r={3 * scale}
+        cx={value.x}
+        cy={value.y}
         {...props}
       />
     );
@@ -65,7 +72,8 @@ const Landmark = (_props: LandmarkProps) => {
 
 /**
  * A wrapper around a canvas element.
- * Provides a declarative API for viewing landmarks on a cephalomertic image and performing common edits like brightness and contrast.
+ * Provides a declarative API for viewing landmarks on a cephalomertic image
+ * and performing common edits like brightness and contrast.
  */
 export class CephaloCanvas extends React.PureComponent<Props, { }> {
   refs: { canvas: React.ReactInstance, image: React.ReactInstance };
@@ -96,7 +104,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
   private getFilterAttribute = () => {
     let f = '';
     if (this.props.isInverted) {
-      f += " url(#invert)";
+      f += ' url(#invert)';
     }
     return f;
   }

@@ -20,8 +20,7 @@ export function isGeometricalVector(object: any): object is GeometricalVector {
 
 export function isBehind(point: GeometricalPoint, line: GeometricalVector) {
   return ((line.x2 - line.x1) * (point.y - line.y1) - (line.y2 - line.y1) * (point.x - line.x1)) > 0;
-} 
-
+}
 
 /**
  * Calculates distance between two points
@@ -40,7 +39,7 @@ export function calculateDistanceBetweenTwoPoints(A: GeometricalPoint, B: Geomet
  */
 export function calculateAngleBetweenPoints(A: GeometricalPoint, B: GeometricalPoint, C: GeometricalPoint): number {
   // Calculate length of each line in the triangle formed by A, B, C.
-  const AB = calculateDistanceBetweenTwoPoints(A, B);    
+  const AB = calculateDistanceBetweenTwoPoints(A, B);
   const BC = calculateDistanceBetweenTwoPoints(B, C);
   const AC = calculateDistanceBetweenTwoPoints(A, C);
 

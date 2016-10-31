@@ -53,8 +53,9 @@ const analysis: Analysis = {
   ],
   interpret(values) {
     const results: AnalysisInterpretation[] = [];
-    if (values[BJORK_SUM.symbol] !== undefined){
-      results.push(...interpretSumOfBjork(values[BJORK_SUM.symbol] as number));
+    const valueOfBjork = values[BJORK_SUM.symbol];
+    if (typeof valueOfBjork === 'number') {
+      results.push(...interpretSumOfBjork(valueOfBjork));
     }
     return results;
   }

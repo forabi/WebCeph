@@ -1,15 +1,19 @@
 import * as React from 'react';
-import DropDownMenu from 'material-ui/DropDownMenu';
+
 import CircularProgress from 'material-ui/CircularProgress';
+import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
-import Props from './props';
-import { pure } from 'recompose';
+
 import map from 'lodash/map';
+import { pure } from 'recompose';
+
+import Props from './props';
 import { getNameForAnalysis } from './strings';
 
 const AnalysisSelector = pure(({ className, isLoading, currentAnalysisId, onChange, analyses }: Props) => (
   <div>
-    <DropDownMenu disabled={isLoading}
+    <DropDownMenu
+      disabled={isLoading}
       className={className}
       value={currentAnalysisId}
       onChange={(_, __, value) => onChange(value)}

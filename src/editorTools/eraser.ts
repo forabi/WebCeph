@@ -1,6 +1,7 @@
-import assign from 'lodash/assign';
 import createZoomWithWheel from './zoomWithWheel';
 import { Cursor } from 'utils/constants';
+
+import assign from 'lodash/assign';
 
 import {
   removeManualLandmark,

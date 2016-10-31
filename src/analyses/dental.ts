@@ -1,9 +1,11 @@
 import {
-  line, point, angleBetweenLines, flipVector,
-  UpperIncisorInclination, LowerIncisorInclination,
-  ProblemSeverity
+  LowerIncisorInclination,
+  ProblemSeverity,
+  UpperIncisorInclination,
+  angleBetweenLines, flipVector, line, point,
 } from './helpers';
-import { N, S, Me, Go } from './common';
+
+import { Go, Me, N, S } from './common';
 
 const U1_APEX = point('U1 Apex', undefined, 'Apex of Upper Incisor');
 const U1_INCISAL_EDGE = point('U1 Incisal Edge', undefined, 'Incisal Edge of Upper Incisor');
@@ -72,14 +74,15 @@ const analysis: Analysis = {
       // @TODO
     }
 
-    if (values[L1_MP.symbol] !== undefined) {
+
+    const valueOfL1_MP = values[L1_MP.symbol];
+    if (typeof values[L1_MP.symbol] === 'number') {
       let severity = ProblemSeverity.NONE;
       let indication = LowerIncisorInclination.normal;
-      const value = values[L1_MP.symbol] as number;
       const { norm, stdDev } = angleBetweenLowerIncisorToMP;
-      if (value < norm - stdDev) {
+      if (valueOfL1_MP < norm - stdDev) {
         indication = LowerIncisorInclination.lingual;
-      } else if (value > norm + stdDev) {
+      } else if (valueOfL1_MP > norm + stdDev) {
         indication = LowerIncisorInclination.labial;
       }
       results.push({
@@ -88,15 +91,16 @@ const analysis: Analysis = {
         relevantComponents: [L1_MP.symbol],
       });
     }
-    
-    if (values[U1_SN.symbol] !== undefined) {
+
+
+    const valueOfU1_SN = values[U1_SN.symbol];
+    if (typeof valueOfU1_SN === 'number') {
       let severity = ProblemSeverity.NONE;
       let indication = UpperIncisorInclination.normal;
-      const value = values[U1_SN.symbol] as number;
       const { norm, stdDev } = angleBetweenUpperIncisorToSN;
-      if (value < norm - stdDev) {
+      if (valueOfU1_SN < norm - stdDev) {
         indication = UpperIncisorInclination.palatal;
-      } else if (value > norm + stdDev) {
+      } else if (valueOfU1_SN > norm + stdDev) {
         indication = UpperIncisorInclination.labial;
       }
       results.push({
@@ -106,11 +110,12 @@ const analysis: Analysis = {
       });
     }
 
-    if (values[INTERINCISAL_ANGLE.symbol] !== undefined) {
-      
+    const valueOfInterincisalAngle = values[INTERINCISAL_ANGLE.symbol];
+    if (typeof valueOfInterincisalAngle === 'number') {
+
     }
     return results;
-  }
-}
+  },
+};
 
 export default analysis;
