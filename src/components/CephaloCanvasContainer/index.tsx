@@ -1,12 +1,33 @@
 import * as React from 'react';
-import ResizeObservable from 'utils/resize-observable';
-import CephaloCanvas from 'components/CephaloCanvas/connected';
-import CephaloDropzone from 'components/CephaloDropzone/connected';
-import * as cx from 'classnames';
-import Props from './props';
 import { findDOMNode } from 'react-dom';
 
+import CircularProgress from 'material-ui/CircularProgress';
+
+import ResizeObservable from 'utils/resize-observable';
+
+import CephaloCanvas from 'components/CephaloCanvas/connected';
+import CephaloDropzone from 'components/CephaloDropzone/connected';
+
+import * as cx from 'classnames';
+
+import Props from './props';
+
+import { pure } from 'recompose';
+
 const classes = require('./style.scss');
+
+const Content = pure(({ hasImage, isLoading }: Props) => {
+  if (hasImage) {
+    return <CephaloCanvas />;
+  } else if (isLoading) {
+    return (
+      <div className={classes.loading_container}>
+        <CircularProgress color="white" size={120} />
+      </div>
+    );
+  }
+  return <CephaloDropzone />;
+});
 
 class CephaloCanvasContainer extends React.PureComponent<Props, { }> {
   private childInstance: React.ReactInstance | null;
@@ -28,7 +49,7 @@ class CephaloCanvasContainer extends React.PureComponent<Props, { }> {
         className={cx(className, classes.root)}
         onResize={this.handleResize}
       >
-        {hasImage ? <CephaloCanvas /> : <CephaloDropzone />}
+        <Content {...this.props} />
       </ResizeObservable>
     );
   }

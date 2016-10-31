@@ -9,13 +9,14 @@ import {
   DispatchProps,
   OwnProps,
 } from './props';
-import { hasImage } from 'store/reducers/workspace/image';
+import { hasImage, isImageLoading } from 'store/reducers/workspace/image';
 import { updateCanvasSize } from 'actions/workspace';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (enhancedState: EnhancedState<StoreState>) => {
   const { present: state } = enhancedState;
   return {
     hasImage: hasImage(state),
+    isLoading: isImageLoading(state),
   };
 };
 
