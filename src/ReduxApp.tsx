@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Provider, Store } from 'react-redux';
-import App from './components/App';
+
+import App from './components/App/connected';
 import createConfiguredStore from './store';
 
 declare var window: Window & { __STORE__?: Store<any> };

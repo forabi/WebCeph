@@ -12,6 +12,7 @@ import {
   flipX, flipY,
   invertColors,
   redo, undo,
+  showAnalysisResults,
 } from 'actions/workspace';
 import {
   canEdit,
@@ -27,6 +28,11 @@ import {
   getActiveToolId,
 } from 'store/reducers/workspace/canvas';
 
+import {
+  canShowResults,
+  areResultsShown,
+} from 'store/reducers/workspace/analysis';
+
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (enhancedState: EnhancedState<StoreState>): StateProps => {
     const state = enhancedState.present;
@@ -38,6 +44,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
       canEdit: canEdit(state),
       canRedo: canRedo(enhancedState),
       canUndo: canUndo(enhancedState),
+      canShowSummary: !areResultsShown(state) && canShowResults(state),
     };
   };
 
@@ -52,6 +59,7 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
       onRedoClick: () => dispatch(redo()),
       onUndoClick: () => dispatch(undo()),
       onToolButtonClick: (id) => dispatch(setActiveTool(id)),
+      onShowSummaryClick: () => dispatch(showAnalysisResults()),
     };
   };
 

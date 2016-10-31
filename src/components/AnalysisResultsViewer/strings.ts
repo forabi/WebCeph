@@ -1,3 +1,5 @@
+import findKey from 'lodash/findKey';
+
 import {
   SkeletalPattern,
   SkeletalProfile,
@@ -8,6 +10,15 @@ import {
   LowerIncisorInclination,
   UpperIncisorInclination,
   ProblemSeverity,
+  isSkeletalBite,
+  isSkeletalPattern,
+  isLowerIncisorInclination,
+  isUpperIncisorInclination,
+  isMandible,
+  isMandiblularRotation,
+  isMaxilla,
+  isSkeletalProfile,
+  isGrowthPattern,
 } from 'analyses/helpers';
 
 /** A map of interpretation results to human-readable phrases */
@@ -38,7 +49,7 @@ const typeMap = {
   [UpperIncisorInclination.palatal]: 'Palatal',
   [SkeletalBite.normal]: 'Normal',
   [SkeletalBite.open]: 'Open',
-  [SkeletalBite.closed]: 'Closed'
+  [SkeletalBite.closed]: 'Closed',
 };
 
 /** A map of the seveirty of skeletal problems to human-readable phrases */
@@ -54,4 +65,25 @@ export function mapSeverityToString(value?: number) {
 
 export function mapIndicationToString(value?: number) {
   return value !== undefined ? typeMap[value] : null;
+};
+
+type CategoryTest = (value: number | string) => boolean;
+
+const categoryMap: { [catergory: string]: CategoryTest } = {
+  'Skeletal Bite': isSkeletalBite,
+  'Skeletal Pattern': isSkeletalPattern,
+  'Mandibular Rotation': isMandiblularRotation,
+  Mandible: isMandible,
+  Maxilla: isMaxilla,
+  'Lower Incisor Inclination': isLowerIncisorInclination,
+  'Upper Incisor Inclination': isUpperIncisorInclination,
+  'Growth Pattern': isGrowthPattern,
+  'Skeletal Profile': isSkeletalProfile,
+};
+
+export function mapCategoryToString(value?: number) {
+  if (value !== undefined) {
+    return findKey(categoryMap, (test: CategoryTest) => test(value));
+  }
+  return null;
 };

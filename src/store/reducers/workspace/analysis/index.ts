@@ -1,21 +1,27 @@
 import { handleActions } from 'redux-actions';
+import { createSelector } from 'reselect';
+
 import assign from 'lodash/assign';
+import compact from 'lodash/compact';
+import every from 'lodash/every';
 import filter from 'lodash/filter';
 import find from 'lodash/find';
-import every from 'lodash/every';
-import memoize from 'lodash/memoize';
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
-import compact from 'lodash/compact';
+import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
+import memoize from 'lodash/memoize';
+
 import { printUnexpectedPayloadWarning } from 'utils/debug';
+
 import tracing, {
   isLandmarkRemovable,
   getManualLandmarks,
   getCephaloMapper,
 } from './tracing';
-import { createSelector } from 'reselect';
+
 import { StoreKeys, Event } from 'utils/constants';
+
 import {
   getStepsForAnalysis,
   areEqualSteps,
@@ -77,8 +83,8 @@ const loadErrorReducer = handleActions<LoadError, any>(
 const areResultsShownReducer = handleActions<AreResultsShown, any>(
   {
     [Event.SHOW_ANALYSIS_RESULTS_REQUESTED]: () => true,
-    [Event.RESET_WORKSPACE_REQUESTED]: () => true,
     [Event.CLOSE_ANALYSIS_RESULTS_REQUESTED]: () => false,
+    [Event.RESET_WORKSPACE_REQUESTED]: () => false,
   },
   false,
 );
@@ -92,8 +98,10 @@ export default assign({
   [KEY_ACTIVE_ANALYSIS_ID]: activeAnalysisIdReducer,
   [KEY_IS_ANALYSIS_LOADING]: isAnalysisLoadingReducer,
   [KEY_ANALYSIS_LOAD_ERROR]: loadErrorReducer,
-  [KEY_ARE_RESULTS_SHOWN]: areResultsShownReducer, 
+  [KEY_ARE_RESULTS_SHOWN]: areResultsShownReducer,
 }, tracing);
+
+export const areResultsShown = (state: GenericState): AreResultsShown => state[KEY_ARE_RESULTS_SHOWN];
 
 export const getActiveAnalysisId = (state: GenericState): AnalysisId => state[KEY_ACTIVE_ANALYSIS_ID]; 
 
@@ -135,7 +143,7 @@ export const findAnalysisComponentBySymbol = createSelector(
     }
     return null;
   }),
-)
+);
 
 export const getActiveAnalysisSteps = createSelector(
   getActiveAnalysis,
@@ -170,7 +178,7 @@ export const getManualStepState = createSelector(
     if (manualLandmarks[symbol] !== undefined) {
       return 'done';
     } else if (next && next.symbol === symbol) {
-      return 'current'
+      return 'current';
     } else {
       return 'pending';
     }
@@ -373,10 +381,9 @@ export const getAllLandmarksAndValues = createSelector(
 
 export const getAnalysisResults = createSelector(
   getActiveAnalysis,
-  isAnalysisComplete,
   getAllLandmarksAndValues,
-  (analysis, isComplete, evaluatedValues) => {
-    if (analysis !== null && isComplete) {
+  (analysis, evaluatedValues) => {
+    if (analysis !== null) {
       return analysis.interpret(evaluatedValues);
     }
     return [];
@@ -392,8 +399,8 @@ export const getCategorizedAnalysisResults = createSelector(
   (results, findStep, getValue, findComponent, evaluatedValues): CategorizedAnalysisResults => {
     return map(
       groupBy(results, result => result.indication),
-      (resultsInCategory: AnalysisInterpretation[], category: string) => ({
-        category,
+      (resultsInCategory: AnalysisInterpretation[], indication: number) => ({
+        category: indication,
         indication: resolveIndication(resultsInCategory, evaluatedValues),
         severity: resolveSeverity(resultsInCategory),
         relevantComponents: flatten(map(
@@ -414,7 +421,12 @@ export const getCategorizedAnalysisResults = createSelector(
       }),
     );
   },
-)
+);
+
+export const canShowResults = createSelector(
+  getCategorizedAnalysisResults,
+  (results) => !isEmpty(results),
+);
 
 export {
   isLandmarkRemovable,

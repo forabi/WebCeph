@@ -1,14 +1,18 @@
 import * as React from 'react';
+
+import Checkbox from 'material-ui/Checkbox';
+import Divider from 'material-ui/Divider';
 import FlatButton from 'material-ui/FlatButton';
 import Slider from 'material-ui/Slider';
-import IconFlip from 'material-ui/svg-icons/image/flip';
-import IconUndo from 'material-ui/svg-icons/content/undo';
-import IconRedo from 'material-ui/svg-icons/content/redo';
-import IconEraser from 'material-ui/svg-icons/content/remove-circle-outline';
+
 import IconAddPoint from 'material-ui/svg-icons/image/control-point';
+import IconEraser from 'material-ui/svg-icons/content/remove-circle-outline';
+import IconFlip from 'material-ui/svg-icons/image/flip';
+import IconList from 'material-ui/svg-icons/action/list';
+import IconRedo from 'material-ui/svg-icons/content/redo';
+import IconUndo from 'material-ui/svg-icons/content/undo';
 import IconZoom from 'material-ui/svg-icons/action/zoom-in';
-import Divider from 'material-ui/Divider';
-import Checkbox from 'material-ui/Checkbox';
+
 import * as cx from 'classnames';
 
 const classes = require('./style.scss');
@@ -30,6 +34,8 @@ const CephaloEditorToolbar = (props: ToolbarProps) => {
     // onFlipYClick,
     onInvertToggle,
     onToolButtonClick,
+    onShowSummaryClick,
+    canShowSummary,
   } = props;
 
   const cannotEdit = !canEdit;
@@ -55,6 +61,12 @@ const CephaloEditorToolbar = (props: ToolbarProps) => {
         label=""
         icon={<IconZoom />}
         onClick={onToolButtonClick.bind(null, ToolsIds.ZOOM_WITH_CLICK)}
+      />
+      <FlatButton
+        disabled={!canShowSummary}
+        label="Summary"
+        icon={<IconList />}
+        onClick={onShowSummaryClick}
       />
     </div>
   );

@@ -2,12 +2,10 @@ import {
   connect,
   MapStateToProps,
   MapDispatchToPropsFunction,
-  MergeProps,
 } from 'react-redux';
 import assign from 'lodash/assign';
 import AnalysisStepper from './index';
 import {
-  ConnectableProps,
   StateProps,
   DispatchProps,
   OwnProps,
@@ -23,7 +21,6 @@ import {
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (enhancedState: EnhancedState<StoreState>) => {
   const { present: state } = enhancedState;
   return {
-    open: false,
     results: getCategorizedAnalysisResults(state),
   };
 };
@@ -34,16 +31,8 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = 
   }
 );
 
-const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> = (stateProps, dispatchProps): ConnectableProps => {
-  return assign(
-    { },
-    stateProps,
-    dispatchProps,
-  );
-};
-
 const connected = connect<StateProps, DispatchProps, OwnProps>(
-  mapStateToProps, mapDispatchToProps, mergeProps
+  mapStateToProps, mapDispatchToProps
 )(AnalysisStepper);
 
 

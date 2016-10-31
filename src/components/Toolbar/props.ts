@@ -6,6 +6,7 @@ export interface StateProps {
   isImageInverted: boolean;
   brightness: number;
   contrast: number;
+  canShowSummary: boolean;
 };
 
 export interface DispatchProps {
@@ -17,6 +18,7 @@ export interface DispatchProps {
   onToolButtonClick(id: string): any;
   onUndoClick(): any;
   onRedoClick(): any;
+  onShowSummaryClick(): any;
 }
 
 export type ConnectableProps = StateProps & DispatchProps;

@@ -1,5 +1,4 @@
 export interface StateProps {
-  open: boolean;
   results: CategorizedAnalysisResults;
 };
 
@@ -9,7 +8,9 @@ export interface DispatchProps {
 
 export type ConnectableProps = StateProps & DispatchProps;
 
-export type OwnProps = { };
+export type OwnProps = {
+  open: boolean;
+};
 
 export type Props = ConnectableProps & OwnProps;
 

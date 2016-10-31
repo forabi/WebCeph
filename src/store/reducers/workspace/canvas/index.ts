@@ -5,7 +5,7 @@ import activeTool, { getActiveToolId, getActiveToolCreator } from './activeTool'
 import highlightedStep, { getHighlightedStep } from './highlightedStep';
 
 export default assign(
-  { }, 
+  { },
   canvasSize,
   highlightedStep,
   activeTool,

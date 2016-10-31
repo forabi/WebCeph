@@ -112,7 +112,7 @@ interface AnalysisInterpretation {
 }
 
 type CategorizedAnalysisResults = ReadonlyArray<{
-  category: string;
+  category: number;
   indication?: number;
   severity?: number;
   relevantComponents: ReadonlyArray<{

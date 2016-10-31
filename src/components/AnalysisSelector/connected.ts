@@ -27,7 +27,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
         'dental',
         'bjork',
       ],
-      currentAnalysisId: getActiveAnalysisId(state), 
+      currentAnalysisId: getActiveAnalysisId(state),
       isLoading: isAnalysisLoading(state),
     };
   };

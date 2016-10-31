@@ -16,17 +16,18 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import attempt from 'lodash/attempt';
 
+import Props from './props';
+
 attempt(injectTapEventPlugin);
 
 const classes = require('./style.scss');
 
-type Props = { };
 
-const App = (_: Props) => (
+const App = ({ isSummaryShown }: Props) => (
   <MuiThemeProvider muiTheme={getMuiTheme()}>
     <div className={classes.root}>
       <CommandPalette className={classes.command_palette} />
-      <AnalysisResultsViewer />
+      <AnalysisResultsViewer open={isSummaryShown} />
       <CompatibilityChecker />
       <div className={classes.container}>
         <Menu className={classes.menu} />

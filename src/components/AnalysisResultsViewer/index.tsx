@@ -4,7 +4,7 @@ import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowCol
 import { pure } from 'recompose';
 import map from 'lodash/map';
 import Props from './props';
-import { mapSeverityToString, mapIndicationToString } from './strings';
+import { mapSeverityToString, mapIndicationToString, mapCategoryToString } from './strings';
 
 export const AnalysisResultsViewer = pure(({ open, onRequestClose, results }: Props) => (
   <Dialog open={open} onRequestClose={onRequestClose} >
@@ -33,7 +33,7 @@ export const AnalysisResultsViewer = pure(({ open, onRequestClose, results }: Pr
         map(results, ({ category, indication, severity, relevantComponents }) => (
           <TableRow key={category}>
             <TableRowColumn>
-              {category}
+              {mapCategoryToString(category) || '-'}
             </TableRowColumn>
             <TableRowColumn>
               {mapIndicationToString(indication) || '-'}
