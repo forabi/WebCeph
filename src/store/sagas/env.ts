@@ -18,7 +18,7 @@ function performModernizrTests() {
 
   return eventChannel(emit => {
     /** This is used to keep track of number of features completed. See below. */
-    let j = 1; 
+    let j = 1;
 
     const features = keys(featureDetails);
     const total = features.length;

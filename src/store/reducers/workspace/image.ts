@@ -163,6 +163,10 @@ export default {
   [KEY_IMAGE_LOAD_ERROR]: setLoadError,
 };
 
+export const isImageLoading = (state: GenericState) => {
+  return state[KEY_IMAGE_IS_LOADING] as boolean;
+};
+
 export const getImageWidth = (state: GenericState) => {
   return state[KEY_IMAGE_WIDTH] as Width;
 };

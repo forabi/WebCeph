@@ -103,7 +103,12 @@ export default assign({
 
 export const areResultsShown = (state: GenericState): AreResultsShown => state[KEY_ARE_RESULTS_SHOWN];
 
-export const getActiveAnalysisId = (state: GenericState): AnalysisId => state[KEY_ACTIVE_ANALYSIS_ID]; 
+export const getActiveAnalysisId = (state: GenericState): AnalysisId => state[KEY_ACTIVE_ANALYSIS_ID];
+
+export const isAnalysisSet = createSelector(
+  getActiveAnalysisId,
+  (id) => id !== null,
+);
 
 export const isAnalysisLoading = (state: GenericState): IsAnalysisLoading => state[KEY_IS_ANALYSIS_LOADING];
 

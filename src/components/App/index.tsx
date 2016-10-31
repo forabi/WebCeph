@@ -12,18 +12,31 @@ import Toolbar from 'components/Toolbar/connected';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
+import * as cx from 'classnames';
+
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import attempt from 'lodash/attempt';
+
+import { compose, lifecycle, pure } from 'recompose';
 
 import Props from './props';
 
 attempt(injectTapEventPlugin);
 
+type State = { };
+
 const classes = require('./style.scss');
 
+const addLifeCycleHooks = lifecycle({
+  componentDidMount(this: React.Component<Props, { }>) {
+    this.props.onComponentMount();
+  },
+});
 
-const App = ({ isSummaryShown }: Props) => (
+const enhance = compose<Props, State>(pure, addLifeCycleHooks);
+
+const App = enhance(({ isSummaryShown, shouldShowStepper }: Props) => (
   <MuiThemeProvider muiTheme={getMuiTheme()}>
     <div className={classes.root}>
       <CommandPalette className={classes.command_palette} />
@@ -33,7 +46,7 @@ const App = ({ isSummaryShown }: Props) => (
         <Menu className={classes.menu} />
         <div className={classes.row}>
           <CephaloCanvasContainer className={classes.main} />
-          <div className={classes.sidebar}>
+          <div className={cx(classes.sidebar, { [classes.sidebar_hidden]: !shouldShowStepper })}>
             <AnalysisSelector className={classes.selector} />
             <AnalysisStepper className={classes.stepper} />
           </div>
@@ -42,6 +55,6 @@ const App = ({ isSummaryShown }: Props) => (
       </div>
     </div>
   </MuiThemeProvider>
-);
+));
 
-export default App;
+export default App as React.ComponentClass<Props>;

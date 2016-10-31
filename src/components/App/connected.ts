@@ -16,19 +16,35 @@ import {
   canShowResults,
 } from 'store/reducers/workspace/analysis';
 
+import {
+  hasImage,
+  isImageLoading,
+} from 'store/reducers/workspace/image';
+
+import {
+  checkBrowserCompatibility,
+} from 'actions/initialization';
+
+import {
+  setAnalysis,
+} from 'actions/workspace';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (enhancedState: EnhancedState<StoreState>) => {
     const { present: state } = enhancedState;
     return {
       isSummaryShown: areResultsShown(state) && canShowResults(state),
+      shouldShowStepper: hasImage(state) || isImageLoading(state),
     };
   };
 
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
-  (_) => (
+  (dispatch) => (
     {
-
+      onComponentMount: () => {
+        dispatch(checkBrowserCompatibility());
+        dispatch(setAnalysis('common'));
+      },
     }
   );
 

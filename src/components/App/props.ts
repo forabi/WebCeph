@@ -4,10 +4,11 @@ export interface OwnProps {
 
 export interface StateProps {
   isSummaryShown: boolean;
+  shouldShowStepper: boolean;
 }
 
 export interface DispatchProps {
-
+  onComponentMount: () => any;
 }
 
 export type ConnectableProps = StateProps & DispatchProps;

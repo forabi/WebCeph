@@ -296,6 +296,8 @@ interface EnhancedState<T> {
   future: T[];
 }
 
+type FinalState = EnhancedState<GenericState>;
+
 interface StoreState {
   'env.compatiblity.isIgnored': boolean;
   'env.compatiblity.missingFeatures': MissingBrowserFeature[];

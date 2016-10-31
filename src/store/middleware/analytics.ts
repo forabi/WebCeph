@@ -18,7 +18,7 @@ const isLoggable = (type: string) => {
 const middleware: Middleware = (store: Store<any>) => (next: Dispatch<any>) => (action: Action<any>) => {
   const { type, payload } = action;
   if (isLoggable(type)) {
-    console.log('It works!', type, payload, store.getState());  
+    console.log('It works!', type, payload, store.getState());
     // @TODO: fetch();
   }
   return next(action);
