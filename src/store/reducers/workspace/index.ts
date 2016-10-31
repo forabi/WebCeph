@@ -1,12 +1,14 @@
 import { createSelector } from 'reselect';
-import assign from 'lodash/assign';
 import canvas, { getHighlightedStep } from './canvas';
-import analysis, { getLandmarkWithAllNestedLandmarks } from './analysis';
+import analysis, { getLandmarkWithAllNestedLandmarks, getManualLandmarks } from './analysis';
 import image, { hasImage } from './image';
 import workers from './workers';
 
+import assign from 'lodash/assign';
+import isEmpty from 'lodash/isEmpty';
+
 export default assign(
-  { }, 
+  { },
   image,
   canvas,
   workers,
@@ -26,4 +28,9 @@ export const getHighlightedLandmarks = createSelector(
     }
     return getWithNested(step);
   },
+);
+
+export const hasUnsavedWork = createSelector(
+  getManualLandmarks,
+  (manual) => !isEmpty(manual),
 );

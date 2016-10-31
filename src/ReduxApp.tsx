@@ -6,7 +6,7 @@ import createConfiguredStore from './store';
 
 declare var window: Window & { __STORE__?: Store<any> };
 
-import { hasImage } from 'store/reducers/workspace/image';
+import { hasUnsavedWork } from 'store/reducers/workspace';
 
 const store = createConfiguredStore() as Store<FinalState>;
 
@@ -15,7 +15,7 @@ if (__DEBUG__) {
 }
 
 window.addEventListener('beforeunload', e => {
-  if (hasImage((store.getState().present))) {
+  if (hasUnsavedWork((store.getState().present))) {
     const confirmationMessage = (
       'Are you sure you want to close this window?'
     );

@@ -435,4 +435,5 @@ export const canShowResults = createSelector(
 
 export {
   isLandmarkRemovable,
+  getManualLandmarks,
 };
