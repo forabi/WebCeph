@@ -8,7 +8,7 @@ import { createSelector } from 'reselect';
 type ToolId = StoreEntries.workspace.canvas.activeTool;
 
 const KEY_ACTIVE_TOOL = StoreKeys.activeTool;
-const defaultTool: ToolId = ToolsIds.SELECT;
+const defaultTool: ToolId = ToolsIds.ADD_POINT;
 
 const setActiveTool = handleAction<ToolId, Payloads.setActiveTool>(
   Event.TOGGLE_TOOL_REQUESTED,

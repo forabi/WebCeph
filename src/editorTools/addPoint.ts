@@ -1,5 +1,6 @@
 import assign from 'lodash/assign';
 import createZoomWithWheel from './zoomWithWheel';
+import createTrackCursor from './trackCursor';
 import { Cursor } from 'utils/constants';
 
 import {
@@ -19,6 +20,7 @@ export const createAddPoint: EditorToolCreator = (
   dispatch: DispatchFunction,
 ) => (assign(
   createZoomWithWheel(state, dispatch),
+  createTrackCursor(state, dispatch),
   {
     onCanvasMouseEnter() {
       if (!isAnalysisComplete(state)) {
@@ -36,12 +38,12 @@ export const createAddPoint: EditorToolCreator = (
         dispatch(addUnnamedManualLandmark({ x, y }));
       }
     },
-    onLandmarkMouseEnter(symbol) {
-      // dispatch(temporarilyHideLandmark(symbol));
-    },
-    onLandmarkMouseLeave(symbol) {
-      // dispatch(showTemporarilyHiddenLandmark(symbol));
-    },
+    // onLandmarkMouseEnter(symbol) {
+    //   // dispatch(temporarilyHideLandmark(symbol));
+    // },
+    // onLandmarkMouseLeave(symbol) {
+    //   // dispatch(showTemporarilyHiddenLandmark(symbol));
+    // },
     getCursorForCanvas() {
       return Cursor.ADD_LANDMARK;
     },

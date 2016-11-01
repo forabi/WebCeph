@@ -5,8 +5,9 @@ import Divider from 'material-ui/Divider';
 import FlatButton from 'material-ui/FlatButton';
 import Slider from 'material-ui/Slider';
 
-import IconAddPoint from 'material-ui/svg-icons/image/control-point';
-import IconEraser from 'material-ui/svg-icons/content/remove-circle-outline';
+import IconAddPoint from 'material-ui/svg-icons/content/add';
+import IconSelect from 'material-ui/svg-icons/action/help-outline';
+import IconEraser from 'material-ui/svg-icons/content/clear';
 import IconFlip from 'material-ui/svg-icons/image/flip';
 import IconList from 'material-ui/svg-icons/action/list';
 import IconRedo from 'material-ui/svg-icons/content/redo';
@@ -45,16 +46,22 @@ const CephaloEditorToolbar = (props: ToolbarProps) => {
       <FlatButton onClick={onRedoClick} disabled={cannotEdit || !canRedo} label="Redo" icon={<IconRedo/>} />
       <FlatButton onClick={onFlipXClick} disabled={cannotEdit} label="Flip" icon={<IconFlip/>} />
       <FlatButton
+        disabled={cannotEdit || activeToolId === ToolsIds.SELECT}
+        label=""
+        icon={<IconSelect />}
+        onClick={onToolButtonClick.bind(null, ToolsIds.SELECT)}
+      />
+      <FlatButton
+        disabled={cannotEdit || activeToolId === ToolsIds.ADD_POINT}
+        label=""
+        icon={<IconAddPoint />}
+        onClick={onToolButtonClick.bind(null, ToolsIds.ADD_POINT)}
+      />
+      <FlatButton
         disabled={cannotEdit || activeToolId === ToolsIds.ERASER}
         label=""
         icon={<IconEraser />}
         onClick={onToolButtonClick.bind(null, ToolsIds.ERASER)}
-      />
-      <FlatButton
-        disabled={cannotEdit || activeToolId === ToolsIds.SELECT}
-        label=""
-        icon={<IconAddPoint />}
-        onClick={onToolButtonClick.bind(null, ToolsIds.SELECT)}
       />
       <FlatButton
         disabled={true || cannotEdit || activeToolId === ToolsIds.ZOOM_WITH_CLICK}

@@ -1,4 +1,4 @@
-import createAddPoint from './addPoint';
+import createZoomWithWheel from './zoomWithWheel';
 import { highlightStep, unhighlightStep } from 'actions/workspace';
 import { Cursor } from 'utils/constants';
 
@@ -9,7 +9,7 @@ export const createSelect: EditorToolCreator = (
   dispatch: DispatchFunction,
 ) => {
   return assign(
-    createAddPoint(state, dispatch),
+    createZoomWithWheel(state, dispatch),
     {
       getCursorForLandmark() {
         return Cursor.SELECT;
