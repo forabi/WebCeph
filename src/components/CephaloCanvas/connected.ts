@@ -34,6 +34,7 @@ import {
 } from 'store/reducers/workspace/analysis';
 import assign from 'lodash/assign';
 import curry from 'lodash/curry';
+import mapValues from 'lodash/mapValues';
 
 type OwnProps = { };
 
@@ -57,8 +58,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (enhancedState: E
     isFlippedY: isImageFlippedY(state),
     landmarks: getAllLandmarks(state),
     isInverted: isImageInverted(state),
-    isHighlightModeActive: false,
-    highlightedLandmarks: getHighlightedLandmarks(state),
+    highlightedLandmarks: mapValues(getHighlightedLandmarks(state), Boolean),
     activeTool: curry(getActiveToolCreator(state))(state),
   };
 };

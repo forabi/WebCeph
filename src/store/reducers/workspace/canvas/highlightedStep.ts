@@ -2,9 +2,6 @@ import { handleAction } from 'redux-actions';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 import { wrapWithDefaultState, reduceReducers } from 'store/helpers';
 import { Event, StoreKeys } from 'utils/constants';
-import { createSelector } from 'reselect';
-import { getStepsForLandmarks } from 'analyses/helpers';
-import { findStepBySymbol } from 'store/reducers/workspace/analysis';
 
 export const KEY_HIGHLIGHTED_STEP =  StoreKeys.highlightedStep;
 
@@ -23,10 +20,10 @@ const highlightStep = handleAction<State, Payloads.highlightStep>(
 );
 
 const unhighlightStep = handleAction<State, Payloads.unhighlightStep>(
-  Event.HIGHLIGHT_STEP_ON_CANVAS_REQUESTED,
+  Event.UNHIGHLIGHT_STEP_ON_CANVAS_REQUESTED,
   (state, { payload, type }) => {
     if (payload !== undefined) {
-      printUnexpectedPayloadWarning(type, state);
+      printUnexpectedPayloadWarning(type, state, typeof payload);
       return state;
     }
     return null;

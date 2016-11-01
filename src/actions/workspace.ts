@@ -95,7 +95,7 @@ export const highlightStep:
     createAction(Event.HIGHLIGHT_STEP_ON_CANVAS_REQUESTED);
 
 export const unhighlightStep:
-  (symbol: string) => Action<Payloads.unhighlightStep> =
+  () => Action<Payloads.unhighlightStep> =
     createAction(Event.UNHIGHLIGHT_STEP_ON_CANVAS_REQUESTED);
 
 export const redo: () => Action<Payloads.undo> = createAction(Event.REDO_REQUESTED);

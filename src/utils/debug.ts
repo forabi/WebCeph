@@ -1,8 +1,8 @@
-export function printUnexpectedPayloadWarning(type: string, state: any) {
+export function printUnexpectedPayloadWarning(type: string, state: any, actualType='undefined') {
   __DEBUG__ && console.warn(
-    'Did not expect action payload to be undefined for action ' +
-    type + '. ' +
-    'Returning current state.',
+    `Did not expect action payload to be ${actualType} for action ` +
+    `${type}. ` +
+    `Returning current state.`,
     state,
   );
 }

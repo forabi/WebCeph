@@ -44,7 +44,7 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = 
     onRemoveLandmarkClick: (symbol: string) => dispatch(removeManualLandmark(symbol)),
     onEditLandmarkClick: noop, // @TODO
     onStepMouseEnter: (symbol) => dispatch(highlightStep(symbol)),
-    onStepMouseLeave: (symbol) => dispatch(unhighlightStep(symbol)),
+    onStepMouseLeave: (_) => dispatch(unhighlightStep()),
   }
 );
 

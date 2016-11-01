@@ -22,9 +22,9 @@ export const canEdit = hasImage;
 export const getHighlightedLandmarks = createSelector(
   getHighlightedStep,
   getLandmarkWithAllNestedLandmarks,
-  (step, getWithNested): GeometricalObject[] => {
+  (step, getWithNested): { [symbol: string]: GeometricalObject | undefined } | { } => {
     if (step === null) {
-      return [];
+      return { };
     }
     return getWithNested(step);
   },

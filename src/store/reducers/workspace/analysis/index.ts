@@ -2,13 +2,13 @@ import { handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
 
 import assign from 'lodash/assign';
-import compact from 'lodash/compact';
 import every from 'lodash/every';
 import filter from 'lodash/filter';
 import find from 'lodash/find';
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
+import reduce from 'lodash/reduce';
 import map from 'lodash/map';
 import memoize from 'lodash/memoize';
 
@@ -368,13 +368,21 @@ export const getLandmarkWithAllNestedLandmarks = createSelector(
   getComponentWithAllPossibleNestedComponents,
   getCephaloMapper,
   (findStep, getWithNested, mapper) => (symbol: string) => {
-    return compact(map(getWithNested(symbol), l => {
-      const step = findStep(l.symbol);
-      if (step !== null) {
-        return tryMap(step, mapper);
-      }
-      return undefined;
-    })) as GeometricalObject[];
+    type TResult = { [symbol: string]: GeometricalObject | undefined } | { };
+    return reduce<TResult, TResult>(
+      map(
+        getWithNested(symbol),
+        l => {
+          const step = findStep(l.symbol);
+          if (step !== null) {
+            return { [l.symbol]: tryMap(step, mapper) };
+          }
+          return { };
+        },
+      ),
+      assign,
+      { },
+    );
   },
 );
 

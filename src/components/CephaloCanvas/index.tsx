@@ -11,6 +11,7 @@ import Props from './props';
 
 import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
+import isEmpty from 'lodash/isEmpty';
 
 import { mapCursor } from 'utils/constants';
 import { isGeometricalPoint, isGeometricalVector } from 'utils/math';
@@ -18,6 +19,7 @@ import { isGeometricalPoint, isGeometricalVector } from 'utils/math';
 const classes = require('./style.scss');
 
 interface LandmarkProps {
+  symbol: string;
   value: GeometricalObject;
   stroke?: string;
   fill?: string;
@@ -69,6 +71,8 @@ const Landmark = (_props: LandmarkProps) => {
     return <span/>;
   }
 };
+
+const noop = () => undefined;
 
 /**
  * A wrapper around a canvas element.
@@ -170,17 +174,18 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
 
   render() {
     const {
-      isHighlightModeActive,
       className,
       src,
       canvasWidth, canvasHeight,
       imageHeight, imageWidth,
       contrast = 50, brightness = 50,
       highlightedLandmarks: highlighted,
-      getCursorForCanvas = () => undefined,
+      getCursorForCanvas = noop,
+      getCursorForLandmark = noop,
     } = this.props;
     const minHeight = Math.max(canvasHeight, imageHeight);
     const minWidth = Math.max(canvasWidth, imageWidth); 
+    const isHighlightModeActive = !isEmpty(highlighted)
     return (
       <div style={{ height: minHeight, width: minWidth }}>
         <svg
@@ -217,28 +222,41 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
             </g>
             <g transform={this.getTransformAttribute()}>
               {
-                sortBy(map(
-                  this.props.landmarks,
-                  (landmark: GeometricalObject, symbol: string) => {
-                    let props = { };
-                    if (isHighlightModeActive) {
-                      if (highlighted[symbol] === true) {
-                        props = { stroke: 'orange', fill: 'orange', zIndex: 1 };
-                      } else {
-                        props = { fillOpacity: 0.5, zIndex: 0 };
+                map(
+                  sortBy(
+                    map(
+                      this.props.landmarks,
+                      (landmark: GeometricalObject, symbol: string) => {
+                        let props = { };
+                        if (isHighlightModeActive) {
+                          if (highlighted[symbol] === true) {
+                            props = { stroke: 'orange', fill: 'orange', zIndex: 1 };
+                          } else {
+                            props = { fillOpacity: 0.5, zIndex: 0 };
+                          }
+                        }
+                        return (
+                          <Landmark
+                            key={symbol}
+                            symbol={symbol}
+                            value={landmark}
+                            onMouseEnter={this.handleLandmarkMouseEnter(symbol)}
+                            onMouseLeave={this.handleLandmarkMouseLeave(symbol)}
+                            onClick={this.handleLandmarkClick(symbol)}
+                            scale={1 / this.props.scale}
+                            {...props}
+                          />
+                        );
                       }
-                    }
-                    return <Landmark
-                      key={symbol}
-                      onMouseEnter={this.handleLandmarkMouseEnter(symbol)}
-                      onMouseLeave={this.handleLandmarkMouseLeave(symbol)}
-                      onClick={this.handleLandmarkClick(symbol)}
-                      scale={1 / this.props.scale}
-                      value={landmark}
-                      {...props}
-                    />;
-                  }
-                ), (i: JSX.Element) => i.props.zIndex || isGeometricalPoint(i.props.value))
+                    ),
+                    ({ props: { key, value } }) => highlighted[key] === true || isGeometricalPoint(value)
+                  ),
+                  (Landmark => (
+                    <g style={{ cursor: mapCursor(getCursorForLandmark(Landmark.props.symbol)) }}>
+                      {Landmark}
+                    </g>
+                  ))
+                )
               }
             </g>
           </g>

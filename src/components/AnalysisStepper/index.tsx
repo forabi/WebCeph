@@ -69,8 +69,8 @@ export class AnalysisStepper extends React.PureComponent<Props, { }> {
                     (typeof value === 'number' ?
                       <span>{value.toFixed(1)}</span> : undefined)
                   }
-                  onMouseEnter={isDone ? () => onStepMouseEnter(step.symbol) : undefined}
-                  onMouseLeave={isDone ? () => onStepMouseLeave(step.symbol) : undefined}
+                  onMouseEnter={isDone ? onStepMouseEnter.bind(null, step.symbol) : undefined}
+                  onMouseLeave={isDone ? onStepMouseLeave.bind(null, step.symbol) : undefined}
                 />
               </div>
             );
