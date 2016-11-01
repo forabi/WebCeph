@@ -38,7 +38,8 @@ class CephaloCanvasContainer extends React.PureComponent<Props, { }> {
     }
     const node = findDOMNode(this.childInstance);
     const { scrollWidth, scrollHeight, clientWidth, clientHeight }  = node;
-    node.scrollTo((scrollWidth - clientWidth) / 2, (scrollHeight - clientHeight) / 2);
+    node.scrollLeft = (scrollWidth - clientWidth) / 2;
+    node.scrollTop = (scrollHeight - clientHeight) / 2;
   }
 
   public render() {
