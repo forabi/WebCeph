@@ -9,6 +9,7 @@ import IconHourglass from 'material-ui/svg-icons/action/hourglass-empty';
 import IconPlayArrow from 'material-ui/svg-icons/av/play-arrow';
 
 import findIndex from 'lodash/findIndex';
+import findLastIndex from 'lodash/findLastIndex';
 import map from 'lodash/map';
 
 import Props from './props';
@@ -30,11 +31,13 @@ const icons: { [id: string]: JSX.Element } = {
 
 export class AnalysisStepper extends React.PureComponent<Props, { }> {
   private itemToScrollTo: React.ReactInstance | null;
+  private hasScrolled = false;
 
   public componentDidUpdate() {
     if (this.itemToScrollTo !== null) {
       const node = findDOMNode(this.itemToScrollTo);
       scrollIntoViewIfNeeded(node, false);
+      this.hasScrolled = true;
     }
   }
 
@@ -50,6 +53,7 @@ export class AnalysisStepper extends React.PureComponent<Props, { }> {
       onStepMouseEnter, onStepMouseLeave,
     } = this.props;
     const firstPendingIndex = findIndex(steps, (step) => getStepState(step.symbol) === 'current');
+    const lastDoneIndex = findLastIndex(steps, (step) => getStepState(step.symbol) === 'done');
     return (
       <div className={cx(classes.root, className)}>
         <List className={classes.list}>
@@ -60,7 +64,9 @@ export class AnalysisStepper extends React.PureComponent<Props, { }> {
             const isDone = state === 'done';
             const isRemovable = isDone && isStepRemovable(step.symbol);
             const shouldScrollTo = (
-              i === firstPendingIndex || firstPendingIndex === -1
+              i === firstPendingIndex || (
+                firstPendingIndex === -1 && i === lastDoneIndex && !this.hasScrolled
+              )
             );
             return (
               <div key={step.symbol}>
