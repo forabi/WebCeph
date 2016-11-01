@@ -59,14 +59,12 @@ export class AnalysisStepper extends React.PureComponent<Props, { }> {
             const state = getStepState(step.symbol);
             const isDone = state === 'done';
             const isRemovable = isDone && isStepRemovable(step.symbol);
-            const isHighlighted = step.symbol === highlightedStep;
             const shouldScrollTo = (
               i === firstPendingIndex || firstPendingIndex === -1
             );
             return (
               <div key={step.symbol}>
                 <ListItem
-                  className={cx({ [classes.list_item_highlighted]: isHighlighted })}
                   ref={shouldScrollTo ? this.setScrollTo : undefined}
                   primaryText={getTitleForStep(step)}
                   secondaryText={getDescriptionForStep(step) || undefined}
