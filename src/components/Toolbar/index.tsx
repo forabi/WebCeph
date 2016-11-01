@@ -72,25 +72,25 @@ const CephaloEditorToolbar = (props: ToolbarProps) => {
   );
 };
 
-const Corrections = () => (
-  <div>
-    Brightness
-    <Slider
-      style={{ width: 200, margin: 15 }}
-      min={0} max={100}
-      defaultValue={brightness}
-      onChange={(_, v) => onBrightnessChange(v)}
-    />
-    Contrast
-    <Slider
-      style={{ width: 200, margin: 15 }}
-      min={-100} max={100}
-      defaultValue={contrast}
-      onChange={(_, v) => onContrastChange(v)}
-    />
-    <Divider />
-    <Checkbox label="Invert" checked={isImageInverted} onCheck={onInvertToggle} />
-  </div>
-);
+// const Corrections = () => (
+//   <div>
+//     Brightness
+//     <Slider
+//       style={{ width: 200, margin: 15 }}
+//       min={0} max={100}
+//       defaultValue={brightness}
+//       onChange={(_, v) => onBrightnessChange(v)}
+//     />
+//     Contrast
+//     <Slider
+//       style={{ width: 200, margin: 15 }}
+//       min={-100} max={100}
+//       defaultValue={contrast}
+//       onChange={(_, v) => onContrastChange(v)}
+//     />
+//     <Divider />
+//     <Checkbox label="Invert" checked={isImageInverted} onCheck={onInvertToggle} />
+//   </div>
+// );
 
 export default CephaloEditorToolbar;

@@ -34,7 +34,6 @@ import {
 } from 'store/reducers/workspace/analysis';
 import assign from 'lodash/assign';
 import curry from 'lodash/curry';
-import mapValues from 'lodash/mapValues';
 
 type OwnProps = { };
 
