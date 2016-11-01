@@ -7,6 +7,7 @@ export interface StateProps {
   getStepState(symbol: string): StepState;
   getStepValue(symbol: string): number | undefined;
   isStepRemovable(symbol: string): boolean;
+  highlightedStep: string | null;
 }
 
 export interface DispatchProps {

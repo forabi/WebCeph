@@ -2,17 +2,13 @@ import {
   connect,
   MapStateToProps,
   MapDispatchToPropsFunction,
-  MergeProps,
 } from 'react-redux';
-import assign from 'lodash/assign';
 import noop from 'lodash/noop';
 import AnalysisStepper from './index';
 import {
-  ConnectableProps,
   StateProps,
   DispatchProps,
   OwnProps,
-  AdditionalPropsToMerge,
 } from './props';
 import {
   getStepStateBySymbol,
@@ -21,7 +17,10 @@ import {
 } from 'store/reducers/workspace/analysis';
 import {
   isLandmarkRemovable,
-} from 'store/reducers/workspace/analysis/tracing'
+} from 'store/reducers/workspace/analysis/tracing';
+import {
+  getHighlightedStep
+} from 'store/reducers/workspace/canvas';
 
 import {
   removeManualLandmark,
@@ -36,6 +35,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (enhancedState: E
     getStepState: getStepStateBySymbol(state),
     getStepValue: getComputedValueBySymbol(state),
     isStepRemovable: isLandmarkRemovable(state),
+    highlightedStep: getHighlightedStep(state),
   };
 };
 

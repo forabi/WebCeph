@@ -51,10 +51,10 @@ const CephaloEditorToolbar = (props: ToolbarProps) => {
         onClick={onToolButtonClick.bind(null, ToolsIds.ERASER)}
       />
       <FlatButton
-        disabled={cannotEdit || activeToolId === ToolsIds.ADD_POINT}
+        disabled={cannotEdit || activeToolId === ToolsIds.SELECT}
         label=""
         icon={<IconAddPoint />}
-        onClick={onToolButtonClick.bind(null, ToolsIds.ADD_POINT)}
+        onClick={onToolButtonClick.bind(null, ToolsIds.SELECT)}
       />
       <FlatButton
         disabled={true || cannotEdit || activeToolId === ToolsIds.ZOOM_WITH_CLICK}

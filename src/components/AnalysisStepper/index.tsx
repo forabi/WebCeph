@@ -44,6 +44,7 @@ export class AnalysisStepper extends React.PureComponent<Props, { }> {
       steps,
       getStepState,
       getStepValue,
+      highlightedStep,
       isStepRemovable,
       onRemoveLandmarkClick, onEditLandmarkClick,
       onStepMouseEnter, onStepMouseLeave,
@@ -61,7 +62,7 @@ export class AnalysisStepper extends React.PureComponent<Props, { }> {
             return (
               <div key={step.symbol}>
                 <ListItem
-                  ref={(i === firstPendingIndex || firstPendingIndex === -1) ? this.setFirstPending : undefined}
+                  ref={(step.symbol === highlightedStep || i === firstPendingIndex || firstPendingIndex === -1) ? this.setFirstPending : undefined}
                   primaryText={getTitleForStep(step)}
                   secondaryText={getDescriptionForStep(step) || undefined}
                   leftIcon={icons[state]}

@@ -1,4 +1,4 @@
-import createZoomWithWheel from './zoomWithWheel';
+import createAddPoint from './addPoint';
 import { highlightStep, unhighlightStep } from 'actions/workspace';
 import { Cursor } from 'utils/constants';
 
@@ -9,7 +9,7 @@ export const createSelect: EditorToolCreator = (
   dispatch: DispatchFunction,
 ) => {
   return assign(
-    createZoomWithWheel(state, dispatch),
+    createAddPoint(state, dispatch),
     {
       getCursorForLandmark() {
         return Cursor.SELECT;
@@ -18,8 +18,8 @@ export const createSelect: EditorToolCreator = (
         dispatch(highlightStep(symbol));
         // @TODO: show tooltip?
       },
-      onLandmarkClick(symbol) {
-        dispatch(unhighlightStep(symbol));
+      onLandmarkMouseLeave(_) {
+        dispatch(unhighlightStep());
         // @TODO: hide tooltip
       },
     } as EditorTool,

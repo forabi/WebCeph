@@ -8,6 +8,12 @@
   overflow-y: scroll;
 }
 
+.list_item {
+  &_highlighted {
+    background-color: lightblue;
+  }
+}
+
 @keyframes spin {
     from {
       transform: rotate(0deg);
