@@ -13,7 +13,7 @@ export interface StateProps {
   scaleOriginX: number | null;
   scaleOriginY: number | null;
   landmarks: { [symbol: string]: GeometricalObject } | { };
-  highlightedLandmarks: { [symbol: string]: boolean } | { };
+  highlightedLandmarks: { [symbol: string]: GeometricalObject } | { };
   activeTool: (dispatch: DispatchFunction) => EditorTool;
 };
 

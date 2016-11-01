@@ -23,7 +23,7 @@ const defaultScaleFactor: ScaleFactor = null;
 
 const KEY_TRACING_MODE = StoreKeys.tracingMode;
 const KEY_SKIPPED_STEPS = StoreKeys.skippedSteps;
-const KEY_SCALE_FACTOR = StoreKeys.scaleFactor
+const KEY_SCALE_FACTOR = StoreKeys.scaleFactor;
 
 const tracingMode = handleActions<TracingMode, Payloads.setTracingMode>(
   {
@@ -62,7 +62,7 @@ const skippedSteps = handleActions<
   defaultSkippedSteps,
 );
 
-const scaleFactor = handleActions<
+const scaleFactorReducer = handleActions<
   ScaleFactor,
   Payloads.setScaleFactor | Payloads.unsetScaleFactor
 >(
@@ -89,7 +89,7 @@ const scaleFactor = handleActions<
 export default assign({
   [KEY_TRACING_MODE]: tracingMode,
   [KEY_SKIPPED_STEPS]: skippedSteps,
-  [KEY_SCALE_FACTOR]: scaleFactor, 
+  [KEY_SCALE_FACTOR]: scaleFactorReducer, 
 }, manualLandmarks);
 
 export const isLandmarkRemovable = createSelector(
@@ -160,7 +160,7 @@ export const getCephaloMapper = createSelector(
           [A, B, C] = uniqBy(
             [
               ...angle1.components[1].components,
-              ...angle2.components[1].components
+              ...angle2.components[1].components,
             ] as CephaloPoint[],
             c => c.symbol,
           );

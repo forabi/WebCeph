@@ -58,7 +58,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (enhancedState: E
     isFlippedY: isImageFlippedY(state),
     landmarks: getAllLandmarks(state),
     isInverted: isImageInverted(state),
-    highlightedLandmarks: mapValues(getHighlightedLandmarks(state), Boolean),
+    highlightedLandmarks: getHighlightedLandmarks(state),
     activeTool: curry(getActiveToolCreator(state))(state),
   };
 };

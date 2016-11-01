@@ -29,11 +29,11 @@ const icons: { [id: string]: JSX.Element } = {
 };
 
 export class AnalysisStepper extends React.PureComponent<Props, { }> {
-  private firstPending: React.ReactInstance | null;
+  private itemToScrollTo: React.ReactInstance | null;
 
   public componentDidUpdate() {
-    if (this.firstPending !== null) {
-      const node = findDOMNode(this.firstPending);
+    if (this.itemToScrollTo !== null) {
+      const node = findDOMNode(this.itemToScrollTo);
       scrollIntoViewIfNeeded(node, false);
     }
   }
@@ -59,10 +59,15 @@ export class AnalysisStepper extends React.PureComponent<Props, { }> {
             const state = getStepState(step.symbol);
             const isDone = state === 'done';
             const isRemovable = isDone && isStepRemovable(step.symbol);
+            const isHighlighted = step.symbol === highlightedStep;
+            const shouldScrollTo = (
+              i === firstPendingIndex || firstPendingIndex === -1
+            );
             return (
               <div key={step.symbol}>
                 <ListItem
-                  ref={(step.symbol === highlightedStep || i === firstPendingIndex || firstPendingIndex === -1) ? this.setFirstPending : undefined}
+                  className={cx({ [classes.list_item_highlighted]: isHighlighted })}
+                  ref={shouldScrollTo ? this.setScrollTo : undefined}
                   primaryText={getTitleForStep(step)}
                   secondaryText={getDescriptionForStep(step) || undefined}
                   leftIcon={icons[state]}
@@ -82,7 +87,7 @@ export class AnalysisStepper extends React.PureComponent<Props, { }> {
     );
   }
 
-  private setFirstPending = (node: React.ReactInstance | null) => this.firstPending = node;
+  private setScrollTo = (node: React.ReactInstance | null) => this.itemToScrollTo = node;
 };
 
 export default AnalysisStepper;

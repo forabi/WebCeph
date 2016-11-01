@@ -155,12 +155,23 @@ export const getActiveAnalysisSteps = createSelector(
   (analysis) => analysis === null ? [] : getStepsForAnalysis(analysis),
 );
 
+
+export const getAllPossibleActiveAnalysisSteps = createSelector(
+  getActiveAnalysis,
+  (analysis) => analysis === null ? [] : getStepsForAnalysis(analysis, false),
+);
+
 export const findStepBySymbol = createSelector(
+  getAllPossibleActiveAnalysisSteps,
   getActiveAnalysisSteps,
-  (steps) => (symbol: string): CephaloLandmark | null => {
-    return find(steps, (step: CephaloLandmark) => step.symbol === symbol) || null;
+  (steps, deduplicatedSteps) => (symbol: string, includeDuplicates = true): CephaloLandmark | null => {
+    return find(
+      includeDuplicates ? steps : deduplicatedSteps,
+      (step: CephaloLandmark) => step.symbol === symbol
+    ) || null;
   }
 );
+
 
 export const getManualSteps = createSelector(
   getActiveAnalysisSteps,
@@ -199,10 +210,8 @@ export const getPendingSteps = createSelector(
 );
 
 export const findEqualComponents = createSelector(
-  getActiveAnalysis,
-  (analysis) => memoize(((step: CephaloLandmark): CephaloLandmark[] => {
-    if (!analysis) return [];
-    const steps = getStepsForAnalysis(analysis, false);
+  getAllPossibleActiveAnalysisSteps,
+  (steps) => memoize(((step: CephaloLandmark): CephaloLandmark[] => {
     const cs = filter(steps, s => !areEqualSymbols(step, s) && areEqualSteps(step, s)) || [];
     return cs;
   })),
@@ -210,15 +219,18 @@ export const findEqualComponents = createSelector(
 
 export const isStepEligibleForAutomaticMapping = createSelector(
   getManualStepState,
-  (getManualStepState) => function isStepEligibleForAutomaticMapping(s: CephaloLandmark): boolean {
-    if (isStepManual(s)) return false;
-    return every(s.components, c => {
-      if (isCephaloPoint(c)) {
-        const state = getManualStepState(c.symbol);
-        return state === 'done';
-      }
-      return isStepEligibleForAutomaticMapping(c);
-    });
+  (getState) => {
+    const fn = (s: CephaloLandmark): boolean => {
+      if (isStepManual(s)) return false;
+      return every(s.components, c => {
+        if (isCephaloPoint(c)) {
+          const state = getState(c.symbol);
+          return state === 'done';
+        }
+        return fn(c);
+      });
+    };
+    return fn;
   },
 );
 
@@ -234,12 +246,12 @@ export const getAutomaticLandmarks = createSelector(
         const r = tryMap(step, mapper);
         if (r) {
           result[step.symbol] = r;
-        };
+        }
         for (const equalStep of findEqual(step)) {
           const r = tryMap(equalStep, mapper);
           if (r) {
             result[equalStep.symbol] = r;
-          };
+          }
         }
       }
     }

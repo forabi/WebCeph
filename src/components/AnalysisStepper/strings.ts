@@ -13,7 +13,7 @@ export const descriptions: { [id: string]: string } = {
   Po: 'Most superior point of outline of external auditory meatus',
   A: 'Most concave point of anterior maxilla',
   B: 'Most concave point on mandibular symphysis',
-}
+};
 
 
 export const getDescriptionForStep = (landmark: CephaloLandmark) => {

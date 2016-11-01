@@ -12,6 +12,7 @@ import Props from './props';
 import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
 import isEmpty from 'lodash/isEmpty';
+import assign from 'lodash/assign';
 
 import { mapCursor } from 'utils/constants';
 import { isGeometricalPoint, isGeometricalVector } from 'utils/math';
@@ -225,11 +226,11 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
                 map(
                   sortBy(
                     map(
-                      this.props.landmarks,
+                      assign({ }, this.props.landmarks, highlighted),
                       (landmark: GeometricalObject, symbol: string) => {
                         let props = { };
                         if (isHighlightModeActive) {
-                          if (highlighted[symbol] === true) {
+                          if (highlighted[symbol] !== undefined) {
                             props = { stroke: 'orange', fill: 'orange', zIndex: 1 };
                           } else {
                             props = { fillOpacity: 0.5, zIndex: 0 };
@@ -249,7 +250,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
                         );
                       }
                     ),
-                    ({ props: { key, value } }) => highlighted[key] === true || isGeometricalPoint(value)
+                    ({ props: { symbol, value } }) => highlighted[symbol] !== undefined || isGeometricalPoint(value),
                   ),
                   (Landmark => (
                     <g style={{ cursor: mapCursor(getCursorForLandmark(Landmark.props.symbol)) }}>
