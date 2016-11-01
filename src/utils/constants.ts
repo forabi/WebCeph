@@ -17,6 +17,10 @@ export const StoreKeys = {
   activeTool: 'cephalo.workspace.canvas.activeTool',
   canvasHeight: 'cephalo.workspace.canvas.height',
   canvasWidth: 'cephalo.workspace.canvas.width',
+  canvasTop: 'cephalo.workspace.canvas.top',
+  canvasLeft: 'cephalo.workspace.canvas.left',
+  canvasMouseX: 'cephalo.workspace.canvas.mouseX',
+  canvasMouseY: 'cephalo.workspace.canvas.mouseY',
   imageHeight: 'cephalo.workspace.image.height',
   imageWidth: 'cephalo.workspace.image.width',
   imageData: 'cephalo.workspace.image.data',
@@ -63,6 +67,8 @@ export const Event = {
   LOAD_IMAGE_FAILED: 'LOAD_IMAGE_FAILED',
   RESET_WORKSPACE_REQUESTED: 'RESET_WORKSPACE_REQUESTED',
   IGNORE_WORKSPACE_ERROR_REQUESTED: 'IGNORE_WORKSPACE_ERROR_REQUESTED',
+
+  MOUSE_POSITION_CHANGED: 'MOUSE_POSITION_CHANGED',
 
   REDO_REQUESTED: 'REDO_REQUESTED',
   UNDO_REQUESTED: 'UNDO_REQUESTED',

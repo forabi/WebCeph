@@ -10,7 +10,7 @@ import {
   OwnProps,
 } from './props';
 import { hasImage, isImageLoading } from 'store/reducers/workspace/image';
-import { updateCanvasSize } from 'actions/workspace';
+import { canvasResized } from 'actions/workspace';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (enhancedState: EnhancedState<StoreState>) => {
   const { present: state } = enhancedState;
@@ -22,7 +22,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (enhancedState: E
 
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = (dispatch) => (
   {
-    onResize: (width, height) => dispatch(updateCanvasSize(width, height)),
+    onResize: (rect) => dispatch(canvasResized(rect)),
   }
 );
 

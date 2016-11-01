@@ -71,11 +71,16 @@ export const resetWorkspace:
   () => Action<Payloads.resetWorkspace> =
     createAction(Event.RESET_WORKSPACE_REQUESTED);
 
-export const updateCanvasSize:
-  (width: number, height: number) => Action<Payloads.updateCanvasSize> =
+export const canvasResized:
+  (rect: Payloads.updateCanvasSize) => Action<Payloads.updateCanvasSize> =
     createAction(
       Event.CANVAS_RESIZED,
-      (width: number, height: number) => ({ width, height }),
+    );
+
+export const setMousePosition:
+  (position: Payloads.updateMousePosition) => Action<Payloads.updateCanvasSize> =
+    createAction(
+      Event.MOUSE_POSITION_CHANGED,
     );
 
 export const setAnalysis:

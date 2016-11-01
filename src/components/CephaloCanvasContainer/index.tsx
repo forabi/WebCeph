@@ -7,6 +7,7 @@ import ResizeObservable from 'utils/resize-observable';
 
 import CephaloCanvas from 'components/CephaloCanvas/connected';
 import CephaloDropzone from 'components/CephaloDropzone/connected';
+import Lens from 'components/CephaloLens/connected';
 
 import * as cx from 'classnames';
 
@@ -18,7 +19,12 @@ const classes = require('./style.scss');
 
 const Content = pure(({ hasImage, isLoading }: Props) => {
   if (hasImage) {
-    return <CephaloCanvas />;
+    return (
+      <div>
+        <Lens height={200} width={200} margin={15} className={classes.lens} />
+        <CephaloCanvas />
+      </div>
+    );
   } else if (isLoading) {
     return (
       <div className={classes.loading_container}>
@@ -58,7 +64,7 @@ class CephaloCanvasContainer extends React.PureComponent<Props, { }> {
   private setRef = (instance: React.ReactInstance | null) => this.childInstance = instance;
 
   private handleResize: (e: ResizeObserverEntry) => any
-    = ({ contentRect: { width, height } }) => this.props.onResize(width, height);
+    = ({ contentRect }) => this.props.onResize(contentRect);
 };
 
 export default CephaloCanvasContainer;

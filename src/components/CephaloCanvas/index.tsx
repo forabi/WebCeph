@@ -139,6 +139,13 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
     }
   }
 
+  private handleCanvasMouseMove = (e: React.WheelEvent<WheelEvent>) => {
+    if (typeof this.props.onCanvasMouseMove === 'function') {
+      const { x, y } = this.convertMousePositionRelativeToOriginalImage(e);
+      this.props.onCanvasMouseMove(x, y);
+    }
+  }
+
   private handleClick = (e: React.MouseEvent<MouseEvent>) => {
     if (this.props.onCanvasLeftClick !== undefined || this.props.onCanvasRightClick !== undefined) {
       const { x, y } = this.convertMousePositionRelativeToOriginalImage(e);
@@ -215,6 +222,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
                     x={0} y={0}
                     width={imageWidth} height={imageHeight}
                     onMouseDown={this.handleClick}
+                    onMouseMove={this.handleCanvasMouseMove}
                     transform={this.getTransformAttribute()}
                     filter={this.getFilterAttribute()}
                   />
@@ -253,7 +261,9 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
                     ({ props: { symbol, value } }) => highlighted[symbol] !== undefined || isGeometricalPoint(value),
                   ),
                   (Landmark => (
-                    <g style={{ cursor: mapCursor(getCursorForLandmark(Landmark.props.symbol)) }}>
+                    <g
+                      key={Landmark.props.symbol}
+                      style={{ cursor: mapCursor(getCursorForLandmark(Landmark.props.symbol)) }}>
                       {Landmark}
                     </g>
                   ))

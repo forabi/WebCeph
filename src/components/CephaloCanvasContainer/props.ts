@@ -4,7 +4,7 @@ export interface StateProps {
 };
 
 export interface DispatchProps {
-  onResize(width: number, height: number): any;
+  onResize(rect: { top: number, left: number, width: number, height: number }): any;
 };
 
 export type ConnectableProps = StateProps & DispatchProps;

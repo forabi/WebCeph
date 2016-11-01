@@ -217,6 +217,10 @@ declare namespace StoreEntries {
     namespace canvas {
       type width = number;
       type height = number;
+      type top = number | null;
+      type left = number | null;
+      type mouseX = number | null;
+      type mouseY = number | null;
       type highlightedStep = string | null; 
       type activeTool = string;
       /** 1 indicates the original image size */
@@ -275,7 +279,8 @@ declare namespace Payloads {
   type disableActiveTool = setActiveTool;
   type enableTools = setActiveTool;
   type removeActiveTool = string;
-  type updateCanvasSize = { width: number, height: number };
+  type updateCanvasSize = { top: number, left: number, width: number, height: number };
+  type updateMousePosition = { x: number, y: number };
   type imageLoadSucceeded = { data: string, height: number, width: number };
   type imageLoadFailed = { message: string; };
   type imageLoadRequested = File;
@@ -358,6 +363,12 @@ interface EditorTool {
    * Useful for implementing zoom functionality.
    */
   onCanvasMouseWheel?(x: number, y: number, delta: number);
+
+  /**
+   * Triggered when the mouse moves over the canvas.
+   * Useful for implementing lens functionality.
+   */
+  onCanvasMouseMove?(x: number, y: number);
 
   /**
    * Triggered when the mouse enters a landmark.
