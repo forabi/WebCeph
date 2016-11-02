@@ -7,6 +7,7 @@ import ResizeObservable from 'utils/resize-observable';
 
 import CephaloCanvas from 'components/CephaloCanvas/connected';
 import CephaloDropzone from 'components/CephaloDropzone/connected';
+import CephaloImage from 'components/CephaloImage/connected';
 import Lens from 'components/CephaloLens/connected';
 
 import * as cx from 'classnames';
@@ -21,7 +22,14 @@ const Content = pure(({ hasImage, isLoading }: Props) => {
   if (hasImage) {
     return (
       <div>
-        <Lens height={200} width={200} margin={15} className={classes.lens} />
+        <Lens
+          className={classes.lens}
+          width={200}
+          height={200}
+          margin={15}
+        >
+          <CephaloImage />
+        </Lens>
         <CephaloCanvas />
       </div>
     );

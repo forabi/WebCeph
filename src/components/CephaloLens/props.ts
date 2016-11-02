@@ -1,11 +1,10 @@
 export interface StateProps {
-  src: string | null;
-  imageWidth: number | null;
-  imageHeight: number | null;
   top: number | null;
   left: number | null;
   x: number;
   y: number;
+  isFlippedX: boolean;
+  isFlippedY: boolean;
 }
 
 export interface DispatchProps {

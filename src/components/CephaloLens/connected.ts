@@ -15,6 +15,8 @@ import {
 import {
   getImageData,
   getImageSize,
+  isImageFlippedX,
+  isImageFlippedY,
 } from 'store/reducers/workspace/image';
 
 import {
@@ -37,6 +39,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
       top: top + margin,
       left: canvasWidth - width - margin,
       imageHeight, imageWidth,
+      isFlippedX: isImageFlippedX(state),
+      isFlippedY: isImageFlippedY(state),
     };
   };
 
