@@ -75,15 +75,28 @@ const Landmark = (_props: LandmarkProps) => {
 
 const noop = () => undefined;
 
+function isMouseEvent<T>(e: any): e is React.MouseEvent<T> {
+  return e.touches === undefined;
+};
+
+function isTouchEvent<T>(e: any): e is React.TouchEvent<T> {
+  return e.touches !== undefined;
+};
+
 /**
  * A wrapper around a canvas element.
  * Provides a declarative API for viewing landmarks on a cephalomertic image
  * and performing common edits like brightness and contrast.
  */
 export class CephaloCanvas extends React.PureComponent<Props, { }> {
-  refs: { canvas: React.ReactInstance, image: React.ReactInstance };
+  public refs: {
+    canvas: React.ReactInstance,
+    image: React.ReactInstance
+  };
 
-  private convertMousePositionRelativeToOriginalImage = (e: React.MouseEvent<MouseEvent>) => {
+  private convertMousePositionRelativeToOriginalImage = (
+    e: React.MouseEvent<SVGElement> | React.TouchEvent<SVGElement>
+  ) => {
     const element = e.currentTarget as Element;
     const rect = element.getBoundingClientRect();
     const { imageHeight, imageWidth } = this.props;
@@ -91,10 +104,9 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
     const scaleY = rect.height / imageHeight;
     const scrollTop = document.documentElement.scrollTop;
     const scrollLeft = document.documentElement.scrollLeft;
-    const elementLeft = (rect.left) + scrollLeft;  
+    const elementLeft = (rect.left) + scrollLeft;
     const elementTop = (rect.top) + scrollTop;
-    const pageX = e.pageX;
-    const pageY = e.pageY;
+    const { pageX, pageY } = isMouseEvent(e) ? e : e.touches.item(0);
     let x = (pageX - elementLeft) / scaleX;
     let y = (pageY - elementTop)  / scaleY;
     if (this.props.isFlippedX) {
@@ -132,21 +144,21 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
     return t;
   };
 
-  private handleMouseWheel = (e: React.WheelEvent<WheelEvent>) => {
+  private handleMouseWheel = (e: React.WheelEvent<SVGElement>) => {
     if (typeof this.props.onCanvasMouseWheel === 'function') {
       const { x, y } = this.convertMousePositionRelativeToOriginalImage(e);
       this.props.onCanvasMouseWheel(x, y, e.deltaY);
     }
   }
 
-  private handleCanvasMouseMove = (e: React.WheelEvent<WheelEvent>) => {
+  private handleCanvasMouseMove = (e: React.MouseEvent<SVGElement> | React.TouchEvent<SVGElement>) => {
     if (typeof this.props.onCanvasMouseMove === 'function') {
       const { x, y } = this.convertMousePositionRelativeToOriginalImage(e);
       this.props.onCanvasMouseMove(x, y);
     }
   }
 
-  private handleClick = (e: React.MouseEvent<MouseEvent>) => {
+  private handleClick = (e: React.MouseEvent<SVGElement>) => {
     if (this.props.onCanvasLeftClick !== undefined || this.props.onCanvasRightClick !== undefined) {
       const { x, y } = this.convertMousePositionRelativeToOriginalImage(e);
       const which = e.button;
@@ -158,23 +170,23 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
     }
   };
 
-  private handleContextMenu = (e: React.MouseEvent<MouseEvent>) => {
+  private handleContextMenu = (e: React.MouseEvent<SVGElement>) => {
     e.preventDefault();
   };
 
-  private handleLandmarkMouseEnter = (symbol: string) => (_: React.MouseEvent<MouseEvent>) => {
+  private handleLandmarkMouseEnter = (symbol: string) => (_: React.MouseEvent<SVGElement>) => {
     if (typeof this.props.onLandmarkMouseEnter === 'function') {
       this.props.onLandmarkMouseEnter(symbol);
     }
   };
 
-  private handleLandmarkMouseLeave = (symbol: string) => (_: React.MouseEvent<MouseEvent>) => {
+  private handleLandmarkMouseLeave = (symbol: string) => (_: React.MouseEvent<SVGElement>) => {
     if (typeof this.props.onLandmarkMouseLeave === 'function') {
       this.props.onLandmarkMouseLeave(symbol);
     }
   };
 
-  private handleLandmarkClick = (symbol: string) => (e: React.MouseEvent<MouseEvent>) => {
+  private handleLandmarkClick = (symbol: string) => (e: React.MouseEvent<SVGElement>) => {
     if (typeof this.props.onLandmarkClick === 'function') {
       this.props.onLandmarkClick(symbol, e.nativeEvent as MouseEvent);
     }
@@ -189,7 +201,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
       contrast = 50, brightness = 50,
       highlightedLandmarks: highlighted,
       getCursorForCanvas = noop,
-      getCursorForLandmark = noop,
+      getCursorForLandmark,
     } = this.props;
     const minHeight = Math.max(canvasHeight, imageHeight);
     const minWidth = Math.max(canvasWidth, imageWidth); 
@@ -223,6 +235,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
                     width={imageWidth} height={imageHeight}
                     onMouseDown={this.handleClick}
                     onMouseMove={this.handleCanvasMouseMove}
+                    onTouchMove={this.handleCanvasMouseMove}
                     transform={this.getTransformAttribute()}
                     filter={this.getFilterAttribute()}
                   />
@@ -263,7 +276,10 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
                   (Landmark => (
                     <g
                       key={Landmark.props.symbol}
-                      style={{ cursor: mapCursor(getCursorForLandmark(Landmark.props.symbol)) }}>
+                      style={{
+                        cursor: getCursorForLandmark !== undefined ? 
+                          mapCursor(getCursorForLandmark(Landmark.props.symbol)) : undefined
+                      }}>
                       {Landmark}
                     </g>
                   ))
