@@ -46,7 +46,6 @@ export const createEraser: EditorToolCreator = (
       },
 
       getCursorForLandmark(symbol) {
-        console.log('HEY', symbol)
         if (isRemovable(symbol)) {
           return Cursor.REMOVE_LANDMARK;
         }
