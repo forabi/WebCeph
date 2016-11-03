@@ -57,7 +57,7 @@ export function point(symbol: string, name?: string, description?: string): Ceph
     symbol,
     description,
     components: [],
-  }
+  };
 }
 
 /**
@@ -80,7 +80,7 @@ export function distance(A: CephaloPoint, B: CephaloPoint, name?: string, unit: 
     unit,
     components: [A, B],
     symbol: `distance_${A.symbol}_${B.symbol}`,
-  }
+  };
 }
 
 export function angularSum(components: CephaloAngle[], name: string, symbol?: string): CephaloAngularSum {
@@ -115,7 +115,7 @@ export function getStepsForLandmarks(landmarks: CephaloLandmark[], removeEqualSt
         if (!landmark) {
           __DEBUG__ && console.warn(
             'Got unexpected value in getStepsForLandmarks. ' +
-            'Expected a Cephalo.Landmark, got ' + landmark, 
+            'Expected a Cephalo.Landmark, got ' + landmark,
           );
           return [];
         }
@@ -220,11 +220,12 @@ export enum SkeletalPattern {
   class1 = 0,
   class2,
   class3,
+  tendencyForClass3,
 };
 
 /** The anterior-posterior position of the maxilla relative to a reference plane */
 export enum Maxilla {
-  prognathic = 3,
+  prognathic = 4,
   retrognathic,
   /** Indicates the maxilla is neither retrognathic nor prognathic */
   normal,
@@ -233,21 +234,21 @@ export enum Maxilla {
 /** The anterior-posterior position of the mandible relative to a reference plane */
 export enum Mandible {
   // Mandible
-  prognathic = 6,
+  prognathic = 7,
   retrognathic,
   /** Indicates the mandible is neither retrognathic nor prognathic */
   normal,
 };
 
 export enum SkeletalProfile {
-  normal = 9,
+  normal = 10,
   concave,
   convex,
 };
 
 /** The pattern of rotation of the mandible */
 export enum MandibularRotation {
-  normal = 12,
+  normal = 13,
   clockwise,
   vertical = clockwise,
   counterClockwise,
@@ -255,7 +256,7 @@ export enum MandibularRotation {
 };
 
 export enum GrowthPattern {
-  normal = 15,
+  normal = 16,
   clockwise,
   vertical = clockwise,
   counterClockwise,
@@ -277,7 +278,7 @@ export enum LowerIncisorInclination {
 };
 
 export enum SkeletalBite {
-  normal = 25,
+  normal = 26,
   open,
   closed,
 };

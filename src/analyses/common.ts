@@ -1,6 +1,6 @@
 import assign from 'lodash/assign';
 
-import { 
+import {
   line, point,
   angleBetweenPoints, angleBetweenLines,
   ProblemSeverity, SkeletalPattern, Mandible, Maxilla,
@@ -171,17 +171,16 @@ export const interpretSN_to_MP = (value: number, min = 30, max = 40): AnalysisIn
   };
 };
 
-export const interpretANB = (value: number, min = 0, max = 4): AnalysisInterpretation => {
+export const interpretANB = (value: number, min = 2, max = 4): AnalysisInterpretation => {
   // @TODO: handle severity
   const relevantComponents = [ANB.symbol];
-  const severity: ProblemSeverity = Math.min(
-    ProblemSeverity.HIGH,
-    Math.round(Math.abs(value - ((min + max) / 2)) / 3),
-  );
+  const severity = ProblemSeverity.UNKNOWN;
   let indication = SkeletalPattern.class1;
   if (value > max) {
     indication = SkeletalPattern.class2;
-  } else if (value < min) {
+  } else if (value < min && value >= 0) {
+    indication = SkeletalPattern.tendencyForClass3;
+  } else if (value < 0) {
     indication = SkeletalPattern.class3;
   }
   return {
@@ -278,7 +277,7 @@ const analysis: Analysis = {
       results.push(interpretSN_to_MP(valueOfSN_to_MP));
     }
     return results;
-  }
-}
+  },
+};
 
 export default analysis;
