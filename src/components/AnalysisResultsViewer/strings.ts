@@ -26,6 +26,7 @@ const typeMap = {
   [SkeletalPattern.class1]: 'Class I',
   [SkeletalPattern.class2]: 'Class II',
   [SkeletalPattern.class3]: 'Class III',
+  [SkeletalPattern.tendencyForClass3]: 'Tendency for Class III',
   [SkeletalProfile.concave]: 'Concave',
   [SkeletalProfile.convex]: 'Convex',
   [SkeletalProfile.normal]: 'Normal',
