@@ -3,7 +3,7 @@ const analysesMap: { [id: string]: string } = {
   common: 'Common',
   downs: 'Downs',
   dental: 'Dental',
-  bjork: 'Bjork',
+  bjork: 'Björk',
 };
 
 export const getNameForAnalysis = (id: string) => {
