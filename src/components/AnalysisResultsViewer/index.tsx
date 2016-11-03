@@ -18,9 +18,6 @@ export const AnalysisResultsViewer = pure(({ open, onRequestClose, results }: Pr
             Value
           </TableHeaderColumn>
           <TableHeaderColumn>
-            Severity
-          </TableHeaderColumn>
-          <TableHeaderColumn>
             Calculated
           </TableHeaderColumn>
           <TableHeaderColumn>
@@ -30,16 +27,13 @@ export const AnalysisResultsViewer = pure(({ open, onRequestClose, results }: Pr
       </TableHeader>
       <TableBody displayRowCheckbox={false}>
       {
-        map(results, ({ category, indication, severity, relevantComponents }) => (
+        map(results, ({ category, indication, relevantComponents }) => (
           <TableRow key={category}>
             <TableRowColumn>
               {mapCategoryToString(category) || '-'}
             </TableRowColumn>
             <TableRowColumn>
               {mapIndicationToString(indication) || '-'}
-            </TableRowColumn>
-            <TableRowColumn>
-              {mapSeverityToString(severity) || '-'}
             </TableRowColumn>
             <TableRowColumn>{
               map(relevantComponents, ({ symbol, value }) => (
