@@ -63,7 +63,7 @@ const config = {
       hot('webpack-hot-middleware/client'),
       path.resolve(__dirname, './src/index.tsx'),
     ]),
-    vendor: [
+    lib: [
       'react',
       'react-dom',
       'reselect',
