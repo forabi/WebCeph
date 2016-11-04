@@ -15,8 +15,16 @@ TODO
   * [ ] CI
 * [x] Fix setting points and landmarks relative to current canvas size
 * [ ] Performance
-  * [ ] Service worker
-  * [ ] HTTP/2
+  * [ ] Memoize functions if possible
+  * [ ] requestAnimationFrame
+  * [ ] Throttle function calls?
+  * [ ] Identify potential bottlenecks
+  * [ ] Offload to workers if possible
+  * [ ] requresIdleCallback if cannot offload to a worker?
+    * [ ] Polyfill? Good idea?
+  * [ ] 
+  * [x] Service worker
+  * [x] HTTP/2
   * [ ] Bundling?
   * [ ] Investigate handling some redux action using a rAF scheduler?
 * [ ] Namespaces
@@ -53,6 +61,7 @@ TODO
     * [x] Use SVG for cursor?
 * [ ] UX
   * [x] Scroll current step into view
+  * [ ] Meaningful animations
 * [x] Highlight geometrical object on step hover
 * [ ] Highlight step on object hover
 * [ ] Rename object
