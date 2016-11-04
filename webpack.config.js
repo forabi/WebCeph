@@ -5,6 +5,7 @@ const env = require('./env');
 const WebpackHTMLPlugin = require('webpack-html-plugin');
 const { compact } = require('lodash');
 const autoprefixer = require('autoprefixer');
+const BabiliPlugin = require('babili-webpack-plugin');
 
 let Dashboard;
 let DashboardPlugin;
@@ -63,20 +64,35 @@ const config = {
     ]),
     vendor: [
       'react',
-      'material-ui/List',
+      'react-dom',
+      'reselect',
+      'redux',
+      'react-redux',
+      'redux-actions',
+      'redux-undo',
+      'lodash/assign',
+      'lodash/map',
+      'lodash/findIndex',
+      'lodash/attempt',
+      'lodash/curry',
+      'lodash/reduce',
+      'lodash/find',
+      'lodash/uniqBy',
+      'lodash/isEmpty',
+      'lodash/omit',
+      'lodash/filter',
+      'lodash/memoize',
+      'material-ui/CircularProgress',
+      'material-ui/Dialog',
+      'material-ui/List/List',
+      'material-ui/List/ListItem',
       'material-ui/RaisedButton',
       'material-ui/FlatButton',
-      'material-ui/Slider',
-      'material-ui/Popover',
-      'material-ui/Menu',
-      'material-ui/MenuItem',
-      'material-ui/Checkbox',
-      'material-ui/Divider',
     ],
   },
 
   output: {
-    path: path.resolve(__dirname, 'docs'),
+    path: path.resolve(__dirname, 'build'),
     filename: '[name]_[hash].js',
     publicPath: buildPath,
   },
@@ -208,12 +224,7 @@ const config = {
       debug: false,
     }),
     prod(new webpack.optimize.OccurrenceOrderPlugin(true)),
-    prod(new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        drop_console: true,
-        warnings: false,
-      },
-    })),
+    prod(new BabiliPlugin()),
   ]),
 };
 

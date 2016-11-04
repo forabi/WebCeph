@@ -20,7 +20,7 @@ const manualLandmarksReducer = handleActions<
         return state;
       }
       if (state[payload.symbol] !== undefined) {
-        __DEBUG__ && console.warn(
+        console.warn(
           'Attempted to add a landmark that already exists, this is a bug!'
         );
         return state;
@@ -33,13 +33,16 @@ const manualLandmarksReducer = handleActions<
         },
       );
     },
-    [Event.REMOVE_MANUAL_LANDMARK_REQUESTED]: (state: ManualLandmarks, { type, payload: symbol }: Action<Payloads.removeManualLandmark>) => {
+    [Event.REMOVE_MANUAL_LANDMARK_REQUESTED]: (
+      state: ManualLandmarks,
+      { type, payload: symbol }: Action<Payloads.removeManualLandmark>
+    ) => {
       if (symbol === undefined) {
         printUnexpectedPayloadWarning(type, state);
         return state;
       }
       if (state[symbol] === undefined) {
-        __DEBUG__ && console.warn(
+        console.warn(
           'Attempted to remove a landmark that does not exist, this is a bug!'
         );
         return state;

@@ -54,7 +54,7 @@ const activeAnalysisIdReducer = handleActions<AnalysisId, any>(
     },
   },
   defaultAnalysisId,
-)
+);
 
 const isAnalysisLoadingReducer = handleActions<IsAnalysisLoading, any>(
   {
@@ -78,7 +78,7 @@ const loadErrorReducer = handleActions<LoadError, any>(
     [Event.SET_ANALYSIS_REQUESTED]: () => null,
   },
   null,
-)
+);
 
 const areResultsShownReducer = handleActions<AreResultsShown, any>(
   {
@@ -221,7 +221,9 @@ export const isStepEligibleForAutomaticMapping = createSelector(
   getManualStepState,
   (getState) => {
     const fn = (s: CephaloLandmark): boolean => {
-      if (isStepManual(s)) return false;
+      if (isStepManual(s)) {
+        return false;
+      }
       return every(s.components, c => {
         if (isCephaloPoint(c)) {
           const state = getState(c.symbol);
@@ -271,7 +273,7 @@ export const isStepEligibleForComputation = createSelector(
   getAllLandmarks,
   (allLandmarks) => (step: CephaloLandmark) => {
     return (
-      isStepComputable(step) && 
+      isStepComputable(step) &&
       every(step.components, (c: CephaloLandmark) => allLandmarks[c.symbol] !== undefined)
     );
   }
@@ -290,7 +292,7 @@ export const getComputedValues = createSelector(
           result[step.symbol] = value;
         } else {
           console.warn(
-            `Step ${step.symbol} was eligible for automatic ` + 
+            `Step ${step.symbol} was eligible for automatic ` +
             `computation but a value could not be computed.`,
           );
         }
@@ -309,13 +311,13 @@ export const getStepStateBySymbol = createSelector(
   getAllLandmarks,
   getManualStepState,
   getComputedValues,
-  (allLandmarks, getManualStepState, computedValues) => (symbol: string): StepState => {
+  (allLandmarks, getStep, computedValues) => (symbol: string): StepState => {
     if (allLandmarks[symbol] !== undefined) {
       return 'done';
     } else if (computedValues[symbol] !== undefined) {
       return 'done';
     } else {
-      return getManualStepState(symbol);
+      return getStep(symbol);
     }
   }
 );
@@ -365,8 +367,8 @@ export const getComponentWithAllPossibleNestedComponents = createSelector(
     if (landmark !== null) {
       return [landmark, ...getAllNested(landmark)];
     } else {
-      __DEBUG__ && console.warn(
-        `Tried to get nested components for landmark ${symbol}, ` +  
+      console.warn(
+        `Tried to get nested components for landmark ${symbol}, ` +
         `but the active analysis does not have a landmark with that symbol. ` +
         `Returning an empty array.`,
       );

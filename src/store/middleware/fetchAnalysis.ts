@@ -12,7 +12,7 @@ const middleware: Middleware = (_: Store<any>) => (next: Dispatch<any>) => async
     require.ensure([], (require) => {
       try {
         // const analysis: Analysis = require(`analyses/${analysisId}`);
-        // __DEBUG__ && console.log('Fetched!', analysis, typeof analysis, analysis);
+        // console.log('Fetched!', analysis, typeof analysis, analysis);
         return next({
           type: Event.SET_ANALYSIS_SUCCEEDED,
           payload: payload as Payloads.analysisLoadSucceeded,

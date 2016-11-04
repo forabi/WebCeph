@@ -2,9 +2,13 @@
   "sourceMaps": "both",
   "presets": [
     [
-      "es2015",
+      "env",
       {
-        "modules": false
+        "modules": false,
+        "browsers": [
+          "last 2 Chrome versions",
+          "last 5 Firefox versions"
+        ]
       }
     ],
     "react",
@@ -13,7 +17,12 @@
   "env": {
     "production": {
       "plugins": [
-        "transform-runtime"
+        "transform-runtime",
+        "minify-empty-function",
+        "transform-inline-environment-variables",
+        "transform-node-env-inline",
+        "transform-remove-console",
+        "transform-remove-debugger"
       ],
       "presets": [
         "react-optimize"
