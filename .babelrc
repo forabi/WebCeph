@@ -21,6 +21,7 @@
         "minify-empty-function",
         "transform-inline-environment-variables",
         "transform-node-env-inline",
+        "transform-remove-console",
         "transform-remove-debugger"
       ],
       "presets": [
