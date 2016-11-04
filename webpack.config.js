@@ -90,14 +90,14 @@ const config = {
       'material-ui/RaisedButton',
       'material-ui/FlatButton',
     ],
-    sw: [
+    'sw-toolbox': [
       'sw-toolbox/sw-toolbox.js',
     ],
   },
 
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: '[name]_[chunkhash].js',
+    filename: env.isProd ? '[name]_[chunkhash].js' : '[name]_[hash].js',
     publicPath: buildPath,
   },
 

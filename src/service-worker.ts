@@ -2,8 +2,6 @@
 /// <reference path="./service-worker.d.ts" />
 import toolbox from 'sw-toolbox/sw-toolbox.js';
 
-toolbox.options = __DEBUG__;
-
 type ServiceWorkerOptions = {
   assets: ReadonlyArray<string>
 };
@@ -19,4 +17,10 @@ const assetsToCache = [
 
 toolbox.precache(assetsToCache);
 
-toolbox.router.get('/*', toolbox.cacheFirst);
+toolbox.router.get(
+  '/*',
+  toolbox.cacheFirst,
+  {
+    debug: __DEBUG__,
+  },
+);
