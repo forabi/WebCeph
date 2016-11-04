@@ -296,13 +296,13 @@ type GenericAction = { type: string, payload?: any };
 type Action<T> = GenericAction & { payload?: T };
 type DispatchFunction = (GenericAction) => any;
 
-interface EnhancedState<T> {
+interface UndoableState<T> {
   past: T[];
   present: T,
   future: T[];
 }
 
-type FinalState = EnhancedState<GenericState>;
+type FinalState = GenericState;
 
 interface StoreState {
   'env.compatiblity.isIgnored': boolean;
@@ -393,6 +393,11 @@ interface EditorTool {
   getCursorForLandmark?(symbol: string): string | undefined;
 
   getCursorForCanvas?(): string | undefined;
+
+  /** Indicates whether the lens should be shown when this tool is active.
+   * `null` indicates no preference.
+   */
+  shouldShowLens: boolean | null;
 }
 
 /** An EditorToolCreate is a function that is used to create editor tools.

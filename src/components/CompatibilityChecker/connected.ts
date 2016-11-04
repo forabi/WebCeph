@@ -20,8 +20,7 @@ import {
   getMissingFeatures,
 } from 'store/reducers/env/compatibility';
 
-const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (enhancedState: EnhancedState<StoreState>) => {
-  const { present: state } = enhancedState;
+const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalState) => {
   return {
     shouldUpgradeCurrentBrowser: isBrowserCompatible(state),
     missingFeatures: getMissingFeatures(state),

@@ -6,6 +6,7 @@ const WebpackHTMLPlugin = require('webpack-html-plugin');
 const { compact } = require('lodash');
 const autoprefixer = require('autoprefixer');
 const BabiliPlugin = require('babili-webpack-plugin');
+const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 
 let Dashboard;
 let DashboardPlugin;
@@ -62,7 +63,7 @@ const config = {
       hot('webpack-hot-middleware/client'),
       path.resolve(__dirname, './src/index.tsx'),
     ]),
-    vendor: [
+    lib: [
       'react',
       'react-dom',
       'reselect',
@@ -89,11 +90,14 @@ const config = {
       'material-ui/RaisedButton',
       'material-ui/FlatButton',
     ],
+    'sw-toolbox': [
+      'sw-toolbox/sw-toolbox.js',
+    ],
   },
 
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: '[name]_[hash].js',
+    filename: env.isProd ? '[name]_[chunkhash].js' : '[name]_[hash].js',
     publicPath: buildPath,
   },
 
@@ -218,6 +222,9 @@ const config = {
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       isBrowser: true,
       isHot: JSON.stringify(Boolean(process.env.HOT)),
+    }),
+    new ServiceWorkerWebpackPlugin({
+      entry: path.join(__dirname, 'src/service-worker.ts'),
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: true,

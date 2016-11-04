@@ -4,6 +4,9 @@ import { handleActions } from 'redux-actions';
 import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 
+import undoable, { includeAction } from 'redux-undo';
+import { undoableConfig } from 'utils/config';
+
 type ManualLandmarks = StoreEntries.workspace.analysis.tracing.landmarks.manual;
 
 const KEY_MANUAL_LANDMARKS = StoreKeys.manualLandmarks;
@@ -14,7 +17,9 @@ const manualLandmarksReducer = handleActions<
   Payloads.addManualLandmark | Payloads.removeManualLandmark
 >(
   {
-    [Event.ADD_MANUAL_LANDMARK_REQUESTED]: (state: ManualLandmarks, { type, payload }: Action<Payloads.addManualLandmark>) => {
+    [Event.ADD_MANUAL_LANDMARK_REQUESTED]: (
+      state: ManualLandmarks, { type, payload }: Action<Payloads.addManualLandmark>
+    ) => {
       if (payload === undefined) {
         printUnexpectedPayloadWarning(type, state);
         return state;
@@ -55,9 +60,21 @@ const manualLandmarksReducer = handleActions<
 );
 
 export default {
-  [KEY_MANUAL_LANDMARKS]: manualLandmarksReducer,
+  [KEY_MANUAL_LANDMARKS]: undoable(
+    manualLandmarksReducer,
+    assign(
+      { },
+      undoableConfig,
+      {
+        filter: includeAction([
+          Event.ADD_MANUAL_LANDMARK_REQUESTED,
+          Event.REMOVE_MANUAL_LANDMARK_REQUESTED,
+        ]),
+      },
+    ),
+  ),
 };
 
 export const getManualLandmarks = (state: GenericState) => {
-  return state[KEY_MANUAL_LANDMARKS] as ManualLandmarks;
+  return state[KEY_MANUAL_LANDMARKS] as UndoableState<ManualLandmarks>;
 };

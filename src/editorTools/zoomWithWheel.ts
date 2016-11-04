@@ -11,6 +11,7 @@ const createZoomWithWheel: EditorToolCreator = (
   onCanvasMouseWheel(x, y, delta) {
     // @TODO
   },
+  shouldShowLens: false,
 });
 
 export default createZoomWithWheel;

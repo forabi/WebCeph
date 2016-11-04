@@ -181,7 +181,7 @@ export const getManualSteps = createSelector(
 export const getExpectedNextManualLandmark = createSelector(
   getManualSteps,
   getManualLandmarks,
-  (manualSteps, manualLandmarks): CephaloLandmark | null => (find(
+  (manualSteps, { present: manualLandmarks }): CephaloLandmark | null => (find(
     manualSteps,
     step => manualLandmarks[step.symbol] === undefined,
   ) || null),
@@ -190,7 +190,7 @@ export const getExpectedNextManualLandmark = createSelector(
 export const getManualStepState = createSelector(
   getManualLandmarks,
   getExpectedNextManualLandmark,
-  (manualLandmarks, next) => (symbol: string): StepState => {
+  ({ present: manualLandmarks }, next) => (symbol: string): StepState => {
     if (manualLandmarks[symbol] !== undefined) {
       return 'done';
     } else if (next && next.symbol === symbol) {
@@ -264,7 +264,7 @@ export const getAutomaticLandmarks = createSelector(
 export const getAllLandmarks = createSelector(
   getManualLandmarks,
   getAutomaticLandmarks,
-  (manual, automatic) => {
+  ({ present: manual }, automatic) => {
     return assign({ }, manual, automatic);
   }
 );

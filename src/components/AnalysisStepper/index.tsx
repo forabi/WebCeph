@@ -17,8 +17,8 @@ import { getDescriptionForStep, getTitleForStep } from './strings';
 
 const classes = require('./style.scss');
 
-const ICON_DONE       = <IconDone color="green"/>;
-const ICON_CURRENT    = <IconPlayArrow color="blue" />;
+const ICON_DONE       = <IconDone color='green'/>;
+const ICON_CURRENT    = <IconPlayArrow color='blue' />;
 const ICON_PENDING    = <IconHourglass />;
 const ICON_EVALUATING = <IconHourglass className={classes.icon_pending__evaluating} />;
 
@@ -36,8 +36,10 @@ export class AnalysisStepper extends React.PureComponent<Props, { }> {
   public componentDidUpdate() {
     if (this.itemToScrollTo !== null) {
       const node = findDOMNode(this.itemToScrollTo);
-      scrollIntoViewIfNeeded(node, false);
-      this.hasScrolled = true;
+      if (node) {
+        scrollIntoViewIfNeeded(node, false);
+        this.hasScrolled = true;
+      }
     }
   }
 

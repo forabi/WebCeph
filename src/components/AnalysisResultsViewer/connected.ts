@@ -18,8 +18,7 @@ import {
   hideAnalysisResults,
 } from 'actions/workspace';
 
-const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (enhancedState: EnhancedState<StoreState>) => {
-  const { present: state } = enhancedState;
+const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalState) => {
   return {
     results: getCategorizedAnalysisResults(state),
   };

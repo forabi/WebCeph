@@ -55,6 +55,8 @@ export const createEraser: EditorToolCreator = (
       getCursorForCanvas() {
         return Cursor.REMOVE_LANDMARK_NO_TARGET;
       },
+
+      shouldShowLens: false,
     } as EditorTool,
   );
 };

@@ -9,10 +9,10 @@ import * as cx from 'classnames';
 
 import Props from './props';
 
+import assign from 'lodash/assign';
+import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
-import isEmpty from 'lodash/isEmpty';
-import assign from 'lodash/assign';
 
 import { mapCursor } from 'utils/constants';
 import { isGeometricalPoint, isGeometricalVector } from 'utils/math';
@@ -40,7 +40,7 @@ const getTranslateToCenter = (
   const translateX = Math.abs(containerWidth - width * scale) / 2;
   const translateY = Math.abs(containerHeight - height * scale) / 2;
   return [translateX, translateY];
-}
+};
 
 const Landmark = (_props: LandmarkProps) => {
   const { value, fill, fillOpacity, scale = 1, stroke, onClick, onMouseEnter, onMouseLeave } = _props;
@@ -204,12 +204,12 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
       getCursorForLandmark,
     } = this.props;
     const minHeight = Math.max(canvasHeight, imageHeight);
-    const minWidth = Math.max(canvasWidth, imageWidth); 
-    const isHighlightModeActive = !isEmpty(highlighted)
+    const minWidth = Math.max(canvasWidth, imageWidth);
+    const isHighlightModeActive = !isEmpty(highlighted);
     return (
       <div style={{ height: minHeight, width: minWidth }}>
         <svg
-          ref="canvas" 
+          ref='canvas'
           className={cx(classes.canvas, className)}
           width={minWidth} height={minHeight}
           onWheel={this.handleMouseWheel}
@@ -219,17 +219,17 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
           style={{ cursor: mapCursor(getCursorForCanvas()) }}
         >
           <defs>
-            <BrightnessFilter id="brightness" value={brightness} />
-            <DropShadow id="shadow" />
-            <InvertFilter id="invert" />
-            <ContrastFilter id="contrast" value={contrast} />
+            <BrightnessFilter id='brightness' value={brightness} />
+            <DropShadow id='shadow' />
+            <InvertFilter id='invert' />
+            <ContrastFilter id='contrast' value={contrast} />
           </defs>
           <g>
-            <g filter="url(#shadow)">
-              <g filter="url(#brightness)">
+            <g filter='url(#shadow)'>
+              <g filter='url(#brightness)'>
                 <g>
                   <image
-                    ref="image"
+                    ref='image'
                     xlinkHref={src}
                     x={0} y={0}
                     width={imageWidth} height={imageHeight}
@@ -277,8 +277,8 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
                     <g
                       key={Landmark.props.symbol}
                       style={{
-                        cursor: getCursorForLandmark !== undefined ? 
-                          mapCursor(getCursorForLandmark(Landmark.props.symbol)) : undefined
+                        cursor: getCursorForLandmark !== undefined ?
+                          mapCursor(getCursorForLandmark(Landmark.props.symbol)) : undefined,
                       }}>
                       {Landmark}
                     </g>
@@ -289,7 +289,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
           </g>
         </svg>
       </div>
-    )
+    );
   }
 }
 

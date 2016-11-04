@@ -74,7 +74,7 @@ function* loadImage({ payload }: Action<Payloads.imageLoadRequested>): IterableI
               width,
             } as Payloads.imageLoadSucceeded,
           });
-          const { present: state }: EnhancedState<StoreState> = yield select();
+          const state: FinalState = yield select();
           const { width: canvasWidth, height: canvasHeight } = getCanvasSize(state);
           const scale = 1 / Math.max(height / canvasHeight, width / canvasWidth);
           yield put(setScale(scale));

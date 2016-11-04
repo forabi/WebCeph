@@ -1,7 +1,13 @@
 import { handleActions } from 'redux-actions';
 import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
+
 import { createSelector } from 'reselect';
+
+import assign from 'lodash/assign';
+
+import undoable, { includeAction } from 'redux-undo';
+import { undoableConfig } from 'utils/config';
 
 type Height = StoreEntries.workspace.image.height;
 type Width = StoreEntries.workspace.image.width;
@@ -122,7 +128,7 @@ const flipY = handleActions<boolean, boolean>({
 
 // @TODO: normalize to [-1, 1] instead of 0-100
 const setBrightness = handleActions<number, number>({
-  [Event.SET_IMAGE_BRIGHTNESS_REQUESTED]: (state, { type, payload: value }) =>{
+  [Event.SET_IMAGE_BRIGHTNESS_REQUESTED]: (state, { type, payload: value }) => {
     if (value === undefined) {
       printUnexpectedPayloadWarning(type, state);
       return state;
@@ -134,7 +140,7 @@ const setBrightness = handleActions<number, number>({
 }, defaultBrightness);
 
 const setContrast = handleActions<number, number>({
-  [Event.SET_IMAGE_CONTRAST_REQUESTED]: (state, { type, payload: value }) =>{
+  [Event.SET_IMAGE_CONTRAST_REQUESTED]: (state, { type, payload: value }) => {
     if (value === undefined) {
       printUnexpectedPayloadWarning(type, state);
       return state;

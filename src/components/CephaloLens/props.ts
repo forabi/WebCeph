@@ -5,6 +5,8 @@ export interface StateProps {
   y: number;
   isFlippedX: boolean;
   isFlippedY: boolean;
+  width: number;
+  height: number;
 }
 
 export interface DispatchProps {
@@ -12,8 +14,6 @@ export interface DispatchProps {
 }
 
 export interface OwnProps extends React.HTMLAttributes<HTMLDivElement> {
-  width: number;
-  height: number;
   margin: number;
 }
 

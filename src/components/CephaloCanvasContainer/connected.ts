@@ -10,13 +10,14 @@ import {
   OwnProps,
 } from './props';
 import { hasImage, isImageLoading } from 'store/reducers/workspace/image';
+import { shouldShowLens } from 'store/reducers/workspace/canvas';
 import { canvasResized } from 'actions/workspace';
 
-const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (enhancedState: EnhancedState<StoreState>) => {
-  const { present: state } = enhancedState;
+const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalState) => {
   return {
     hasImage: hasImage(state),
     isLoading: isImageLoading(state),
+    shouldShowLens: shouldShowLens(state),
   };
 };
 

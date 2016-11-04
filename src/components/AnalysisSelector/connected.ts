@@ -17,8 +17,7 @@ import {
 } from 'store/reducers/workspace/analysis';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
-  (enhancedState: EnhancedState<StoreState>): StateProps => {
-    const state = enhancedState.present;
+  (state: FinalState): StateProps => {
     return {
       analyses: [
         'downs',
