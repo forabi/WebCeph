@@ -70,7 +70,7 @@ TODO
   * [x] Do not store entire analysis in store
   * [x] Ability to switch analysis
   * [ ] Predefined
-    * [ x] Basic
+    * [x] Basic
       * [x] SNA, SNB, ANB
       * [x] Growth pattern
         * [x] Bjork
@@ -99,7 +99,7 @@ TODO
   * [x] Show steps
   * [x] Walk through steps
   * [ ] Test getStepsForAnalysis
-    * [ ] Should not repeat lines i.e. S-N, N-S
+    * [x] Should not repeat lines i.e. S-N, N-S
   * [ ] Line -> Vector
   * [x] GeometricalVector
   * [x] GeometricalAngle
