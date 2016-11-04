@@ -10,16 +10,15 @@ import {
   OwnProps,
 } from './props';
 
-const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (enhancedState: EnhancedState<StoreState>) => {
-  const { present: state } = enhancedState;
+const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalState) => {
   return {
-    
+
   };
 };
 
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = (dispatch) => (
   {
-    
+
   }
 );
 

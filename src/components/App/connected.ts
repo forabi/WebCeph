@@ -30,8 +30,7 @@ import {
 } from 'actions/workspace';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
-  (enhancedState: EnhancedState<StoreState>) => {
-    const { present: state } = enhancedState;
+  (state: FinalState) => {
     return {
       isSummaryShown: areResultsShown(state) && canShowResults(state),
       shouldShowStepper: hasImage(state) || isImageLoading(state),

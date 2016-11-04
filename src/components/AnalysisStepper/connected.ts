@@ -19,7 +19,7 @@ import {
   isLandmarkRemovable,
 } from 'store/reducers/workspace/analysis/tracing';
 import {
-  getHighlightedStep
+  getHighlightedStep,
 } from 'store/reducers/workspace/canvas';
 
 import {
@@ -28,8 +28,7 @@ import {
   unhighlightStep,
 } from 'actions/workspace';
 
-const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (enhancedState: EnhancedState<StoreState>) => {
-  const { present: state } = enhancedState;
+const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalState) => {
   return {
     steps: getActiveAnalysisSteps(state),
     getStepState: getStepStateBySymbol(state),

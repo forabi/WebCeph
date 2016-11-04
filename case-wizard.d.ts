@@ -296,13 +296,13 @@ type GenericAction = { type: string, payload?: any };
 type Action<T> = GenericAction & { payload?: T };
 type DispatchFunction = (GenericAction) => any;
 
-interface EnhancedState<T> {
+interface UndoableState<T> {
   past: T[];
   present: T,
   future: T[];
 }
 
-type FinalState = EnhancedState<GenericState>;
+type FinalState = GenericState;
 
 interface StoreState {
   'env.compatiblity.isIgnored': boolean;

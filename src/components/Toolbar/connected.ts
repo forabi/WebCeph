@@ -34,16 +34,15 @@ import {
 } from 'store/reducers/workspace/analysis';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
-  (enhancedState: EnhancedState<StoreState>): StateProps => {
-    const state = enhancedState.present;
+  (state: FinalState): StateProps => {
     return {
       activeToolId: getActiveToolId(state),
       brightness: getImageBrightness(state),
       contrast: getImageContrast(state),
       isImageInverted: isImageInverted(state),
       canEdit: canEdit(state),
-      canRedo: canRedo(enhancedState),
-      canUndo: canUndo(enhancedState),
+      canRedo: canRedo(state),
+      canUndo: canUndo(state),
       canShowSummary: !areResultsShown(state) && canShowResults(state),
     };
   };

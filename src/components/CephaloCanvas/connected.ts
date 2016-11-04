@@ -43,8 +43,7 @@ import curry from 'lodash/curry';
 type OwnProps = { };
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
-  (enhancedState: EnhancedState<StoreState>) => {
-    const state = enhancedState.present;
+  (state: FinalState) => {
     const origin = getScaleOrigin(state);
     const { height: canvasHeight, width: canvasWidth } = getCanvasSize(state);
     const { height: imageHeight, width: imageWidth } = getImageSize(state);

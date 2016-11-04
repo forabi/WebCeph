@@ -15,8 +15,6 @@ export default assign(
   analysis,
 );
 
-export const canUndo = ({ past }: EnhancedState<GenericState>) => past.length > 0;
-export const canRedo = ({ future }: EnhancedState<GenericState>) => future.length > 0;
 export const canEdit = hasImage;
 
 export const getHighlightedLandmarks = createSelector(
@@ -32,5 +30,11 @@ export const getHighlightedLandmarks = createSelector(
 
 export const hasUnsavedWork = createSelector(
   getManualLandmarks,
-  (manual) => !isEmpty(manual),
+  ({ present, past }) => !isEmpty(present) || !isEmpty(past),
+);
+
+export const canUndo = hasUnsavedWork;
+export const canRedo = createSelector(
+  getManualLandmarks,
+  ({ future }) => !isEmpty(future),
 );

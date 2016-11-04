@@ -94,7 +94,7 @@ export default assign({
 
 export const isLandmarkRemovable = createSelector(
   getManualLandmarks,
-  (manualLandmarks) => (symbol: string) => manualLandmarks[symbol] !== undefined,
+  ({ present: manualLandmarks }) => (symbol: string) => manualLandmarks[symbol] !== undefined,
 );
 
 export const getScaleFactor = (state: GenericState): ScaleFactor => state[KEY_SCALE_FACTOR];
@@ -103,7 +103,7 @@ export const getCephaloMapper = createSelector(
   getManualLandmarks,
   getScaleFactor,
   isImageFlippedX,
-  (manualLandmarks, scaleFactor, isFlippedX): CephaloMapper => {
+  ({ present: manual }, scaleFactor, isFlippedX): CephaloMapper => {
     const toPoint = (cephaloPoint: CephaloPoint) => {
       const { symbol } = cephaloPoint;
       if (!isCephaloPoint(cephaloPoint)) {
@@ -112,13 +112,15 @@ export const getCephaloMapper = createSelector(
           `but ${symbol} does not conform to the CephaloPoint interface.`,
         );
       }
-      const geoLandmark = manualLandmarks[symbol];
+      const geoLandmark = manual[symbol];
       if (!isGeometricalPoint(geoLandmark)) {
         console.warn(
           `CephaloMapper.toPoint tried to map ${symbol}, ` +
-          `which is a CephaloPoint, to a geometrical representation that` +
-          `does not conform the the GeometricalPoint interface.`
-          ,
+          `which is a CephaloPoint, to a geometrical representation that ` +
+          `does not conform the the GeometricalPoint interface.`,
+          geoLandmark,
+          cephaloPoint,
+          manualLandmarks,
         );
       }
       return geoLandmark as GeometricalPoint;
