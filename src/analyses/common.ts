@@ -53,7 +53,6 @@ export const Pog = point('Pog', 'Pogonion');
  */
 export const Gn = point('Gn', 'Gnathion');
 
-
 /**
  * Junction between inferior surface of the cranial base and the posterior border of the ascending rami of the mandible
  */
@@ -85,7 +84,9 @@ export const SNA = angleBetweenPoints(S, N, A);
 export const SNB = angleBetweenPoints(S, N, B);
 
 /**
- * ANB (A point, nasion, B point) indicates whether the skeletal relationship between the maxilla and mandible is a normal skeletal class I (+2 degrees), a skeletal Class II (+4 degrees or more), or skeletal class III (0 or negative) relationship.
+ * ANB (A point, nasion, B point) indicates whether the skeletal relationship between
+ * the maxilla and mandible is a normal skeletal class I (+2 degrees),
+ * a skeletal Class II (+4 degrees or more), or skeletal class III (0 or negative) relationship.
  * ANB is a custom landmark that has a positive sign if A is in front of N-B, negative otherwise.
  */
 export const ANB: CephaloAngle = assign(
@@ -102,10 +103,11 @@ export const ANB: CephaloAngle = assign(
   },
 );
 
-
 /**
  * Most posterior inferior point on angle of mandible.
- * Can also be constructed by bisecting the angle formed by intersection of mandibular plane and ramus of mandible */
+ * Can also be constructed by bisecting the angle formed by 
+ * intersection of mandibular plane and ramus of mandible 
+ */
 export const Go = point('Go', 'Gonion', 'Most posterior inferior point on angle of mandible');
 
 /**
@@ -125,7 +127,7 @@ export const FMA = FMPA;
 /**
  * Angle between SN and the mandibular plane
  */
-export const SN_to_MP: CephaloAngle = angleBetweenLines(line(S, N), MP, 'SN-MP', 'SN-MP');
+export const SN_MP: CephaloAngle = angleBetweenLines(line(S, N), MP, 'SN-MP', 'SN-MP');
 
 export const components: AnalysisComponent[] = [
   {
@@ -149,14 +151,14 @@ export const components: AnalysisComponent[] = [
     stdDev: 5,
   },
   {
-    landmark: SN_to_MP,
+    landmark: SN_MP,
     norm: 35,
     stdDev: 5,
   },
 ];
 
-export const interpretSN_to_MP = (value: number, min = 30, max = 40): AnalysisInterpretation => {
-  const relevantComponents = [SN_to_MP.symbol];
+export const interpretSNtoMP = (value: number, min = 30, max = 40): AnalysisInterpretation => {
+  const relevantComponents = [SN_MP.symbol];
   const severity: ProblemSeverity = ProblemSeverity.NONE;
   let indication = MandibularRotation.normal;
   if (value > max) {
@@ -234,11 +236,7 @@ export const interpretFMPA = (value: number, min = 16.9, max = 26.9): AnalysisIn
   // @TODO: handle severity
   const relevantComponents = [FMPA.symbol];
   let indication = MandibularRotation.normal;
-  let severity = ProblemSeverity.NONE;
-  // const severity = Math.min(
-  //   AnalysisResultSeverity.HIGH,
-  //   Math.round(Math.abs(value - ((min + max) / 2)) / 3),
-  // );
+  let severity = ProblemSeverity.UNKNOWN;
   if (value > max) {
     indication = MandibularRotation.clockwise;
   } else if (value < min) {
@@ -272,9 +270,9 @@ const analysis: Analysis = {
     if (typeof valueOfFMPA === 'number') {
       results.push(interpretFMPA(valueOfFMPA));
     }
-    const valueOfSN_to_MP = values[SN_to_MP.symbol];
-    if (typeof valueOfSN_to_MP === 'number') {
-      results.push(interpretSN_to_MP(valueOfSN_to_MP));
+    const valueOfSNtoMP = values[SN_MP.symbol];
+    if (typeof valueOfSNtoMP === 'number') {
+      results.push(interpretSNtoMP(valueOfSNtoMP));
     }
     return results;
   },

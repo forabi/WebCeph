@@ -1,4 +1,4 @@
-import { 
+import {
   angularSum, angleBetweenPoints,
   ProblemSeverity,
   GrowthPattern,
@@ -44,7 +44,7 @@ export const interpretSumOfBjork = (value: number, min = 390, max = 402): Analys
     severity,
     relevantComponents: [BJORK_SUM.symbol],
   }];
-}
+};
 
 const analysis: Analysis = {
   id: 'bjork',
@@ -58,7 +58,7 @@ const analysis: Analysis = {
       results.push(...interpretSumOfBjork(valueOfBjork));
     }
     return results;
-  }
+  },
 };
 
 export default analysis;

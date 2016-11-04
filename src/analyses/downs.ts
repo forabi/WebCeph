@@ -1,13 +1,19 @@
 import assign from 'lodash/assign';
+
 import {
   angleBetweenPoints,
   line, angleBetweenLines,
   SkeletalProfile, ProblemSeverity,
   MandibularRotation,
   Mandible,
-} from './helpers';
-import common, { components as commonComponents, FH_PLANE, N, Pog, A, B, Gn, S, Po } from './common';
-import { radiansToDegrees, calculateAngleBetweenTwoVectors } from '../utils/math';
+} from 'analyses/helpers';
+
+import common, {
+  components as commonComponents,
+  FH_PLANE, N, Pog, A, B, Gn, S,
+} from 'analyses/common';
+
+import { radiansToDegrees, calculateAngleBetweenTwoVectors } from 'utils/math';
 
 const ANGLE_OF_CONVEXITY: CephaloAngle = assign(
    angleBetweenPoints(N, A, Pog, 'Angle of Convexity'),
@@ -16,7 +22,7 @@ const ANGLE_OF_CONVEXITY: CephaloAngle = assign(
        const _A = { x: NA.x1, y: NA.y1 };
        const _N = { x: NA.x2, y: NA.y2 };
        const _Pog = { x: APog.x2, y: APog.y2 };
-       const _NPog = { x1: _N.x, y1: _N.y, x2: _Pog.x, y2: _Pog.y }
+       const _NPog = { x1: _N.x, y1: _N.y, x2: _Pog.x, y2: _Pog.y };
        const positiveValue = Math.abs(radiansToDegrees(Math.PI - calculateAngleBetweenTwoVectors(NA, APog)));
        if (mapper.isBehind(_A, _NPog)) {
          return -1 * positiveValue;
@@ -178,6 +184,6 @@ const analysis: Analysis = {
   id: 'downs',
   components,
   interpret,
-}
+};
 
 export default analysis;

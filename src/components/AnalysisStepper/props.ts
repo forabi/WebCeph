@@ -1,13 +1,13 @@
 export interface OwnProps {
-  className?: string,
+  className?: string,;
 }
 
 export interface StateProps {
   steps: CephaloLandmark[];
+  highlightedStep: string | null;
   getStepState(symbol: string): StepState;
   getStepValue(symbol: string): number | undefined;
   isStepRemovable(symbol: string): boolean;
-  highlightedStep: string | null;
 }
 
 export interface DispatchProps {

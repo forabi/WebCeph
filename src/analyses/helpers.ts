@@ -63,7 +63,11 @@ export function point(symbol: string, name?: string, description?: string): Ceph
 /**
  * Creates an object conforming to the Line interface connecting two points
  */
-export function line(A: CephaloPoint, B: CephaloPoint, name?: string, symbol?: string, unit: LinearUnit = 'mm'): CephaloLine {
+export function line(
+  A: CephaloPoint, B: CephaloPoint,
+  name?: string, symbol?: string,
+  unit: LinearUnit = 'mm',
+): CephaloLine {
   return {
     type: 'line',
     name,
@@ -89,15 +93,23 @@ export function angularSum(components: CephaloAngle[], name: string, symbol?: st
     name,
     unit: components[0].unit,
     symbol: symbol || join(map(components, c => c.symbol), '+'),
-    components: components,
+    components,
   };
 }
 
 export function areEqualSteps(l1: CephaloLandmark, l2: CephaloLandmark): boolean {
-  if (l1.type !== l2.type) return false;
-  if (l1.symbol === l2.symbol) return true;
-  if (l1.components.length === 0) return false;
-  if (l1.components.length !== l2.components.length) return false;
+  if (l1.symbol === l2.symbol) {
+    return true;
+  }
+  if (l1.type !== l2.type) {
+    return false;
+  }
+  if (l1.components.length === 0) {
+    return false;
+  }
+  if (l1.components.length !== l2.components.length) {
+    return false;
+  }
   return (
     xorWith(l1.components, l2.components, areEqualSteps).length === 0
   );
@@ -108,7 +120,7 @@ export function areEqualSymbols(l1: CephaloLandmark, l2: CephaloLandmark) {
 };
 
 export function getStepsForLandmarks(
-  landmarks: CephaloLandmark[], removeEqualSteps: boolean = true
+  landmarks: CephaloLandmark[], removeEqualSteps = true
 ): CephaloLandmark[] {
   return uniqWith(
     flatten(map(
@@ -131,7 +143,10 @@ export function getStepsForLandmarks(
   );
 };
 
-export function getStepsForAnalysis(analysis: Analysis, deduplicateVectors: boolean = true): CephaloLandmark[] {
+export function getStepsForAnalysis(
+  analysis: Analysis,
+  deduplicateVectors = true
+): CephaloLandmark[] {
   return getStepsForLandmarks(analysis.components.map(c => c.landmark), deduplicateVectors);
 };
 
@@ -280,7 +295,7 @@ export enum LowerIncisorInclination {
 };
 
 export enum SkeletalBite {
-  normal = 26,
+  normal = 25,
   open,
   closed,
 };
@@ -357,8 +372,10 @@ export function getDisplayNameForResult({ indication }: AnalysisInterpretation) 
   return null;
 };
 
-
-/** Determines whether a step in a cephalometric analysis can be mapped to a geometrical object or computed as a numerical value */
+/**
+ * Determines whether a step in a cephalometric analysis can be mapped
+ * to a geometrical object or computed as a numerical value
+ */
 export const isStepAutomatic = (step: CephaloLandmark): boolean => {
   if (step.type === 'point') {
     return false;
@@ -388,7 +405,8 @@ export const isStepComputable = (step: CephaloLandmark) => {
 };
 
 /**
- * Tries to return the most reasonable severity value given contradicting interpretations of the evaluated values of an analysis
+ * Tries to return the most reasonable severity value given contradicting
+ * interpretations of the evaluated values of an analysis
  */
 export function resolveSeverity(results: AnalysisInterpretation[]) {
   return reduce<AnalysisInterpretation, ProblemSeverity>(
@@ -402,9 +420,13 @@ export function resolveSeverity(results: AnalysisInterpretation[]) {
 };
 
 /**
- * Tries to return the most reasonable indication given contradicting interpretations of the evaluated values of an analysis
+ * Tries to return the most reasonable indication given contradicting
+ * interpretations of the evaluated values of an analysis
  */
-export function resolveIndication(results: AnalysisInterpretation[], values: { [symbol: string]: EvaluatedValue }) {
+export function resolveIndication(
+  results: AnalysisInterpretation[],
+  values: { [symbol: string]: EvaluatedValue }
+) {
   // @TODO: improve the logic
   return results[0].indication;
 };
