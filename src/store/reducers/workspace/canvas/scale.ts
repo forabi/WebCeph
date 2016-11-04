@@ -19,7 +19,7 @@ const sacleValueReducer = handleActions<ScaleValue, Payloads.setScale>(
         return state;
       }
       if (payload.scale === 0) {
-        __DEBUG__ && console.warn(
+        console.warn(
           'Attempted to zoom in by 0, this is a bug!'
         );
         return state;

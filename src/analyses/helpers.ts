@@ -107,13 +107,15 @@ export function areEqualSymbols(l1: CephaloLandmark, l2: CephaloLandmark) {
   return l1.symbol === l2.symbol;
 };
 
-export function getStepsForLandmarks(landmarks: CephaloLandmark[], removeEqualSteps: boolean = true): CephaloLandmark[] {
+export function getStepsForLandmarks(
+  landmarks: CephaloLandmark[], removeEqualSteps: boolean = true
+): CephaloLandmark[] {
   return uniqWith(
     flatten(map(
       landmarks,
       (landmark: CephaloLandmark) => {
         if (!landmark) {
-          __DEBUG__ && console.warn(
+          console.warn(
             'Got unexpected value in getStepsForLandmarks. ' +
             'Expected a Cephalo.Landmark, got ' + landmark,
           );

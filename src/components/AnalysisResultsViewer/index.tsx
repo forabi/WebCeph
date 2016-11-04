@@ -1,10 +1,26 @@
 import React from 'react';
+
 import Dialog from 'material-ui/Dialog';
-import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
+
+import {
+  Table,
+  TableBody,
+  TableHeader,
+  TableHeaderColumn,
+  TableRow,
+  TableRowColumn,
+} from 'material-ui/Table';
+
 import { pure } from 'recompose';
+
 import map from 'lodash/map';
+
 import Props from './props';
-import { mapSeverityToString, mapIndicationToString, mapCategoryToString } from './strings';
+
+import {
+  mapCategoryToString,
+  mapIndicationToString,
+} from './strings';
 
 export const AnalysisResultsViewer = pure(({ open, onRequestClose, results }: Props) => (
   <Dialog open={open} onRequestClose={onRequestClose} >

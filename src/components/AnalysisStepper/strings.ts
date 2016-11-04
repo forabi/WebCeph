@@ -28,11 +28,11 @@ export const getTitleForStep = (landmark: CephaloLandmark) => {
   } else if (landmark.type === 'angle') {
     return `Calculate angle ${landmark.symbol}${ landmark.name ? ` (${landmark.name})` : '' }`;
   } else if (landmark.type === 'distance') {
-    return `Measure distance between points ${landmark.components[0].symbol} and ${landmark.components[1].symbol}`
+    return `Measure distance between points ${landmark.components[0].symbol} and ${landmark.components[1].symbol}`;
   } else if (landmark.type === 'sum') {
-    return `Calculate ${landmark.name || landmark.symbol || landmark.components.map(c => c.symbol).join(' + ')}`
+    return `Calculate ${landmark.name || landmark.symbol || landmark.components.map(c => c.symbol).join(' + ')}`;
   }
-  __DEBUG__ && console.warn(
+  console.warn(
     `Could not get title for step`,
     landmark,
   );
