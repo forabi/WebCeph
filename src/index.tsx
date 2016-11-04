@@ -10,6 +10,11 @@ if (window.ResizeObserver === undefined) {
   window.ResizeObserver = require('resize-observer-polyfill').default;
 }
 
+if ('serviceWorker' in navigator) {
+  const runtime = require('serviceworker-webpack-plugin/lib/runtime');
+  runtime.register();
+}
+
 const rootEl = document.getElementById('container');
 
 const render = (App: typeof ReduxApp) => ReactDOM.render(<App />, rootEl);

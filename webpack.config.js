@@ -6,6 +6,7 @@ const WebpackHTMLPlugin = require('webpack-html-plugin');
 const { compact } = require('lodash');
 const autoprefixer = require('autoprefixer');
 const BabiliPlugin = require('babili-webpack-plugin');
+const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 
 let Dashboard;
 let DashboardPlugin;
@@ -88,6 +89,9 @@ const config = {
       'material-ui/List/ListItem',
       'material-ui/RaisedButton',
       'material-ui/FlatButton',
+    ],
+    sw: [
+      'sw-toolbox/sw-toolbox.js',
     ],
   },
 
@@ -218,6 +222,9 @@ const config = {
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       isBrowser: true,
       isHot: JSON.stringify(Boolean(process.env.HOT)),
+    }),
+    new ServiceWorkerWebpackPlugin({
+      entry: path.join(__dirname, 'src/service-worker.ts'),
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: true,
