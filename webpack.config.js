@@ -92,7 +92,7 @@ const config = {
   },
 
   output: {
-    path: path.resolve(__dirname, 'docs'),
+    path: path.resolve(__dirname, 'build'),
     filename: '[name]_[hash].js',
     publicPath: buildPath,
   },

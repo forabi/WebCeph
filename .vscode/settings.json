@@ -3,14 +3,14 @@
   "files.watcherExclude": {
     "**/.git/objects/**": true,
     "**/node_modules/**": true,
-    "docs/**": true
+    "build/**": true
   },
   "files.exclude": {
     "**/.git": true,
     "**/.svn": true,
     "**/.hg": true,
     "**/.DS_Store": true,
-    "**/docs": true,
+    "build/": true,
     "src/assets": true
   },
   "eslint.autoFixOnSave": true,
