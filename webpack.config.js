@@ -93,7 +93,7 @@ const config = {
 
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: '[name]_[hash].js',
+    filename: '[name]_[chunkhash].js',
     publicPath: buildPath,
   },
 
