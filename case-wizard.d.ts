@@ -393,6 +393,11 @@ interface EditorTool {
   getCursorForLandmark?(symbol: string): string | undefined;
 
   getCursorForCanvas?(): string | undefined;
+
+  /** Indicates whether the lens should be shown when this tool is active.
+   * `null` indicates no preference.
+   */
+  shouldShowLens: boolean | null;
 }
 
 /** An EditorToolCreate is a function that is used to create editor tools.

@@ -26,16 +26,20 @@ import {
 } from 'store/reducers/workspace/canvas';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
-  (enhancedState: EnhancedState<StoreState>, { width, margin }: OwnProps) => {
+  (enhancedState: EnhancedState<StoreState>, { margin }: OwnProps) => {
     const { present: state } = enhancedState;
     const { top } = getCanvasPosition(state);
     const { width: canvasWidth } = getCanvasSize(state);
     const { x, y } = getMousePosition(state);
     const { width: imageWidth, height: imageHeight } = getImageSize(state);
+    const width = 200;
+    const height = 200;
     return {
       src: getImageData(state),
       x: x !== null ? x :  imageWidth / 2,
       y: y !== null ? y :  imageHeight / 2,
+      width, // @TODO: get from state
+      height, // @TODO: get from state
       top: top + margin,
       left: canvasWidth - width - margin,
       imageHeight, imageWidth,

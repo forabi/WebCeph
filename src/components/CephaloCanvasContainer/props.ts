@@ -1,6 +1,7 @@
 export interface StateProps {
   hasImage: boolean;
   isLoading: boolean;
+  shouldShowLens: boolean;
 };
 
 export interface DispatchProps {

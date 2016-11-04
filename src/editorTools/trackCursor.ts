@@ -10,6 +10,7 @@ export const createTrackCursor: EditorToolCreator = (
     onCanvasMouseMove(x, y) {
       dispatch(setMousePosition({ x, y }));
     },
+    shouldShowLens: true,
   }
 );
 

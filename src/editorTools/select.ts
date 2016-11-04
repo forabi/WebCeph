@@ -22,6 +22,7 @@ export const createSelect: EditorToolCreator = (
         dispatch(unhighlightStep());
         // @TODO: hide tooltip
       },
+      shouldShowLens: true,
     } as EditorTool,
   ) as EditorTool;
 };

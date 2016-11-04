@@ -1,3 +1,5 @@
+import { createSelector } from 'reselect';
+
 import assign from 'lodash/assign';
 import scale, { getScale, getScaleOrigin } from './scale';
 import canvasSize, { getCanvasSize } from './canvasSize';
@@ -26,3 +28,11 @@ export {
   getActiveToolCreator,
   getHighlightedStep,
 };
+
+const getLensScale = () => 1;
+
+export const shouldShowLens = createSelector(
+  getLensScale, // @TODO
+  getScale,
+  (lensScale, scale) => lensScale - scale > 0.1,
+);

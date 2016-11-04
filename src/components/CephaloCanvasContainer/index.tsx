@@ -18,25 +18,24 @@ import { pure } from 'recompose';
 
 const classes = require('./style.scss');
 
-const Content = pure(({ hasImage, isLoading }: Props) => {
+const Content = pure(({ hasImage, shouldShowLens, isLoading }: Props) => {
   if (hasImage) {
     return (
       <div>
-        <Lens
-          className={classes.lens}
-          width={200}
-          height={200}
-          margin={15}
-        >
-          <CephaloImage />
-        </Lens>
+        {
+          shouldShowLens ? (
+            <Lens className={classes.lens} margin={15}>
+              <CephaloImage />
+            </Lens>
+          ) : null
+        }
         <CephaloCanvas />
       </div>
     );
   } else if (isLoading) {
     return (
       <div className={classes.loading_container}>
-        <CircularProgress color="white" size={120} />
+        <CircularProgress color='white' size={120} />
       </div>
     );
   }

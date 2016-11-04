@@ -17,7 +17,8 @@ export const createZoomWithClick: EditorToolCreator = (
     },
     getCursorForCanvas() {
       return Cursor.ZOOM;
-    }
+    },
+    shouldShowLens: false,
   } as EditorTool,
 ));
 
