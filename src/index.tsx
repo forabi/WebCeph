@@ -7,6 +7,10 @@ declare var System: any;
 declare var module: __WebpackModuleApi.Module;
 declare var window: Window & { ResizeObserver?: ResizeObserver };
 
+if (!__DEBUG__ && location.protocol !== 'https:') {
+ location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
+}
+
 if (window.ResizeObserver === undefined) {
   window.ResizeObserver = require('resize-observer-polyfill').default;
 }
