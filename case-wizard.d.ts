@@ -163,6 +163,8 @@ type GenericState = { [id: string]: any };
 type GenericError = { message: string, code?: number };
 type WorkerType = 'image_worker' | 'tracing_worker';
 
+type StageId = string;
+
 interface WorkerIntrinsicDetails {
   id: string;
   type: WorkerType;
@@ -181,7 +183,7 @@ type WorkerUpdate = {
 type TracingMode = 'auto' | 'manual' | 'assisted';
 type WorkspaceMode = 'tracing' | 'superimposition';
 interface TreatmentStage {
-  id: string;
+  id: StageId;
   displayName: string;
 }
 
@@ -198,19 +200,32 @@ declare namespace StoreEntries {
 
   namespace workspace {
     type mode = WorkspaceMode;
+    type superimposedStages = string[];
+
+    type activeTreatmentStageId = StageId;
+    type treatmentStagesOrder = string[];
+    type treatmentStagesDetails = {
+      [stageId: string]: TreatmentStage
+    } | { };
+
     namespace analysis {
-      type activeId = string | null;
-      type activeTreatmentStageId = string | null;
-      type treatmentStagesOrder = string[];
-      type treatmentStagesDetails = { [stageId: string]: TreatmentStage } | { };
       type isLoading = boolean;
       type loadError = GenericError | null;
+      type activeId = string | null;
+
+      
+
       namespace results {
         type areShown = boolean;
       }
+
       namespace tracing {
-        type mode = TracingMode;
-        type scaleFactor = number | null;
+        type mode = {
+          [stageId: string]: TracingMode;
+        }
+        type scaleFactor = {
+          [stageId: string]: number | null;
+        }
         namespace landmarks {
           type manual = {
             [stageId: string]: {
@@ -240,18 +255,57 @@ declare namespace StoreEntries {
       type scaleOrigin = null | { x: number, y: number };
     }
     namespace image {
-      type type = 'lateral_cephalo' | 'frontal_cephalo' | 'panoramic' | null;
-      type data = string | null;
-      type width = number | null;
-      type height = number | null;
-      type loadError = GenericError | null;
-      namespace suggestions {
-        type shouldFlipX = boolean;
-        type shouldFlipY = boolean;
-        type probablyOfType = workspace.image.type;
+      type type = {
+        [stageId: string]: (
+          'lateral_cephalo' |
+          'frontal_cephalo' | 
+          'lateral_photograph' |
+          'frontal_photograph' |
+          'panoramic' |
+          null
+        );
+      };
+      type isLoading = {
+        [stageId: string]: boolean;
+      }
+      type brightness = {
+        [stageId: string]: number;
+      };
+      type contrast = {
+        [stageId: string]: number;
+      };
+      type invert = {
+        [stageId: string]: boolean;
+      };
+      type flipX = {
+        [stageId: string]: boolean;
+      };
+      type flipY = {
+        [stageId: string]: boolean;
+      }
+      type data = {
+        [stageId: string]: string | null;
+      };
+      type width = {
+        [stageId: string]: number | null;
+      };
+      type height = {
+        [stageId: string]: number | null;
+      };
+      type loadError = {
+        [stageId: string]: GenericError | null;
+      };
+      interface suggestions {
+        [stageId: string]: {
+          shouldFlipX: boolean;
+          shouldFlipY: boolean;
+          probablyOfType: workspace.image.type;
+        };
       }
     }
-    type workers = { [workerId: string]: WorkerDetails } | { };
+    type workers = {
+      [workerId: string]: WorkerDetails
+    } | { };
   }
 }
 
@@ -265,33 +319,66 @@ declare namespace Payloads {
     stage: string;
     value: GeometricalObject;
   }
+  interface removeManualLandmark {
+    symbol: string;
+    stage: string;
+  };
   interface addUnnamedManualLandmark {
     stage: string;
     value: GeometricalObject;
   }
   type undo = void;
   type redo = void;
-  type flipImageX = void;
-  type flipImageY = void;
-  type invertColors = void;
-  type setContrast = number;
-  type setBrightness = number;
+
+  /** Stage ID */
+  type flipImageX = string;
+  /** Stage ID */
+  type flipImageY = string;
+  /** Stage ID */
+  type invertColors = string;
+
+  type setContrast = {
+    stageId: StageId;
+    value: number;
+  };
+  type setBrightness = {
+    stageId: StageId;
+    value: number;
+  };
+  type setInvert = {
+    stageId: StageId;
+    value: number;
+  };
+
   type resetWorkspace = void;
   type showAnalysisResults = void;
   type hideAnalysisResults = void;
-
-  type removeManualLandmark = { symbol: string, stage: string };
+  
   type ignoreCompatiblityCheck = void;
   type enforceCompatibilityCheck = void;
   type isCheckingCompatiblity = void;
-  type setTracingMode = TracingMode;
-  type setScaleFactor = number;
-  type unsetScaleFactor = void;
+
+  type setTracingMode = {
+    stageId: string;
+    value: TracingMode;
+  }
+
+  type setScaleFactor = {
+    stageId: string;
+    value: number;
+  };
+
+  /** Stage ID */
+  type unsetScaleFactor = string;
+
   type skipStep = string;
   type unskipStep = skipStep;
+
   type missingFeatureDetected = MissingBrowserFeature;
+
   type highlightStep = string;
   type unhighlightStep = void;
+
   type setCursor = string;
   type removeCursors = string[];
   type setScale = { scale: number, x?: number, y?: number };
@@ -301,12 +388,26 @@ declare namespace Payloads {
   type removeActiveTool = string;
   type updateCanvasSize = { top: number, left: number, width: number, height: number };
   type updateMousePosition = { x: number, y: number };
-  type imageLoadSucceeded = { data: string, height: number, width: number };
-  type imageLoadFailed = { message: string; };
-  type imageLoadRequested = File;
+
+  type imageLoadSucceeded = {
+    stageId: string;
+    data: string;
+    height: number;
+    width: number;
+  };
+  type imageLoadFailed = {
+    stageId: string;
+    message: string;
+  };
+  type imageLoadRequested = {
+    stageId: string;
+    file: File;
+  }
+
   type analysisLoadFailed = GenericError;
   type analysisLoadRequested = string;
   type analysisLoadSucceeded = string;
+
   type addWorker = WorkerDetails;
   type removeWorker = string;
   type updateWorkerStatus = { id: string; } & WorkerUpdate;

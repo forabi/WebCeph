@@ -9,7 +9,7 @@ import {
   DispatchProps,
   OwnProps,
 } from './props';
-import { hasImage, isImageLoading } from 'store/reducers/workspace/image';
+import { hasAnyImage, isAnyImageLoading } from 'store/reducers/workspace/image';
 import {
   getTreatmentStagesIdsInOrder,
   getActiveTreatmentStageId,
@@ -27,8 +27,9 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalStat
     stageIds = [getActiveTreatmentStageId(state)];
   }
   return {
-    hasImage: hasImage(state),
-    isLoading: isImageLoading(state),
+    mode,
+    hasImage: hasAnyImage(state),
+    isLoading: isAnyImageLoading(state),
     shouldShowLens: shouldShowLens(state),
     stageIds,
   };

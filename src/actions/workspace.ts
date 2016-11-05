@@ -51,8 +51,16 @@ export const tryAutomaticSteps: () => any = createAction(Event.TRY_AUTOMATIC_STE
 
 /* Image editing actions */
 export const loadImageFile:
-  (file: File) => Action<Payloads.imageLoadRequested> =
+  (payload: Payloads.imageLoadRequested) => Action<Payloads.imageLoadRequested> =
     createAction(Event.LOAD_IMAGE_REQUESTED);
+
+export const loadImageSucceeded:
+  (paylaod: Payloads.imageLoadSucceeded) => Action<Payloads.imageLoadSucceeded> =
+    createAction(Event.LOAD_IMAGE_SUCCEEDED);
+
+export const loadImageFailed:
+  (paylaod: Payloads.imageLoadFailed) => Action<Payloads.imageLoadFailed> =
+    createAction(Event.LOAD_IMAGE_FAILED);
 
 export const flipX: () => Action<Payloads.flipImageX> = createAction(Event.FLIP_IMAGE_X_REQUESTED);
 export const flipY: () => Action<Payloads.flipImageY> = createAction(Event.FLIP_IMAGE_Y_REQUESTED);

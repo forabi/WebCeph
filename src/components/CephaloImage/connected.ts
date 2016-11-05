@@ -17,11 +17,16 @@ import {
   getImageSize,
 } from 'store/reducers/workspace/image';
 
+import {
+  getActiveTreatmentStageId,
+} from 'store/reducers/workspace/analysis/tracing/manualLandmarks';
+
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
-  (state: FinalState) => {
-    const { width, height } = getImageSize(state);
+  (state: FinalState, ) => {
+    const stageId = getActiveTreatmentStageId(state);
+    const { width, height } = getImageSize(state)(stageId);
     return {
-      src: getImageData(state),
+      src: getImageData(state)(stageId),
       height, width,
     };
   };

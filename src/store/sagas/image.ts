@@ -4,7 +4,7 @@ import { takeLatest, eventChannel, END, Channel } from 'redux-saga';
 import { select, put, take, cps, fork, call, Effect } from 'redux-saga/effects';
 import { ImageWorkerAction } from 'utils/constants';
 import { ImageWorkerInstance, ImageWorkerEvent, ImageWorkerResponse } from 'utils/image-worker.d';
-import { setScale, addWorker, updateWorker } from 'actions/workspace';
+import { loadImageSucceeded, loadImageFailed, setScale, addWorker, updateWorker } from 'actions/workspace';
 import { getCanvasSize } from 'store/reducers/workspace/canvas';
 
 const ImageWorker = require('worker!utils/image-worker');
@@ -32,8 +32,7 @@ function processImageInWorker(file: File, actions: any[]) {
   });
 }
 
-function* loadImage({ payload }: Action<Payloads.imageLoadRequested>): IterableIterator<Effect> {
-  const file = payload;
+function* loadImage({ payload: { file, stageId } }: { payload: Payloads.imageLoadRequested }): IterableIterator<Effect> {
   const workerId = uniqueId('worker_');
   yield put(addWorker({
     id: workerId,
@@ -48,12 +47,15 @@ function* loadImage({ payload }: Action<Payloads.imageLoadRequested>): IterableI
   ];
   const chan: Channel<ImageWorkerResponse> = yield call(processImageInWorker, file, actions);
   try {
-    yield put({ type: Event.WORKER_STATUS_CHANGED, payload: { id: workerId, isBusy: true } });
+    yield put(updateWorker({ id: workerId, isBusy: true }));
     while (true) {
       const data: ImageWorkerResponse = yield take(chan);
       if (data.error) {
         console.error('Got worker error', data);
-        yield put({ type: Event.LOAD_IMAGE_FAILED, payload: data.error });
+        yield put(loadImageFailed({
+          stageId,
+          message: data.error.message,
+        }));
       } else if (data.result) {
         console.info('Got successful worker response', data);
         const { actionId, payload } = data.result;
@@ -66,15 +68,12 @@ function* loadImage({ payload }: Action<Payloads.imageLoadRequested>): IterableI
               cb(null, { height, width });
             };
           });
-          yield put({
-            type: Event.LOAD_IMAGE_SUCCEEDED,
-            payload: {
-              data: payload.url,
-              height,
-              width,
-            } as Payloads.imageLoadSucceeded,
-          });
           const state: FinalState = yield select();
+          yield put(loadImageSucceeded({
+            stageId,
+            data: payload.url,
+            height, width,
+          }))
           const { width: canvasWidth, height: canvasHeight } = getCanvasSize(state);
           const scale = 1 / Math.max(height / canvasHeight, width / canvasWidth);
           yield put(setScale(scale));
@@ -83,11 +82,10 @@ function* loadImage({ payload }: Action<Payloads.imageLoadRequested>): IterableI
     }
   } catch (error) {
     console.error(error);
-    yield put({
-      type: Event.LOAD_IMAGE_FAILED,
-      payload: error.message,
-      error: true,
-    });
+    yield put(loadImageFailed({
+      stageId,
+      message: error.message,
+    }));
   } finally {
     chan.close();
     yield put(updateWorker({ id: workerId, isBusy: false }));

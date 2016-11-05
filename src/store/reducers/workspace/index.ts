@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import canvas, { getHighlightedStep } from './canvas';
 import analysis, { getLandmarkWithAllNestedLandmarks, getManualLandmarksHistory } from './analysis';
-import image, { hasImage } from './image';
+import image, { hasAnyImage } from './image';
 import workers from './workers';
 import workspaceMode, { getWorkspaceMode } from './mode';
 
@@ -21,7 +21,7 @@ export {
   getWorkspaceMode,
 }
 
-export const canEdit = hasImage;
+export const canEdit = hasAnyImage;
 
 export const getHighlightedLandmarks = createSelector(
   getHighlightedStep,

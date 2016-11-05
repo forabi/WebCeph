@@ -32,7 +32,7 @@ const Content = pure(({ hasImage, mode, stageIds, shouldShowLens, isLoading }: P
           ) : null
         }
         {
-          map(stageIds, (stageId) => <TracingView stageId={stageId} />)
+          map(stageIds, stageId => <TracingView stageId={stageId} />)
         }
         {
           mode === 'superimposition' ? <SuperimpositionDropzone /> : null

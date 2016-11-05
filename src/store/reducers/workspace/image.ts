@@ -1,19 +1,23 @@
 import { handleActions } from 'redux-actions';
 import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
+import { defaultTreatmentStageId } from 'utils/config';
 
 import { createSelector } from 'reselect';
 
 import assign from 'lodash/assign';
+import some from 'lodash/some';
 
 type Height = StoreEntries.workspace.image.height;
 type Width = StoreEntries.workspace.image.width;
 type Data = StoreEntries.workspace.image.data;
 type LoadError = StoreEntries.workspace.image.loadError;
-
-// @TODO: normalize to [-1, 1] instead of 0-100
-const defaultBrightness = 50;
-const defaultContrast = 1;
+type FlipX = StoreEntries.workspace.image.flipX;
+type FlipY = StoreEntries.workspace.image.flipY;
+type Brigthness = StoreEntries.workspace.image.brightness;
+type Contrast = StoreEntries.workspace.image.contrast;
+type Invert = StoreEntries.workspace.image.invert;
+type IsLoading = StoreEntries.workspace.image.isLoading;
 
 const KEY_IMAGE_HEIGHT = StoreKeys.imageHeight;
 const KEY_IMAGE_WIDTH = StoreKeys.imageWidth;
@@ -25,9 +29,49 @@ const KEY_IMAGE_FLIP_X = StoreKeys.imageFlipX;
 const KEY_IMAGE_FLIP_Y = StoreKeys.imageFlipY;
 const KEY_IMAGE_IS_LOADING = StoreKeys.imageIsLoading;
 const KEY_IMAGE_LOAD_ERROR = StoreKeys.imageLoadError;
-const defaultWidth: Height = null;
-const defaultHeight: Width = null;
-const defaultData: Data = null;
+
+const defaultStageId: StageId = defaultTreatmentStageId;
+
+const defaultData: Data = {
+  [defaultStageId]: null,
+};
+
+const defaultLoadError: LoadError = {
+  [defaultStageId]: null,
+};
+
+const defaultIsLoading: IsLoading = {
+  [defaultStageId]: false,
+};
+
+// @TODO: normalize to [-1, 1] instead of 0-100
+const defaultBrightness: Brigthness = {
+  [defaultStageId]: 50,
+};
+
+const defaultContrast: Contrast = {
+  [defaultStageId]: 1,
+};
+
+const defaultInvert: Invert = {
+  [defaultStageId]: false,
+};
+
+const defaultWidth: Width = {
+  [defaultStageId]: null,
+};
+
+const defaultHeight: Height = {
+  [defaultStageId]: null,
+};
+
+const defaultFlipX: FlipX = {
+  [defaultStageId]: false,
+};
+
+const defaultFlipY: FlipY = {
+  [defaultStageId]: false,
+};
 
 const setHeight = handleActions<
   Height,
@@ -100,29 +144,32 @@ const setLoadError = handleActions<LoadError, Payloads.imageLoadFailed>({
   },
   [Event.LOAD_IMAGE_REQUESTED]: () => null,
   [Event.RESET_WORKSPACE_REQUESTED]: () => null,
-}, null);
+}, defaultLoadError);
 
-const setLoadStatus = handleActions<boolean, boolean>({
+const setLoadStatus = handleActions<
+  IsLoading,
+  Payloads.imageLoadRequested | Payloads.imageLoadFailed | Payloads.imageLoadSucceeded
+>({
   [Event.LOAD_IMAGE_REQUESTED]: () => true,
   [Event.LOAD_IMAGE_FAILED]: () => false,
   [Event.LOAD_IMAGE_SUCCEEDED]: () => false,
   [Event.RESET_WORKSPACE_REQUESTED]: () => false,
-}, false);
+}, defaultIsLoading);
 
-const flipX = handleActions<boolean, boolean>({
+const flipX = handleActions<FlipX, Payloads.flipImageX>({
   [Event.FLIP_IMAGE_X_REQUESTED]: (state: boolean) => !state,
   [Event.LOAD_IMAGE_REQUESTED]: () => false,
   [Event.RESET_WORKSPACE_REQUESTED]: () => false,
-}, false);
+}, defaultFlipX);
 
-const flipY = handleActions<boolean, boolean>({
+const flipY = handleActions<FlipY, Payloads.flipImageY>({
   [Event.FLIP_IMAGE_Y_REQUESTED]: (state: boolean) => !state,
   [Event.LOAD_IMAGE_REQUESTED]: () => false,
   [Event.RESET_WORKSPACE_REQUESTED]: () => false,
-}, false);
+}, defaultFlipY);
 
 // @TODO: normalize to [-1, 1] instead of 0-100
-const setBrightness = handleActions<number, number>({
+const setBrightness = handleActions<Brigthness, Payloads.setBrightness>({
   [Event.SET_IMAGE_BRIGHTNESS_REQUESTED]: (state, { type, payload: value }) => {
     if (value === undefined) {
       printUnexpectedPayloadWarning(type, state);
@@ -134,7 +181,7 @@ const setBrightness = handleActions<number, number>({
   [Event.RESET_WORKSPACE_REQUESTED]: () => defaultBrightness,
 }, defaultBrightness);
 
-const setContrast = handleActions<number, number>({
+const setContrast = handleActions<Contrast, Payloads.setContrast>({
   [Event.SET_IMAGE_CONTRAST_REQUESTED]: (state, { type, payload: value }) => {
     if (value === undefined) {
       printUnexpectedPayloadWarning(type, state);
@@ -146,10 +193,10 @@ const setContrast = handleActions<number, number>({
   [Event.RESET_WORKSPACE_REQUESTED]: () => defaultContrast,
 }, defaultContrast);
 
-const setInvert = handleActions<boolean, boolean>({
+const setInvert = handleActions<Invert, Payloads.setInvert>({
   [Event.INVERT_IMAGE_REQUESTED]: (state) => !state,
   [Event.RESET_WORKSPACE_REQUESTED]: () => false,
-}, false);
+}, defaultInvert);
 
 export default {
   [KEY_IMAGE_HEIGHT]: setHeight,
@@ -164,35 +211,59 @@ export default {
   [KEY_IMAGE_LOAD_ERROR]: setLoadError,
 };
 
-export const isImageLoading = (state: GenericState) => {
-  return state[KEY_IMAGE_IS_LOADING] as boolean;
+export const isAnyImageLoading = (state: GenericState): boolean => {
+  return some(state[KEY_IMAGE_IS_LOADING], (v) => v === true);
 };
 
-export const getImageWidth = (state: GenericState) => {
-  return state[KEY_IMAGE_WIDTH] as Width;
+export const getImageWidth = (state: GenericState) => (stageId: StageId): number | null => {
+  return state[KEY_IMAGE_WIDTH][stageId];
 };
 
-export const getImageHeight = (state: GenericState) => {
-  return state[KEY_IMAGE_HEIGHT] as Height;
+export const getImageHeight = (state: GenericState) => (stageId: StageId): number | null => {
+  return state[KEY_IMAGE_HEIGHT][stageId];
 };
 
-export const getImageData = (state: GenericState) => {
-  return state[KEY_IMAGE_DATA] as Data;
+export const getAllImageData = (state: GenericState) => {
+  return state[KEY_IMAGE_DATA];
 };
 
-export const hasImage = createSelector(
-  getImageData,
-  (data) => data !== null,
+export const getImageData = createSelector(
+  getAllImageData,
+  (allData) => (stageId: StageId): string => {
+    return allData[stageId];
+  },
+);
+
+export const hasAnyImage = createSelector(
+  getAllImageData,
+  (allData) => some(allData, (data) => data !== null),
 );
 
 export const getImageSize = createSelector(
   getImageWidth,
   getImageHeight,
-  (width, height) => ({ width, height }),
+  (getWidth, getHeight) => (stageId: StageId): { width: number | null, height: number | null } => ({
+    width: getWidth(stageId),
+    height: getHeight(stageId),
+  }),
 );
 
-export const getImageBrightness = (state: GenericState) => state[KEY_IMAGE_BRIGHTNESS] as number;
-export const getImageContrast = (state: GenericState) => state[KEY_IMAGE_CONTRAST] as number;
-export const isImageFlippedX = (state: GenericState) => state[KEY_IMAGE_FLIP_X] as boolean;
-export const isImageFlippedY = (state: GenericState) => state[KEY_IMAGE_FLIP_Y] as boolean;
-export const isImageInverted = (state: GenericState) => state[KEY_IMAGE_INVERT] as boolean;
+export const getImageBrightness =
+  (state: GenericState) =>
+    (stageId: StageId): number => state[KEY_IMAGE_BRIGHTNESS][stageId];
+
+export const getImageContrast =
+  (state: GenericState) =>
+    (stageId: StageId): number => state[KEY_IMAGE_CONTRAST][stageId];
+
+export const isImageFlippedX =
+  (state: GenericState) =>
+    (stageId: StageId): boolean => state[KEY_IMAGE_FLIP_X][stageId];
+
+export const isImageFlippedY =
+  (state: GenericState) =>
+    (stageId: StageId): boolean => state[KEY_IMAGE_FLIP_Y][stageId];
+
+export const isImageInverted =
+  (state: GenericState) =>
+    (stageId: StageId): boolean => state[KEY_IMAGE_INVERT][stageId];

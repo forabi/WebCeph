@@ -13,8 +13,12 @@ import {
 import {
   getExpectedNextManualLandmark,
   isAnalysisComplete,
-  getActiveTracingStageId,
 } from 'store/reducers/workspace/analysis';
+
+
+import {
+  getActiveTreatmentStageId,
+} from 'store/reducers/workspace/analysis/tracing/manualLandmarks';
 
 export const createAddPoint: EditorToolCreator = (
   state: GenericState,
@@ -34,12 +38,12 @@ export const createAddPoint: EditorToolCreator = (
       },
       onCanvasLeftClick(x, y) {
         const landmark = getExpectedNextManualLandmark(state);
-        const stage = getActiveTracingStageId(state);
-        if (stage !== null) {
+        const stageId = getActiveTreatmentStageId(state);
+        if (stageId !== null) {
           if (landmark !== null) {
-            dispatch(addManualLandmark(landmark.symbol, stage, { x, y }));
+            dispatch(addManualLandmark(landmark.symbol, stageId, { x, y }));
           } else {
-            dispatch(addUnnamedManualLandmark(stage, { x, y }));
+            dispatch(addUnnamedManualLandmark(stageId, { x, y }));
           }
         }
       },
