@@ -16,9 +16,11 @@ import Props from './props';
 
 import { pure } from 'recompose';
 
+import map from 'lodash/map';
+
 const classes = require('./style.scss');
 
-const Content = pure(({ hasImage, shouldShowLens, isLoading }: Props) => {
+const Content = pure(({ hasImage, mode, stageIds, shouldShowLens, isLoading }: Props) => {
   if (hasImage) {
     return (
       <div>
@@ -29,13 +31,18 @@ const Content = pure(({ hasImage, shouldShowLens, isLoading }: Props) => {
             </Lens>
           ) : null
         }
-        <CephaloCanvas />
+        {
+          map(stageIds, (stageId) => <CephaloCanvas stageId={stageId} />)
+        }
+        {
+          mode === 'superimposition' ? <SuperimpositionDropzone /> : null
+        }
       </div>
     );
   } else if (isLoading) {
     return (
       <div className={classes.loading_container}>
-        <CircularProgress color='white' size={120} />
+        <CircularProgress color="white" size={120} />
       </div>
     );
   }

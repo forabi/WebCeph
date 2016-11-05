@@ -179,6 +179,11 @@ type WorkerUpdate = {
 }
 
 type TracingMode = 'auto' | 'manual' | 'assisted';
+type WorkspaceMode = 'tracing' | 'superimposition';
+interface TreatmentStage {
+  id: string;
+  displayName: string;
+}
 
 declare namespace StoreEntries {
   namespace env {
@@ -192,8 +197,12 @@ declare namespace StoreEntries {
   }
 
   namespace workspace {
+    type mode = WorkspaceMode;
     namespace analysis {
       type activeId = string | null;
+      type activeTreatmentStageId = string | null;
+      type treatmentStagesOrder = string[];
+      type treatmentStagesDetails = { [stageId: string]: TreatmentStage } | { };
       type isLoading = boolean;
       type loadError = GenericError | null;
       namespace results {
@@ -204,7 +213,9 @@ declare namespace StoreEntries {
         type scaleFactor = number | null;
         namespace landmarks {
           type manual = {
-            [symbol: string]: GeometricalObject;
+            [stageId: string]: {
+              [symbol: string]: GeometricalObject;
+            };
           };
         }
         namespace steps {
@@ -245,8 +256,17 @@ declare namespace StoreEntries {
 }
 
 declare namespace Payloads {
+  type setWorkspaceMode = WorkspaceMode;
+  type setActiveTracingStage = string;
+  type addTreatmentStage = TreatmentStage;
+  type removeTreatmentStage = string;
   interface addManualLandmark {
     symbol: string;
+    stage: string;
+    value: GeometricalObject;
+  }
+  interface addUnnamedManualLandmark {
+    stage: string;
     value: GeometricalObject;
   }
   type undo = void;
@@ -260,7 +280,7 @@ declare namespace Payloads {
   type showAnalysisResults = void;
   type hideAnalysisResults = void;
 
-  type removeManualLandmark = string;
+  type removeManualLandmark = { symbol: string, stage: string };
   type ignoreCompatiblityCheck = void;
   type enforceCompatibilityCheck = void;
   type isCheckingCompatiblity = void;

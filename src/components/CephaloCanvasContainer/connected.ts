@@ -10,14 +10,27 @@ import {
   OwnProps,
 } from './props';
 import { hasImage, isImageLoading } from 'store/reducers/workspace/image';
+import {
+  getTreatmentStagesIdsInOrder,
+  getActiveTreatmentStageId,
+} from 'store/reducers/workspace/analysis/tracing/manualLandmarks';
+import { getWorkspaceMode } from 'store/reducers/workspace';
 import { shouldShowLens } from 'store/reducers/workspace/canvas';
 import { canvasResized } from 'actions/workspace';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalState) => {
+  const mode = getWorkspaceMode(state);
+  let stageIds: string[];
+  if (mode === 'superimposition') {
+    stageIds = getTreatmentStagesIdsInOrder(state);
+  } else {
+    stageIds = [getActiveTreatmentStageId(state)];
+  }
   return {
     hasImage: hasImage(state),
     isLoading: isImageLoading(state),
     shouldShowLens: shouldShowLens(state),
+    stageIds,
   };
 };
 

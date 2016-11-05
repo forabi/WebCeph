@@ -8,7 +8,11 @@ import { handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
 import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
-import manualLandmarks, { getManualLandmarks } from './manualLandmarks';
+import manualLandmarks, {
+  getActiveStageManualLandmarks,
+  getManualLandmarksHistory,
+  getManualLandmarksOfAllStages,
+} from './manualLandmarks';
 import { isImageFlippedX } from 'store/reducers/workspace/image';
 import { line, isCephaloPoint, isCephaloLine, isCephaloAngle } from 'analyses/helpers';
 import { isGeometricalPoint, isBehind } from 'utils/math';
@@ -93,17 +97,17 @@ export default assign({
 }, manualLandmarks);
 
 export const isLandmarkRemovable = createSelector(
-  getManualLandmarks,
-  ({ present: manualLandmarks }) => (symbol: string) => manualLandmarks[symbol] !== undefined,
+  getActiveStageManualLandmarks,
+  (manualLandmarks) => (symbol: string) => manualLandmarks[symbol] !== undefined,
 );
 
 export const getScaleFactor = (state: GenericState): ScaleFactor => state[KEY_SCALE_FACTOR];
 
 export const getCephaloMapper = createSelector(
-  getManualLandmarks,
+  getActiveStageManualLandmarks,
   getScaleFactor,
   isImageFlippedX,
-  ({ present: manual }, scaleFactor, isFlippedX): CephaloMapper => {
+  (manual, scaleFactor, isFlippedX): CephaloMapper => {
     const toPoint = (cephaloPoint: CephaloPoint) => {
       const { symbol } = cephaloPoint;
       if (!isCephaloPoint(cephaloPoint)) {
@@ -149,7 +153,9 @@ export const getCephaloMapper = createSelector(
         const [A, B, C] = cephaloAngle.components as CephaloPoint[];
         vectors = [line(A, B), line(B, C)];
       } else if (every(cephaloAngle.components, isCephaloAngle)) {
-        let A: CephaloPoint, B: CephaloPoint, C: CephaloPoint;
+        let A: CephaloPoint;
+        let B: CephaloPoint;
+        let C: CephaloPoint;
         const [angle1, angle2] = cephaloAngle.components;
         const components = [...angle1.components, ...angle2.components];
         if (every(components, isCephaloPoint)) {
@@ -200,4 +206,8 @@ export const getCephaloMapper = createSelector(
   }
 );
 
-export { getManualLandmarks };
+export {
+  getActiveStageManualLandmarks,
+  getManualLandmarksHistory,
+  getManualLandmarksOfAllStages,
+};

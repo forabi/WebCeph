@@ -11,6 +11,7 @@ import {
   ConnectableProps,
   StateProps,
   DispatchProps,
+  OwnProps,
 } from './props';
 
 import {
@@ -39,8 +40,6 @@ import {
 
 import assign from 'lodash/assign';
 import curry from 'lodash/curry';
-
-type OwnProps = { };
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: FinalState) => {

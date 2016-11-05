@@ -6,9 +6,6 @@ import { createSelector } from 'reselect';
 
 import assign from 'lodash/assign';
 
-import undoable, { includeAction } from 'redux-undo';
-import { undoableConfig } from 'utils/config';
-
 type Height = StoreEntries.workspace.image.height;
 type Width = StoreEntries.workspace.image.width;
 type Data = StoreEntries.workspace.image.data;
@@ -91,8 +88,6 @@ const setData = handleActions<
   },
   defaultData,
 );
-
-
 
 const setLoadError = handleActions<LoadError, Payloads.imageLoadFailed>({
   [Event.IGNORE_WORKSPACE_ERROR_REQUESTED]: (_, __) => null,

@@ -11,23 +11,24 @@ export const disableActiveTool: () => Action<Payloads.disableActiveTool> = creat
 );
 
 export const addManualLandmark:
-  (symbol: string, value: GeometricalObject | number) => Action<Payloads.addManualLandmark> =
+  (symbol: string, stage: string, value: GeometricalObject) => Action<Payloads.addManualLandmark> =
   createAction(
     Event.ADD_MANUAL_LANDMARK_REQUESTED,
-    (symbol: string, value: GeometricalObject): Payloads.addManualLandmark => ({ symbol, value }),
+    (symbol: string, stage: string, value: GeometricalObject): Payloads.addManualLandmark => ({ symbol, stage, value }),
   );
 
 export const addUnnamedManualLandmark:
-  (value: GeometricalObject | number) => Action<Payloads.addUnnamedManualLandmark> =
+  (stage: string, value: GeometricalObject) => Action<Payloads.addUnnamedManualLandmark> =
   createAction(
     Event.ADD_UNKOWN_MANUAL_LANDMARK_REQUESTED,
+    (stage: string, value: GeometricalObject): Payloads.addUnnamedManualLandmark => ({ stage, value }),
   );
 
 export const removeManualLandmark:
-(symbol: string) => Action<Payloads.removeManualLandmark> =
+(symbol: string, stage: string) => Action<Payloads.removeManualLandmark> =
   createAction(
     Event.REMOVE_MANUAL_LANDMARK_REQUESTED,
-    (symbol: string): Payloads.removeManualLandmark => symbol,
+    (symbol: string, stage: string): Payloads.removeManualLandmark => ({ symbol, stage }),
   );
 
 export const temporarilyHideLandmark: (symbol: string) => any = createAction(

@@ -7,7 +7,10 @@ export const StoreKeys = {
   compatibilityIsIgnored: 'env.compatiblity.isIgnored',
   compatiblityIsBeingChcecked: 'env.compatiblity.isBeingChecked',
   missingFeatures: 'env.compatiblity.missingFeatures',
+  workspaceMode: 'cephalo.workspace.mode',
   manualLandmarks: 'cephalo.workspace.analysis.tracing.landmarks.manual',
+  treatmentStagesOrder: 'cephalo.workspace.treatmentStages.order',
+  treatmentStagesDetails: 'cephalo.workspace.treatmentStages.details',
   scaleFactor: 'cephalo.workspace.analysis.tracing.scaleFactor',
   tracingMode: 'cephalo.workspace.analysis.tracing.mode',
   skippedSteps: 'cephalo.workspace.analysis.tracing.steps.skipped',
@@ -32,11 +35,12 @@ export const StoreKeys = {
   imageFlipX: 'cephalo.workspace.image.corrections.flipX',
   imageFlipY: 'cephalo.workspace.image.corrections.flipY',
   activeAnalysisId: 'cephalo.workspace.analysis.activeId',
+  activeTracingStageId: 'cephalo.workspace.analysis.stage.activeId',
   areResultsShown: 'cephalo.workspace.analysis.resutls.areShown',
   isAnalysisLoading: 'cephalo.workspace.analysis.isLoading',
   analysisLoadError: 'cephalo.workspace.analysis.loadError',
   workers: 'cephalo.workspace.workers',
-}
+};
 
 /**
  * Events are just Redux actions. 
@@ -51,6 +55,10 @@ export const Event = {
   WORKER_STATUS_CHANGED: 'WORKER_STATUS_CHANGED',
 
   /* Workspace */
+  SET_WORKSPACE_MODE_REQUESTED: 'SET_WORKSPACE_MODE_REQUESTED',
+  SET_ACTIVE_TRACING_STAGE: 'SET_ACTIVE_TRACING_STAGE',
+  ADD_TREATMENT_STAGE: 'ADD_TREATMENT_STAGE',
+  REMOVE_TREATMENT_STAGE: 'REMOVE_TREATMENT_STAGE',
   TOGGLE_TOOL_REQUESTED: 'TOGGLE_TOOL_REQUESTED',
   ENABLE_TOOL_REQUESTED: 'ENABLE_TOOL_REQUESTED',
   DISABLE_TOOL_REQUESTED: 'DISABLE_TOOL_REQUESTED',
