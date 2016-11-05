@@ -3,7 +3,11 @@ var serviceWorkerOption = {
     "./4502ba795be584933131c195c7a53052.png",
     "./800608933790f1502ddb5dc9ba746f62.png",
     "./99a60d48b8007720beec.worker.js",
+<<<<<<< HEAD
     "./bundle_54c45456d647ca21a3e8.js",
+=======
+    "./bundle_392695fd0e7cb06141eb.js",
+>>>>>>> d48d7eda6f6b9b983842a4f000ddec471221085b
     "./lib_6509ccd89824b4787710.js",
     "./sw-toolbox_7306ab18401482cf1c0d.js",
     "./index.html"
