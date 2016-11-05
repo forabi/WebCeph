@@ -5,7 +5,7 @@ import {
   MergeProps,
 } from 'react-redux';
 
-import CephaloCanvas from './index';
+import TracingView from './index';
 
 import {
   ConnectableProps,
@@ -82,7 +82,7 @@ const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> =
 
 const connected = connect<StateProps, DispatchProps, OwnProps>(
   mapStateToProps, mapDispatchToProps, mergeProps,
-)(CephaloCanvas);
+)(TracingView);
 
 
 export default connected;

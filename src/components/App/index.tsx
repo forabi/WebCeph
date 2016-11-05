@@ -3,7 +3,7 @@ import * as React from 'react';
 import AnalysisResultsViewer from 'components/AnalysisResultsViewer/connected';
 import AnalysisSelector from 'components/AnalysisSelector/connected';
 import AnalysisStepper from 'components/AnalysisStepper/connected';
-import CephaloCanvasContainer from 'components/CephaloCanvasContainer/connected';
+import Workspace from 'components/Workspace/connected';
 import CommandPalette from 'components/CommandPalette/connected';
 import CompatibilityChecker from 'components/CompatibilityChecker/connected';
 import Menu from 'components/Menu/connected';
@@ -45,7 +45,7 @@ const App = enhance(({ isSummaryShown, shouldShowStepper }: Props) => (
       <div className={classes.container}>
         <Menu className={classes.menu} />
         <div className={classes.row}>
-          <CephaloCanvasContainer className={classes.main} />
+          <Workspace className={classes.main} />
           <div className={cx(classes.sidebar, { [classes.sidebar_hidden]: !shouldShowStepper })}>
             <AnalysisSelector className={classes.selector} />
             <AnalysisStepper className={classes.stepper} />

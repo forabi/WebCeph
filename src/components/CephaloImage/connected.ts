@@ -4,7 +4,7 @@ import {
   MapDispatchToPropsFunction,
 } from 'react-redux';
 
-import CephaloLens from './index';
+import Lens from './index';
 
 import {
   StateProps,
@@ -36,7 +36,7 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
 
 const connected = connect<StateProps, DispatchProps, OwnProps>(
   mapStateToProps, mapDispatchToProps
-)(CephaloLens);
+)(Lens);
 
 
 export default connected;
