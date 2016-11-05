@@ -22,6 +22,9 @@ import {
 import {
   getHighlightedStep,
 } from 'store/reducers/workspace/canvas';
+import {
+  getActiveTreatmentStageId,
+} from 'store/reducers/workspace/treatmentStage';
 
 import assign from 'lodash/assign';
 
@@ -38,7 +41,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalStat
     getStepValue: getComputedValueBySymbol(state),
     isStepRemovable: isLandmarkRemovable(state),
     highlightedStep: getHighlightedStep(state),
-    stageId: getActiveTracingStageId(state),
+    stageId: getActiveTreatmentStageId(state),
   };
 };
 

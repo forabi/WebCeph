@@ -13,7 +13,7 @@ import {
 
 import {
   getActiveTreatmentStageId,
-} from 'store/reducers/workspace/analysis/tracing/manualLandmarks';
+} from 'store/reducers/workspace/treatmentStage';
 
 export const createEraser: EditorToolCreator = (
   state: GenericState,

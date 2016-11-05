@@ -6,6 +6,8 @@ import { handleActions } from 'redux-actions';
 import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 
+import { getActiveTreatmentStageId } from 'store/reducers/workspace/treatmentStage';
+
 import undoable, { includeAction } from 'redux-undo';
 import { undoableConfig } from 'utils/config';
 
@@ -116,7 +118,7 @@ export const getActiveStageManualLandmarks = createSelector(
   getManualLandmarksOfAllStages,
   getActiveTreatmentStageId,
   (manual, stageId): { [symbol: string]: GeometricalObject } => {
-    if (stageId !== null && manual[stageId] !== undefined) {
+    if (manual[stageId] !== undefined) {
       return manual[stageId];
     }
     return { };

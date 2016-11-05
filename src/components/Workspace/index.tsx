@@ -32,7 +32,7 @@ const Content = pure(({ hasImage, mode, stageIds, shouldShowLens, isLoading }: P
           ) : null
         }
         {
-          map(stageIds, stageId => <TracingView stageId={stageId} />)
+          map(stageIds, stageId => <TracingView key={stageId} stageId={stageId} />)
         }
         {
           mode === 'superimposition' ? <SuperimpositionDropzone /> : null
@@ -46,7 +46,7 @@ const Content = pure(({ hasImage, mode, stageIds, shouldShowLens, isLoading }: P
       </div>
     );
   }
-  return <CephaloDropzone />;
+  return <CephaloDropzone stageId={stageIds[0]} />;
 });
 
 class Workspace extends React.PureComponent<Props, { }> {

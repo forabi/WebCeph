@@ -360,7 +360,7 @@ declare namespace Payloads {
 
   type setTracingMode = {
     stageId: string;
-    value: TracingMode;
+    mode: TracingMode;
   }
 
   type setScaleFactor = {

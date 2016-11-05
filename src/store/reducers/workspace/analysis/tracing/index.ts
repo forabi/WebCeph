@@ -13,17 +13,25 @@ import manualLandmarks, {
   getManualLandmarksHistory,
   getManualLandmarksOfAllStages,
 } from './manualLandmarks';
-import { isImageFlippedX } from 'store/reducers/workspace/image';
+import {
+  getActiveTreatmentStageId,
+} from 'store/reducers/workspace/treatmentStage';
+import { issImageForStageFlippedX } from 'store/reducers/workspace/image';
 import { line, isCephaloPoint, isCephaloLine, isCephaloAngle } from 'analyses/helpers';
 import { isGeometricalPoint, isBehind } from 'utils/math';
+import { defaultTreatmentStageId } from 'utils/config';
 
 type SkippedSteps = StoreEntries.workspace.analysis.tracing.steps.skipped;
 type TracingMode = StoreEntries.workspace.analysis.tracing.mode;
 type ScaleFactor = StoreEntries.workspace.analysis.tracing.scaleFactor;
 
-const defaultTracingMode: TracingMode = 'assisted';
+const defaultTracingMode: TracingMode = {
+  [defaultTreatmentStageId]: 'assisted',
+};
 const defaultSkippedSteps: SkippedSteps = { };
-const defaultScaleFactor: ScaleFactor = null;
+const defaultScaleFactor: ScaleFactor = {
+  [defaultTreatmentStageId]: null,
+};
 
 const KEY_TRACING_MODE = StoreKeys.tracingMode;
 const KEY_SKIPPED_STEPS = StoreKeys.skippedSteps;
@@ -31,12 +39,23 @@ const KEY_SCALE_FACTOR = StoreKeys.scaleFactor;
 
 const tracingMode = handleActions<TracingMode, Payloads.setTracingMode>(
   {
-    [Event.SET_TRACING_MODE_REQUESTED]: (state, { payload: mode, type }) => {
-      if (mode === undefined) {
+    [Event.SET_TRACING_MODE_REQUESTED]: (state, { payload, type }) => {
+      if (payload === undefined) {
         printUnexpectedPayloadWarning(type, state);
         return state;
       }
-      return mode;
+      const { mode, stageId } = payload;
+      if (mode === undefined || stageId === undefined) {
+        printUnexpectedPayloadWarning(type, state);
+        return state;
+      }
+      return assign(
+        { },
+        state,
+        {
+          [stageId]: mode,
+        },
+      );
     },
   },
   defaultTracingMode,
@@ -71,19 +90,37 @@ const scaleFactorReducer = handleActions<
   Payloads.setScaleFactor | Payloads.unsetScaleFactor
 >(
   {
-    [Event.SET_SCALE_FACTOR_REQUESTED]: (state, { payload: scaleFactor, type }) => {
-      if (scaleFactor === undefined) {
+    [Event.SET_SCALE_FACTOR_REQUESTED]: (
+      state: ScaleFactor, { payload, type }: Action<Payloads.setScaleFactor>
+    ) => {
+      if (payload === undefined) {
         printUnexpectedPayloadWarning(type, state);
         return state;
       }
-      return scaleFactor;
+      const { value, stageId } = payload;
+      return assign(
+        { },
+        state,
+        {
+          [stageId]: value,
+        }
+      );
     },
-    [Event.UNSET_SCALE_FACTOR_REQUESTED]: (state, { payload, type }) => {
+    [Event.UNSET_SCALE_FACTOR_REQUESTED]: (
+      state: ScaleFactor, { payload, type }: Action<Payloads.unsetScaleFactor>
+    ) => {
       if (payload !== undefined) {
         printUnexpectedPayloadWarning(type, state);
         return state;
       }
-      return null;
+      const stageId = payload;
+      return assign(
+        { },
+        state,
+        {
+          [stageId]: null,
+        }
+      );
     },
     [Event.RESET_WORKSPACE_REQUESTED]: () => defaultScaleFactor,
   },
@@ -101,13 +138,20 @@ export const isLandmarkRemovable = createSelector(
   (manualLandmarks) => (symbol: string) => manualLandmarks[symbol] !== undefined,
 );
 
-export const getScaleFactor = (state: GenericState): ScaleFactor => state[KEY_SCALE_FACTOR];
+export const getScaleFactorForAllStages = (state: GenericState): ScaleFactor => state[KEY_SCALE_FACTOR];
+
+export const getScaleFactor = createSelector(
+  getScaleFactorForAllStages,
+  (allFactors) => (stageId: StageId) => allFactors[stageId],
+);
 
 export const getCephaloMapper = createSelector(
-  getActiveStageManualLandmarks,
+  getManualLandmarksOfAllStages,
   getScaleFactor,
-  isImageFlippedX,
-  (manual, scaleFactor, isFlippedX): CephaloMapper => {
+  issImageForStageFlippedX,
+  (allManual, allScaleFactors, isFlippedX) => (stageId: StageId): CephaloMapper  => {
+    const manual = allManual[stageId];
+    const scaleFactor = allScaleFactors[stageId];
     const toPoint = (cephaloPoint: CephaloPoint) => {
       const { symbol } = cephaloPoint;
       if (!isCephaloPoint(cephaloPoint)) {
@@ -201,9 +245,15 @@ export const getCephaloMapper = createSelector(
       toVector,
       toAngle,
       scaleFactor,
-      isBehind: isFlippedX ? negate(isBehind) : isBehind,
+      isBehind: isFlippedX(stageId) === true ? negate(isBehind) : isBehind,
     };
   }
+);
+
+export const getActiveStageCephaloMapper = createSelector(
+  getCephaloMapper,
+  getActiveTreatmentStageId,
+  (getMapper, activeStage) => getMapper(activeStage),
 );
 
 export {

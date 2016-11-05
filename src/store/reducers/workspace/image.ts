@@ -3,6 +3,8 @@ import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 import { defaultTreatmentStageId } from 'utils/config';
 
+import { getActiveTreatmentStageId } from 'store/reducers/workspace/treatmentStage';
+
 import { createSelector } from 'reselect';
 
 import assign from 'lodash/assign';
@@ -78,56 +80,123 @@ const setHeight = handleActions<
   Payloads.imageLoadSucceeded | Payloads.imageLoadFailed | Payloads.imageLoadRequested
 >(
   {
-    [Event.LOAD_IMAGE_SUCCEEDED]: (state, action) => {
-      const payload = action.payload as Payloads.imageLoadSucceeded | undefined;
+    [Event.LOAD_IMAGE_SUCCEEDED]: (
+      state: Height, { type, payload }: Action<Payloads.imageLoadSucceeded>
+    ) => {
       if (payload === undefined) {
-        printUnexpectedPayloadWarning(action.type, state);
+        printUnexpectedPayloadWarning(type, state);
         return state;
       }
-      return payload.height;
+      const { stageId, height } = payload;
+      return assign(
+        { },
+        state,
+        {
+          [stageId]: height,
+        }
+      );
     },
-    [Event.LOAD_IMAGE_REQUESTED]: (_, __) => {
-      return null;
+    [Event.LOAD_IMAGE_REQUESTED]: (
+      state: Height,
+      { type, payload }: Action<Payloads.imageLoadRequested>
+    ) => {
+      if (payload === undefined) {
+        printUnexpectedPayloadWarning(type, state);
+        return state;
+      }
+      const { stageId } = payload;
+      return assign(
+        { },
+        state,
+        {
+          [stageId]: null,
+        }
+      );
     },
   },
   defaultHeight,
 );
 
 const setWidth = handleActions<
-  Height,
+  Width,
   Payloads.imageLoadSucceeded | Payloads.imageLoadFailed | Payloads.imageLoadRequested
 >(
   {
-    [Event.LOAD_IMAGE_SUCCEEDED]: (state, action) => {
-      const payload = action.payload as Payloads.imageLoadSucceeded | undefined;
+    [Event.LOAD_IMAGE_SUCCEEDED]: (
+      state: Width, { type, payload }: Action<Payloads.imageLoadSucceeded>
+    ) => {
       if (payload === undefined) {
-        printUnexpectedPayloadWarning(action.type, state);
+        printUnexpectedPayloadWarning(type, state);
         return state;
       }
-      return payload.width;
+      const { stageId, width } = payload;
+      return assign(
+        { },
+        state,
+        {
+          [stageId]: width,
+        }
+      );
     },
-    [Event.LOAD_IMAGE_REQUESTED]: (_, __) => {
-      return null;
+    [Event.LOAD_IMAGE_REQUESTED]: (
+      state: Width,
+      { type, payload }: Action<Payloads.imageLoadRequested>
+    ) => {
+      if (payload === undefined) {
+        printUnexpectedPayloadWarning(type, state);
+        return state;
+      }
+      const { stageId } = payload;
+      return assign(
+        { },
+        state,
+        {
+          [stageId]: null,
+        }
+      );
     },
   },
   defaultWidth,
 );
+
 
 const setData = handleActions<
   Data,
   Payloads.imageLoadSucceeded | Payloads.imageLoadFailed | Payloads.imageLoadRequested
 >(
   {
-    [Event.LOAD_IMAGE_SUCCEEDED]: (state, action) => {
-      const payload = action.payload as Payloads.imageLoadSucceeded | undefined;
+    [Event.LOAD_IMAGE_SUCCEEDED]: (
+      state: Data, { type, payload }: Action<Payloads.imageLoadSucceeded>
+    ) => {
       if (payload === undefined) {
-        printUnexpectedPayloadWarning(action.type, state);
+        printUnexpectedPayloadWarning(type, state);
         return state;
       }
-      return payload.data;
+      const { stageId, data } = payload;
+      return assign(
+        { },
+        state,
+        {
+          [stageId]: data,
+        }
+      );
     },
-    [Event.LOAD_IMAGE_REQUESTED]: (_, __) => {
-      return null;
+    [Event.LOAD_IMAGE_REQUESTED]: (
+      state: Data,
+      { type, payload }: Action<Payloads.imageLoadRequested>
+    ) => {
+      if (payload === undefined) {
+        printUnexpectedPayloadWarning(type, state);
+        return state;
+      }
+      const { stageId } = payload;
+      return assign(
+        { },
+        state,
+        {
+          [stageId]: null,
+        }
+      );
     },
   },
   defaultData,
@@ -227,7 +296,7 @@ export const getAllImageData = (state: GenericState) => {
   return state[KEY_IMAGE_DATA];
 };
 
-export const getImageData = createSelector(
+export const getImageDataByStageId = createSelector(
   getAllImageData,
   (allData) => (stageId: StageId): string => {
     return allData[stageId];
@@ -239,7 +308,7 @@ export const hasAnyImage = createSelector(
   (allData) => some(allData, (data) => data !== null),
 );
 
-export const getImageSize = createSelector(
+export const getImageSizeByStageId = createSelector(
   getImageWidth,
   getImageHeight,
   (getWidth, getHeight) => (stageId: StageId): { width: number | null, height: number | null } => ({
@@ -248,22 +317,65 @@ export const getImageSize = createSelector(
   }),
 );
 
-export const getImageBrightness =
+export const getImageBrightnessByStageId =
   (state: GenericState) =>
     (stageId: StageId): number => state[KEY_IMAGE_BRIGHTNESS][stageId];
 
-export const getImageContrast =
+export const getImageContrastByStageId =
   (state: GenericState) =>
     (stageId: StageId): number => state[KEY_IMAGE_CONTRAST][stageId];
 
-export const isImageFlippedX =
+export const issImageForStageFlippedX =
   (state: GenericState) =>
     (stageId: StageId): boolean => state[KEY_IMAGE_FLIP_X][stageId];
 
-export const isImageFlippedY =
+export const isImageForStageFlippedY =
   (state: GenericState) =>
     (stageId: StageId): boolean => state[KEY_IMAGE_FLIP_Y][stageId];
 
-export const isImageInverted =
+export const isImageForStageInverted =
   (state: GenericState) =>
     (stageId: StageId): boolean => state[KEY_IMAGE_INVERT][stageId];
+
+
+export const getActiveImageData = createSelector(
+  getImageDataByStageId,
+  getActiveTreatmentStageId,
+  (fn, stageId) => fn(stageId),
+);
+
+export const getActiveImageSize = createSelector(
+  getImageSizeByStageId,
+  getActiveTreatmentStageId,
+  (fn, stageId) => fn(stageId),
+);
+
+export const getActiveImageBrightness = createSelector(
+  getImageBrightnessByStageId,
+  getActiveTreatmentStageId,
+  (fn, stageId) => fn(stageId),
+);
+
+export const getActiveImageContrast = createSelector(
+  getImageContrastByStageId,
+  getActiveTreatmentStageId,
+  (fn, stageId) => fn(stageId),
+);
+
+export const isActiveImageFlippedX = createSelector(
+  issImageForStageFlippedX,
+  getActiveTreatmentStageId,
+  (fn, stageId) => fn(stageId),
+);
+
+export const isActiveImageFlippedY = createSelector(
+  isImageForStageFlippedY,
+  getActiveTreatmentStageId,
+  (fn, stageId) => fn(stageId),
+);
+
+export const isActiveImageInverted = createSelector(
+  isImageForStageInverted,
+  getActiveTreatmentStageId,
+  (fn, stageId) => fn(stageId),
+);

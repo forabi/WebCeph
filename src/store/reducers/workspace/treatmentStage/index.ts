@@ -21,8 +21,7 @@ const defaultTreatmentStagesDetails: TreatmentStagesDetails = {
   },
 };
 
-
-const getActiveTracingStageIdReducer = handleActions<TreatmentStageId, Payloads.setActiveTracingStage>(
+const getActiveTreatmentStageIdReducer = handleActions<TreatmentStageId, Payloads.setActiveTracingStage>(
   {
     [Event.SET_ACTIVE_TRACING_STAGE]: (state, { type, payload }) => {
       if (payload === undefined) {
@@ -109,7 +108,7 @@ const KEY_TREATMENT_STAGES_ORDER = StoreKeys.treatmentStagesOrder;
 const KEY_TREATMENT_STAGES_DETAILS = StoreKeys.treatmentStagesDetails;
 
 export default {
-  [KEY_ACTIVE_TREATMENT_STAGE_ID]: getActiveTracingStageIdReducer,
+  [KEY_ACTIVE_TREATMENT_STAGE_ID]: getActiveTreatmentStageIdReducer,
   [KEY_TREATMENT_STAGES_ORDER]: treatmentStagesOrderReducer,
   [KEY_TREATMENT_STAGES_DETAILS]: treatmentStagesDetailsReducer,
 };

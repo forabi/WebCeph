@@ -13,7 +13,7 @@ import { hasAnyImage, isAnyImageLoading } from 'store/reducers/workspace/image';
 import {
   getTreatmentStagesIdsInOrder,
   getActiveTreatmentStageId,
-} from 'store/reducers/workspace/analysis/tracing/manualLandmarks';
+} from 'store/reducers/workspace/treatmentStage';
 import { getWorkspaceMode } from 'store/reducers/workspace';
 import { shouldShowLens } from 'store/reducers/workspace/canvas';
 import { canvasResized } from 'actions/workspace';

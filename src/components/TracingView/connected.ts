@@ -15,13 +15,13 @@ import {
 } from './props';
 
 import {
-  getImageSize,
-  getImageData,
-  getImageBrightness,
-  getImageContrast,
-  isImageFlippedX,
-  isImageFlippedY,
-  isImageInverted,
+  getImageSizeByStageId,
+  getImageDataByStageId,
+  getImageBrightnessByStageId,
+  getImageContrastByStageId,
+  issImageForStageFlippedX,
+  isImageForStageFlippedY,
+  isImageForStageInverted,
 } from 'store/reducers/workspace/image';
 
 import {
@@ -45,22 +45,22 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: FinalState, { stageId }: OwnProps) => {
     const origin = getScaleOrigin(state);
     const { height: canvasHeight, width: canvasWidth } = getCanvasSize(state);
-    const { height: imageHeight, width: imageWidth } = getImageSize(state)(stageId);
+    const { height: imageHeight, width: imageWidth } = getImageSizeByStageId(state)(stageId);
     return {
       canvasHeight,
       canvasWidth,
-      src: getImageData(state)(stageId) as string,
+      src: getImageDataByStageId(state)(stageId) as string,
       imageWidth: imageWidth as number,
       imageHeight: imageHeight as number,
       scale: getScale(state),
       scaleOriginX: origin !== null ? origin.x : null,
       scaleOriginY: origin !== null ? origin.y : null,
-      brightness: getImageBrightness(state)(stageId),
-      contrast: getImageContrast(state)(stageId),
-      isFlippedX: isImageFlippedX(state)(stageId),
-      isFlippedY: isImageFlippedY(state)(stageId),
+      brightness: getImageBrightnessByStageId(state)(stageId),
+      contrast: getImageContrastByStageId(state)(stageId),
+      isFlippedX: issImageForStageFlippedX(state)(stageId),
+      isFlippedY: isImageForStageFlippedY(state)(stageId),
       landmarks: getAllLandmarks(state),
-      isInverted: isImageInverted(state)(stageId),
+      isInverted: isImageForStageInverted(state)(stageId),
       highlightedLandmarks: getHighlightedLandmarks(state),
       activeTool: curry(getActiveToolCreator(state))(state),
     };

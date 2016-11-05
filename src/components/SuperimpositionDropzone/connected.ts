@@ -13,10 +13,10 @@ import {
 } from './props';
 
 import {
-  getImageData,
-  getImageSize,
-  isImageFlippedX,
-  isImageFlippedY,
+  getImageDataByStageId,
+  getImageSizeByStageId,
+  issImageForStageFlippedX,
+  isImageForStageFlippedY,
 } from 'store/reducers/workspace/image';
 
 import {
@@ -30,11 +30,11 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
     const { top } = getCanvasPosition(state);
     const { width: canvasWidth } = getCanvasSize(state);
     const { x, y } = getMousePosition(state);
-    const { width: imageWidth, height: imageHeight } = getImageSize(state);
+    const { width: imageWidth, height: imageHeight } = getImageSizeByStageId(state);
     const width = 200;
     const height = 200;
     return {
-      src: getImageData(state),
+      src: getImageDataByStageId(state),
       x: x !== null ? x :  imageWidth / 2,
       y: y !== null ? y :  imageHeight / 2,
       width, // @TODO: get from state
@@ -42,8 +42,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
       top: top + margin,
       left: canvasWidth - width - margin,
       imageHeight, imageWidth,
-      isFlippedX: isImageFlippedX(state),
-      isFlippedY: isImageFlippedY(state),
+      isFlippedX: issImageForStageFlippedX(state),
+      isFlippedY: isImageForStageFlippedY(state),
     };
   };
 

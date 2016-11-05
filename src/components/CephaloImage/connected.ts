@@ -13,20 +13,15 @@ import {
 } from './props';
 
 import {
-  getImageData,
-  getImageSize,
+  getActiveImageData,
+  getActiveImageSize,
 } from 'store/reducers/workspace/image';
-
-import {
-  getActiveTreatmentStageId,
-} from 'store/reducers/workspace/analysis/tracing/manualLandmarks';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: FinalState, ) => {
-    const stageId = getActiveTreatmentStageId(state);
-    const { width, height } = getImageSize(state)(stageId);
+    const { width, height } = getActiveImageSize(state);
     return {
-      src: getImageData(state)(stageId),
+      src: getActiveImageData(state),
       height, width,
     };
   };
