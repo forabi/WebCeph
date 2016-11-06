@@ -20,7 +20,7 @@ import map from 'lodash/map';
 
 const classes = require('./style.scss');
 
-const Content = pure(({ hasImage, mode, stageIds, shouldShowLens, isLoading }: Props) => {
+const Content = pure(({ hasImage, mode, imageIds, shouldShowLens, isLoading }: Props) => {
   if (hasImage) {
     return (
       <div>
@@ -32,7 +32,7 @@ const Content = pure(({ hasImage, mode, stageIds, shouldShowLens, isLoading }: P
           ) : null
         }
         {
-          map(stageIds, stageId => <TracingView key={stageId} stageId={stageId} />)
+          map(imageIds, imageId => <TracingView key={imageId} imageId={imageId} />)
         }
         {
           mode === 'superimposition' ? <SuperimpositionDropzone /> : null
@@ -46,7 +46,7 @@ const Content = pure(({ hasImage, mode, stageIds, shouldShowLens, isLoading }: P
       </div>
     );
   }
-  return <CephaloDropzone imageId={stageIds[0]} />;
+  return <CephaloDropzone imageId={imageIds[0]} />;
 });
 
 class Workspace extends React.PureComponent<Props, { }> {

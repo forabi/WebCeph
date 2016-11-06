@@ -266,7 +266,7 @@ declare namespace StoreEntries {
           flipY: boolean;
           contrast: number;
           brightness: number;
-          invert: number;
+          invert: boolean;
           scaleFactor: number | null;
           suggestions: {
             flipX: boolean;

@@ -3,7 +3,7 @@ export interface StateProps {
   isLoading: boolean;
   shouldShowLens: boolean;
   mode: WorkspaceMode;
-  stageIds: string[];
+  imageIds: string[];
 };
 
 export interface DispatchProps {

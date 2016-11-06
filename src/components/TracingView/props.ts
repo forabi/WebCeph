@@ -26,7 +26,7 @@ export type AdditionalPropsToMerge = EditorTool;
 export type ConnectableProps = StateProps & DispatchProps & AdditionalPropsToMerge;
 
 export interface OwnProps {
-  stageId: string;
+  imageId: string;
   className?: string;
 };
 
