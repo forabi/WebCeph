@@ -12,7 +12,7 @@ import {
 } from 'store/reducers/workspace/analysis';
 
 import {
-  getActiveImageId,
+  getActiveTreatmentStageId,
 } from 'store/reducers/workspace/treatmentStage';
 
 export const createEraser: EditorToolCreator = (
@@ -25,7 +25,7 @@ export const createEraser: EditorToolCreator = (
     {
       onLandmarkClick(symbol) {
         if (isRemovable(symbol)) {
-          const stageId = getActiveImageId(state);
+          const stageId = getActiveTreatmentStageId(state);
           dispatch(removeManualLandmark(symbol, stageId));
         }
       },

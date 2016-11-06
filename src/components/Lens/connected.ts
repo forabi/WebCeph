@@ -13,7 +13,7 @@ import {
 } from './props';
 
 import {
-  getImageDataById,
+  getActiveImageData,
   getActiveImageSize,
   isActiveImageFlippedX,
   isActiveImageFlippedY,
@@ -34,7 +34,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
     const width = 200;
     const height = 200;
     return {
-      src: getImageDataById(state),
+      src: getActiveImageData(state),
       x: x !== null ? x :  imageWidth / 2,
       y: y !== null ? y :  imageHeight / 2,
       width, // @TODO: get from state

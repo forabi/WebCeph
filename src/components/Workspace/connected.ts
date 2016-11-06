@@ -12,7 +12,7 @@ import {
 import { hasAnyImage, isAnyImageLoading } from 'store/reducers/workspace/image';
 import {
   getTreatmentStagesIdsInOrder,
-  getActiveImageId,
+  getActiveTreatmentStageId,
 } from 'store/reducers/workspace/treatmentStage';
 import { getWorkspaceMode } from 'store/reducers/workspace';
 import { shouldShowLens } from 'store/reducers/workspace/canvas';
@@ -24,7 +24,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalStat
   if (mode === 'superimposition') {
     stageIds = getTreatmentStagesIdsInOrder(state);
   } else {
-    stageIds = [getActiveImageId(state)];
+    stageIds = [getActiveTreatmentStageId(state)];
   }
   return {
     mode,

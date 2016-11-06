@@ -6,12 +6,12 @@ import { handleActions } from 'redux-actions';
 import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 
-import { getActiveImageId } from 'store/reducers/workspace/treatmentStage';
+import { getActiveTreatmentStageId } from 'store/reducers/workspace/treatmentStage';
 
 import undoable, { includeAction } from 'redux-undo';
 import { undoableConfig } from 'utils/config';
 
-type ManualLandmarks = StoreEntries.workspace.analysis.tracing.landmarks.manual;
+type ManualLandmarks = StoreEntries.workspace.tracing;
 const KEY_MANUAL_LANDMARKS = StoreKeys.manualLandmarks;
 
 const defaultState: ManualLandmarks = { };
@@ -29,7 +29,7 @@ const manualLandmarksReducer = handleActions<
         return state;
       }
 
-      if (state[payload.stage] === undefined) {
+      if (state[payload.imageId] === undefined) {
         console.warn(
           'Attempted to add a landmark without specifing the treatment stage, this is a bug!'
         );
@@ -46,9 +46,9 @@ const manualLandmarksReducer = handleActions<
         { },
         state,
         {
-          [payload.stage]: assign(
+          [payload.imageId]: assign(
             { },
-            state[payload.stage],
+            state[payload.imageId],
             {
               [payload.symbol]: payload.value,
             },
@@ -58,19 +58,19 @@ const manualLandmarksReducer = handleActions<
     },
     [Event.REMOVE_MANUAL_LANDMARK_REQUESTED]: (
       state: ManualLandmarks,
-      { type, payload: { stage, symbol } }: Action<Payloads.removeManualLandmark>
+      { type, payload: { imageId, symbol } }: Action<Payloads.removeManualLandmark>
     ) => {
       if (symbol === undefined) {
         printUnexpectedPayloadWarning(type, state);
         return state;
       }
-      if (stage === undefined) {
+      if (imageId === undefined) {
         console.warn(
           'Attempted to remove a landmark without specifing the treatment stage, this is a bug!'
         );
         return state;
       }
-      if (state[stage][symbol] === undefined) {
+      if (state[imageId][symbol] === undefined) {
         console.warn(
           'Attempted to remove a landmark that does not exist, this is a bug!'
         );
@@ -80,7 +80,7 @@ const manualLandmarksReducer = handleActions<
         { },
         state,
         {
-          [stage]: omit(state[stage], symbol),
+          [imageId]: omit(state[imageId], symbol),
         },
       );
     },
@@ -116,7 +116,7 @@ export const getManualLandmarksOfAllStages = (state: GenericState): ManualLandma
 
 export const getActiveStageManualLandmarks = createSelector(
   getManualLandmarksOfAllStages,
-  getActiveImageId,
+  getActiveTreatmentStageId,
   (manual, stageId): { [symbol: string]: GeometricalObject } => {
     if (manual[stageId] !== undefined) {
       return manual[stageId];

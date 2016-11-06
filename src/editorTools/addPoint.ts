@@ -17,7 +17,7 @@ import {
 
 
 import {
-  getActiveImageId,
+  getActiveTreatmentStageId,
 } from 'store/reducers/workspace/treatmentStage';
 
 export const createAddPoint: EditorToolCreator = (
@@ -39,7 +39,7 @@ export const createAddPoint: EditorToolCreator = (
       onCanvasLeftClick(x, y) {
         const landmark = getExpectedNextManualLandmark(state);
         if (landmark !== null) {
-          const imageId = getActiveImageId(state);
+          const imageId = getActiveTreatmentStageId(state);
           if (imageId !== null) {
             dispatch(addManualLandmark({
               imageId,

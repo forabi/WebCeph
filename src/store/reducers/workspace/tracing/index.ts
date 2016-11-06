@@ -14,7 +14,7 @@ import manualLandmarks, {
   getManualLandmarksOfAllStages,
 } from './manualLandmarks';
 import {
-  getActiveImageId,
+  getActiveTreatmentStageId,
 } from 'store/reducers/workspace/treatmentStage';
 import { isImageFlippedX } from 'store/reducers/workspace/image';
 import { line, isCephaloPoint, isCephaloLine, isCephaloAngle } from 'analyses/helpers';
@@ -252,7 +252,7 @@ export const getCephaloMapper = createSelector(
 
 export const getActiveStageCephaloMapper = createSelector(
   getCephaloMapper,
-  getActiveImageId,
+  getActiveTreatmentStageId,
   (getMapper, activeStage) => getMapper(activeStage),
 );
 

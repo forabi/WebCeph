@@ -236,7 +236,6 @@ declare namespace StoreEntries {
     }
 
     namespace treatmentStages {
-      type activeId = StageId;
       type order = string[];
       type data = {
         [stageId: string]: TreatmentStage;

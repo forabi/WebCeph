@@ -4,37 +4,25 @@ import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 import { defaultTreatmentStageId, defaultTreatmentStageDisplayName } from 'utils/config';
 
+import { getActiveImageId } from 'store/reducers/workspace/image';
+
 import assign from 'lodash/assign';
 import map from 'lodash/map';
 import without from 'lodash/without';
 import omit from 'lodash/omit';
+import findKey from 'lodash/findKey';
 
-type TreatmentStageId = StoreEntries.workspace.activeTreatmentStageId;
-type TreatmentStagesOrder = StoreEntries.workspace.treatmentStagesOrder;
-type TreatmentStagesDetails = StoreEntries.workspace.treatmentStagesDetails;
+type TreatmentStagesOrder = StoreEntries.workspace.treatmentStages.order;
+type TreatmentStagesDetails = StoreEntries.workspace.treatmentStages.data;
 
 const defaultTreatmentStagesOrder: TreatmentStagesOrder = [defaultTreatmentStageId];
 const defaultTreatmentStagesDetails: TreatmentStagesDetails = {
   [defaultTreatmentStageId]: {
     id: defaultTreatmentStageId,
     displayName: defaultTreatmentStageDisplayName,
+    imageIds: { },
   },
 };
-
-const getActiveTreatmentStageIdReducer = handleActions<TreatmentStageId, Payloads.setActiveTracingStage>(
-  {
-    [Event.SET_ACTIVE_TRACING_STAGE]: (state, { type, payload }) => {
-      if (payload === undefined) {
-        printUnexpectedPayloadWarning(type, state);
-        return state;
-      }
-      return payload as TreatmentStageId;
-    },
-    [Event.RESET_WORKSPACE_REQUESTED]: () => defaultTreatmentStageId,
-  },
-  defaultTreatmentStageId,
-);
-
 
 const treatmentStagesOrderReducer = handleActions<
   TreatmentStagesOrder,
@@ -97,27 +85,31 @@ const treatmentStagesDetailsReducer = handleActions<
         printUnexpectedPayloadWarning(type, state);
         return state;
       }
-      return omit(state, payload);
+      return omit(state, payload) as TreatmentStagesDetails;
     },
   },
   defaultTreatmentStagesDetails,
 );
 
-const KEY_ACTIVE_TREATMENT_STAGE_ID = StoreKeys.activeTracingStageId;
 const KEY_TREATMENT_STAGES_ORDER = StoreKeys.treatmentStagesOrder;
 const KEY_TREATMENT_STAGES_DETAILS = StoreKeys.treatmentStagesDetails;
 
 export default {
-  [KEY_ACTIVE_TREATMENT_STAGE_ID]: getActiveTreatmentStageIdReducer,
   [KEY_TREATMENT_STAGES_ORDER]: treatmentStagesOrderReducer,
   [KEY_TREATMENT_STAGES_DETAILS]: treatmentStagesDetailsReducer,
 };
 
-export const getActiveImageId =
-  (state: GenericState): TreatmentStageId => state[KEY_ACTIVE_TREATMENT_STAGE_ID];
-
 export const getTreatmentStagesDetails =
   (state: GenericState): TreatmentStagesDetails => state[KEY_TREATMENT_STAGES_DETAILS];
+
+export const getActiveTreatmentStageId = createSelector(
+  getActiveImageId,
+  getTreatmentStagesDetails,
+  (activeImageId, details) => findKey<TreatmentStage, TreatmentStagesDetails>(
+    details,
+    d => d.imageIds[activeImageId] === true,
+  ),
+);
 
 export const getTreatmentStagesOrder =
   (state: GenericState): TreatmentStagesOrder => state[KEY_TREATMENT_STAGES_ORDER];
@@ -129,7 +121,7 @@ export const getTreatmentStagesIdsInOrder = createSelector(
 );
 
 export const getActiveTreatmentStageDetails = createSelector(
-  getActiveImageId,
+  getActiveTreatmentStageId,
   getTreatmentStagesDetails,
   (id, details) => details[id],
 );
