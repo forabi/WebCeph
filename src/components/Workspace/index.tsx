@@ -46,7 +46,7 @@ const Content = pure(({ hasImage, mode, stageIds, shouldShowLens, isLoading }: P
       </div>
     );
   }
-  return <CephaloDropzone stageId={stageIds[0]} />;
+  return <CephaloDropzone imageId={stageIds[0]} />;
 });
 
 class Workspace extends React.PureComponent<Props, { }> {

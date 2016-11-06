@@ -17,7 +17,7 @@ import {
 
 
 import {
-  getActiveTreatmentStageId,
+  getActiveImageId,
 } from 'store/reducers/workspace/treatmentStage';
 
 export const createAddPoint: EditorToolCreator = (
@@ -38,12 +38,19 @@ export const createAddPoint: EditorToolCreator = (
       },
       onCanvasLeftClick(x, y) {
         const landmark = getExpectedNextManualLandmark(state);
-        const stageId = getActiveTreatmentStageId(state);
-        if (stageId !== null) {
-          if (landmark !== null) {
-            dispatch(addManualLandmark(landmark.symbol, stageId, { x, y }));
+        if (landmark !== null) {
+          const imageId = getActiveImageId(state);
+          if (imageId !== null) {
+            dispatch(addManualLandmark({
+              imageId,
+              symbol: landmark.symbol,
+              value: { x, y },
+            }));
           } else {
-            dispatch(addUnnamedManualLandmark(stageId, { x, y }));
+            dispatch(addUnnamedManualLandmark({
+              imageId,
+              value: { x, y },
+            }));
           }
         }
       },

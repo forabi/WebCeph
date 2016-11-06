@@ -15,9 +15,9 @@ import {
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> = () => ({ });
 
-const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = (dispatch, { stageId }) => (
+const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = (dispatch, { imageId }) => (
   {
-    onFilesDropped: (files) => dispatch(loadImageFile({ stageId, file: files[0] })),
+    onFilesDropped: (files) => dispatch(loadImageFile({ imageId, file: files[0] })),
   }
 );
 

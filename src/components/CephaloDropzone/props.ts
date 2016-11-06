@@ -10,7 +10,7 @@ export interface DispatchProps {
 export type ConnectableProps = StateProps & DispatchProps;
 
 export interface OwnProps {
-  stageId: string;
+  imageId: string;
 };
 
 export type Props = ConnectableProps & OwnProps;

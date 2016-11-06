@@ -15,13 +15,13 @@ import {
 } from './props';
 
 import {
-  getImageSizeByStageId,
-  getImageDataByStageId,
-  getImageBrightnessByStageId,
-  getImageContrastByStageId,
-  issImageForStageFlippedX,
-  isImageForStageFlippedY,
-  isImageForStageInverted,
+  getImageSizeById,
+  getImageDataById,
+  getImageBrightnessById,
+  getImageContrastById,
+  isImageFlippedX,
+  isImageFlippedY,
+  isImageInverted,
 } from 'store/reducers/workspace/image';
 
 import {
@@ -45,22 +45,22 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: FinalState, { stageId }: OwnProps) => {
     const origin = getScaleOrigin(state);
     const { height: canvasHeight, width: canvasWidth } = getCanvasSize(state);
-    const { height: imageHeight, width: imageWidth } = getImageSizeByStageId(state)(stageId);
+    const { height: imageHeight, width: imageWidth } = getImageSizeById(state)(stageId);
     return {
       canvasHeight,
       canvasWidth,
-      src: getImageDataByStageId(state)(stageId) as string,
+      src: getImageDataById(state)(stageId) as string,
       imageWidth: imageWidth as number,
       imageHeight: imageHeight as number,
       scale: getScale(state),
       scaleOriginX: origin !== null ? origin.x : null,
       scaleOriginY: origin !== null ? origin.y : null,
-      brightness: getImageBrightnessByStageId(state)(stageId),
-      contrast: getImageContrastByStageId(state)(stageId),
-      isFlippedX: issImageForStageFlippedX(state)(stageId),
-      isFlippedY: isImageForStageFlippedY(state)(stageId),
+      brightness: getImageBrightnessById(state)(stageId),
+      contrast: getImageContrastById(state)(stageId),
+      isFlippedX: isImageFlippedX(state)(stageId),
+      isFlippedY: isImageFlippedY(state)(stageId),
       landmarks: getAllLandmarks(state),
-      isInverted: isImageForStageInverted(state)(stageId),
+      isInverted: isImageInverted(state)(stageId),
       highlightedLandmarks: getHighlightedLandmarks(state),
       activeTool: curry(getActiveToolCreator(state))(state),
     };

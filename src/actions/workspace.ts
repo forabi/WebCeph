@@ -10,25 +10,19 @@ export const disableActiveTool: () => Action<Payloads.disableActiveTool> = creat
   Event.DISABLE_TOOL_REQUESTED,
 );
 
-export const addManualLandmark:
-  (symbol: string, stage: string, value: GeometricalObject) => Action<Payloads.addManualLandmark> =
-  createAction(
+export const addManualLandmark =
+  createAction<Payloads.addManualLandmark>(
     Event.ADD_MANUAL_LANDMARK_REQUESTED,
-    (symbol: string, stage: string, value: GeometricalObject): Payloads.addManualLandmark => ({ symbol, stage, value }),
   );
 
-export const addUnnamedManualLandmark:
-  (stage: string, value: GeometricalObject) => Action<Payloads.addUnnamedManualLandmark> =
-  createAction(
-    Event.ADD_UNKOWN_MANUAL_LANDMARK_REQUESTED,
-    (stage: string, value: GeometricalObject): Payloads.addUnnamedManualLandmark => ({ stage, value }),
-  );
+export const addUnnamedManualLandmark =
+  createAction<Payloads.addUnnamedManualLandmark>(Event.ADD_UNKOWN_MANUAL_LANDMARK_REQUESTED);
 
 export const removeManualLandmark:
-(symbol: string, stage: string) => Action<Payloads.removeManualLandmark> =
+(symbol: string, imageId: string) => Action<Payloads.removeManualLandmark> =
   createAction(
     Event.REMOVE_MANUAL_LANDMARK_REQUESTED,
-    (symbol: string, stage: string): Payloads.removeManualLandmark => ({ symbol, stage }),
+    (symbol: string, imageId: string): Payloads.removeManualLandmark => ({ symbol, imageId }),
   );
 
 export const temporarilyHideLandmark: (symbol: string) => any = createAction(

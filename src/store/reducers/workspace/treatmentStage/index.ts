@@ -113,7 +113,7 @@ export default {
   [KEY_TREATMENT_STAGES_DETAILS]: treatmentStagesDetailsReducer,
 };
 
-export const getActiveTreatmentStageId =
+export const getActiveImageId =
   (state: GenericState): TreatmentStageId => state[KEY_ACTIVE_TREATMENT_STAGE_ID];
 
 export const getTreatmentStagesDetails =
@@ -129,7 +129,7 @@ export const getTreatmentStagesIdsInOrder = createSelector(
 );
 
 export const getActiveTreatmentStageDetails = createSelector(
-  getActiveTreatmentStageId,
+  getActiveImageId,
   getTreatmentStagesDetails,
   (id, details) => details[id],
 );

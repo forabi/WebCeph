@@ -32,7 +32,7 @@ function processImageInWorker(file: File, actions: any[]) {
   });
 }
 
-function* loadImage({ payload: { file, stageId } }: { payload: Payloads.imageLoadRequested }): IterableIterator<Effect> {
+function* loadImage({ payload: { file, imageId } }: { payload: Payloads.imageLoadRequested }): IterableIterator<Effect> {
   const workerId = uniqueId('worker_');
   yield put(addWorker({
     id: workerId,
@@ -70,7 +70,7 @@ function* loadImage({ payload: { file, stageId } }: { payload: Payloads.imageLoa
           });
           const state: FinalState = yield select();
           yield put(loadImageSucceeded({
-            stageId,
+            imageId,
             data: payload.url,
             height, width,
           }))
