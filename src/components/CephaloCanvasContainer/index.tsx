@@ -35,7 +35,7 @@ const Content = pure(({ hasImage, shouldShowLens, isLoading }: Props) => {
   } else if (isLoading) {
     return (
       <div className={classes.loading_container}>
-        <CircularProgress color='white' size={120} />
+        <CircularProgress color="white" size={120} />
       </div>
     );
   }

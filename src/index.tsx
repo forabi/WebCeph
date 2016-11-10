@@ -15,7 +15,7 @@ if (window.ResizeObserver === undefined) {
   window.ResizeObserver = require('resize-observer-polyfill').default;
 }
 
-if ('serviceWorker' in navigator) {
+if (!__DEBUG__ && 'serviceWorker' in navigator) {
   const runtime = require('serviceworker-webpack-plugin/lib/runtime');
   runtime.register();
 }
