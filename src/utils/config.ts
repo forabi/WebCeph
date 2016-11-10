@@ -7,6 +7,3 @@ const undoableConfig = {
 };
 
 export { undoableConfig };
-
-export const defaultTreatmentStageId = 'pretreatment';
-export const defaultTreatmentStageDisplayName = 'Pretreatment';

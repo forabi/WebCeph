@@ -163,9 +163,6 @@ type GenericState = { [id: string]: any };
 type GenericError = { message: string, code?: number };
 type WorkerType = 'image_worker' | 'tracing_worker';
 
-type StageId = string;
-type ImageId = string;
-
 interface WorkerIntrinsicDetails {
   id: string;
   type: WorkerType;
@@ -182,24 +179,6 @@ type WorkerUpdate = {
 }
 
 type TracingMode = 'auto' | 'manual' | 'assisted';
-type SuperimpostionMode = 'auto' | 'manual' | 'assisted';
-type WorkspaceMode = 'tracing' | 'superimposition';
-type ImageType = (
-  'lateral_cephalo' |
-  'frontal_cephalo' | 
-  'lateral_photograph' |
-  'frontal_photograph' |
-  'panoramic' |
-  null
-);
-
-type TreatmentStage = {
-  id: StageId;
-  displayName: string;
-  imageIds: {
-    [imagId: string]: true;
-  };
-}
 
 declare namespace StoreEntries {
   namespace env {
@@ -213,8 +192,28 @@ declare namespace StoreEntries {
   }
 
   namespace workspace {
-    type mode = WorkspaceMode;
-
+    namespace analysis {
+      type activeId = string | null;
+      type isLoading = boolean;
+      type loadError = GenericError | null;
+      namespace results {
+        type areShown = boolean;
+      }
+      namespace tracing {
+        type mode = TracingMode;
+        type scaleFactor = number | null;
+        namespace landmarks {
+          type manual = {
+            [symbol: string]: GeometricalObject;
+          };
+        }
+        namespace steps {
+          type skipped = {
+            [symbol: string]: boolean;
+          } | { };
+        }
+      }
+    }
     namespace canvas {
       type width = number;
       type height = number;
@@ -229,139 +228,50 @@ declare namespace StoreEntries {
       /** A null value indicates that the scale origin is 50% 50% */
       type scaleOrigin = null | { x: number, y: number };
     }
-
-    namespace superimposition {
-      type mode = SuperimpostionMode;
-      type imageIds = string[];
-    }
-
-    namespace treatmentStages {
-      type order = string[];
-      type data = {
-        [stageId: string]: TreatmentStage;
-      }
-    }
-
-    namespace analysis {
-      type isLoading = boolean;
+    namespace image {
+      type type = 'lateral_cephalo' | 'frontal_cephalo' | 'panoramic' | null;
+      type data = string | null;
+      type width = number | null;
+      type height = number | null;
       type loadError = GenericError | null;
-      type activeId = string | null;
-
-      namespace results {
-        type areShown = boolean;
+      namespace suggestions {
+        type shouldFlipX = boolean;
+        type shouldFlipY = boolean;
+        type probablyOfType = workspace.image.type;
       }
     }
-
-    namespace images {
-      type activeId = ImageId | null;
-      type data = {
-        [imageId: string]: {
-          type: ImageType;
-          data: string | null;
-          width: number | null;
-          height: number | null;
-          isLoading: boolean;
-          loadError: GenericError | null;
-          flipX: boolean;
-          flipY: boolean;
-          contrast: number;
-          brightness: number;
-          invert: boolean;
-          scaleFactor: number | null;
-          suggestions: {
-            flipX: boolean;
-            flipY: boolean;
-            type: ImageType;
-          };
-        };
-      }
-    }
-
-    type tracing = {
-      [imageId: string]: {
-        manualLandmarks: {
-          [symbol: string]: GeometricalObject;
-        };
-        skippedSteps: {
-          [symbol: string]: true;
-        };
-      }
-    }
-
-    type workers = {
-      [workerId: string]: WorkerDetails;
-    } | { };
+    type workers = { [workerId: string]: WorkerDetails } | { };
   }
 }
 
 declare namespace Payloads {
-  type setWorkspaceMode = WorkspaceMode;
-  type setActiveTracingStage = string;
-  type addTreatmentStage = TreatmentStage;
-  type removeTreatmentStage = string;
   interface addManualLandmark {
-    imageId: string;
     symbol: string;
-    value: GeometricalObject;
-  }
-  interface removeManualLandmark {
-    imageId: string;
-    symbol: string;
-  };
-  interface addUnnamedManualLandmark {
-    imageId: string;
     value: GeometricalObject;
   }
   type undo = void;
   type redo = void;
-
-  type setActiveImageId = ImageId;
-  type flipImageX = { imageId: ImageId };
-  type flipImageY = { imageId: ImageId };
-  type invertColors = { imageId: ImageId };
-
-  type setContrast = {
-    imageId: ImageId;
-    value: number;
-  };
-  type setBrightness = {
-    imageId: ImageId;
-    value: number;
-  };
-  type setInvert = {
-    imageId: ImageId;
-    value: number;
-  };
-
+  type flipImageX = void;
+  type flipImageY = void;
+  type invertColors = void;
+  type setContrast = number;
+  type setBrightness = number;
   type resetWorkspace = void;
   type showAnalysisResults = void;
   type hideAnalysisResults = void;
-  
+
+  type removeManualLandmark = string;
   type ignoreCompatiblityCheck = void;
   type enforceCompatibilityCheck = void;
   type isCheckingCompatiblity = void;
-
-  type setTracingMode = {
-    stageId: string;
-    mode: TracingMode;
-  }
-
-  type setScaleFactor = {
-    stageId: string;
-    value: number;
-  };
-
-  /** Stage ID */
-  type unsetScaleFactor = string;
-
+  type setTracingMode = TracingMode;
+  type setScaleFactor = number;
+  type unsetScaleFactor = void;
   type skipStep = string;
   type unskipStep = skipStep;
-
   type missingFeatureDetected = MissingBrowserFeature;
-
   type highlightStep = string;
   type unhighlightStep = void;
-
   type setCursor = string;
   type removeCursors = string[];
   type setScale = { scale: number, x?: number, y?: number };
@@ -371,34 +281,20 @@ declare namespace Payloads {
   type removeActiveTool = string;
   type updateCanvasSize = { top: number, left: number, width: number, height: number };
   type updateMousePosition = { x: number, y: number };
-
-  type imageLoadSucceeded = {
-    imageId: ImageId;
-    data: string;
-    height: number;
-    width: number;
-  };
-  type imageLoadFailed = {
-    imageId: ImageId;
-    message: string;
-  };
-  type imageLoadRequested = {
-    imageId: ImageId;
-    file: File;
-  }
-
+  type imageLoadSucceeded = { data: string, height: number, width: number };
+  type imageLoadFailed = { message: string; };
+  type imageLoadRequested = File;
   type analysisLoadFailed = GenericError;
   type analysisLoadRequested = string;
   type analysisLoadSucceeded = string;
-
   type addWorker = WorkerDetails;
   type removeWorker = string;
   type updateWorkerStatus = { id: string; } & WorkerUpdate;
 }
 
-type GenericAction = { type: string };
+type GenericAction = { type: string, payload?: any };
 type Action<T> = GenericAction & { payload?: T };
-type DispatchFunction = (action: GenericAction) => any;
+type DispatchFunction = (GenericAction) => any;
 
 interface UndoableState<T> {
   past: T[];

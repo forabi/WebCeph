@@ -8,7 +8,7 @@ export interface StateProps {
   canvasHeight: number;
   canvasWidth: number;
   imageHeight: number;
-  imageWidth: number;
+  imageWidth: number; 
   scale: number;
   scaleOriginX: number | null;
   scaleOriginY: number | null;
@@ -25,11 +25,10 @@ export type AdditionalPropsToMerge = EditorTool;
 
 export type ConnectableProps = StateProps & DispatchProps & AdditionalPropsToMerge;
 
-export interface OwnProps {
-  imageId: string;
+export interface UnconnectableProps {
   className?: string;
 };
 
-export type Props = ConnectableProps & OwnProps;
+export type Props = ConnectableProps & UnconnectableProps;
 
 export default Props;

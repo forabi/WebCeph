@@ -17,8 +17,8 @@ import {
 } from 'store/reducers/workspace/analysis';
 
 import {
-  hasAnyImage,
-  isAnyImageLoading,
+  hasImage,
+  isImageLoading,
 } from 'store/reducers/workspace/image';
 
 import {
@@ -33,7 +33,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: FinalState) => {
     return {
       isSummaryShown: areResultsShown(state) && canShowResults(state),
-      shouldShowStepper: hasAnyImage(state) || isAnyImageLoading(state),
+      shouldShowStepper: hasImage(state) || isImageLoading(state),
     };
   };
 
