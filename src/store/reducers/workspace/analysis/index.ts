@@ -16,10 +16,8 @@ import { printUnexpectedPayloadWarning } from 'utils/debug';
 
 import tracing, {
   isLandmarkRemovable,
-  getActiveStageManualLandmarks,
+  getManualLandmarks,
   getCephaloMapper,
-  getManualLandmarksHistory,
-  getManualLandmarksOfAllStages,
 } from './tracing';
 
 import { StoreKeys, Event } from 'utils/constants';
@@ -182,17 +180,17 @@ export const getManualSteps = createSelector(
 
 export const getExpectedNextManualLandmark = createSelector(
   getManualSteps,
-  getActiveStageManualLandmarks,
-  (manualSteps, manualLandmarks): CephaloLandmark | null => (find(
+  getManualLandmarks,
+  (manualSteps, { present: manualLandmarks }): CephaloLandmark | null => (find(
     manualSteps,
     step => manualLandmarks[step.symbol] === undefined,
   ) || null),
 );
 
 export const getManualStepState = createSelector(
-  getActiveStageManualLandmarks,
+  getManualLandmarks,
   getExpectedNextManualLandmark,
-  (manualLandmarks, next) => (symbol: string): StepState => {
+  ({ present: manualLandmarks }, next) => (symbol: string): StepState => {
     if (manualLandmarks[symbol] !== undefined) {
       return 'done';
     } else if (next && next.symbol === symbol) {
@@ -264,9 +262,9 @@ export const getAutomaticLandmarks = createSelector(
 );
 
 export const getAllLandmarks = createSelector(
-  getActiveStageManualLandmarks,
+  getManualLandmarks,
   getAutomaticLandmarks,
-  (manual, automatic) => {
+  ({ present: manual }, automatic) => {
     return assign({ }, manual, automatic);
   }
 );
@@ -459,7 +457,5 @@ export const canShowResults = createSelector(
 
 export {
   isLandmarkRemovable,
-  getActiveStageManualLandmarks,
-  getManualLandmarksOfAllStages,
-  getManualLandmarksHistory,
+  getManualLandmarks,
 };

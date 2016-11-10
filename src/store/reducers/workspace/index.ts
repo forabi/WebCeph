@@ -1,27 +1,21 @@
 import { createSelector } from 'reselect';
 import canvas, { getHighlightedStep } from './canvas';
-import analysis, { getLandmarkWithAllNestedLandmarks, getManualLandmarksHistory } from './analysis';
-import image, { hasAnyImage } from './image';
+import analysis, { getLandmarkWithAllNestedLandmarks, getManualLandmarks } from './analysis';
+import image, { hasImage } from './image';
 import workers from './workers';
-import workspaceMode, { getWorkspaceMode } from './mode';
 
 import assign from 'lodash/assign';
 import isEmpty from 'lodash/isEmpty';
 
 export default assign(
   { },
-  workspaceMode,
   image,
   canvas,
   workers,
   analysis,
 );
 
-export {
-  getWorkspaceMode,
-}
-
-export const canEdit = hasAnyImage;
+export const canEdit = hasImage;
 
 export const getHighlightedLandmarks = createSelector(
   getHighlightedStep,
@@ -35,12 +29,12 @@ export const getHighlightedLandmarks = createSelector(
 );
 
 export const hasUnsavedWork = createSelector(
-  getManualLandmarksHistory,
+  getManualLandmarks,
   ({ present, past }) => !isEmpty(present) || !isEmpty(past),
 );
 
 export const canUndo = hasUnsavedWork;
 export const canRedo = createSelector(
-  getManualLandmarksHistory,
+  getManualLandmarks,
   ({ future }) => !isEmpty(future),
 );

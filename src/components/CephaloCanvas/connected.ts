@@ -5,20 +5,19 @@ import {
   MergeProps,
 } from 'react-redux';
 
-import TracingView from './index';
+import CephaloCanvas from './index';
 
 import {
   ConnectableProps,
   StateProps,
   DispatchProps,
-  OwnProps,
 } from './props';
 
 import {
-  getImageSizeById,
-  getImageDataById,
-  getImageBrightnessById,
-  getImageContrastById,
+  getImageSize,
+  getImageData,
+  getImageBrightness,
+  getImageContrast,
   isImageFlippedX,
   isImageFlippedY,
   isImageInverted,
@@ -41,26 +40,28 @@ import {
 import assign from 'lodash/assign';
 import curry from 'lodash/curry';
 
+type OwnProps = { };
+
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
-  (state: FinalState, { imageId }: OwnProps) => {
+  (state: FinalState) => {
     const origin = getScaleOrigin(state);
     const { height: canvasHeight, width: canvasWidth } = getCanvasSize(state);
-    const { height: imageHeight, width: imageWidth } = getImageSizeById(state)(imageId);
+    const { height: imageHeight, width: imageWidth } = getImageSize(state);
     return {
       canvasHeight,
       canvasWidth,
-      src: getImageDataById(state)(imageId) as string,
+      src: getImageData(state) as string,
       imageWidth: imageWidth as number,
       imageHeight: imageHeight as number,
       scale: getScale(state),
       scaleOriginX: origin !== null ? origin.x : null,
       scaleOriginY: origin !== null ? origin.y : null,
-      brightness: getImageBrightnessById(state)(imageId),
-      contrast: getImageContrastById(state)(imageId),
-      isFlippedX: isImageFlippedX(state)(imageId),
-      isFlippedY: isImageFlippedY(state)(imageId),
+      brightness: getImageBrightness(state),
+      contrast: getImageContrast(state),
+      isFlippedX: isImageFlippedX(state),
+      isFlippedY: isImageFlippedY(state),
       landmarks: getAllLandmarks(state),
-      isInverted: isImageInverted(state)(imageId),
+      isInverted: isImageInverted(state),
       highlightedLandmarks: getHighlightedLandmarks(state),
       activeTool: curry(getActiveToolCreator(state))(state),
     };
@@ -82,7 +83,7 @@ const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> =
 
 const connected = connect<StateProps, DispatchProps, OwnProps>(
   mapStateToProps, mapDispatchToProps, mergeProps,
-)(TracingView);
+)(CephaloCanvas);
 
 
 export default connected;

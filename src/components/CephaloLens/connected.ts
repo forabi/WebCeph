@@ -4,7 +4,7 @@ import {
   MapDispatchToPropsFunction,
 } from 'react-redux';
 
-import Lens from './index';
+import CephaloLens from './index';
 
 import {
   StateProps,
@@ -13,8 +13,8 @@ import {
 } from './props';
 
 import {
-  getImageDataById,
-  getImageSizeById,
+  getImageData,
+  getImageSize,
   isImageFlippedX,
   isImageFlippedY,
 } from 'store/reducers/workspace/image';
@@ -30,11 +30,11 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
     const { top } = getCanvasPosition(state);
     const { width: canvasWidth } = getCanvasSize(state);
     const { x, y } = getMousePosition(state);
-    const { width: imageWidth, height: imageHeight } = getImageSizeById(state);
+    const { width: imageWidth, height: imageHeight } = getImageSize(state);
     const width = 200;
     const height = 200;
     return {
-      src: getImageDataById(state),
+      src: getImageData(state),
       x: x !== null ? x :  imageWidth / 2,
       y: y !== null ? y :  imageHeight / 2,
       width, // @TODO: get from state
@@ -56,7 +56,7 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
 
 const connected = connect<StateProps, DispatchProps, OwnProps>(
   mapStateToProps, mapDispatchToProps
-)(Lens);
+)(CephaloLens);
 
 
 export default connected;

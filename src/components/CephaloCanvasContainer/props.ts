@@ -2,8 +2,6 @@ export interface StateProps {
   hasImage: boolean;
   isLoading: boolean;
   shouldShowLens: boolean;
-  mode: WorkspaceMode;
-  imageIds: string[];
 };
 
 export interface DispatchProps {
