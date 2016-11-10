@@ -2,6 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
   background-size: 50% 50%;
   background-position: center;
   background-color: #EEEEEE;
@@ -12,8 +13,6 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    max-height: 80%;
-    max-width: 80%;
     user-select: none;
   }
 
@@ -34,7 +33,7 @@
     }
 
     [id="incorrect"] {
-      fill: rgba(255, 100, 100, 50);
+      fill: rgba(255, 100, 100, 50) !important;
     }
 
     [id="incorrect"], [id="correct"] {
@@ -62,7 +61,7 @@
   }
 
   &.dropzone__reject {
-    cursor: no-drop !important;
+    cursor: no-drop not-allowed !important;
 
     .dropzone_placeholder_image {
       [id="circle"] {
@@ -73,11 +72,11 @@
 
       [id="cephalo"] {
         transform: scale(0.5);
-        opacity: 0;
+        opacity: 0 !important;
       }
 
       [id="incorrect"] {
-        opacity: 1;
+        opacity: 1 !important;
         transition-delay: 0.1s;
         transition-duration: 0.2s;
         transform: scale(0.7);

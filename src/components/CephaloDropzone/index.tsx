@@ -7,7 +7,7 @@ import Props from './props';
 const classes = require('./style.scss');
 const DropzonePlaceholder = require(
   'svg-react?name=DropzonePlaceholder!svgo?useConfig=svgoConfig!./assets/placeholder.svg'
-) as React.SFCFactory<React.HTMLAttributes<HTMLDivElement>>;
+) as React.SFCFactory<React.SVGAttributes<SVGElement>>;
 
 class CephaloDropzone extends React.PureComponent<Props, { }> {
   refs: {
@@ -15,7 +15,7 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
   };
 
   private openFilePicker = () => this.refs.dropzone.open();
-  
+
   render() {
     const {
       onFilesDropped,
