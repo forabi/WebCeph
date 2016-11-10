@@ -5,10 +5,10 @@ import CircularProgress from 'material-ui/CircularProgress';
 
 import ResizeObservable from 'utils/resize-observable';
 
-import CephaloCanvas from 'components/CephaloCanvas/connected';
+import TracingView from 'components/TracingView/connected';
 import CephaloDropzone from 'components/CephaloDropzone/connected';
 import CephaloImage from 'components/CephaloImage/connected';
-import Lens from 'components/CephaloLens/connected';
+import Lens from 'components/Lens/connected';
 
 import * as cx from 'classnames';
 
@@ -16,9 +16,11 @@ import Props from './props';
 
 import { pure } from 'recompose';
 
+import map from 'lodash/map';
+
 const classes = require('./style.scss');
 
-const Content = pure(({ hasImage, shouldShowLens, isLoading }: Props) => {
+const Content = pure(({ hasImage, mode, imageIds, shouldShowLens, isLoading }: Props) => {
   if (hasImage) {
     return (
       <div>
@@ -29,7 +31,12 @@ const Content = pure(({ hasImage, shouldShowLens, isLoading }: Props) => {
             </Lens>
           ) : null
         }
-        <CephaloCanvas />
+        {
+          map(imageIds, imageId => <TracingView key={imageId} imageId={imageId} />)
+        }
+        {
+          mode === 'superimposition' ? <SuperimpositionDropzone /> : null
+        }
       </div>
     );
   } else if (isLoading) {
@@ -39,10 +46,10 @@ const Content = pure(({ hasImage, shouldShowLens, isLoading }: Props) => {
       </div>
     );
   }
-  return <CephaloDropzone />;
+  return <CephaloDropzone imageId={imageIds[0]} />;
 });
 
-class CephaloCanvasContainer extends React.PureComponent<Props, { }> {
+class Workspace extends React.PureComponent<Props, { }> {
   private childInstance: React.ReactInstance | null;
 
   public componentDidUpdate() {
@@ -76,4 +83,4 @@ class CephaloCanvasContainer extends React.PureComponent<Props, { }> {
     = ({ contentRect }) => this.props.onResize(contentRect);
 };
 
-export default CephaloCanvasContainer;
+export default Workspace;

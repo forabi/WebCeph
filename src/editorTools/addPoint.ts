@@ -15,6 +15,11 @@ import {
   isAnalysisComplete,
 } from 'store/reducers/workspace/analysis';
 
+
+import {
+  getActiveTreatmentStageId,
+} from 'store/reducers/workspace/treatmentStage';
+
 export const createAddPoint: EditorToolCreator = (
   state: GenericState,
   dispatch: DispatchFunction,
@@ -34,9 +39,19 @@ export const createAddPoint: EditorToolCreator = (
       onCanvasLeftClick(x, y) {
         const landmark = getExpectedNextManualLandmark(state);
         if (landmark !== null) {
-          dispatch(addManualLandmark(landmark.symbol, { x, y }));
-        } else {
-          dispatch(addUnnamedManualLandmark({ x, y }));
+          const imageId = getActiveTreatmentStageId(state);
+          if (imageId !== null) {
+            dispatch(addManualLandmark({
+              imageId,
+              symbol: landmark.symbol,
+              value: { x, y },
+            }));
+          } else {
+            dispatch(addUnnamedManualLandmark({
+              imageId,
+              value: { x, y },
+            }));
+          }
         }
       },
       // onLandmarkMouseEnter(symbol) {

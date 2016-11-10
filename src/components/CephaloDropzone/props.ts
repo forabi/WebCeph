@@ -10,7 +10,7 @@ export interface DispatchProps {
 export type ConnectableProps = StateProps & DispatchProps;
 
 export interface OwnProps {
-
+  imageId: string;
 };
 
 export type Props = ConnectableProps & OwnProps;

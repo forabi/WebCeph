@@ -10,24 +10,19 @@ export const disableActiveTool: () => Action<Payloads.disableActiveTool> = creat
   Event.DISABLE_TOOL_REQUESTED,
 );
 
-export const addManualLandmark:
-  (symbol: string, value: GeometricalObject | number) => Action<Payloads.addManualLandmark> =
-  createAction(
+export const addManualLandmark =
+  createAction<Payloads.addManualLandmark>(
     Event.ADD_MANUAL_LANDMARK_REQUESTED,
-    (symbol: string, value: GeometricalObject): Payloads.addManualLandmark => ({ symbol, value }),
   );
 
-export const addUnnamedManualLandmark:
-  (value: GeometricalObject | number) => Action<Payloads.addUnnamedManualLandmark> =
-  createAction(
-    Event.ADD_UNKOWN_MANUAL_LANDMARK_REQUESTED,
-  );
+export const addUnnamedManualLandmark =
+  createAction<Payloads.addUnnamedManualLandmark>(Event.ADD_UNKOWN_MANUAL_LANDMARK_REQUESTED);
 
 export const removeManualLandmark:
-(symbol: string) => Action<Payloads.removeManualLandmark> =
+(symbol: string, imageId: string) => Action<Payloads.removeManualLandmark> =
   createAction(
     Event.REMOVE_MANUAL_LANDMARK_REQUESTED,
-    (symbol: string): Payloads.removeManualLandmark => symbol,
+    (symbol: string, imageId: string): Payloads.removeManualLandmark => ({ symbol, imageId }),
   );
 
 export const temporarilyHideLandmark: (symbol: string) => any = createAction(
@@ -50,8 +45,16 @@ export const tryAutomaticSteps: () => any = createAction(Event.TRY_AUTOMATIC_STE
 
 /* Image editing actions */
 export const loadImageFile:
-  (file: File) => Action<Payloads.imageLoadRequested> =
+  (payload: Payloads.imageLoadRequested) => Action<Payloads.imageLoadRequested> =
     createAction(Event.LOAD_IMAGE_REQUESTED);
+
+export const loadImageSucceeded:
+  (paylaod: Payloads.imageLoadSucceeded) => Action<Payloads.imageLoadSucceeded> =
+    createAction(Event.LOAD_IMAGE_SUCCEEDED);
+
+export const loadImageFailed:
+  (paylaod: Payloads.imageLoadFailed) => Action<Payloads.imageLoadFailed> =
+    createAction(Event.LOAD_IMAGE_FAILED);
 
 export const flipX: () => Action<Payloads.flipImageX> = createAction(Event.FLIP_IMAGE_X_REQUESTED);
 export const flipY: () => Action<Payloads.flipImageY> = createAction(Event.FLIP_IMAGE_Y_REQUESTED);
