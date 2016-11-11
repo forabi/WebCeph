@@ -37,7 +37,7 @@ export function angleBetweenLines(
     name,
     components: [lineA, lineB],
   };
-}
+};
 
 /**
  * Creates an object conforming to the Angle interface based on 3 points
