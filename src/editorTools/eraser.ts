@@ -11,6 +11,10 @@ import {
   isLandmarkRemovable,
 } from 'store/reducers/workspace/analysis';
 
+import {
+  getActiveTreatmentStageId,
+} from 'store/reducers/workspace/treatmentStage';
+
 export const createEraser: EditorToolCreator = (
   state: GenericState,
   dispatch: DispatchFunction,
@@ -21,7 +25,8 @@ export const createEraser: EditorToolCreator = (
     {
       onLandmarkClick(symbol) {
         if (isRemovable(symbol)) {
-          dispatch(removeManualLandmark(symbol));
+          const stageId = getActiveTreatmentStageId(state);
+          dispatch(removeManualLandmark(symbol, stageId));
         }
       },
 

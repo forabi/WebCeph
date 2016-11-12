@@ -320,6 +320,14 @@ declare namespace Payloads {
     imageId: string;
     value: GeometricalObject;
   }
+  interface removeManualLandmark {
+    imageId: string;
+    symbol: string;
+  };
+  interface addUnnamedManualLandmark {
+    imageId: string;
+    value: GeometricalObject;
+  }
   type undo = void;
   type redo = void;
 
@@ -367,7 +375,6 @@ declare namespace Payloads {
     imageId: ImageId;
     symbol: string;
   };
-
   type unskipStep = skipStep;
 
   type missingFeatureDetected = MissingBrowserFeature;

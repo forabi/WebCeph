@@ -1,29 +1,33 @@
 import assign from 'lodash/assign';
 import omit from 'lodash/omit';
+
+import { createSelector } from 'reselect';
 import { handleActions } from 'redux-actions';
 import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 import { defaultImageId } from 'utils/config';
 
+import { getActiveTreatmentStageId } from 'store/reducers/workspace/treatmentStage';
+
 import undoable, { includeAction } from 'redux-undo';
 import { undoableConfig } from 'utils/config';
 
-type State = StoreEntries.workspace.tracing.manualLandmarks;
+type ManualLandmarks = StoreEntries.workspace.tracing.manualLandmarks;
 
 const KEY_MANUAL_LANDMARKS = StoreKeys.manualLandmarks;
-const defaultState: State = {
+const defaultState: ManualLandmarks = {
   [defaultImageId]: {
 
   },
 };
 
 const manualLandmarksReducer = handleActions<
-  State,
+  ManualLandmarks,
   Payloads.addManualLandmark | Payloads.removeManualLandmark
 >(
   {
     [Event.ADD_MANUAL_LANDMARK_REQUESTED]: (
-      state: State, { type, payload }: Action<Payloads.addManualLandmark>
+      state: ManualLandmarks, { type, payload }: Action<Payloads.addManualLandmark>
     ) => {
       if (payload === undefined) {
         printUnexpectedPayloadWarning(type, state);
@@ -57,7 +61,7 @@ const manualLandmarksReducer = handleActions<
       );
     },
     [Event.REMOVE_MANUAL_LANDMARK_REQUESTED]: (
-      state: State,
+      state: ManualLandmarks,
       { type, payload }: Action<Payloads.removeManualLandmark>
     ) => {
       if (payload === undefined) {
@@ -81,7 +85,7 @@ const manualLandmarksReducer = handleActions<
         { },
         state,
         {
-          [imageId]: omit(state, symbol),
+          [imageId]: omit(state[imageId], symbol),
         },
       );
     },
@@ -89,6 +93,7 @@ const manualLandmarksReducer = handleActions<
   },
   defaultState,
 );
+
 
 export default {
   [KEY_MANUAL_LANDMARKS]: undoable(
@@ -106,6 +111,17 @@ export default {
   ),
 };
 
-export const getManualLandmarks = (state: GenericState) => {
-  return state[KEY_MANUAL_LANDMARKS] as UndoableState<State>;
+export const getManualLandmarksHistory = (state: GenericState): UndoableState<ManualLandmarks> => {
+  return state[KEY_MANUAL_LANDMARKS];
 };
+
+export const getActiveStageManualLandmarks = createSelector(
+  getManualLandmarksOfAllStages,
+  getActiveTreatmentStageId,
+  (manual, stageId): { [symbol: string]: GeometricalObject } => {
+    if (manual[stageId] !== undefined) {
+      return manual[stageId];
+    }
+    return { };
+  },
+);

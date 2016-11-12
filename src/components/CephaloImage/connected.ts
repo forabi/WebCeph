@@ -4,7 +4,7 @@ import {
   MapDispatchToPropsFunction,
 } from 'react-redux';
 
-import CephaloLens from './index';
+import Lens from './index';
 
 import {
   StateProps,
@@ -13,15 +13,15 @@ import {
 } from './props';
 
 import {
-  getImageData,
-  getImageSize,
+  getActiveImageData,
+  getActiveImageSize,
 } from 'store/reducers/workspace/image';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
-  (state: FinalState) => {
-    const { width, height } = getImageSize(state);
+  (state: FinalState, ) => {
+    const { width, height } = getActiveImageSize(state);
     return {
-      src: getImageData(state),
+      src: getActiveImageData(state),
       height, width,
     };
   };
@@ -36,7 +36,7 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
 
 const connected = connect<StateProps, DispatchProps, OwnProps>(
   mapStateToProps, mapDispatchToProps
-)(CephaloLens);
+)(Lens);
 
 
 export default connected;

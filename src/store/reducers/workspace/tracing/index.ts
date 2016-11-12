@@ -4,21 +4,20 @@ import every from 'lodash/every';
 import uniqBy from 'lodash/uniqBy';
 import negate from 'lodash/negate';
 import { createSelector } from 'reselect';
-import manualLandmarks, { getManualLandmarks } from './manualLandmarks';
 import { isImageFlippedX } from 'store/reducers/workspace/image';
 import { line, isCephaloPoint, isCephaloLine, isCephaloAngle } from 'analyses/helpers';
 import { isGeometricalPoint, isBehind } from 'utils/math';
 
+import manualLandmarks, { getManualLandmarks } from './manualLandmarks';
 import scaleFactor, { getScaleFactor } from './scaleFactor';
 import skippedSteps from './skippedSteps';
 import mode from './mode';
-import data from './data';
 
 export default assign(
   { },
   mode,
   scaleFactor,
-  data,
+  manualLandmarks,
   skippedSteps,
 );
 
@@ -77,7 +76,9 @@ export const getCephaloMapper = createSelector(
         const [A, B, C] = cephaloAngle.components as CephaloPoint[];
         vectors = [line(A, B), line(B, C)];
       } else if (every(cephaloAngle.components, isCephaloAngle)) {
-        let A: CephaloPoint, B: CephaloPoint, C: CephaloPoint;
+        let A: CephaloPoint;
+        let B: CephaloPoint;
+        let C: CephaloPoint;
         const [angle1, angle2] = cephaloAngle.components;
         const components = [...angle1.components, ...angle2.components];
         if (every(components, isCephaloPoint)) {
