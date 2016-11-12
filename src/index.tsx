@@ -1,33 +1,63 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { renderToString } from 'react-dom/server';
 
-import ReduxApp from './ReduxApp';
+import map from 'lodash/map';
+import pickBy from 'lodash/pickBy';
 
-declare var System: any;
-declare var module: __WebpackModuleApi.Module;
-declare var window: Window & { ResizeObserver?: ResizeObserver };
-
-if (!__DEBUG__ && location.protocol !== 'https:') {
- location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
+interface Locals {
+  path: string;
+  assets: {
+    [id: string]: string;
+  };
+  pkg: {
+    name: string;
+    version: string;
+  };
 }
 
-if (window.ResizeObserver === undefined) {
-  window.ResizeObserver = require('resize-observer-polyfill').default;
-}
+export const __esModule = true;
 
-if (!__DEBUG__ && 'serviceWorker' in navigator) {
-  const runtime = require('serviceworker-webpack-plugin/lib/runtime');
-  runtime.register();
-}
+export default ({ assets, pkg }: Locals) => {
+  const styles = pickBy(assets, asset => asset.match(/\.css$/)) as { [id: string]: string };
+  return renderToString(
+    <html lang="en" dir="auto">
+      <head>
+        <title>{pkg.name}</title>
+        <meta charSet="utf-8" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+        />
+        <style>
+        {`
+          html, body {
+            margin: 0;
+          }
 
-const rootEl = document.getElementById('container');
-
-const render = (App: typeof ReduxApp) => ReactDOM.render(<App />, rootEl);
-
-render(ReduxApp);
-
-if (module.hot) {
-  module.hot.accept('./ReduxApp', () => {
-    System.import('./ReduxApp').then((App: { default: typeof ReduxApp }) => render(App.default));
-  });
-}
+          * {
+            box-sizing: border-box;
+          }
+        `}
+        </style>
+        {
+          map(styles, (asset, key) => <link key={key} rel="stylesheet" href={asset} />)
+        }
+      </head>
+      <body>
+        <div id="container" />
+        {
+          map(
+            [
+              assets.common,
+              assets.lib,
+              assets.bundle,
+            ],
+            (asset, key) => {
+              return <script key={key} src={asset} />;
+            }
+          )
+        }
+      </body>
+    </html>
+  );
+};

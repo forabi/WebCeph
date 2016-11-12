@@ -2,11 +2,19 @@ const webpack = require('webpack');
 const fail = require('webpack-fail-plugin');
 const path = require('path');
 const env = require('./env');
-const WebpackHTMLPlugin = require('webpack-html-plugin');
 const { compact } = require('lodash');
 const autoprefixer = require('autoprefixer');
 const BabiliPlugin = require('babili-webpack-plugin');
 const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
+const StaticSiteGeneratorPlugin = require('static-site-generator-webpack-plugin');
+
+const pkg = Object.assign(
+  { },
+  require('./package.json'),
+  {
+    name: 'WebCeph',
+  }
+);
 
 let Dashboard;
 let DashboardPlugin;
@@ -57,11 +65,14 @@ const config = {
   devtool: env.isDev ? 'eval' : false,
 
   entry: {
+    main: [
+      path.resolve(__dirname, './src/index.tsx'),
+    ],
     bundle: compact([
       hot('react-hot-loader/patch'),
       hot('webpack/hot/only-dev-server'),
       hot('webpack-hot-middleware/client'),
-      path.resolve(__dirname, './src/index.tsx'),
+      path.resolve(__dirname, './src/client.tsx'),
     ]),
     lib: [
       'react',
@@ -90,15 +101,13 @@ const config = {
       'material-ui/RaisedButton',
       'material-ui/FlatButton',
     ],
-    'sw-toolbox': [
-      'sw-toolbox/sw-toolbox.js',
-    ],
   },
 
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: env.isProd ? '[name]_[chunkhash].js' : '[name]_[hash].js',
     publicPath: buildPath,
+    libraryTarget: 'umd',
   },
 
   resolve: {
@@ -155,14 +164,17 @@ const config = {
         ],
         use: [...globalCSSLoaders, ...sassLoaders],
       },
-      {
-        test: /\.html$/,
-        use: 'html',
-      },
     ],
   },
 
   plugins: compact([
+    new StaticSiteGeneratorPlugin(
+      'main',
+      ['/index.html'],
+      {
+        pkg,
+      }
+    ),
     new webpack.LoaderOptionsPlugin({
       options: {
         context: __dirname,
@@ -199,19 +211,9 @@ const config = {
     dashboard ? new DashboardPlugin(dashboard.setData) : null,
     fail,
     new webpack.optimize.CommonsChunkPlugin({
-      names: ['common'],
+      name: 'common',
+      chunks: ['bundle', 'lib'],
       minSize: 100000,
-    }),
-    new WebpackHTMLPlugin({
-      filename: 'index.html',
-      template: path.resolve(__dirname, 'src/index.html'),
-      inject: 'body',
-      minify: env.isProduction ? {
-        html5: true,
-        collapseBooleanAttributes: true,
-        collapseInlineTagWhitespace: true,
-        collapseWhitespace: true,
-      } : false,
     }),
     new webpack.ProvidePlugin({
       Promise: 'bluebird',
