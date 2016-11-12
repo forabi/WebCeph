@@ -1,5 +1,5 @@
 {
-  "name": "case-wizard",
+  "name": "webceph",
   "version": "1.0.0",
   "description": "",
   "scripts": {
@@ -102,6 +102,7 @@
     "node-sass": "^3.10.1",
     "postcss-loader": "^0.13.0",
     "sass-loader": "^4.0.2",
+    "static-site-generator-webpack-plugin": "^3.1.0",
     "style-loader": "^0.13.1",
     "svg-react-loader": "^0.4.0-beta.2",
     "svgo-loader": "^1.1.0",
