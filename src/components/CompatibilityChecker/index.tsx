@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import map from 'lodash/map';
 import Dialog from 'material-ui/Dialog';
 import ListItem from 'material-ui/List/ListItem';
