@@ -90,9 +90,6 @@ const config = {
       'material-ui/RaisedButton',
       'material-ui/FlatButton',
     ],
-    'sw-toolbox': [
-      'sw-toolbox/sw-toolbox.js',
-    ],
   },
 
   output: {
