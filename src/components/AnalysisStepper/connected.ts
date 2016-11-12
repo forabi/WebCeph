@@ -17,7 +17,7 @@ import {
 } from 'store/reducers/workspace/analysis';
 import {
   isLandmarkRemovable,
-} from 'store/reducers/workspace/analysis/tracing';
+} from 'store/reducers/workspace/tracing';
 import {
   getHighlightedStep,
 } from 'store/reducers/workspace/canvas';

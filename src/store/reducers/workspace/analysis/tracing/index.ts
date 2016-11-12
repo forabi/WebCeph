@@ -12,18 +12,44 @@ import manualLandmarks, { getManualLandmarks } from './manualLandmarks';
 import { isImageFlippedX } from 'store/reducers/workspace/image';
 import { line, isCephaloPoint, isCephaloLine, isCephaloAngle } from 'analyses/helpers';
 import { isGeometricalPoint, isBehind } from 'utils/math';
+import { defaultImageId } from 'utils/config';
 
-type SkippedSteps = StoreEntries.workspace.analysis.tracing.steps.skipped;
-type TracingMode = StoreEntries.workspace.analysis.tracing.mode;
-type ScaleFactor = StoreEntries.workspace.analysis.tracing.scaleFactor;
+type TracingData = StoreEntries.workspace.tracing;
 
-const defaultTracingMode: TracingMode = 'assisted';
-const defaultSkippedSteps: SkippedSteps = { };
-const defaultScaleFactor: ScaleFactor = null;
+const defaultTracingData: TracingData = {
+  [defaultImageId]: {
+    mode: 'assisted',
+    scaleFactor: null,
+    manualLandmarks: {
+
+    },
+    skippedSteps: {
+
+    },
+  },
+};
 
 const KEY_TRACING_MODE = StoreKeys.tracingMode;
 const KEY_SKIPPED_STEPS = StoreKeys.skippedSteps;
 const KEY_SCALE_FACTOR = StoreKeys.scaleFactor;
+
+const tracingDataReducer = handleActions<
+  TracingData,
+  Payloads.setTracingMode |
+  Payloads.addManualLandmark | Payloads.removeManualLandmark |
+  Payloads.setScaleFactor | Payloads.unsetScaleFactor |
+  Payloads.skipStep | Payloads.unskipStep
+  >(
+  {
+    [Event.SET_TRACING_MODE_REQUESTED]: (
+      state: TracingData,
+      { payload, type }: Action<Payloads.setTracingMode>,
+    ) => {
+      return state;
+    },
+  },
+  defaultTracingData,
+);
 
 const tracingMode = handleActions<TracingMode, Payloads.setTracingMode>(
   {
