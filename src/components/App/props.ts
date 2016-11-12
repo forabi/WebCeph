@@ -3,8 +3,9 @@ export interface OwnProps {
 }
 
 export interface StateProps {
-  isSummaryShown: boolean;
-  shouldShowStepper: boolean;
+  isSummaryShown?: boolean;
+  shouldShowStepper?: boolean;
+  isReady: boolean;
 }
 
 export interface DispatchProps {
