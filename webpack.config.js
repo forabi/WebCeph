@@ -56,44 +56,12 @@ const config = {
 
   devtool: env.isDev ? 'eval' : false,
 
-  entry: {
-    bundle: compact([
-      hot('react-hot-loader/patch'),
-      hot('webpack/hot/only-dev-server'),
-      hot('webpack-hot-middleware/client'),
-      path.resolve(__dirname, './src/index.tsx'),
-    ]),
-    lib: [
-      'react',
-      'react-dom',
-      'reselect',
-      'redux',
-      'react-redux',
-      'redux-actions',
-      'redux-undo',
-      'lodash/assign',
-      'lodash/map',
-      'lodash/findIndex',
-      'lodash/attempt',
-      'lodash/curry',
-      'lodash/reduce',
-      'lodash/find',
-      'lodash/uniqBy',
-      'lodash/isEmpty',
-      'lodash/omit',
-      'lodash/filter',
-      'lodash/memoize',
-      'material-ui/CircularProgress',
-      'material-ui/Dialog',
-      'material-ui/List/List',
-      'material-ui/List/ListItem',
-      'material-ui/RaisedButton',
-      'material-ui/FlatButton',
-    ],
-    'sw-toolbox': [
-      'sw-toolbox/sw-toolbox.js',
-    ],
-  },
+  entry: compact([
+    hot('react-hot-loader/patch'),
+    hot('webpack/hot/only-dev-server'),
+    hot('webpack-hot-middleware/client'),
+    path.resolve(__dirname, './src/index.tsx'),
+  ]),
 
   output: {
     path: path.resolve(__dirname, 'build'),
@@ -162,6 +130,8 @@ const config = {
     ],
   },
 
+  recordsOutputPath: path.join(__dirname, 'webpack', 'records.json'),
+
   plugins: compact([
     new webpack.LoaderOptionsPlugin({
       options: {
@@ -198,10 +168,10 @@ const config = {
     hot(new webpack.HotModuleReplacementPlugin()),
     dashboard ? new DashboardPlugin(dashboard.setData) : null,
     fail,
-    new webpack.optimize.CommonsChunkPlugin({
-      names: ['common'],
-      minSize: 100000,
-    }),
+    prod(new webpack.optimize.AggressiveSplittingPlugin({
+      minSize: 30000,
+      maxSize: 50000,
+    })),
     new WebpackHTMLPlugin({
       filename: 'index.html',
       template: path.resolve(__dirname, 'src/index.html'),
