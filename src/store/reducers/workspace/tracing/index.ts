@@ -1,129 +1,31 @@
 import assign from 'lodash/assign';
-import omit from 'lodash/omit';
 import map from 'lodash/map';
 import every from 'lodash/every';
 import uniqBy from 'lodash/uniqBy';
 import negate from 'lodash/negate';
-import { handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
-import { Event, StoreKeys } from 'utils/constants';
-import { printUnexpectedPayloadWarning } from 'utils/debug';
 import manualLandmarks, { getManualLandmarks } from './manualLandmarks';
 import { isImageFlippedX } from 'store/reducers/workspace/image';
 import { line, isCephaloPoint, isCephaloLine, isCephaloAngle } from 'analyses/helpers';
 import { isGeometricalPoint, isBehind } from 'utils/math';
-import { defaultImageId } from 'utils/config';
 
-type TracingData = StoreEntries.workspace.tracing;
+import scaleFactor, { getScaleFactor } from './scaleFactor';
+import skippedSteps from './skippedSteps';
+import mode from './mode';
+import data from './data';
 
-const defaultTracingData: TracingData = {
-  [defaultImageId]: {
-    mode: 'assisted',
-    scaleFactor: null,
-    manualLandmarks: {
-
-    },
-    skippedSteps: {
-
-    },
-  },
-};
-
-const KEY_TRACING_MODE = StoreKeys.tracingMode;
-const KEY_SKIPPED_STEPS = StoreKeys.skippedSteps;
-const KEY_SCALE_FACTOR = StoreKeys.scaleFactor;
-
-const tracingDataReducer = handleActions<
-  TracingData,
-  Payloads.setTracingMode |
-  Payloads.addManualLandmark | Payloads.removeManualLandmark |
-  Payloads.setScaleFactor | Payloads.unsetScaleFactor |
-  Payloads.skipStep | Payloads.unskipStep
-  >(
-  {
-    [Event.SET_TRACING_MODE_REQUESTED]: (
-      state: TracingData,
-      { payload, type }: Action<Payloads.setTracingMode>,
-    ) => {
-      return state;
-    },
-  },
-  defaultTracingData,
+export default assign(
+  { },
+  mode,
+  scaleFactor,
+  data,
+  skippedSteps,
 );
-
-const tracingMode = handleActions<TracingMode, Payloads.setTracingMode>(
-  {
-    [Event.SET_TRACING_MODE_REQUESTED]: (state, { payload: mode, type }) => {
-      if (mode === undefined) {
-        printUnexpectedPayloadWarning(type, state);
-        return state;
-      }
-      return mode;
-    },
-  },
-  defaultTracingMode,
-);
-
-const skippedSteps = handleActions<
-  SkippedSteps,
-  Payloads.skipStep | Payloads.unskipStep
->(
-  {
-    [Event.SKIP_MANUAL_STEP_REQUESTED]: (state, { payload: step, type }) => {
-      if (step === undefined) {
-        printUnexpectedPayloadWarning(type, state);
-        return state;
-      }
-      return assign({ }, state, { [step]: true });
-    },
-    [Event.UNSKIP_MANUAL_STEP_REQUESTED]: (state, { payload: step, type }) => {
-      if (step === undefined) {
-        printUnexpectedPayloadWarning(type, state);
-        return state;
-      }
-      return omit(state, step);
-    },
-    [Event.RESET_WORKSPACE_REQUESTED]: () => defaultSkippedSteps,
-  },
-  defaultSkippedSteps,
-);
-
-const scaleFactorReducer = handleActions<
-  ScaleFactor,
-  Payloads.setScaleFactor | Payloads.unsetScaleFactor
->(
-  {
-    [Event.SET_SCALE_FACTOR_REQUESTED]: (state, { payload: scaleFactor, type }) => {
-      if (scaleFactor === undefined) {
-        printUnexpectedPayloadWarning(type, state);
-        return state;
-      }
-      return scaleFactor;
-    },
-    [Event.UNSET_SCALE_FACTOR_REQUESTED]: (state, { payload, type }) => {
-      if (payload !== undefined) {
-        printUnexpectedPayloadWarning(type, state);
-        return state;
-      }
-      return null;
-    },
-    [Event.RESET_WORKSPACE_REQUESTED]: () => defaultScaleFactor,
-  },
-  defaultScaleFactor,
-);
-
-export default assign({
-  [KEY_TRACING_MODE]: tracingMode,
-  [KEY_SKIPPED_STEPS]: skippedSteps,
-  [KEY_SCALE_FACTOR]: scaleFactorReducer,
-}, manualLandmarks);
 
 export const isLandmarkRemovable = createSelector(
   getManualLandmarks,
   ({ present: manualLandmarks }) => (symbol: string) => manualLandmarks[symbol] !== undefined,
 );
-
-export const getScaleFactor = (state: GenericState): ScaleFactor => state[KEY_SCALE_FACTOR];
 
 export const getCephaloMapper = createSelector(
   getManualLandmarks,

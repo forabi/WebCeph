@@ -10,7 +10,8 @@ export const StoreKeys = {
   manualLandmarks: 'cephalo.workspace.analysis.tracing.landmarks.manual',
   scaleFactor: 'cephalo.workspace.analysis.tracing.scaleFactor',
   tracingMode: 'cephalo.workspace.analysis.tracing.mode',
-  skippedSteps: 'cephalo.workspace.analysis.tracing.steps.skipped',
+  tracingData: 'cephalo.workspace.analysis.tracing.data',
+  skippedSteps: 'cephalo.workspace.analysis.tracing.skipped',
   highlightedStep: 'cephalo.workspace.canvas.highlightedStep',
   scaleValue: 'cephalo.workspace.canvas.scale.value',
   scaleOrigin: 'cephalo.workspace.canvas.scale.origin',
@@ -36,7 +37,7 @@ export const StoreKeys = {
   isAnalysisLoading: 'cephalo.workspace.analysis.isLoading',
   analysisLoadError: 'cephalo.workspace.analysis.loadError',
   workers: 'cephalo.workspace.workers',
-}
+};
 
 /**
  * Events are just Redux actions. 

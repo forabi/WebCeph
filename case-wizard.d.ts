@@ -277,17 +277,23 @@ declare namespace StoreEntries {
       }
     }
 
-    type tracing = {
-      [imageId: string]: {
-        mode: TracingMode;
-        scaleFactor: number | null;
-        manualLandmarks: {
+    namespace tracing {
+      type mode = {
+        [imageId: string]: TracingMode;
+      };
+      type scaleFactor = {
+        [imageId: string]: number | null;
+      };
+      type manualLandmarks = {
+        [imageId: string]: {
           [symbol: string]: GeometricalObject;
         };
-        skippedSteps: {
+      };
+      type skippedSteps = {
+        [imageId: string]: {
           [symbol: string]: true;
         };
-      }
+      };
     }
 
     type workers = {
@@ -344,19 +350,24 @@ declare namespace Payloads {
   type isCheckingCompatiblity = void;
 
   type setTracingMode = {
-    stageId: string;
+    imageId: ImageId;
     mode: TracingMode;
   }
 
   type setScaleFactor = {
-    stageId: string;
+    imageId: ImageId;
     value: number;
   };
 
-  /** Stage ID */
-  type unsetScaleFactor = string;
+  type unsetScaleFactor = {
+    imageId: ImageId;
+  };
 
-  type skipStep = string;
+  type skipStep = {
+    imageId: ImageId;
+    symbol: string;
+  };
+
   type unskipStep = skipStep;
 
   type missingFeatureDetected = MissingBrowserFeature;
@@ -364,14 +375,14 @@ declare namespace Payloads {
   type highlightStep = string;
   type unhighlightStep = void;
 
-  type setCursor = string;
-  type removeCursors = string[];
   type setScale = { scale: number, x?: number, y?: number };
   type setActiveTool = string;
-  type disableActiveTool = setActiveTool;
-  type enableTools = setActiveTool;
-  type removeActiveTool = string;
-  type updateCanvasSize = { top: number, left: number, width: number, height: number };
+  type updateCanvasSize = {
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  };
   type updateMousePosition = { x: number, y: number };
 
   type imageLoadSucceeded = {
