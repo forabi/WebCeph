@@ -92,8 +92,6 @@ const setData = handleActions<
   defaultData,
 );
 
-
-
 const setLoadError = handleActions<LoadError, Payloads.imageLoadFailed>({
   [Event.IGNORE_WORKSPACE_ERROR_REQUESTED]: (_, __) => null,
   [Event.LOAD_IMAGE_FAILED]: (state, { type, payload: error }) => {
