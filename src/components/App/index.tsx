@@ -8,6 +8,7 @@ import CommandPalette from 'components/CommandPalette/connected';
 import CompatibilityChecker from 'components/CompatibilityChecker/connected';
 import Menu from 'components/Menu/connected';
 import Toolbar from 'components/Toolbar/connected';
+import Progress from './Progress';
 
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -17,8 +18,9 @@ import * as cx from 'classnames';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import attempt from 'lodash/attempt';
+import identity from 'lodash/identity';
 
-import { compose, lifecycle, pure } from 'recompose';
+import { compose, lifecycle, pure, branch, renderComponent } from 'recompose';
 
 import Props from './props';
 
@@ -34,9 +36,15 @@ const addLifeCycleHooks = lifecycle({
   },
 });
 
-const enhance = compose<Props, State>(pure, addLifeCycleHooks);
+const showSpinner = branch(
+  ({ isReady }: Props) => !isReady,
+  renderComponent(Progress),
+  identity,
+);
 
-const App = enhance(({ isSummaryShown, shouldShowStepper }: Props) => (
+const enhance = compose<Props, State>(pure, addLifeCycleHooks, showSpinner);
+
+const App = enhance(({ isSummaryShown = false, shouldShowStepper = false }: Props) => (
   <MuiThemeProvider muiTheme={getMuiTheme()}>
     <div className={classes.root}>
       <CommandPalette className={classes.command_palette} />

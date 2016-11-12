@@ -12,6 +12,10 @@ import {
 } from './props';
 
 import {
+  isAppReady,
+} from 'store/reducers/env/init';
+
+import {
   areResultsShown,
   canShowResults,
 } from 'store/reducers/workspace/analysis';
@@ -34,6 +38,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
     return {
       isSummaryShown: areResultsShown(state) && canShowResults(state),
       shouldShowStepper: hasImage(state) || isImageLoading(state),
+      isReady: isAppReady(state),
     };
   };
 
