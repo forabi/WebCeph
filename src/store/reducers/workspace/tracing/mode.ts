@@ -16,8 +16,8 @@ const KEY_TRACING_MODE = StoreKeys.tracingMode;
 
 const tracingModeReducer = handleActions<
   State,
-  Payloads.setTracingMode |
-  >(
+  Payloads.setTracingMode
+>(
   {
     [Event.SET_TRACING_MODE_REQUESTED]: (
       state: State,

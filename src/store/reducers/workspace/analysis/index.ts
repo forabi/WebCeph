@@ -20,7 +20,7 @@ import tracing, {
   getCephaloMapper,
   getManualLandmarksHistory,
   getManualLandmarksOfAllStages,
-} from './tracing';
+} from 'store/reducers/workspace/tracing';
 
 import { StoreKeys, Event } from 'utils/constants';
 
