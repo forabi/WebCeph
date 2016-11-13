@@ -1,4 +1,4 @@
-type WCeph_v1 = {
+type WCephFile_v1 = {
   /** Mandatory version specifier, always 1. */
   v: 1;
 
@@ -6,6 +6,14 @@ type WCeph_v1 = {
    * A map of object IDs to the paths of files inside the ZIP
    */
   refs: {
+    /** Thumbnails */
+    thumbs: {
+      '64x64'?: string;
+      '128x128'?: string;
+      '256x256'?: string;
+      '512x512'?: string;
+    }
+    /** Actual images */
     images: {
       [imageId: string]: string;
     };
@@ -26,6 +34,7 @@ type WCeph_v1 = {
       contrast: number;
       tracing: {
         tracingMode: 'auto' | 'assisted' | 'manual';
+        scaleFactor: number | null;
         manualLandmarks: {
           [symbol: string]: GeometricalObject;
         };
@@ -43,9 +52,11 @@ type WCeph_v1 = {
 
   workspace: {
     mode: 'tracing' | 'superimposition';
+    activeImageId: string | null;
   }
 
   superimposition: {
+    mode: 'auto' | 'manual' | 'assisted';
     /** An order list of superimposed images. */
     imageIds: string[];
   };
