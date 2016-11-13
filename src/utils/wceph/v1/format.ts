@@ -1,4 +1,4 @@
-export const JSON_FILE_NAME = 'state.json';
+export const JSON_FILE_NAME = 'index.json';
 export const IMAGES_FOLDER_NAME = 'images';
 
 export type WCephJSON = {

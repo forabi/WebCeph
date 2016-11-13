@@ -1,19 +1,21 @@
 WCeph v1 File Format Specification
 ===================================
 
-
-File extension | File format
----------------|----------------
-`.wceph`       | ZIP
+WCeph Version 1 File Format |    |           
+---------------|------------------
+Version        | 1
+File Extension | `.wceph`
+File Format    | ZIP
+ZIP Encoding   | UTF-8
 
 ## ZIP file structure
 ```
 root
-|__ state.json
+|__ index.json
 |__ images
     |__ image1.png
     |__ image2.jpg
     |__ any_name.jpg  
 ```
 
-## `state.json` File
+## `index.json` File
