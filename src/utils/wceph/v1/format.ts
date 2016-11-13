@@ -1,6 +1,9 @@
-type WCephFile_v1 = {
+export const JSON_FILE_NAME = 'state.json';
+export const IMAGES_FOLDER_NAME = 'images';
+
+export type WCephJSON = {
   /** Mandatory version specifier, always 1. */
-  v: 1;
+  version: 1;
 
   /**
    * A map of object IDs to the paths of files inside the ZIP
@@ -22,6 +25,7 @@ type WCephFile_v1 = {
   /** Data indexed by image ID */
   data: {
     [imageId: string]: {
+      /** A null value indicates that the image type is not set or is unknown */
       type: (
         'lateral_cephalo' | 'frontal_cephalo' |
         'lateral_photograph' | 'frontal_photograph' |
@@ -29,11 +33,14 @@ type WCephFile_v1 = {
       );
       flipX: boolean;
       flipY: boolean;
-      invert: boolean;
+      /** Wether the image colors should be inverted */
+      invertColors: boolean;
+      /** A value between 0 and 1, defaults to 0.5 */
       brightness: number;
+      /** A value between 0 and 1, defaults to 0.5 */
       contrast: number;
       tracing: {
-        tracingMode: 'auto' | 'assisted' | 'manual';
+        mode: 'auto' | 'assisted' | 'manual';
         scaleFactor: number | null;
         manualLandmarks: {
           [symbol: string]: GeometricalObject;
@@ -48,12 +55,12 @@ type WCephFile_v1 = {
         activeId: string;
       }
     }
-  }
+  };
 
   workspace: {
-    mode: 'tracing' | 'superimposition';
+    mode?: 'tracing' | 'superimposition';
     activeImageId: string | null;
-  }
+  };
 
   superimposition: {
     mode: 'auto' | 'manual' | 'assisted';
@@ -71,4 +78,4 @@ type WCephFile_v1 = {
       };
     }
   };
-}
+};
