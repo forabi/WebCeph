@@ -12,12 +12,16 @@ import {
 } from 'actions/workspace';
 
 import {
-  getActiveAnalysisId,
+  getActiveAnalysisIdForImage,
   isAnalysisLoading,
 } from 'store/reducers/workspace/analysis';
+import {
+  getActiveImageParams,
+} from 'store/reducers/workspace/image';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: FinalState): StateProps => {
+    const params = getActiveImageParams(state);
     return {
       analyses: [
         'downs',
@@ -26,7 +30,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
         'dental',
         'bjork',
       ],
-      currentAnalysisId: getActiveAnalysisId(state),
+      currentAnalysisId: getActiveAnalysisIdForImage(state, params),
       isLoading: isAnalysisLoading(state),
     };
   };

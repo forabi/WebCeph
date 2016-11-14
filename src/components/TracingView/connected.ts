@@ -15,10 +15,10 @@ import {
 } from './props';
 
 import {
-  getImageSizeById,
-  getImageDataById,
-  getImageBrightnessById,
-  getImageContrastById,
+  getImageSize,
+  getImageData,
+  getImageBrightness,
+  getImageContrast,
   isImageFlippedX,
   isImageFlippedY,
   isImageInverted,
@@ -44,23 +44,24 @@ import curry from 'lodash/curry';
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: FinalState, { imageId }: OwnProps) => {
     const origin = getScaleOrigin(state);
-    const { height: canvasHeight, width: canvasWidth } = getCanvasSize(state);
-    const { height: imageHeight, width: imageWidth } = getImageSizeById(state)(imageId);
+    const selectorProps = { imageId };
+    const { height: canvasHeight, width: canvasWidth } = getCanvasSize(state, selectorProps);
+    const { height: imageHeight, width: imageWidth } = getImageSize(state, selectorProps);
     return {
       canvasHeight,
       canvasWidth,
-      src: getImageDataById(state)(imageId) as string,
+      src: getImageData(state, selectorProps) as string,
       imageWidth: imageWidth as number,
       imageHeight: imageHeight as number,
       scale: getScale(state),
       scaleOriginX: origin !== null ? origin.x : null,
       scaleOriginY: origin !== null ? origin.y : null,
-      brightness: getImageBrightnessById(state)(imageId),
-      contrast: getImageContrastById(state)(imageId),
-      isFlippedX: isImageFlippedX(state)(imageId),
-      isFlippedY: isImageFlippedY(state)(imageId),
-      landmarks: getAllLandmarks(state),
-      isInverted: isImageInverted(state)(imageId),
+      brightness: getImageBrightness(state, selectorProps),
+      contrast: getImageContrast(state, selectorProps),
+      isFlippedX: isImageFlippedX(state, selectorProps),
+      isFlippedY: isImageFlippedY(state, selectorProps),
+      landmarks: getAllLandmarks(state, selectorProps),
+      isInverted: isImageInverted(state, selectorProps),
       highlightedLandmarks: getHighlightedLandmarks(state),
       activeTool: curry(getActiveToolCreator(state))(state),
     };

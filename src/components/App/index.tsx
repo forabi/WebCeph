@@ -14,7 +14,6 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 import * as cx from 'classnames';
-
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import attempt from 'lodash/attempt';
@@ -42,19 +41,41 @@ const showSpinner = branch(
   identity,
 );
 
-const enhance = compose<Props, State>(pure, addLifeCycleHooks, showSpinner);
-
-const App = enhance(({ isSummaryShown = false, shouldShowStepper = false }: Props) => (
+const AppWithNoImage = ({ isImageLoading }: Props) => (
   <MuiThemeProvider muiTheme={getMuiTheme()}>
     <div className={classes.root}>
       <CommandPalette className={classes.command_palette} />
-      <AnalysisResultsViewer open={isSummaryShown} />
       <CompatibilityChecker />
       <div className={classes.container}>
         <Menu className={classes.menu} />
         <div className={classes.row}>
           <Workspace className={classes.main} />
-          <div className={cx(classes.sidebar, { [classes.sidebar_hidden]: !shouldShowStepper })}>
+          <div className={cx(classes.sidebar, { [classes.sidebar_hidden]: !isImageLoading })} />
+        </div>
+      </div>
+    </div>
+  </MuiThemeProvider>
+);
+
+const noImage = branch(
+  ({ hasActiveImage }: Props) => !hasActiveImage,
+  renderComponent(AppWithNoImage),
+  identity,
+);
+
+const enhance = compose<Props, State>(pure, addLifeCycleHooks, showSpinner, noImage);
+
+const App = enhance(({ isSummaryShown = false, hasActiveImage = false, isImageLoading = false, }: Props) => (
+  <MuiThemeProvider muiTheme={getMuiTheme()}>
+    <div className={classes.root}>
+      <CommandPalette className={classes.command_palette} />
+      <CompatibilityChecker />
+      <AnalysisResultsViewer open={isSummaryShown} />
+      <div className={classes.container}>
+        <Menu className={classes.menu} />
+        <div className={classes.row}>
+          <Workspace className={classes.main} />
+          <div className={cx(classes.sidebar, { [classes.sidebar_hidden]: !isImageLoading && !hasActiveImage })}>
             <AnalysisSelector className={classes.selector} />
             <AnalysisStepper className={classes.stepper} />
           </div>

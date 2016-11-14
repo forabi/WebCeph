@@ -8,7 +8,7 @@ import { isImageFlippedX } from 'store/reducers/workspace/image';
 import { line, isCephaloPoint, isCephaloLine, isCephaloAngle } from 'analyses/helpers';
 import { isGeometricalPoint, isBehind } from 'utils/math';
 
-import manualLandmarks, { getManualLandmarks } from './manualLandmarks';
+import manualLandmarks, { getManualLandmarksForImage, getManualLandmarksHistory } from './manualLandmarks';
 import scaleFactor, { getScaleFactor } from './scaleFactor';
 import skippedSteps from './skippedSteps';
 import mode from './mode';
@@ -22,15 +22,15 @@ export default assign(
 );
 
 export const isLandmarkRemovable = createSelector(
-  getManualLandmarks,
-  ({ present: manualLandmarks }) => (symbol: string) => manualLandmarks[symbol] !== undefined,
+  getManualLandmarksForImage,
+  (manualLandmarks) => (symbol: string) => manualLandmarks[symbol] !== undefined,
 );
 
 export const getCephaloMapper = createSelector(
-  getManualLandmarks,
+  getManualLandmarksForImage,
   getScaleFactor,
   isImageFlippedX,
-  ({ present: manual }, scaleFactor, isFlippedX): CephaloMapper => {
+  (manual, scaleFactor, isFlippedX): CephaloMapper => {
     const toPoint = (cephaloPoint: CephaloPoint) => {
       const { symbol } = cephaloPoint;
       if (!isCephaloPoint(cephaloPoint)) {
@@ -129,4 +129,4 @@ export const getCephaloMapper = createSelector(
   }
 );
 
-export { getManualLandmarks };
+export { getManualLandmarksForImage, getManualLandmarksHistory };

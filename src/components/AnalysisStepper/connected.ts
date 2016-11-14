@@ -20,6 +20,9 @@ import {
   isLandmarkRemovable,
 } from 'store/reducers/workspace/tracing';
 import {
+  getActiveImageParams,
+} from 'store/reducers/workspace/image';
+import {
   getHighlightedStep,
 } from 'store/reducers/workspace/canvas';
 import {
@@ -35,13 +38,14 @@ import {
 } from 'actions/workspace';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalState) => {
+  const params = getActiveImageParams(state);
   return {
-    steps: getActiveAnalysisSteps(state),
-    getStepState: getStepStateBySymbol(state),
-    getStepValue: getComputedValueBySymbol(state),
-    isStepRemovable: isLandmarkRemovable(state),
+    steps: getActiveAnalysisSteps(state, params),
+    getStepState: getStepStateBySymbol(state, params),
+    getStepValue: getComputedValueBySymbol(state, params),
+    isStepRemovable: isLandmarkRemovable(state, params),
     highlightedStep: getHighlightedStep(state),
-    stageId: getActiveTreatmentStageId(state),
+    stageId: getActiveTreatmentStageId(state, params),
   };
 };
 

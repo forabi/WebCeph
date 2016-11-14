@@ -10,17 +10,23 @@ import {
   DispatchProps,
   OwnProps,
 } from './props';
+
 import {
   getCategorizedAnalysisResults,
 } from 'store/reducers/workspace/analysis';
+
+import {
+  getActiveImageParams,
+} from 'store/reducers/workspace/image';
 
 import {
   hideAnalysisResults,
 } from 'actions/workspace';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalState) => {
+  const params = getActiveImageParams(state);
   return {
-    results: getCategorizedAnalysisResults(state),
+    results: getCategorizedAnalysisResults(state, params),
   };
 };
 

@@ -42,5 +42,8 @@ export default {
   [KEY_TRACING_SCALE_FACTOR]: scaleFactorReducer,
 };
 
+const getAllScaleFactors = (state: GenericState): State => state[KEY_TRACING_SCALE_FACTOR];
 
-export const getScaleFactor = (state: GenericState): State => state[KEY_TRACING_SCALE_FACTOR];
+export const getScaleFactor = (
+  state: GenericState, { imageId }: { imageId: ImageId }
+) => getAllScaleFactors(state)[imageId];
