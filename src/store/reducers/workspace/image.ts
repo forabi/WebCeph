@@ -335,11 +335,11 @@ export const isImageInverted = createSelector(
   (image) => image.invert,
 );
 
-export const getActiveImageParams = memoize(
-  (state: GenericState): { imageId: ImageId | null } => {
+export const getActiveImageQuery = memoize(
+  (state: GenericState): SelectorQuery => {
     const imageId = getActiveImageId(state);
     if (__DEBUG__ && imageId === null) {
-      console.warn('getActiveImageParams was called, but no active image is selected.');
+      console.warn('getActiveImageQuery was called, but no active image is selected.');
     }
     return {
       imageId,

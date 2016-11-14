@@ -44,24 +44,24 @@ import curry from 'lodash/curry';
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: FinalState, { imageId }: OwnProps) => {
     const origin = getScaleOrigin(state);
-    const params = { imageId };
-    const { height: canvasHeight, width: canvasWidth } = getCanvasSize(state, params);
-    const { height: imageHeight, width: imageWidth } = getImageSize(state, params);
+    const query = { imageId };
+    const { height: canvasHeight, width: canvasWidth } = getCanvasSize(state, query);
+    const { height: imageHeight, width: imageWidth } = getImageSize(state, query);
     return {
       canvasHeight,
       canvasWidth,
-      src: getImageData(state, params) as string,
+      src: getImageData(state, query) as string,
       imageWidth: imageWidth as number,
       imageHeight: imageHeight as number,
       scale: getScale(state),
       scaleOriginX: origin !== null ? origin.x : null,
       scaleOriginY: origin !== null ? origin.y : null,
-      brightness: getImageBrightness(state, params),
-      contrast: getImageContrast(state, params),
-      isFlippedX: isImageFlippedX(state, params),
-      isFlippedY: isImageFlippedY(state, params),
-      landmarks: getAllLandmarks(state, params),
-      isInverted: isImageInverted(state, params),
+      brightness: getImageBrightness(state, query),
+      contrast: getImageContrast(state, query),
+      isFlippedX: isImageFlippedX(state, query),
+      isFlippedY: isImageFlippedY(state, query),
+      landmarks: getAllLandmarks(state, query),
+      isInverted: isImageInverted(state, query),
       highlightedLandmarks: getHighlightedLandmarks(state),
       activeTool: curry(getActiveToolCreator(state))(state),
     };

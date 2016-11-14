@@ -13,17 +13,17 @@ import {
 } from './props';
 
 import {
-  getActiveImageParams,
+  getActiveImageQuery,
   getImageData,
   getImageSize,
 } from 'store/reducers/workspace/image';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: FinalState, ) => {
-    const params = getActiveImageParams(state);
-    const { width, height } = getImageSize(state, params);
+    const query = getActiveImageQuery(state);
+    const { width, height } = getImageSize(state, query);
     return {
-      src: getImageData(state, params),
+      src: getImageData(state, query),
       height, width,
     };
   };

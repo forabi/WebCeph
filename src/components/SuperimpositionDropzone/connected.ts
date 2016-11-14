@@ -13,7 +13,7 @@ import {
 } from './props';
 
 import {
-  getActiveImageParams,
+  getActiveImageQuery,
   getImageData,
   getImageSize,
   isImageFlippedX,
@@ -28,11 +28,11 @@ import {
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: FinalState, { margin }: OwnProps) => {
-    const params = getActiveImageParams(state);
+    const query = getActiveImageQuery(state);
     const { top } = getCanvasPosition(state);
     const { width: canvasWidth } = getCanvasSize(state);
     const { x, y } = getMousePosition(state);
-    const { width: imageWidth, height: imageHeight } = getImageSize(state, params);
+    const { width: imageWidth, height: imageHeight } = getImageSize(state, query);
     const width = 200;
     const height = 200;
     return {
@@ -44,8 +44,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
       top: top + margin,
       left: canvasWidth - width - margin,
       imageHeight, imageWidth,
-      isFlippedX: isImageFlippedX(state, params),
-      isFlippedY: isImageFlippedY(state, params),
+      isFlippedX: isImageFlippedX(state, query),
+      isFlippedY: isImageFlippedY(state, query),
     };
   };
 

@@ -181,6 +181,10 @@ type WorkerUpdate = {
   error?: null | GenericError;
 }
 
+type SelectorQuery = {
+  imageId: ImageId | null;
+}
+
 type TracingMode = 'auto' | 'manual' | 'assisted';
 type SuperimpostionMode = 'auto' | 'manual' | 'assisted';
 type WorkspaceMode = 'tracing' | 'superimposition';

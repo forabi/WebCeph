@@ -16,7 +16,7 @@ import {
 } from 'store/reducers/workspace/analysis';
 
 import {
-  getActiveImageParams,
+  getActiveImageQuery,
 } from 'store/reducers/workspace/image';
 
 import {
@@ -24,9 +24,9 @@ import {
 } from 'actions/workspace';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalState) => {
-  const params = getActiveImageParams(state);
+  const query = getActiveImageQuery(state);
   return {
-    results: getCategorizedAnalysisResults(state, params),
+    results: getCategorizedAnalysisResults(state, query),
   };
 };
 
