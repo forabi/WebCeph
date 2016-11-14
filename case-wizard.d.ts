@@ -418,7 +418,7 @@ namespace WCeph {
    * A WCeph File importer recieves the file to be imported along with any import options and
    * returns an array of actions to be dispatched in order.
    */
-  type Importer = (file: File, options: ImportOptions) => Promise<Action[]>;
+  type Importer = (file: File, options: ImportOptions) => Promise<Action<any>[]>;
 
 
   type ExportOptions = {
