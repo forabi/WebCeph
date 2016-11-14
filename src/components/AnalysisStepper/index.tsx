@@ -17,8 +17,8 @@ import { getDescriptionForStep, getTitleForStep } from './strings';
 
 const classes = require('./style.scss');
 
-const ICON_DONE       = <IconDone color='green'/>;
-const ICON_CURRENT    = <IconPlayArrow color='blue' />;
+const ICON_DONE       = <IconDone color="green"/>;
+const ICON_CURRENT    = <IconPlayArrow color="blue" />;
 const ICON_PENDING    = <IconHourglass />;
 const ICON_EVALUATING = <IconHourglass className={classes.icon_pending__evaluating} />;
 
