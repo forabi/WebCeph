@@ -2,7 +2,7 @@ import { handleActions } from 'redux-actions';
 import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 
-import { createSelector } from 'reselect';
+import { createSelector, createStructuredSelector } from 'reselect';
 
 import assign from 'lodash/assign';
 import some from 'lodash/some';
@@ -301,14 +301,10 @@ export const getImageData = createSelector(
   (image) => image.data,
 );
 
-export const getImageSize = createSelector(
-  getImageWidth,
-  getImageHeight,
-  (width, height) => ({
-    width,
-    height,
-  }),
-);
+export const getImageSize = createStructuredSelector({
+  width: getImageWidth,
+  height: getImageHeight,
+});
 
 export const getImageBrightness = createSelector(
   getImage,
