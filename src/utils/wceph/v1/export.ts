@@ -27,7 +27,7 @@ const createExport: WCeph.Exporter = async (state, options) => {
   const isInverted = isImageFlippedY(state);
   const getScaleFactor = getScaleFactorById(state);
   const getTracingMode = getTracingModeById(state);
-  const getManualLandmarks = getSManualLandmarksById(state);
+  const getManualLandmarks = getManualLandmarksById(state);
   const getSkippedSteps = getSkippedStepsById(state);
   const getActiveAnalysisId = getActiveAnalysisById(state);
 
