@@ -118,7 +118,7 @@ export const isAnalysisLoading = (state: GenericState): IsAnalysisLoading => sta
 import downs from 'analyses/downs';
 import basic from 'analyses/basic';
 import bjork from 'analyses/bjork';
-import common from 'analyses/basic';
+import common from 'analyses/common';
 import dental from 'analyses/dental';
 
 const analyses: { [id: string]: Analysis } = {
@@ -157,7 +157,6 @@ export const getActiveAnalysisSteps = createSelector(
   (analysis) => analysis === null ? [] : getStepsForAnalysis(analysis),
 );
 
-
 export const getAllPossibleActiveAnalysisSteps = createSelector(
   getActiveAnalysis,
   (analysis) => analysis === null ? [] : getStepsForAnalysis(analysis, false),
@@ -173,7 +172,6 @@ export const findStepBySymbol = createSelector(
     ) || null;
   }
 );
-
 
 export const getManualSteps = createSelector(
   getActiveAnalysisSteps,
