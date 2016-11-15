@@ -107,6 +107,10 @@ const config = {
       path.join(__dirname, 'src'),
       'node_modules',
     ],
+    alias: {
+      react: 'preact-compat',
+      'react-dom': 'preact-compat',
+    },
   },
 
   module: {
