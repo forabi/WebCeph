@@ -41,7 +41,7 @@ type LoadError = StoreEntries.workspace.analysis.loadError;
 type AreResultsShown = StoreEntries.workspace.analysis.results.areShown;
 type IsAnalysisLoading = StoreEntries.workspace.analysis.isLoading;
 
-const defaultAnalysisId: AnalysisId = null;
+const defaultAnalysisId: AnalysisId = { };
 
 const activeAnalysisIdReducer = handleActions<AnalysisId, any>(
   {
@@ -179,7 +179,6 @@ export const findStepBySymbol = createSelector(
     ) || null;
   }
 );
-
 
 export const getManualSteps = createSelector(
   getActiveAnalysisSteps,
@@ -450,7 +449,7 @@ export const getCategorizedAnalysisResults = createSelector(
                 stdDev,
                 norm,
               };
-            }
+            },
           ))),
         )),
       }),
