@@ -16,10 +16,9 @@ import { printUnexpectedPayloadWarning } from 'utils/debug';
 
 import tracing, {
   isLandmarkRemovable,
-  getActiveStageManualLandmarks,
   getCephaloMapper,
+  getManualLandmarksForImage,
   getManualLandmarksHistory,
-  getManualLandmarksOfAllStages,
 } from 'store/reducers/workspace/tracing';
 
 import { StoreKeys, Event } from 'utils/constants';
@@ -42,7 +41,7 @@ type LoadError = StoreEntries.workspace.analysis.loadError;
 type AreResultsShown = StoreEntries.workspace.analysis.results.areShown;
 type IsAnalysisLoading = StoreEntries.workspace.analysis.isLoading;
 
-const defaultAnalysisId: AnalysisId = null;
+const defaultAnalysisId: AnalysisId = { };
 
 const activeAnalysisIdReducer = handleActions<AnalysisId, any>(
   {
@@ -105,10 +104,17 @@ export default assign({
 
 export const areResultsShown = (state: GenericState): AreResultsShown => state[KEY_ARE_RESULTS_SHOWN];
 
-export const getActiveAnalysisId = (state: GenericState): AnalysisId => state[KEY_ACTIVE_ANALYSIS_ID];
+export const getActiveAnalysisIdForAllImages = (
+  state: GenericState,
+) => state[KEY_ACTIVE_ANALYSIS_ID];
+
+export const getActiveAnalysisIdForImage = (
+  state: GenericState,
+  { imageId }: { imageId: ImageId },
+) => getActiveAnalysisIdForAllImages(state)[imageId];
 
 export const isAnalysisSet = createSelector(
-  getActiveAnalysisId,
+  getActiveAnalysisIdForImage,
   (id) => id !== null,
 );
 
@@ -130,7 +136,7 @@ const analyses: { [id: string]: Analysis } = {
 };
 
 export const getActiveAnalysis = createSelector(
-  getActiveAnalysisId,
+  getActiveAnalysisIdForImage,
   (analysisId): Analysis | null => {
     if (analysisId !== null) {
       return analyses[analysisId] as Analysis;
@@ -180,7 +186,7 @@ export const getManualSteps = createSelector(
 
 export const getExpectedNextManualLandmark = createSelector(
   getManualSteps,
-  getActiveStageManualLandmarks,
+  getManualLandmarksForImage,
   (manualSteps, manualLandmarks): CephaloLandmark | null => (find(
     manualSteps,
     step => manualLandmarks[step.symbol] === undefined,
@@ -188,7 +194,7 @@ export const getExpectedNextManualLandmark = createSelector(
 );
 
 export const getManualStepState = createSelector(
-  getActiveStageManualLandmarks,
+  getManualLandmarksForImage,
   getExpectedNextManualLandmark,
   (manualLandmarks, next) => (symbol: string): StepState => {
     if (manualLandmarks[symbol] !== undefined) {
@@ -262,7 +268,7 @@ export const getAutomaticLandmarks = createSelector(
 );
 
 export const getAllLandmarks = createSelector(
-  getActiveStageManualLandmarks,
+  getManualLandmarksForImage,
   getAutomaticLandmarks,
   (manual, automatic) => {
     return assign({ }, manual, automatic);
@@ -442,7 +448,7 @@ export const getCategorizedAnalysisResults = createSelector(
                 stdDev,
                 norm,
               };
-            }
+            },
           ))),
         )),
       }),
@@ -457,7 +463,6 @@ export const canShowResults = createSelector(
 
 export {
   isLandmarkRemovable,
-  getActiveStageManualLandmarks,
-  getManualLandmarksOfAllStages,
+  getManualLandmarksForImage,
   getManualLandmarksHistory,
 };

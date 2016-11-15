@@ -37,7 +37,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: FinalState) => {
     return {
       isSummaryShown: areResultsShown(state) && canShowResults(state),
-      shouldShowStepper: hasAnyImage(state) || isAnyImageLoading(state),
+      hasActiveImage: hasAnyImage(state),
+      isImageLoading: isAnyImageLoading(state),
       isReady: isAppReady(state),
     };
   };

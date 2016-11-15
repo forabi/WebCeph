@@ -10,9 +10,9 @@ import {
   OwnProps,
 } from './props';
 import { hasAnyImage, isAnyImageLoading, getActiveImageId } from 'store/reducers/workspace/image';
-import {
-  getSuperimposedImageIdsInOrder,
-} from 'store/reducers/workspace/superimposition';
+// import {
+//   getSuperimposedImageIdsInOrder,
+// } from 'store/reducers/workspace/superimposition';
 import { getWorkspaceMode } from 'store/reducers/workspace';
 import { shouldShowLens } from 'store/reducers/workspace/canvas';
 import { canvasResized } from 'actions/workspace';
@@ -21,7 +21,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalStat
   const mode = getWorkspaceMode(state);
   let imageIds: string[];
   if (mode === 'superimposition') {
-    imageIds = getSuperimposedImageIdsInOrder(state);
+    // imageIds = getSuperimposedImageIdsInOrder(state);
+    imageIds = [];
   } else {
     imageIds = [getActiveImageId(state)];
   }

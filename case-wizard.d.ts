@@ -181,6 +181,10 @@ type WorkerUpdate = {
   error?: null | GenericError;
 }
 
+type SelectorQuery = {
+  imageId: ImageId | null;
+}
+
 type TracingMode = 'auto' | 'manual' | 'assisted';
 type SuperimpostionMode = 'auto' | 'manual' | 'assisted';
 type WorkspaceMode = 'tracing' | 'superimposition';
@@ -245,7 +249,9 @@ declare namespace StoreEntries {
     namespace analysis {
       type isLoading = boolean;
       type loadError = GenericError | null;
-      type activeId = string | null;
+      type activeId = {
+        [imageId: string]: string | null;
+      }
 
       namespace results {
         type areShown = boolean;
@@ -266,7 +272,7 @@ declare namespace StoreEntries {
           flipY: boolean;
           contrast: number;
           brightness: number;
-          invert: number;
+          invert: boolean;
           scaleFactor: number | null;
           suggestions: {
             flipX: boolean;

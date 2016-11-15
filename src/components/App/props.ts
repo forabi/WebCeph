@@ -4,7 +4,8 @@ export interface OwnProps {
 
 export interface StateProps {
   isSummaryShown?: boolean;
-  shouldShowStepper?: boolean;
+  hasActiveImage?: boolean;
+  isImageLoading?: boolean;
   isReady: boolean;
 }
 

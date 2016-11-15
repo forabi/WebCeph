@@ -7,7 +7,7 @@ export interface DispatchProps {
 }
 
 export interface OwnProps extends React.HTMLAttributes<HTMLDivElement> {
-
+  margin: number;
 }
 
 export type ConnectableProps = StateProps & DispatchProps;

@@ -111,17 +111,21 @@ export default {
   ),
 };
 
-export const getManualLandmarksHistory = (state: GenericState): UndoableState<ManualLandmarks> => {
+export const getManualLandmarksHistory = (
+  state: GenericState
+): UndoableState<ManualLandmarks> => {
   return state[KEY_MANUAL_LANDMARKS];
 };
 
-export const getActiveStageManualLandmarks = createSelector(
-  getManualLandmarksOfAllStages,
-  getActiveTreatmentStageId,
-  (manual, stageId): { [symbol: string]: GeometricalObject } => {
-    if (manual[stageId] !== undefined) {
-      return manual[stageId];
-    }
-    return { };
-  },
+export const getPresentManualLandmarks = createSelector(
+  getManualLandmarksHistory,
+  ({ present }) => present,
 );
+
+export const getManualLandmarksForImage = (
+  state: GenericState,
+  { imageId }: { imageId: ImageId }
+) => {
+  return getPresentManualLandmarks(state)[imageId];
+};
+

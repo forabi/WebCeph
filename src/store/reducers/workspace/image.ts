@@ -2,10 +2,11 @@ import { handleActions } from 'redux-actions';
 import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 
-import { createSelector } from 'reselect';
+import { createSelector, createStructuredSelector } from 'reselect';
 
 import assign from 'lodash/assign';
 import some from 'lodash/some';
+import memoize from 'lodash/memoize';
 
 type Images = StoreEntries.workspace.images.data;
 type ActiveImageId = StoreEntries.workspace.images.activeId;
@@ -279,116 +280,68 @@ export const hasAnyImage = createSelector(
   },
 );
 
-export const getImageById = createSelector(
-  getAllImageData,
-  (images) => (imageId: ImageId) => {
-    return images[imageId];
-  },
+export const getImage = (
+  state: GenericState, { imageId }: { imageId: ImageId }
+) => {
+  return getAllImageData(state)[imageId];
+};
+
+export const getImageWidth = createSelector(
+  getImage,
+  (image) => image.width,
 );
 
-export const getImageWidthById = createSelector(
-  getImageById,
-  (getImage) => (imageId: ImageId) => {
-    return getImage(imageId).width;
-  },
+export const getImageHeight = createSelector(
+  getImage,
+  (image) => image.height,
 );
 
-export const getImageHeightById = createSelector(
-  getImageById,
-  (getImage) => (imageId: ImageId) => {
-    return getImage(imageId).height;
-  },
+export const getImageData = createSelector(
+  getImage,
+  (image) => image.data,
 );
 
-export const getImageDataById = createSelector(
-  getImageById,
-  (getImage) => (imageId: ImageId) => {
-    return getImage(imageId).data;
-  },
+export const getImageSize = createStructuredSelector({
+  width: getImageWidth,
+  height: getImageHeight,
+});
+
+export const getImageBrightness = createSelector(
+  getImage,
+  (image) => image.brightness,
 );
 
-export const getImageSizeById = createSelector(
-  getImageWidthById,
-  getImageHeightById,
-  (getWidth, getHeight) => (imageId: ImageId): { height: number | null, width: number | null } => ({
-    width: getWidth(imageId),
-    height: getHeight(imageId),
-  }),
-);
-
-export const getImageBrightnessById = createSelector(
-  getImageById,
-  (getImage) => (imageId: ImageId) => {
-    return getImage(imageId).brightness;
-  },
-);
-
-export const getImageContrastById = createSelector(
-  getImageById,
-  (getImage) => (imageId: ImageId) => {
-    return getImage(imageId).contrast;
-  },
+export const getImageContrast = createSelector(
+  getImage,
+  (image) => image.brightness,
 );
 
 export const isImageFlippedX = createSelector(
-  getImageById,
-  (getImage) => (imageId: ImageId) => {
-    return getImage(imageId).flipX;
-  },
+  getImage,
+  (image) => image.flipX,
 );
 
 export const isImageFlippedY = createSelector(
-  getImageById,
-  (getImage) => (imageId: ImageId) => {
-    return getImage(imageId).flipY;
-  },
+  getImage,
+  (image) => image.flipY,
 );
 
 export const isImageInverted = createSelector(
-  getImageById,
-  (getImage) => (imageId: ImageId) => {
-    return getImage(imageId).invert;
+  getImage,
+  (image) => image.invert,
+);
+
+export const getActiveImageQuery = memoize(
+  (state: GenericState): SelectorQuery => {
+    const imageId = getActiveImageId(state);
+    if (__DEBUG__ && imageId === null) {
+      console.warn('getActiveImageQuery was called, but no active image is selected.');
+    }
+    return {
+      imageId,
+    };
   },
 );
 
-export const getActiveImageData = createSelector(
-  getImageDataById,
-  getActiveImageId,
-  (fn, stageId) => fn(stageId),
-);
 
-export const getActiveImageSize = createSelector(
-  getImageSizeById,
-  getActiveImageId,
-  (fn, stageId) => fn(stageId),
-);
 
-export const getActiveImageBrightness = createSelector(
-  getImageBrightnessById,
-  getActiveImageId,
-  (fn, stageId) => fn(stageId),
-);
-
-export const getActiveImageContrast = createSelector(
-  getImageContrastById,
-  getActiveImageId,
-  (fn, stageId) => fn(stageId),
-);
-
-export const isActiveImageFlippedX = createSelector(
-  isImageFlippedX,
-  getActiveImageId,
-  (fn, stageId) => fn(stageId),
-);
-
-export const isActiveImageFlippedY = createSelector(
-  isImageFlippedY,
-  getActiveImageId,
-  (fn, stageId) => fn(stageId),
-);
-
-export const isActiveImageInverted = createSelector(
-  isImageInverted,
-  getActiveImageId,
-  (fn, stageId) => fn(stageId),
-);

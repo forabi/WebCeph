@@ -20,8 +20,9 @@ import {
   canUndo,
 } from 'store/reducers/workspace';
 import {
-  getImageBrightnessById,
-  getImageContrastById,
+  getActiveImageQuery,
+  getImageBrightness,
+  getImageContrast,
   isImageInverted,
 } from 'store/reducers/workspace/image';
 import {
@@ -35,11 +36,12 @@ import {
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: FinalState): StateProps => {
+    const query = getActiveImageQuery(state);
     return {
       activeToolId: getActiveToolId(state),
-      brightness: getImageBrightnessById(state),
-      contrast: getImageContrastById(state),
-      isImageInverted: isImageInverted(state),
+      brightness: getImageBrightness(state, query),
+      contrast: getImageContrast(state, query),
+      isImageInverted: isImageInverted(state, query),
       canEdit: canEdit(state),
       canRedo: canRedo(state),
       canUndo: canUndo(state),
