@@ -4,6 +4,18 @@ export enum ErrorCode {
 }
 
 export const StoreKeys = {
+  connectionIsOffline: 'env.connection.isOffline',
+  connectionIsSlow: 'env.connection.isSlow',
+  connectionIsMetered: 'env.connection.isMetered',
+
+  appUpdateProgress: 'env.app.update.progress',
+  appUpdateComplete: 'env.app.update.complete',
+  appUpdateError: 'env.app.update.error',
+
+  appCachingComplete: 'env.app.caching.complete',
+  appCachingProgress: 'env.app.caching.progress',
+  appCachingError: 'env.app.caching.error',
+
   compatibilityIsIgnored: 'env.compatiblity.isIgnored',
   compatiblityIsBeingChcecked: 'env.compatiblity.isBeingChecked',
   missingFeatures: 'env.compatiblity.missingFeatures',

@@ -185,6 +185,14 @@ type ExportFileOptions = any; // @TODO
 
 declare namespace StoreEntries {
   namespace env {
+    namespace connection {
+      type isOffline = boolean;
+    }
+    namespace app {
+      type isUpdating = boolean;
+      type isCaching = boolean;
+      type isAvailableOffline = boolean;
+    }
     namespace compatibility {
       type isIgnored = boolean;
       type isBeingChecked = boolean;
@@ -248,6 +256,32 @@ declare namespace StoreEntries {
 }
 
 declare namespace Payloads {
+  type setOfflineStatus = {
+    isOffline: boolean;
+    isSlow?: boolean;
+    isMetered?: boolean;
+  };
+
+  type setAppUpdateStatus = {
+    /**
+     * A null value indicates unknown progress,
+     * undefined indicates no change in value
+     * */
+    progress?: number | null;
+    complete: boolean;
+    error?: GenericError;
+  };
+
+  type setAppCachingStatus = {
+    /**
+     * A null value indicates unknown progress,
+     * undefined indicates no change in value
+     * */
+    progress?: number | null;
+    complete: boolean;
+    error?: GenericError;
+  };
+
   type exportFile = {
     format: ExportFileFormat;
     options?: ExportFileOptions;
