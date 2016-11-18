@@ -24,24 +24,29 @@ const hot = p => (env.isHot ? p : null);
 const dev = p => (env.isDev ? p : null);
 
 const localCSSLoaders = [
-  'style',
+  'style-loader',
   {
-    loader: 'css',
+    loader: 'css-loader',
     query: {
       module: true,
       localIdentName: '[name]_[local]_[hash:base64:5]',
     },
   },
-  'postcss',
+  'postcss-loader',
 ];
 
 const globalCSSLoaders = [
-  'style', 'css', 'postcss',
+  'style-loader',
+  'css-loader',
+  'postcss-loader',
 ];
 
 const sassLoaders = [
   {
-    loader: 'sass', query: { sourceMap: true },
+    loader: 'sass-loader',
+    query: {
+      sourceMap: true,
+    },
   },
 ];
 

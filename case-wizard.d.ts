@@ -180,8 +180,19 @@ type WorkerUpdate = {
 
 type TracingMode = 'auto' | 'manual' | 'assisted';
 
+type ExportFileFormat = 'wceph_v1' | 'jpeg';
+type ExportFileOptions = any; // @TODO
+
 declare namespace StoreEntries {
   namespace env {
+    namespace connection {
+      type isOffline = boolean;
+    }
+    namespace app {
+      type isUpdating = boolean;
+      type isCaching = boolean;
+      type isAvailableOffline = boolean;
+    }
     namespace compatibility {
       type isIgnored = boolean;
       type isBeingChecked = boolean;
@@ -245,6 +256,45 @@ declare namespace StoreEntries {
 }
 
 declare namespace Payloads {
+  type setOfflineStatus = {
+    isOffline: boolean;
+    isSlow?: boolean;
+    isMetered?: boolean;
+  };
+
+  type setAppUpdateStatus = {
+    /**
+     * A null value indicates unknown progress,
+     * undefined indicates no change in value
+     * */
+    progress?: number | null;
+    complete: boolean;
+    error?: GenericError;
+  };
+
+  type setAppCachingStatus = {
+    /**
+     * A null value indicates unknown progress,
+     * undefined indicates no change in value
+     * */
+    progress?: number | null;
+    complete: boolean;
+    error?: GenericError;
+  };
+
+  type exportFile = {
+    format: ExportFileFormat;
+    options?: ExportFileOptions;
+  };
+
+  type exportProgress = {
+    value: number,
+    data?: any; // @TODO;
+  }
+
+  type exportFileFailed = GenericError;
+  type exportFileSucceeded = void;
+
   interface addManualLandmark {
     symbol: string;
     value: GeometricalObject;
@@ -284,6 +334,7 @@ declare namespace Payloads {
   type imageLoadSucceeded = { data: string, height: number, width: number };
   type imageLoadFailed = { message: string; };
   type imageLoadRequested = File;
+  type imageLoadFromURLRequested = { url: string; };
   type analysisLoadFailed = GenericError;
   type analysisLoadRequested = string;
   type analysisLoadSucceeded = string;
@@ -404,6 +455,52 @@ interface EditorTool {
  * It recieves the dispatch function as first argument and the state as the second arguemtn.
  */
 type EditorToolCreator = (state: GenericState, dispatch: DispatchFunction) => EditorTool;
+
+type ExportProgressCallback = (
+  value: number,
+  data?: any, // @TODO
+) => void;
+
+namespace WCeph {
+  type ImportOptions = {
+    imagesToLoad?: string[];
+    loadTracingData?: boolean;
+    loadWorkspaceSettings?: boolean;
+    loadSuperimpositionState?: boolean;
+    treatmentStagesToLoad?: string[];
+  }
+
+  /**
+   * A WCeph File importer recieves the file to be imported along with any import options and
+   * returns an array of actions to be dispatched in order.
+   */
+  type Importer = (file: File, options: ImportOptions) => Promise<Action<any>[]>;
+
+
+  type ExportOptions = {
+    imagesToSave?: string[];
+    saveTracingData?: boolean;
+    saveWorkspaceSettings?: boolean;
+    saveSuperimpositionState?: boolean;
+    treatmentStagesToSave?: string[];
+    thumbs?: {
+      '64x64'?: boolean;
+      '128x128'?: boolean;
+      '256x256'?: boolean;
+      '512x512'?: boolean;
+    };
+  }
+
+  /**
+   * A WCeph File exporter recieves the application state along with any export options and
+   * returns an File blob to be saved.
+   */
+  type Exporter = (
+    state: GenericState,
+    options: ExportOptions,
+    progressCallback?: ExportProgressCallback,
+  ) => Promise<Blob>;
+}
 
 /* Browser compatiblity checking */
 type BrowserId = 'Chrome' | 'Firefox' | 'Opera' | 'Microsoft Edge' | 'Safari';

@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import Checkbox from 'material-ui/Checkbox';
-import Divider from 'material-ui/Divider';
+// import Checkbox from 'material-ui/Checkbox';
+// import Divider from 'material-ui/Divider';
 import FlatButton from 'material-ui/FlatButton';
-import Slider from 'material-ui/Slider';
+// import Slider from 'material-ui/Slider';
 
 import IconAddPoint from 'material-ui/svg-icons/content/add';
 import IconSelect from 'material-ui/svg-icons/action/help-outline';
@@ -13,6 +13,7 @@ import IconList from 'material-ui/svg-icons/action/list';
 import IconRedo from 'material-ui/svg-icons/content/redo';
 import IconUndo from 'material-ui/svg-icons/content/undo';
 import IconZoom from 'material-ui/svg-icons/action/zoom-in';
+import IconExport from 'material-ui/svg-icons/file/file-download';
 
 import * as cx from 'classnames';
 
@@ -33,10 +34,12 @@ const CephaloEditorToolbar = (props: ToolbarProps) => {
     onUndoClick,
     onRedoClick,
     // onFlipYClick,
-    onInvertToggle,
+    // onInvertToggle,
+    onExportClick,
     onToolButtonClick,
     onShowSummaryClick,
     canShowSummary,
+    canExport,
   } = props;
 
   const cannotEdit = !canEdit;
@@ -74,6 +77,12 @@ const CephaloEditorToolbar = (props: ToolbarProps) => {
         label="Summary"
         icon={<IconList />}
         onClick={onShowSummaryClick}
+      />
+      <FlatButton
+        disabled={!canExport}
+        label="Export"
+        icon={<IconExport />}
+        onClick={onExportClick}
       />
     </div>
   );

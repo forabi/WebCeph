@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "refs": {
+    "thumbs": {
+      "64x64": "/tumbs/64.png",
+      "128x128": "/tumbs/128.png",
+      "256x256": "/tumbs/256.png",
+      "512x512": "/tumbs/512.png"
+    },
+    "images": {
+      "image_1": "/images/image_1.jpg",
+      "image_2": "/images/image_2.bmp"
+    },
+    "data": {
+      "image_1": {
+        
+      }
+    }
+  }
+}

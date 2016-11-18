@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as Dropzone from 'react-dropzone';
+import * as cx from 'classnames';
 import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
 import join from 'lodash/join';
 import Props from './props';
 
@@ -11,31 +13,37 @@ const DropzonePlaceholder = require(
 
 class CephaloDropzone extends React.PureComponent<Props, { }> {
   refs: {
-    dropzone: React.ReactInstance & { open: () => void; }
+    dropzone: null | React.ReactInstance & { open: () => void; }
   };
 
-  private openFilePicker = () => this.refs.dropzone.open();
 
   render() {
     const {
       onFilesDropped,
-      supportedImageTypes = ['image/jpeg', 'image/png', 'image/bmp'],
+      onDemoButtonClick,
+      supportedImageTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/bmp',
+        'application/wceph',
+        'application/zip',
+      ],
       allowsMultipleFiles = false,
     } = this.props;
     return (
-      <Dropzone ref="dropzone"
+      <Dropzone
+        ref="dropzone"
         className={classes.dropzone}
         activeClassName={classes.dropzone__active}
         rejectClassName={classes.dropzone__reject}
         onDrop={onFilesDropped}
         multiple={allowsMultipleFiles}
-        accept={join(supportedImageTypes, ',')}
         disableClick
         disablePreview
       >
         <div className={classes.dropzone_placeholder}>
           <DropzonePlaceholder className={classes.dropzone_placeholder_image} />
-          <span className={classes.dropzone_placeholder_text}>
+          <span className={cx(classes.dropzone_placeholder_text, classes.text_center, classes.muted)}>
             To start tracing, drop a cephalometric radiograph here or
           </span>
           <RaisedButton
@@ -43,10 +51,29 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
             label="Click to pick an image"
             onClick={this.openFilePicker}
           />
+          <br />
+          <small
+            className={cx(classes.text_center, classes.muted)}
+          >
+            Don't have one around? Try a sample image from Wikipedia!
+          </small>
+          <FlatButton
+            secondary
+            primary
+            label="Load sample image"
+            onClick={onDemoButtonClick}
+          />
         </div>
       </Dropzone>
     );
   };
+
+  private setRef = (node: any) => this.refs.dropzone = node;
+  private openFilePicker = () => {
+    if (this.refs.dropzone !== null) {
+      this.refs.dropzone.open();
+    }
+  }
 };
 
 export default CephaloDropzone;

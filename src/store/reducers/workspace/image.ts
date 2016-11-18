@@ -109,6 +109,7 @@ const setLoadError = handleActions<LoadError, Payloads.imageLoadFailed>({
 
 const setLoadStatus = handleActions<boolean, boolean>({
   [Event.LOAD_IMAGE_REQUESTED]: () => true,
+  [Event.LOAD_IMAGE_FROM_URL_REQUESTED]: () => true,
   [Event.LOAD_IMAGE_FAILED]: () => false,
   [Event.LOAD_IMAGE_SUCCEEDED]: () => false,
   [Event.RESET_WORKSPACE_REQUESTED]: () => false,

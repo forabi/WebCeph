@@ -5,6 +5,7 @@ export interface StateProps {
 
 export interface DispatchProps {
   onFilesDropped(files: File[]): any;
+  onDemoButtonClick(): any;
 }
 
 export type ConnectableProps = StateProps & DispatchProps;

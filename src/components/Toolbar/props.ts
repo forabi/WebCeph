@@ -7,6 +7,7 @@ export interface StateProps {
   brightness: number;
   contrast: number;
   canShowSummary: boolean;
+  canExport: boolean;
 };
 
 export interface DispatchProps {
@@ -19,6 +20,7 @@ export interface DispatchProps {
   onUndoClick(): any;
   onRedoClick(): any;
   onShowSummaryClick(): any;
+  onExportClick(): any;
 }
 
 export type ConnectableProps = StateProps & DispatchProps;

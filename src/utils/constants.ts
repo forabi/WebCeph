@@ -4,6 +4,18 @@ export enum ErrorCode {
 }
 
 export const StoreKeys = {
+  connectionIsOffline: 'env.connection.isOffline',
+  connectionIsSlow: 'env.connection.isSlow',
+  connectionIsMetered: 'env.connection.isMetered',
+
+  appUpdateProgress: 'env.app.update.progress',
+  appUpdateComplete: 'env.app.update.complete',
+  appUpdateError: 'env.app.update.error',
+
+  appCachingComplete: 'env.app.caching.complete',
+  appCachingProgress: 'env.app.caching.progress',
+  appCachingError: 'env.app.caching.error',
+
   compatibilityIsIgnored: 'env.compatiblity.isIgnored',
   compatiblityIsBeingChcecked: 'env.compatiblity.isBeingChecked',
   missingFeatures: 'env.compatiblity.missingFeatures',
@@ -36,7 +48,7 @@ export const StoreKeys = {
   isAnalysisLoading: 'cephalo.workspace.analysis.isLoading',
   analysisLoadError: 'cephalo.workspace.analysis.loadError',
   workers: 'cephalo.workspace.workers',
-}
+};
 
 /**
  * Events are just Redux actions. 
@@ -49,6 +61,19 @@ export const Event = {
   WORKER_CREATED: 'WORKER_CREATED',
   WORKER_TERMINATED: 'WORKER_TERMINATED',
   WORKER_STATUS_CHANGED: 'WORKER_STATUS_CHANGED',
+
+
+  LOAD_IMAGE_FROM_URL_REQUESTED: 'LOAD_IMAGE_FROM_URL_REQUESTED',
+
+  EXPORT_FILE_REQUESTED: 'EXPORT_FILE_REQUESTED',
+  EXPORT_FILE_SUCEEDED: 'EXPORT_FILE_SUCEEDED',
+  EXPORT_FILE_FAILED: 'EXPORT_FILE_FAILED',
+  EXPORT_PROGRESS_CHANGED: 'EXPORT_PROGRESS_CHANGED',
+
+  IMPORT_FILE_REQUESTED: 'IMPORT_FILE_REQUESTED',
+  IMPORT_FILE_SUCEEDED: 'IMPORT_FILE_SUCEEDED',
+  IMPORT_FILE_FAILED: 'IMPORT_FILE_FAILED',
+  IMPORT_PROGRESS_CHANGED: 'IMPORT_PROGRESS_CHANGED',
 
   /* Workspace */
   TOGGLE_TOOL_REQUESTED: 'TOGGLE_TOOL_REQUESTED',

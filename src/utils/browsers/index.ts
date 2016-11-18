@@ -3,11 +3,11 @@ import filter from 'lodash/filter';
 import memoize from 'lodash/memoize';
 import keyBy from 'lodash/keyBy';
 
-const ChromeIcon: string = require('url!./icons/chrome.svg');
-const FirefoxIcon: string = require('url!./icons/firefox.svg');
-const EdgeIcon: string = require('url!./icons/edge.svg');
-const OperaIcon: string = require('url!./icons/opera.svg');
-const SafariIcon: string = require('url!./icons/safari-ios.svg');
+const ChromeIcon: string = require('url-loader!./icons/chrome.svg');
+const FirefoxIcon: string = require('url-loader!./icons/firefox.svg');
+const EdgeIcon: string = require('url-loader!./icons/edge.svg');
+const OperaIcon: string = require('url-loader!./icons/opera.svg');
+const SafariIcon: string = require('url-loader!./icons/safari-ios.svg');
 
 interface BrowserDetails {
   id: string;
@@ -40,7 +40,7 @@ export const recommendedBrowsers: BrowserDetails[] = [
     icon: EdgeIcon,
     isApplicable() {
       return _current.windows && _current.osversion === '10';
-    }
+    },
   },
   {
     id: 'Safari',
@@ -48,7 +48,7 @@ export const recommendedBrowsers: BrowserDetails[] = [
     icon: SafariIcon,
     isApplicable() {
       return _current.mac;
-    }
+    },
   },
 ];
 
