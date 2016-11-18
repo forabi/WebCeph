@@ -284,6 +284,7 @@ declare namespace Payloads {
   type imageLoadSucceeded = { data: string, height: number, width: number };
   type imageLoadFailed = { message: string; };
   type imageLoadRequested = File;
+  type sampleImageLoadRequested = { url: string; };
   type analysisLoadFailed = GenericError;
   type analysisLoadRequested = string;
   type analysisLoadSucceeded = string;

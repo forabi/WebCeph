@@ -36,7 +36,7 @@ export const StoreKeys = {
   isAnalysisLoading: 'cephalo.workspace.analysis.isLoading',
   analysisLoadError: 'cephalo.workspace.analysis.loadError',
   workers: 'cephalo.workspace.workers',
-}
+};
 
 /**
  * Events are just Redux actions. 
@@ -49,6 +49,8 @@ export const Event = {
   WORKER_CREATED: 'WORKER_CREATED',
   WORKER_TERMINATED: 'WORKER_TERMINATED',
   WORKER_STATUS_CHANGED: 'WORKER_STATUS_CHANGED',
+
+  LOAD_SAMPLE_IMAGE_REQUESTED: 'LOAD_SAMPLE_IMAGE_REQUESTED',
 
   /* Workspace */
   TOGGLE_TOOL_REQUESTED: 'TOGGLE_TOOL_REQUESTED',

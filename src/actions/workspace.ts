@@ -53,6 +53,9 @@ export const loadImageFile:
   (file: File) => Action<Payloads.imageLoadRequested> =
     createAction(Event.LOAD_IMAGE_REQUESTED);
 
+/* Image editing actions */
+export const loadSampleImage = createAction<Payloads.sampleImageLoadRequested>(Event.LOAD_SAMPLE_IMAGE_REQUESTED);
+
 export const flipX: () => Action<Payloads.flipImageX> = createAction(Event.FLIP_IMAGE_X_REQUESTED);
 export const flipY: () => Action<Payloads.flipImageY> = createAction(Event.FLIP_IMAGE_Y_REQUESTED);
 export const setBrightness:

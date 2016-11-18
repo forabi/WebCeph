@@ -1,3 +1,11 @@
+.muted {
+  color: gray;
+}
+
+.text_center {
+  text-align: center;
+}
+
 .dropzone {
   display: flex;
   align-items: center;
@@ -18,7 +26,6 @@
 
   .dropzone_placeholder_text {
     font-size: calc(0.8em + 1vw);
-    color: gray;
     margin: 25px 0;
   }
 

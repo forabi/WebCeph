@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as Dropzone from 'react-dropzone';
+import * as cx from 'classnames';
 import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
 import join from 'lodash/join';
 import Props from './props';
 
@@ -19,6 +21,7 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
   render() {
     const {
       onFilesDropped,
+      onDemoButtonClick,
       supportedImageTypes = ['image/jpeg', 'image/png', 'image/bmp'],
       allowsMultipleFiles = false,
     } = this.props;
@@ -35,13 +38,28 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
       >
         <div className={classes.dropzone_placeholder}>
           <DropzonePlaceholder className={classes.dropzone_placeholder_image} />
-          <span className={classes.dropzone_placeholder_text}>
+          <span className={cx(classes.dropzone_placeholder_text, classes.text_center, classes.muted)}>
             To start tracing, drop a cephalometric radiograph here or
           </span>
           <RaisedButton
             primary
             label="Click to pick an image"
             onClick={this.openFilePicker}
+          />
+          <br />
+          <small
+            className={cx(classes.text_center, classes.muted)}
+            style={{ margin: 0 }}
+          >
+            Don't have one around? Try a sample image from Wikipedia!
+          </small>
+            <br />
+          <FlatButton
+            style={{ margin: 0 }}
+            secondary
+            primary
+            label="Load sample image"
+            onClick={onDemoButtonClick}
           />
         </div>
       </Dropzone>

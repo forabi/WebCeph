@@ -4,7 +4,7 @@ import { takeLatest, eventChannel, END, Channel } from 'redux-saga';
 import { select, put, take, cps, fork, call, Effect } from 'redux-saga/effects';
 import { ImageWorkerAction } from 'utils/constants';
 import { ImageWorkerInstance, ImageWorkerEvent, ImageWorkerResponse } from 'utils/image-worker.d';
-import { setScale, addWorker, updateWorker } from 'actions/workspace';
+import { setScale, addWorker, updateWorker , loadImageFile} from 'actions/workspace';
 import { getCanvasSize } from 'store/reducers/workspace/canvas';
 
 const ImageWorker = require('worker!utils/image-worker');
@@ -94,8 +94,30 @@ function* loadImage({ payload }: Action<Payloads.imageLoadRequested>): IterableI
   }
 }
 
+async function fetchBlob(url: string) {
+  const response = await fetch(url);
+  return response.blob();
+}
+
+function* loadSampleImage({ payload }: Action<Payloads.sampleImageLoadRequested>): IterableIterator<Effect>  {
+  try {
+    console.log('Loading sample image', payload.url);
+    const blob = yield call(fetchBlob, payload.url);
+    const file = new File([blob], 'demo_image');
+    yield put(loadImageFile(file));
+  } catch (error) {
+    console.error('Failed to load sample image', error);
+    yield put({
+      type: Event.LOAD_IMAGE_FAILED,
+      payload: error.message,
+      error: true,
+    });
+  }
+}
+
 function* watchImageRequests() {
   yield fork(takeLatest, Event.LOAD_IMAGE_REQUESTED, loadImage);
+  yield fork(takeLatest, Event.LOAD_SAMPLE_IMAGE_REQUESTED, loadSampleImage);
 }
 
 export default watchImageRequests;
