@@ -43,8 +43,10 @@ export function calculateAngleBetweenPoints(A: GeometricalPoint, B: GeometricalP
   const BC = calculateDistanceBetweenTwoPoints(B, C);
   const AC = calculateDistanceBetweenTwoPoints(A, C);
 
-  // Arccosine is the inverse function of a cosine, i.e. given a cosine,
-  // it calculates the corresponding angle.
+  /**
+   * Arccosine is the inverse function of a cosine, i.e. given a cosine,
+   * it calculates the corresponding angle.
+   */
   return Math.acos((BC * BC + AB * AB - AC * AC) / (2 * BC * AB));
 };
 
