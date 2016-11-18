@@ -49,13 +49,10 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
           <br />
           <small
             className={cx(classes.text_center, classes.muted)}
-            style={{ margin: 0 }}
           >
             Don't have one around? Try a sample image from Wikipedia!
           </small>
-            <br />
           <FlatButton
-            style={{ margin: 0 }}
             secondary
             primary
             label="Load sample image"
