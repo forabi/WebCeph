@@ -27,8 +27,8 @@ export type WCephJSON = {
     [imageId: string]: {
       /** A null value indicates that the image type is not set or is unknown */
       type: (
-        'lateral_cephalo' | 'frontal_cephalo' |
-        'lateral_photograph' | 'frontal_photograph' |
+        'ceph_lateral' | 'ceph_pa' |
+        'photo_lateral' | 'photo_frontal' |
         'panoramic' | null
       );
       flipX: boolean;
