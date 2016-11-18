@@ -10,18 +10,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  flex-wrap: wrap;
   width: 100%;
   background-size: 50% 50%;
   background-position: center;
   background-color: #EEEEEE;
 
+  .dropzone_load_demo {
+    margin: 15px 0;
+    margin-top: auto;
+    flex-grow: 0;
+  }
+
   .dropzone_placeholder {
-    white-space: pre-wrap;
+    align-self: center;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     user-select: none;
+    flex-grow: 1;
   }
 
   .dropzone_placeholder_text {

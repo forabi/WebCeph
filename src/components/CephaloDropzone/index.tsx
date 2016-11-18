@@ -53,12 +53,14 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
             label="Click to pick an image"
             onClick={this.openFilePicker}
           />
-          <br />
+        </div>
+        <div className={cx(classes.dropzone_load_demo, classes.text_center)}>
           <small
-            className={cx(classes.text_center, classes.muted)}
+            className={classes.muted}
           >
             Don't have one around? Try a sample image from Wikipedia!
           </small>
+          <br />
           <FlatButton
             secondary
             primary
