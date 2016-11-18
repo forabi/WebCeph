@@ -99,7 +99,7 @@ async function fetchBlob(url: string) {
   return response.blob();
 }
 
-function* loadSampleImage({ payload }: Action<Payloads.sampleImageLoadRequested>): IterableIterator<Effect>  {
+function* loadSampleImage({ payload }: Action<Payloads.imageLoadFromURLRequested>): IterableIterator<Effect>  {
   try {
     console.log('Loading sample image', payload.url);
     const blob = yield call(fetchBlob, payload.url);
@@ -117,7 +117,7 @@ function* loadSampleImage({ payload }: Action<Payloads.sampleImageLoadRequested>
 
 function* watchImageRequests() {
   yield fork(takeLatest, Event.LOAD_IMAGE_REQUESTED, loadImage);
-  yield fork(takeLatest, Event.LOAD_SAMPLE_IMAGE_REQUESTED, loadSampleImage);
+  yield fork(takeLatest, Event.LOAD_IMAGE_FROM_URL_REQUESTED, loadSampleImage);
 }
 
 export default watchImageRequests;
