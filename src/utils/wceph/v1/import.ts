@@ -6,10 +6,13 @@ import {
 import JSZip from 'jszip';
 
 import each from 'lodash/each';
+import map from 'lodash/map';
 
 import {
   loadImageFile,
 } from 'actions/workspace';
+
+import { validateIndexJSON } from './validate';
 
 const importFile: WCeph.Importer = async (fileToImport, options) => {
   const {
@@ -21,7 +24,17 @@ const importFile: WCeph.Importer = async (fileToImport, options) => {
   const json: WCephJSON = JSON.parse(
     await zip.file(JSON_FILE_NAME).async('string')
   );
-  // @TODO: validate json structure
+
+  if (__DEBUG__) {
+    const errors = validateIndexJSON(json);
+    if (errors.length > 0) {
+      console.warn(
+        `Trying to import an invalid WCeph file`,
+        map(errors, e => e.message),
+      );
+    }
+  }
+
   each(json.refs.images, async (path, id) => {
     const imageFile = await zip.file(path).async('blob');
     actions.push(loadImageFile(imageFile));

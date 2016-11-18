@@ -240,7 +240,7 @@ declare namespace StoreEntries {
       type scaleOrigin = null | { x: number, y: number };
     }
     namespace image {
-      type type = 'lateral_cephalo' | 'frontal_cephalo' | 'panoramic' | null;
+      type type = 'ceph_lateral' | 'ceph_pa' | 'panoramic' | null;
       type data = string | null;
       type width = number | null;
       type height = number | null;
@@ -456,6 +456,11 @@ interface EditorTool {
  */
 type EditorToolCreator = (state: GenericState, dispatch: DispatchFunction) => EditorTool;
 
+type ValidationError = GenericError & {
+  type: number,
+  data?: any,
+};
+
 type ExportProgressCallback = (
   value: number,
   data?: any, // @TODO
@@ -491,6 +496,10 @@ namespace WCeph {
     };
   }
 
+  type ValidateOptions = {
+
+  };
+
   /**
    * A WCeph File exporter recieves the application state along with any export options and
    * returns an File blob to be saved.
@@ -500,6 +509,15 @@ namespace WCeph {
     options: ExportOptions,
     progressCallback?: ExportProgressCallback,
   ) => Promise<Blob>;
+
+  /**
+   * A WCeph validator recieves the file to validate and returns zero, one or more validation errors.
+   * A return value with length = 0 means that the files is valid.
+   */
+  type Validator = (
+    fileToValidate: File,
+    options: ValidateOptions,
+  ) => Promise<ValidationError[]>;
 }
 
 /* Browser compatiblity checking */

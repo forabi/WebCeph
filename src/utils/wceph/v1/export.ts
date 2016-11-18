@@ -27,6 +27,8 @@ import {
   isImageFlippedX,
 } from 'store/reducers/workspace/image';
 
+import { validateIndexJSON } from './validate';
+
 const createExport: WCeph.Exporter = async (state, options, onUpdate) => {
   const {
     imagesToSave = getImageIds(state),
@@ -121,6 +123,17 @@ const createExport: WCeph.Exporter = async (state, options, onUpdate) => {
       ),
     },
   };
+
+  if (__DEBUG__) {
+    const errors = validateIndexJSON(json);
+    if (errors.length > 0) {
+      console.warn(
+        `Exporting file as an invalid WCeph format`,
+        map(errors, e => e.message),
+      );
+    }
+  }
+
   zip.file(JSON_FILE_NAME, JSON.stringify(json, undefined, 2));
   return zip.generateAsync(
     {
