@@ -128,9 +128,10 @@ const createExport: WCeph.Exporter = async (state, options, onUpdate) => {
     const errors = validateIndexJSON(json);
     if (errors.length > 0) {
       console.warn(
-        `Exporting file as an invalid WCeph format`,
+        `Trying to export file as an invalid WCeph format`,
         map(errors, e => e.message),
       );
+      throw new TypeError('Invalid file');
     }
   }
 
