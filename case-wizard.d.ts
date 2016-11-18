@@ -180,6 +180,9 @@ type WorkerUpdate = {
 
 type TracingMode = 'auto' | 'manual' | 'assisted';
 
+type ExportFileFormat = 'wceph_v1' | 'jpeg';
+type ExportFileOptions = any; // @TODO
+
 declare namespace StoreEntries {
   namespace env {
     namespace compatibility {
@@ -245,6 +248,19 @@ declare namespace StoreEntries {
 }
 
 declare namespace Payloads {
+  type exportFile = {
+    format: ExportFileFormat;
+    options?: ExportFileOptions;
+  };
+
+  type exportProgress = {
+    value: number,
+    data?: any; // @TODO;
+  }
+
+  type exportFileFailed = GenericError;
+  type exportFileSucceeded = void;
+
   interface addManualLandmark {
     symbol: string;
     value: GeometricalObject;
@@ -405,6 +421,11 @@ interface EditorTool {
  */
 type EditorToolCreator = (state: GenericState, dispatch: DispatchFunction) => EditorTool;
 
+type ExportProgressCallback = (
+  value: number,
+  data?: any, // @TODO
+) => void;
+
 namespace WCeph {
   type ImportOptions = {
     imagesToLoad?: string[];
@@ -439,7 +460,11 @@ namespace WCeph {
    * A WCeph File exporter recieves the application state along with any export options and
    * returns an File blob to be saved.
    */
-  type Exporter = (state: GenericState, options: ExportOptions) => Promise<Blob>;
+  type Exporter = (
+    state: GenericState,
+    options: ExportOptions,
+    progressCallback?: ExportProgressCallback,
+  ) => Promise<Blob>;
 }
 
 /* Browser compatiblity checking */

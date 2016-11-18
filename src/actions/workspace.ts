@@ -53,6 +53,22 @@ export const loadImageFile:
   (file: File) => Action<Payloads.imageLoadRequested> =
     createAction(Event.LOAD_IMAGE_REQUESTED);
 
+export const exportFile = createAction<Payloads.exportFile>(
+  Event.EXPORT_FILE_REQUESTED
+);
+
+export const exportFileSucceeded = createAction<Payloads.exportFileSucceeded>(
+  Event.EXPORT_FILE_SUCEEDED,
+);
+
+export const exportFileFailed = createAction<Payloads.exportFileFailed>(
+  Event.EXPORT_FILE_FAILED,
+);
+
+export const setExportProgress = createAction<Payloads.exportProgress>(
+  Event.EXPORT_PROGRESS_CHANGED,
+);
+
 export const flipX: () => Action<Payloads.flipImageX> = createAction(Event.FLIP_IMAGE_X_REQUESTED);
 export const flipY: () => Action<Payloads.flipImageY> = createAction(Event.FLIP_IMAGE_Y_REQUESTED);
 export const setBrightness:

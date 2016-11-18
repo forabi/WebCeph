@@ -13,16 +13,19 @@ import {
   invertColors,
   redo, undo,
   showAnalysisResults,
+  exportFile,
 } from 'actions/workspace';
 import {
   canEdit,
   canRedo,
   canUndo,
+  hasUnsavedWork,
 } from 'store/reducers/workspace';
 import {
   getImageBrightness,
   getImageContrast,
   isImageInverted,
+  hasImage,
 } from 'store/reducers/workspace/image';
 import {
   getActiveToolId,
@@ -44,6 +47,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
       canRedo: canRedo(state),
       canUndo: canUndo(state),
       canShowSummary: !areResultsShown(state) && canShowResults(state),
+      canExport: hasImage(state) && hasUnsavedWork(state), // @TODO
     };
   };
 
@@ -59,6 +63,11 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
       onUndoClick: () => dispatch(undo()),
       onToolButtonClick: (id) => dispatch(setActiveTool(id)),
       onShowSummaryClick: () => dispatch(showAnalysisResults()),
+      onExportClick: () => dispatch(
+        exportFile({
+          format: 'wceph_v1',
+        })
+      ),
     };
   };
 

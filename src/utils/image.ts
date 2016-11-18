@@ -1,5 +1,5 @@
 import Jimp from './jimp';
-const url: string = require('./assets/cephalo.jpg');
+const url: string = require('url-loader!./assets/cephalo.jpg');
 
 let _ref: Jimp | null = null;
 async function readReferenceImage(): Promise<Jimp> {
@@ -30,7 +30,7 @@ async function isDistanceSatisifed(img: Jimp): Promise<void> {
 
 async function isDiffSatisfied(img: Jimp): Promise<void> {
   const diff = getPixelDiff(img, await readReferenceImage());
-  console.info('Pixel difference %f', diff)
+  console.info('Pixel difference %f', diff);
   return diff < 0.15 ? Promise.resolve() : Promise.reject(err);
 }
 
@@ -50,7 +50,7 @@ export async function doesLookLikeCephalometricRadiograph(img: Jimp, tryFlipX: b
       return {
         isCephalo,
         shouldFlipX: isCephalo,
-      }
+      };
     }
     return {
       isCephalo: false,

@@ -3,7 +3,7 @@ import filter from 'lodash/filter';
 import memoize from 'lodash/memoize';
 import keyBy from 'lodash/keyBy';
 
-const ChromeIcon: string = require('url-lodaer!./icons/chrome.svg');
+const ChromeIcon: string = require('url-loader!./icons/chrome.svg');
 const FirefoxIcon: string = require('url-loader!./icons/firefox.svg');
 const EdgeIcon: string = require('url-loader!./icons/edge.svg');
 const OperaIcon: string = require('url-loader!./icons/opera.svg');

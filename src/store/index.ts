@@ -4,6 +4,7 @@ import rootSaga from './sagas';
 import reducers from './reducers';
 import analyticsMiddleware from './middleware/analytics';
 import fetchAnalysis from './middleware/fetchAnalysis';
+import exportMiddleware from './middleware/export';
 
 declare const window: Window & { devToolsExtension?: () => any };
 
@@ -14,6 +15,7 @@ const sagaMiddleware = createSagaMiddleware();
 const middlewares: Middleware[] = [
   sagaMiddleware,
   fetchAnalysis,
+  exportMiddleware,
 ];
 
 if (__DEBUG__) {

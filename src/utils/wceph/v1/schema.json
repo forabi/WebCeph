@@ -18,10 +18,24 @@
       "type": "object",
       "properties": {
         "thumbs": {
-
+          "type": "object",
+          "properties": {
+            "64x64": {
+              "type": "string"
+            },
+            "128x128": {
+              "type": "string"
+            },
+            "256x256": {
+              "type": "string"
+            },
+            "512x512": {
+              "type": "string"
+            }
+          }
         },
         "images": {
-
+          
         }
       }
     },

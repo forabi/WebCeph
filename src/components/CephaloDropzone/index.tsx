@@ -11,25 +11,30 @@ const DropzonePlaceholder = require(
 
 class CephaloDropzone extends React.PureComponent<Props, { }> {
   refs: {
-    dropzone: React.ReactInstance & { open: () => void; }
+    dropzone: null | React.ReactInstance & { open: () => void; }
   };
 
-  private openFilePicker = () => this.refs.dropzone.open();
 
   render() {
     const {
       onFilesDropped,
-      supportedImageTypes = ['image/jpeg', 'image/png', 'image/bmp'],
+      supportedImageTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/bmp',
+        'application/wceph',
+        'application/zip',
+      ],
       allowsMultipleFiles = false,
     } = this.props;
     return (
-      <Dropzone ref="dropzone"
+      <Dropzone
+        ref="dropzone"
         className={classes.dropzone}
         activeClassName={classes.dropzone__active}
         rejectClassName={classes.dropzone__reject}
         onDrop={onFilesDropped}
         multiple={allowsMultipleFiles}
-        accept={join(supportedImageTypes, ',')}
         disableClick
         disablePreview
       >
@@ -47,6 +52,13 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
       </Dropzone>
     );
   };
+
+  private setRef = (node: any) => this.refs.dropzone = node;
+  private openFilePicker = () => {
+    if (this.refs.dropzone !== null) {
+      this.refs.dropzone.open();
+    }
+  }
 };
 
 export default CephaloDropzone;
