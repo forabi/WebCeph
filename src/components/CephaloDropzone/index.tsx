@@ -11,6 +11,8 @@ const DropzonePlaceholder = require(
   'svg-react?name=DropzonePlaceholder!svgo?useConfig=svgoConfig!./assets/placeholder.svg'
 ) as React.SFCFactory<React.SVGAttributes<SVGElement>>;
 
+const demoButtonStyle = { marginTop: 5 };
+
 class CephaloDropzone extends React.PureComponent<Props, { }> {
   refs: {
     dropzone: null | React.ReactInstance & { open: () => void; }
@@ -60,6 +62,7 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
           <FlatButton
             secondary
             primary
+            style={demoButtonStyle}
             label="Load sample image"
             onClick={onDemoButtonClick}
           />
