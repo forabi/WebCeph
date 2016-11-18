@@ -7,7 +7,7 @@ import { ImageWorkerInstance, ImageWorkerEvent, ImageWorkerResponse } from 'util
 import { setScale, addWorker, updateWorker } from 'actions/workspace';
 import { getCanvasSize } from 'store/reducers/workspace/canvas';
 
-const ImageWorker = require('worker!utils/image-worker');
+const ImageWorker = require('worker-loader!utils/image-worker');
 
 const worker: ImageWorkerInstance = new ImageWorker;
 

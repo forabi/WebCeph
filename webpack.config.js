@@ -36,12 +36,17 @@ const localCSSLoaders = [
 ];
 
 const globalCSSLoaders = [
-  'style', 'css', 'postcss',
+  'style-loader',
+  'css-lodaer',
+  'postcss-loader',
 ];
 
 const sassLoaders = [
   {
-    loader: 'sass', query: { sourceMap: true },
+    loader: 'sass-loader',
+    query: {
+      sourceMap: true,
+    },
   },
 ];
 
