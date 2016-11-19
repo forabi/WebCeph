@@ -1,4 +1,5 @@
 declare const __DEBUG__: boolean;
+declare const __VERSION__: string;
 
 declare type AngularUnit = 'degree' | 'radian';
 type LinearUnit = 'mm' | 'cm' | 'in';
@@ -193,11 +194,23 @@ declare namespace StoreEntries {
       type isCaching = boolean;
       type isAvailableOffline = boolean;
     }
+    namespace persistence {
+      type isSupported = boolean;
+      type isSaving = boolean;
+      type isLoading = boolean;
+      type isUpgrading = boolean;
+      type saveError = GenericError | null;
+      type loadError = GenericError | null;
+    }
     namespace compatibility {
       type isIgnored = boolean;
       type isBeingChecked = boolean;
-      interface missingFeatures {
-        [id: string]: MissingBrowserFeature;
+      interface checkResults {
+        [userAgent: string]: {
+          missing: {
+            [id: string]: MissingBrowserFeature;
+          },
+        }
       }
     }
   }
@@ -256,6 +269,20 @@ declare namespace StoreEntries {
 }
 
 declare namespace Payloads {
+  type loadPersistedState = void;
+  // @TODO: use partial mapped types in TS >= 2.1
+  type loadPersistedStateSucceeded = { [key: string]: any };
+  type loadPersistedStateFailed = GenericError;
+
+  type persistStateRequested = void;
+  type persistStateSucceeded = void;
+  type persistStateFailed = GenericError;
+
+
+  type clearPersistedStateRequested = void;
+  type clearPersistedStateSucceeded = void;
+  type clearPersistedStateFailed = GenericError;
+
   type setOfflineStatus = {
     isOffline: boolean;
     isSlow?: boolean;
@@ -319,7 +346,10 @@ declare namespace Payloads {
   type unsetScaleFactor = void;
   type skipStep = string;
   type unskipStep = skipStep;
-  type missingFeatureDetected = MissingBrowserFeature;
+  type foundMissingFeature = {
+    userAgent: string;
+    feature: MissingBrowserFeature;
+  };
   type highlightStep = string;
   type unhighlightStep = void;
   type setCursor = string;
@@ -345,7 +375,7 @@ declare namespace Payloads {
 
 type GenericAction = { type: string, payload?: any };
 type Action<T> = GenericAction & { payload?: T };
-type DispatchFunction = (GenericAction) => any;
+type DispatchFunction = (action: GenericAction) => any;
 
 interface UndoableState<T> {
   past: T[];

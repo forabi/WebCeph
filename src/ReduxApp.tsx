@@ -29,6 +29,6 @@ window.addEventListener('beforeunload', e => {
 
 export default () => (
   <Provider store={store}>
-    <App />
+    <App userAgent={navigator.userAgent} />
   </Provider>
 );

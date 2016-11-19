@@ -18,6 +18,7 @@ export interface DispatchProps {
 
 export interface OwnProps {
   className?: string;
+  userAgent: string;
 }
 
 export type ConnectableProps = StateProps & DispatchProps;

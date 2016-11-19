@@ -4,6 +4,7 @@ import keys from 'lodash/keys';
 import noop from 'lodash/noop';
 import each from 'lodash/each';
 
+import { foundMissingFeature } from 'actions/initialization';
 import { Event } from 'utils/constants';
 import featureDetails from 'utils/features';
 
@@ -57,14 +58,14 @@ function* checkBrowserCompatiblity(): IterableIterator<Effect> {
       // @TODO: Figure out how to handle optional features
       if (!result.isSupported) {
         console.info('Detected missing feature: ', result.feature);
-        yield put({
-          type: Event.BROWSER_COMPATIBLITY_CHECK_MISSING_FEATURE_DETECTED,
-          payload: ({
+        yield put(foundMissingFeature({
+          userAgent: navigator.userAgent,
+          feature: {
             id: result.feature,
             optional: featureDetails[result.feature].optional || false,
             available: false,
-          }) as MissingBrowserFeature,
-        });
+          },
+        }));
       }
     }
   } catch (error) {

@@ -17,7 +17,8 @@ const DetailsForNerds = ({ missingFeatures } : { missingFeatures: MissingBrowser
     <List>
     {
       map(missingFeatures, feature => (
-        <ListItem key={feature.id}
+        <ListItem
+          key={feature.id}
           primaryText={getFeatureName(feature)}
           secondaryText={getWhyFeatureIsRequired(feature)}
         />
@@ -46,9 +47,9 @@ const CompatibilityChecker = pure((props: Props) => {
               Consider upgrading to
               {' '}
               <a
-              rel="noreferrer noopener"
-              target="_blank"
-              href={currentBrowser.downloadUrl}
+                rel="noreferrer noopener"
+                target="_blank"
+                href={currentBrowser.downloadUrl}
               >
                 a more recent version of your browser
               </a>
@@ -59,7 +60,8 @@ const CompatibilityChecker = pure((props: Props) => {
         <div className={classes.browser_recommendation_container}>
           {
             map(recommendedBrowsers, ({ id, downloadUrl, icon }) => (
-              <a key={id}
+              <a
+                key={id}
                 rel="noreferrer noopener"
                 target="_blank"
                 href={downloadUrl}

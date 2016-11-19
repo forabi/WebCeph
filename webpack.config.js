@@ -23,6 +23,8 @@ const prod = p => (env.isProd ? p : null);
 const hot = p => (env.isHot ? p : null);
 const dev = p => (env.isDev ? p : null);
 
+const pkg = require('./package.json');
+
 const localCSSLoaders = [
   'style-loader',
   {
@@ -219,6 +221,7 @@ const config = {
       Promise: 'bluebird',
     }),
     new webpack.DefinePlugin({
+      __VERSION__: JSON.stringify(pkg.version),
       __DEBUG__: JSON.stringify(env.isDev),
       'process.env.ENVIRONMENT': JSON.stringify('BROWSER'),
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),

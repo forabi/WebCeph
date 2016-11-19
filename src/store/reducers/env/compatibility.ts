@@ -3,13 +3,15 @@ import { handleActions } from 'redux-actions';
 import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 import { createSelector } from 'reselect';
+
+import has from 'lodash/has';
 import toArray from 'lodash/toArray';
 
 const KEY_IS_IGNORED =  StoreKeys.compatibilityIsIgnored;
 const KEY_IS_BEING_CHEKED = StoreKeys.compatiblityIsBeingChcecked;
 const KEY_MISSING_FEATURES = StoreKeys.missingFeatures;
 
-type MissingFeatures = StoreEntries.env.compatibility.missingFeatures;
+type CheckResults = StoreEntries.env.compatibility.checkResults;
 type IsBeingChecked = StoreEntries.env.compatibility.isBeingChecked;
 type IsIgnored = StoreEntries.env.compatibility.isIgnored;
 
@@ -29,25 +31,64 @@ const isBeingChecked = handleActions<IsBeingChecked, Payloads.isCheckingCompatib
   [Event.BROWSER_COMPATIBLITY_CHECK_FAILED]: (_, __) => false,
 }, false);
 
-const missingFeatures = handleActions<MissingFeatures, Payloads.missingFeatureDetected>({
+const missingFeatures = handleActions<CheckResults, Payloads.foundMissingFeature>({
   [Event.BROWSER_COMPATIBLITY_CHECK_MISSING_FEATURE_DETECTED]: (state, { type, payload }) => {
     if (payload === undefined) {
       printUnexpectedPayloadWarning(type, state);
       return state;
     }
-    return assign({ }, state, {
-      [payload.id]: payload,
-    });
-  }
+    const { userAgent, feature: { id: featureId } } = payload;
+    return assign(
+      { },
+      state,
+      {
+        [userAgent]: assign(
+          { },
+          state[userAgent],
+          {
+            missing: assign(
+              { },
+              state[userAgent].missing,
+              {
+                [featureId]: true,
+              },
+            ),
+          }
+        ),
+      }
+    );
+  },
 }, { });
 
 export const isCheckingCompatiblity = (state: GenericState): IsBeingChecked => state[KEY_IS_BEING_CHEKED];
 
-export const getMissingFeatures = (state: GenericState) => toArray(state[KEY_MISSING_FEATURES] as MissingFeatures);
+export const isCompatibilityIgnored = (state: GenericState): IsIgnored => state[KEY_IS_IGNORED];
+
+
+export const getCheckResults = (state: GenericState) =>
+  (userAgent: string): { missing: { [id: string]: MissingBrowserFeature } } | undefined =>
+    state[KEY_MISSING_FEATURES][userAgent];
+
+export const getMissingFeatures = createSelector(
+  getCheckResults,
+  (getResults) => (userAgent: string): MissingBrowserFeature[] => {
+    const results = getResults(userAgent);
+    if (results !== undefined) {
+      return toArray(results.missing);
+    }
+    return [];
+  }
+);
+
+export const isBrowserChecked = (state: GenericState) =>
+  (userAgent: string) => has(state[KEY_MISSING_FEATURES], userAgent);
 
 export const isBrowserCompatible = createSelector(
+  isBrowserChecked,
   getMissingFeatures,
-  (missing) => missing.length === 0,
+  (isChecked, getMissing) => (userAgent: string) => {
+    return isChecked(userAgent) && getMissing(userAgent).length > 0;
+  },
 );
 
 export default {

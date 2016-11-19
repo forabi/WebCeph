@@ -5,6 +5,7 @@ import reducers from './reducers';
 import analyticsMiddleware from './middleware/analytics';
 import fetchAnalysis from './middleware/fetchAnalysis';
 import exportMiddleware from './middleware/export';
+import { saveStateMiddleware, loadStateMiddleware, clearStateMiddleware } from './middleware/persistence';
 
 declare const window: Window & { devToolsExtension?: () => any };
 
@@ -16,6 +17,9 @@ const middlewares: Middleware[] = [
   sagaMiddleware,
   fetchAnalysis,
   exportMiddleware,
+  saveStateMiddleware,
+  loadStateMiddleware,
+  clearStateMiddleware,
 ];
 
 if (__DEBUG__) {

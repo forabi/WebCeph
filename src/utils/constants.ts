@@ -19,6 +19,7 @@ export const StoreKeys = {
   compatibilityIsIgnored: 'env.compatiblity.isIgnored',
   compatiblityIsBeingChcecked: 'env.compatiblity.isBeingChecked',
   missingFeatures: 'env.compatiblity.missingFeatures',
+
   manualLandmarks: 'cephalo.workspace.analysis.tracing.landmarks.manual',
   scaleFactor: 'cephalo.workspace.analysis.tracing.scaleFactor',
   tracingMode: 'cephalo.workspace.analysis.tracing.mode',
@@ -62,6 +63,7 @@ export const Event = {
   WORKER_TERMINATED: 'WORKER_TERMINATED',
   WORKER_STATUS_CHANGED: 'WORKER_STATUS_CHANGED',
 
+  APP_IS_READY: 'APP_IS_READY',
 
   LOAD_IMAGE_FROM_URL_REQUESTED: 'LOAD_IMAGE_FROM_URL_REQUESTED',
 
@@ -140,9 +142,12 @@ export const Event = {
   LOAD_PERSISTED_STATE_REQUESTED: 'LOAD_PERSISTED_STATE_REQUESTED',
   LOAD_PERSISTED_STATE_SUCCEEDED: 'LOAD_PERSISTED_STATE_SUCCEEDED',
   LOAD_PERSISTED_STATE_FAILED: 'LOAD_PERSISTED_STATE_FAILED',
-  PERSIST_STATE_REQUESTED: 'PERSIST_STATE_REQUESTED',
+  PERSIST_STATE_STARTED: 'PERSIST_STATE_STARTED',
   PERSIST_STATE_SUCCEEDED: 'PERSIST_STATE_SUCCEEDED',
   PERSIST_STATE_FAILED: 'PERSIST_STATE_FAILED',
+  CLEAR_PRESISTED_STATE_REQUESTED: 'CLEAR_PRESISTED_STATE_REQUESTED',
+  CLEAR_PRESISTED_STATE_SUCCEEDED: 'CLEAR_PRESISTED_STATE_SUCCEEDED',
+  CLEAR_PERSISTED_STATE_FAILED: 'CLEAR_PERSISTED_STATE_FAILED',
 };
 
 export enum ImageWorkerAction {
