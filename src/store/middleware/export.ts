@@ -27,16 +27,16 @@ const middleware: Middleware = ({ getState }: Store<any>) => (next: Dispatch<any
         );
         throw new Error('Incompatible file type');
       }
-      next(exportFileSucceeded());
+      return next(exportFileSucceeded());
     } catch (e) {
       console.error(
         `Failed to export file.`,
         e,
       );
-      next(exportFileFailed(e));
+      return next(exportFileFailed(e));
     }
   } else {
-    next(action);
+    return next(action);
   }
 };
 
