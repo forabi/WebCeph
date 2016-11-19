@@ -1,4 +1,3 @@
-import assign from 'lodash/assign';
 import omit from 'lodash/omit';
 import { handleActions } from 'redux-actions';
 import { Event, StoreKeys } from 'utils/constants';
@@ -30,13 +29,10 @@ const manualLandmarksReducer = handleActions<
         );
         return state;
       }
-      return assign(
-        { },
-        state,
-        {
-          [payload.symbol]: payload.value,
-        },
-      );
+      return {
+        ...state,
+        [payload.symbol]: payload.value,
+      };
     },
     [Event.REMOVE_MANUAL_LANDMARK_REQUESTED]: (
       state: ManualLandmarks,
@@ -62,16 +58,13 @@ const manualLandmarksReducer = handleActions<
 export default {
   [KEY_MANUAL_LANDMARKS]: undoable(
     manualLandmarksReducer,
-    assign(
-      { },
-      undoableConfig,
-      {
-        filter: includeAction([
-          Event.ADD_MANUAL_LANDMARK_REQUESTED,
-          Event.REMOVE_MANUAL_LANDMARK_REQUESTED,
-        ]),
-      },
-    ),
+    {
+      ...undoableConfig,
+      filter: includeAction([
+        Event.ADD_MANUAL_LANDMARK_REQUESTED,
+        Event.REMOVE_MANUAL_LANDMARK_REQUESTED,
+      ]),
+    },
   ),
 };
 

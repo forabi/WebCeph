@@ -37,7 +37,6 @@ import {
   getAllLandmarks,
 } from 'store/reducers/workspace/analysis';
 
-import assign from 'lodash/assign';
 import curry from 'lodash/curry';
 
 type OwnProps = { };
@@ -72,13 +71,12 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
 
 const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> =
   (stateProps, dispatchProps, ownProps): ConnectableProps => {
-    return assign(
-      { },
-      ownProps,
-      stateProps,
-      dispatchProps,
-      stateProps.activeTool(dispatchProps.dispatch),
-    );
+    return {
+      ...ownProps,
+      ...stateProps,
+      ...dispatchProps,
+      ...stateProps.activeTool(dispatchProps.dispatch),
+    };
   };
 
 const connected = connect<StateProps, DispatchProps, OwnProps>(

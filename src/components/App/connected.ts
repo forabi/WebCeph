@@ -42,8 +42,6 @@ import {
 
 import { connectionStatusChanged } from 'actions/env';
 
-import assign from 'lodash/assign';
-
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: FinalState, { userAgent }: OwnProps) => {
     return {
@@ -69,12 +67,11 @@ const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> =
   (stateProps, dispatchProps, ownProps) => {
     const { dispatch } = dispatchProps;
     const { isReady, shouldCheckCompatibility } = stateProps;
-    return assign(
-      { },
-      stateProps,
-      dispatchProps,
-      ownProps,
-      {
+    return {
+      ...stateProps,
+      ...dispatchProps,
+      ...ownProps,
+      ...{
         onComponentMount: async () => {
           if (!isReady) {
             dispatch(restorePersistedState());
@@ -84,13 +81,12 @@ const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> =
           }
           dispatch(connectionStatusChanged({ isOffline: !navigator.onLine }));
         },
-      }
-    );
+      },
+    };
   };
 
 const connected = connect<StateProps, DispatchProps, OwnProps>(
   mapStateToProps, mapDispatchToProps, mergeProps,
 )(App);
-
 
 export default connected;

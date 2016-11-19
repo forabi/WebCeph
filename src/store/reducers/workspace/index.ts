@@ -5,24 +5,22 @@ import image, { hasImage } from './image';
 import workers from './workers';
 import fileExport, { getExportError, hasExportError } from './export';
 
-import assign from 'lodash/assign';
 import isEmpty from 'lodash/isEmpty';
 
-export default assign(
-  { },
-  image,
-  canvas,
-  workers,
-  analysis,
-  fileExport,
-);
+export default {
+  ...image,
+  ...canvas,
+  ...workers,
+  ...analysis,
+  ...fileExport,
+};
 
 export const canEdit = hasImage;
 
 export const getHighlightedLandmarks = createSelector(
   getHighlightedStep,
   getLandmarkWithAllNestedLandmarks,
-  (step, getWithNested): { [symbol: string]: GeometricalObject | undefined } | { } => {
+  (step, getWithNested): { [symbol: string]: GeometricalObject } => {
     if (step === null) {
       return { };
     }

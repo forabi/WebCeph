@@ -8,12 +8,12 @@ export interface StateProps {
   canvasHeight: number;
   canvasWidth: number;
   imageHeight: number;
-  imageWidth: number; 
+  imageWidth: number;
   scale: number;
   scaleOriginX: number | null;
   scaleOriginY: number | null;
-  landmarks: { [symbol: string]: GeometricalObject } | { };
-  highlightedLandmarks: { [symbol: string]: GeometricalObject } | { };
+  landmarks: { [symbol: string]: GeometricalObject };
+  highlightedLandmarks: { [symbol: string]: GeometricalObject };
   activeTool: (dispatch: DispatchFunction) => EditorTool;
 };
 

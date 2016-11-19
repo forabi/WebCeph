@@ -95,12 +95,13 @@ const KEY_ARE_RESULTS_SHOWN = StoreKeys.areResultsShown;
 const KEY_IS_ANALYSIS_LOADING = StoreKeys.isAnalysisLoading;
 const KEY_ANALYSIS_LOAD_ERROR = StoreKeys.analysisLoadError;
 
-export default assign({
+export default {
+  ...tracing,
   [KEY_ACTIVE_ANALYSIS_ID]: activeAnalysisIdReducer,
   [KEY_IS_ANALYSIS_LOADING]: isAnalysisLoadingReducer,
   [KEY_ANALYSIS_LOAD_ERROR]: loadErrorReducer,
   [KEY_ARE_RESULTS_SHOWN]: areResultsShownReducer,
-}, tracing);
+};
 
 export const areResultsShown = (state: GenericState): AreResultsShown => state[KEY_ARE_RESULTS_SHOWN];
 
@@ -266,7 +267,7 @@ export const getAllLandmarks = createSelector(
   getManualLandmarks,
   getAutomaticLandmarks,
   ({ present: manual }, automatic) => {
-    return assign({ }, manual, automatic);
+    return { ...manual, ...automatic };
   }
 );
 
@@ -387,14 +388,19 @@ export const getLandmarkWithAllNestedLandmarks = createSelector(
   getComponentWithAllPossibleNestedComponents,
   getCephaloMapper,
   (findStep, getWithNested, mapper) => (symbol: string) => {
-    type TResult = { [symbol: string]: GeometricalObject | undefined } | { };
+    type TResult = { [symbol: string]: GeometricalObject };
     return reduce<TResult, TResult>(
       map(
         getWithNested(symbol),
         l => {
           const step = findStep(l.symbol);
           if (step !== null) {
-            return { [l.symbol]: tryMap(step, mapper) };
+            const mapped = tryMap(step, mapper);
+            if (mapped !== undefined) {
+              return {
+                [l.symbol]: mapped,
+              };
+            }
           }
           return { };
         },
@@ -408,7 +414,7 @@ export const getLandmarkWithAllNestedLandmarks = createSelector(
 export const getAllLandmarksAndValues = createSelector(
   getAllLandmarks,
   getComputedValues,
-  (landmarks, values): { [symbol: string]: EvaluatedValue } => assign({ }, landmarks, values),
+  (landmarks, values): { [symbol: string]: EvaluatedValue } => ({ ...landmarks, ...values }),
 );
 
 export const getAnalysisResults = createSelector(

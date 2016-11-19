@@ -1,8 +1,6 @@
-import React from 'react';
+import * as React from 'react';
 
 import { pure } from 'recompose';
-
-import assign from 'lodash/assign';
 
 import Props from './props';
 
@@ -21,17 +19,16 @@ const Lens = pure((props: Props) => {
     style: ownStyle = { },
   } = props;
   const transform = `translate(-${ x - (width / 2) }px, -${ y - (height / 2) }px)`;
-  const style = assign(
-    { },
-    ownStyle,
-    {
+  const style = {
+    ...ownStyle,
+    ...{
       top, left,
       width, height,
       position: 'absolute',
       overflow: 'hidden',
       transform: `scale(${ isFlippedX ? -1 : 1 }, ${ isFlippedY ? -1 : 1 })`,
     },
-  );
+  };
 
   return (
     <div {...props} style={style}>

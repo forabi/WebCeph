@@ -3,7 +3,6 @@ import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 import { createSelector } from 'reselect';
 import omit from 'lodash/omit';
-import assign from 'lodash/assign';
 import has from 'lodash/has';
 import isEmpty from 'lodash/isEmpty';
 
@@ -42,7 +41,7 @@ const workersReducer = handleActions<
         );
         return state;
       }
-      return assign({ }, state, { [workerId]: payload });
+      return { ...state, [workerId]: payload };
     },
     [Event.WORKER_TERMINATED]: (state, action) => {
       const workerId = action.payload as Payloads.removeWorker | undefined;
@@ -58,7 +57,7 @@ const workersReducer = handleActions<
         );
         return state;
       }
-      return omit(state, workerId);
+      return omit(state, workerId) as Workers;
     },
     [Event.WORKER_STATUS_CHANGED]: (state, action) => {
       const patch = action.payload as Payloads.updateWorkerStatus | undefined;
@@ -84,9 +83,11 @@ const workersReducer = handleActions<
         );
         return state;
       }
-      return assign({ }, state, {
-        [workerId]: assign({ }, state[workerId], patch),
-      });
+      const w = state[workerId];
+      return {
+        ...state,
+        [workerId]: { ...w, ...patch },
+      };
     },
   },
   defaultWorkers,

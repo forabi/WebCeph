@@ -241,7 +241,7 @@ declare namespace StoreEntries {
         namespace steps {
           type skipped = {
             [symbol: string]: boolean;
-          } | { };
+          };
         }
       }
     }
@@ -272,7 +272,7 @@ declare namespace StoreEntries {
         type probablyOfType = workspace.image.type;
       }
     }
-    type workers = { [workerId: string]: WorkerDetails } | { };
+    type workers = { [workerId: string]: WorkerDetails };
   }
 }
 

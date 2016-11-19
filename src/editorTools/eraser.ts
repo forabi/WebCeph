@@ -1,8 +1,6 @@
 import createZoomWithWheel from './zoomWithWheel';
 import { Cursor } from 'utils/constants';
 
-import assign from 'lodash/assign';
-
 import {
   removeManualLandmark,
 } from 'actions/workspace';
@@ -16,49 +14,47 @@ export const createEraser: EditorToolCreator = (
   dispatch: DispatchFunction,
 ) => {
   const isRemovable = isLandmarkRemovable(state);
-  return assign(
-    createZoomWithWheel(state, dispatch),
-    {
-      onLandmarkClick(symbol) {
-        if (isRemovable(symbol)) {
-          dispatch(removeManualLandmark(symbol));
-        }
-      },
+  return {
+    ...createZoomWithWheel(state, dispatch),
+    onLandmarkClick(symbol) {
+      if (isRemovable(symbol)) {
+        dispatch(removeManualLandmark(symbol));
+      }
+    },
 
-      onLandmarkMouseEnter(symbol) {
-        if (isRemovable(symbol)) {
-          // @TODO: set tooltip: 'Click to remove'
-        } else {
-          // @TODO: set tooltip: 'Cannot remove'
-        }
-      },
+    onLandmarkMouseEnter(symbol) {
+      if (isRemovable(symbol)) {
+        // @TODO: set tooltip: 'Click to remove'
+      } else {
+        // @TODO: set tooltip: 'Cannot remove'
+      }
+    },
 
-      onLandmarkMouseLeave(_) {
-        // @TODO
-      },
+    onLandmarkMouseLeave(_) {
+      // @TODO
+    },
 
-      onCanvasMouseEnter() {
-        // @TODO
-      },
+    onCanvasMouseEnter() {
+      // @TODO
+    },
 
-      onCanvasMouseLeave() {
-        // @TODO
-      },
+    onCanvasMouseLeave() {
+      // @TODO
+    },
 
-      getCursorForLandmark(symbol) {
-        if (isRemovable(symbol)) {
-          return Cursor.REMOVE_LANDMARK;
-        }
-        return Cursor.REMOVE_LANDMARK_DISABLED;
-      },
+    getCursorForLandmark(symbol) {
+      if (isRemovable(symbol)) {
+        return Cursor.REMOVE_LANDMARK;
+      }
+      return Cursor.REMOVE_LANDMARK_DISABLED;
+    },
 
-      getCursorForCanvas() {
-        return Cursor.REMOVE_LANDMARK_NO_TARGET;
-      },
+    getCursorForCanvas() {
+      return Cursor.REMOVE_LANDMARK_NO_TARGET;
+    },
 
-      shouldShowLens: false,
-    } as EditorTool,
-  );
+    shouldShowLens: false,
+  };
 };
 
 export default createEraser;

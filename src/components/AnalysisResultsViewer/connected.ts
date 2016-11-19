@@ -3,7 +3,6 @@ import {
   MapStateToProps,
   MapDispatchToPropsFunction,
 } from 'react-redux';
-import assign from 'lodash/assign';
 import AnalysisStepper from './index';
 import {
   StateProps,

@@ -1,4 +1,3 @@
-import assign from 'lodash/assign';
 import omit from 'lodash/omit';
 import map from 'lodash/map';
 import every from 'lodash/every';
@@ -48,14 +47,14 @@ const skippedSteps = handleActions<
         printUnexpectedPayloadWarning(type, state);
         return state;
       }
-      return assign({ }, state, { [step]: true });
+      return { ...state, [step]: true };
     },
     [Event.UNSKIP_MANUAL_STEP_REQUESTED]: (state, { payload: step, type }) => {
       if (step === undefined) {
         printUnexpectedPayloadWarning(type, state);
         return state;
       }
-      return omit(state, step);
+      return omit(state, step) as SkippedSteps;
     },
     [Event.RESET_WORKSPACE_REQUESTED]: () => defaultSkippedSteps,
   },
@@ -86,11 +85,12 @@ const scaleFactorReducer = handleActions<
   defaultScaleFactor,
 );
 
-export default assign({
+export default {
+  ...manualLandmarks,
   [KEY_TRACING_MODE]: tracingMode,
   [KEY_SKIPPED_STEPS]: skippedSteps,
   [KEY_SCALE_FACTOR]: scaleFactorReducer,
-}, manualLandmarks);
+};
 
 export const isLandmarkRemovable = createSelector(
   getManualLandmarks,
