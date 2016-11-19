@@ -14,5 +14,6 @@
     "src/assets": true
   },
   "eslint.autoFixOnSave": true,
-  "tslint.autoFixOnSave": true
+  "tslint.autoFixOnSave": true,
+  "editor.tabSize": 2
 }
