@@ -3,12 +3,12 @@ import * as Dropzone from 'react-dropzone';
 import * as cx from 'classnames';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
-import join from 'lodash/join';
+// import join from 'lodash/join';
 import Props from './props';
 
 const classes = require('./style.scss');
 const DropzonePlaceholder = require(
-  'svg-react?name=DropzonePlaceholder!svgo?useConfig=svgoConfig!./assets/placeholder.svg'
+  'svg-react-loader?name=DropzonePlaceholder!svgo-loader?useConfig=svgoConfig!./assets/placeholder.svg'
 ) as React.SFCFactory<React.SVGAttributes<SVGElement>>;
 
 const demoButtonStyle = { marginTop: 5 };
@@ -23,13 +23,13 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
     const {
       onFilesDropped,
       onDemoButtonClick,
-      supportedImageTypes = [
-        'image/jpeg',
-        'image/png',
-        'image/bmp',
-        'application/wceph',
-        'application/zip',
-      ],
+      // supportedImageTypes = [
+      //   'image/jpeg',
+      //   'image/png',
+      //   'image/bmp',
+      //   'application/wceph',
+      //   'application/zip',
+      // ],
       allowsMultipleFiles = false,
     } = this.props;
     return (
