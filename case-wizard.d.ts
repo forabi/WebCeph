@@ -290,7 +290,7 @@ declare namespace Payloads {
   type clearPersistedStateSucceeded = void;
   type clearPersistedStateFailed = GenericError;
 
-  type setOfflineStatus = {
+  type connectionStatusChanged = {
     isOffline: boolean;
     isSlow?: boolean;
     isMetered?: boolean;

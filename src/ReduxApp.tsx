@@ -1,12 +1,15 @@
 import * as React from 'react';
 import { Provider, Store } from 'react-redux';
 
-import App from './components/App/connected';
-import createConfiguredStore from './store';
+import App from 'components/App/connected';
+import createConfiguredStore from 'store';
+
+import { hasUnsavedWork } from 'store/reducers/workspace';
+
+import { connectionStatusChanged } from 'actions/env';
 
 declare var window: Window & { __STORE__?: Store<any> };
 
-import { hasUnsavedWork } from 'store/reducers/workspace';
 
 const store = createConfiguredStore() as Store<FinalState>;
 
@@ -26,6 +29,15 @@ window.addEventListener('beforeunload', e => {
   return undefined;
 });
 
+const handleConnectionChange = () => {
+  console.log('Connection changed', navigator.onLine);
+  store.dispatch(connectionStatusChanged({
+    isOffline: !navigator.onLine,
+  }));
+};
+
+window.addEventListener('online', handleConnectionChange);
+window.addEventListener('offline', handleConnectionChange);
 
 export default () => (
   <Provider store={store}>

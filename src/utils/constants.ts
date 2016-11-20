@@ -63,6 +63,9 @@ export const StoreKeys = {
  * just indicate that something has happend.
  */
 export const Event = {
+  /** Connection */
+  CONNECTION_STATUS_CHANGED: 'CONNECTION_STATUS_CHANGED',
+
   /* Worker creation and termination */
   WORKER_CREATED: 'WORKER_CREATED',
   WORKER_TERMINATED: 'WORKER_TERMINATED',
