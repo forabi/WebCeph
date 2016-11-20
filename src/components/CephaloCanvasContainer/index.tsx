@@ -2,6 +2,8 @@ import * as React from 'react';
 import { findDOMNode } from 'react-dom';
 
 import CircularProgress from 'material-ui/CircularProgress';
+import FlatButton from 'material-ui/FlatButton';
+import Dialog from 'material-ui/Dialog';
 
 import ResizeObservable from 'utils/resize-observable';
 
@@ -58,13 +60,36 @@ class CephaloCanvasContainer extends React.PureComponent<Props, { }> {
   }
 
   public render() {
-    const { hasImage, className } = this.props;
+    const {
+      className,
+      hasImage,
+      hasError, errorMessage, onRequestDismissError,
+    } = this.props;
+    const errorActions = [
+      <FlatButton
+        primary
+        keyboardFocused={true}
+        onTouchTap={onRequestDismissError}
+        label="Dismiss"
+      />,
+    ];
     return (
       <ResizeObservable
         ref={hasImage ? this.setRef : undefined}
         className={cx(className, classes.root)}
         onResize={this.handleResize}
       >
+        {
+          !hasError ? null : (
+            <Dialog
+              open={hasError}
+              onRequestClose={onRequestDismissError}
+              actions={errorActions}
+            >
+              <span style={{ whiteSpace: 'pre-wrap' }}>{errorMessage}</span>
+            </Dialog>
+          )
+        }
         <Content {...this.props} />
       </ResizeObservable>
     );

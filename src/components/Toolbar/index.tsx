@@ -40,6 +40,7 @@ const CephaloEditorToolbar = (props: ToolbarProps) => {
     onShowSummaryClick,
     canShowSummary,
     canExport,
+    isExporting,
   } = props;
 
   const cannotEdit = !canEdit;
@@ -81,8 +82,8 @@ const CephaloEditorToolbar = (props: ToolbarProps) => {
       <FlatButton
         disabled={!canExport}
         label="Export"
-        icon={<IconExport />}
-        onClick={onExportClick}
+        icon={!isExporting ? <IconExport /> : <CircularProgress size={24} thickness={2} />}
+        onTouchTap={onExportClick}
       />
     </div>
   );

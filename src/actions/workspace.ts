@@ -10,6 +10,11 @@ export const disableActiveTool: () => Action<Payloads.disableActiveTool> = creat
   Event.DISABLE_TOOL_REQUESTED,
 );
 
+export const ignoreWorkspaceError: () => Action<Payloads.ignoreWorkspaceError> =
+  createAction<Payloads.ignoreWorkspaceError>(
+    Event.IGNORE_WORKSPACE_ERROR_REQUESTED,
+  );
+
 export const addManualLandmark:
   (symbol: string, value: GeometricalObject | number) => Action<Payloads.addManualLandmark> =
   createAction(

@@ -22,6 +22,9 @@ import {
   hasUnsavedWork,
 } from 'store/reducers/workspace';
 import {
+  isExporting,
+} from 'store/reducers/workspace/export';
+import {
   getImageBrightness,
   getImageContrast,
   isImageInverted,
@@ -38,6 +41,7 @@ import {
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: FinalState): StateProps => {
+    const _isExporting = isExporting(state);
     return {
       activeToolId: getActiveToolId(state),
       brightness: getImageBrightness(state),
@@ -47,7 +51,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
       canRedo: canRedo(state),
       canUndo: canUndo(state),
       canShowSummary: !areResultsShown(state) && canShowResults(state),
-      canExport: hasImage(state) && hasUnsavedWork(state), // @TODO
+      canExport: !_isExporting && hasImage(state) && hasUnsavedWork(state),
+      isExporting: _isExporting,
     };
   };
 

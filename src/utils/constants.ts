@@ -10,6 +10,9 @@ export const StoreKeys = {
 
   appIsInitialized: 'env.init.isInitialized',
 
+  isExporting: 'cephalo.workspace.export.isExporting',
+  exportError: 'cephalo.workspace.export.error',
+
   appUpdateProgress: 'env.app.update.progress',
   appUpdateComplete: 'env.app.update.complete',
   appUpdateError: 'env.app.update.error',

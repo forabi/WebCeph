@@ -219,6 +219,10 @@ declare namespace StoreEntries {
   }
 
   namespace workspace {
+    namespace fileExport {
+      type isExporting = boolean;
+      type error = GenericError | null;
+    }
     namespace analysis {
       type activeId = string | null;
       type isLoading = boolean;
@@ -337,6 +341,7 @@ declare namespace Payloads {
   type setContrast = number;
   type setBrightness = number;
   type resetWorkspace = void;
+  type ignoreWorkspaceError = void;
   type showAnalysisResults = void;
   type hideAnalysisResults = void;
 

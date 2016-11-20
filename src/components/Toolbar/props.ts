@@ -8,6 +8,7 @@ export interface StateProps {
   contrast: number;
   canShowSummary: boolean;
   canExport: boolean;
+  isExporting: boolean;
 };
 
 export interface DispatchProps {
