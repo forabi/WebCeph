@@ -9,12 +9,17 @@
       "statements",
       "parameters"
     ],
+    "no-console": [
+      false
+    ],
     "arrow-parens": false,
     "adjacent-overload-signatures": true,
     "object-literal-shorthand": true,
     "no-var-requires": false,
     "jsx-no-multiline-js": false,
-    "ordered-imports": false,
+    "ordered-imports": [
+      false
+    ],
     "jsdoc-format": true,
     "interface-name": [
       "never-prefix",
@@ -43,13 +48,17 @@
       true,
       "spaces"
     ],
-    "no-inferrable-types": true,
+    "no-inferrable-types": [
+      true
+    ],
     "no-duplicate-variable": true,
     "no-eval": true,
     "no-internal-module": true,
     "no-trailing-whitespace": true,
     "no-var-keyword": true,
-    "one-variable-per-declaration": true,
+    "one-variable-per-declaration": [
+      true
+    ],
     "one-line": [
       true,
       "check-open-brace",
