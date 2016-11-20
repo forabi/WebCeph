@@ -29,6 +29,7 @@ declare interface Deadline {
  * without impacting latency-critical events such as animation and input response.
  * Functions are generally called in first-in-first-out order
  * unless the function's timeout is reached before the browser calls it.
+ * @return An unsigned long integer that can be used to cancel the callback using the Window.cancelIdleCallback() method.
  */
 declare interface RequestIdleCallback {
   (
@@ -39,3 +40,13 @@ declare interface RequestIdleCallback {
   ): number;
 }
 
+/**
+ * The Window.cancelIdleCallback() enables you to cancel a callback
+ * previously scheduled with Window.requestIdleCallback.
+ */
+declare interface CancelIdleCallback {
+  /**
+   * The unsigned long integer returned by calling Window.requestIdleCallback.
+   */
+  handle: number;
+}
