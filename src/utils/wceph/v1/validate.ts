@@ -14,14 +14,20 @@ import every from 'lodash/every';
 import has from 'lodash/has';
 import keys from 'lodash/keys';
 import values from 'lodash/values';
+import isBoolean from 'lodash/isBoolean';
+import isNumber from 'lodash/isNumber';
+import isString from 'lodash/isString';
 
+import { isGeometricalObject } from 'utils/math';
+
+const isTrue = (value: any) => value === true;
 const isDefined = negate(isUndefined);
 
 type Rule<T> = (data: T) => true | false;
 type ErrorMaker<T> = (data: T) => ValidationError;
 type Fixer<T> = (data: T, error: ValidationError) => T;
 
-enum ErrorType {
+enum ValidationErrorType {
   UNSPECIFIED_FILE_VERSION,
   NO_REFS,
   MISSING_REFS,
@@ -29,24 +35,26 @@ enum ErrorType {
   INCOMPATIBLE_IMAGE_TYPE,
   INCOMPATIBLE_BRIGHTNESS_VALUE,
   INCOMPATIBLE_CONTRAST_VALUE,
+  INVALID_IMAGE_DATA,
+  INVALID_TRACING_DATA,
 }
 
-const getMessageForError = (type: ErrorType, data?: any) => {
+const getMessageForError = (type: ValidationErrorType, data?: any) => {
   switch (type) {
-    case ErrorType.UNSPECIFIED_FILE_VERSION:
+    case ValidationErrorType.UNSPECIFIED_FILE_VERSION:
       return (
         `Unspecified file version`
       );
-    case ErrorType.MISSING_REFS:
+    case ValidationErrorType.MISSING_REFS:
       return (
         `Invalid file format`
       );
     default:
-      return ErrorType[type];
+      return ValidationErrorType[type];
   }
 };
 
-function createErrorMaker<T>(type: ErrorType): ErrorMaker<T> {
+function createErrorMaker<T>(type: ValidationErrorType): ErrorMaker<T> {
   return (data: T) => ({
     type,
     message: getMessageForError(type, data),
@@ -62,29 +70,103 @@ const rules: [
 ][] = [
   [
     ({ version }) => isDefined(version),
-    createErrorMaker(ErrorType.UNSPECIFIED_FILE_VERSION),
+    createErrorMaker(ValidationErrorType.UNSPECIFIED_FILE_VERSION),
     undefined,
   ],
   [
     ({ version }) => version === 1,
-    createErrorMaker(ErrorType.UNSPECIFIED_FILE_VERSION),
+    createErrorMaker(ValidationErrorType.UNSPECIFIED_FILE_VERSION),
     undefined,
   ],
   [
-    ({ refs }) => isDefined(refs) && isPlainObject(refs),
-    createErrorMaker(ErrorType.NO_REFS),
+    ({ refs }) => (
+      isPlainObject(refs) &&
+      isPlainObject(refs.images) &&
+      isPlainObject(refs.thumbs)
+    ),
+    createErrorMaker(ValidationErrorType.NO_REFS),
     undefined,
   ],
   [
     ({ data }) => isDefined(data) && isPlainObject(data),
-    createErrorMaker(ErrorType.MISSING_DATA),
+    createErrorMaker(ValidationErrorType.MISSING_DATA),
     undefined,
   ],
   [
     ({ data, refs }) => {
-      return every(keys(data), key => has(refs, key));
+      return isPlainObject(refs.images) && every(keys(data), key => has(refs.images, key));
     },
-    createErrorMaker(ErrorType.MISSING_REFS),
+    createErrorMaker(ValidationErrorType.MISSING_REFS),
+    undefined,
+  ],
+  [
+    ({ data }) => {
+      return every(values(data), (image) => {
+        return (
+          isString(image.type) &&
+          isBoolean(image.flipX) &&
+          isBoolean(image.flipY) &&
+          isBoolean(image.invertColors) &&
+          isNumber(image.brightness) &&
+          isNumber(image.contrast)
+        );
+      });
+    },
+    createErrorMaker(ValidationErrorType.INVALID_IMAGE_DATA),
+    undefined,
+  ],
+  [
+    ({ data }) => {
+      return every(values(data), ({ tracing }) => {
+        return (
+          isPlainObject(tracing) &&
+          isString(tracing.mode) &&
+          (
+            isNumber(tracing.scaleFactor) ||
+            tracing.scaleFactor === null
+          )
+        );
+      });
+    },
+    createErrorMaker(ValidationErrorType.INVALID_TRACING_DATA),
+    undefined,
+  ],
+
+  [
+    ({ data }) => {
+      return every(values(data), ({ tracing: { mode } }) => {
+        return (
+          mode === 'auto' ||
+          mode === 'assisted' ||
+          mode === 'manual'
+        );
+      });
+    },
+    createErrorMaker(ValidationErrorType.INVALID_TRACING_DATA),
+    undefined,
+  ],
+  [
+    ({ data }) => {
+      return every(values(data), ({ tracing: { manualLandmarks } }) => {
+        return (
+          isPlainObject(manualLandmarks) &&
+          every(values(manualLandmarks), isGeometricalObject)
+        );
+      });
+    },
+    createErrorMaker(ValidationErrorType.INVALID_TRACING_DATA),
+    undefined,
+  ],
+  [
+    ({ data }) => {
+      return every(values(data), ({ tracing: { skippedSteps } }) => {
+        return (
+          isPlainObject(skippedSteps) &&
+          every(values(skippedSteps), isTrue)
+        );
+      });
+    },
+    createErrorMaker(ValidationErrorType.INVALID_TRACING_DATA),
     undefined,
   ],
   [
@@ -100,7 +182,7 @@ const rules: [
         );
       });
     },
-    createErrorMaker(ErrorType.INCOMPATIBLE_IMAGE_TYPE),
+    createErrorMaker(ValidationErrorType.INCOMPATIBLE_IMAGE_TYPE),
     undefined,
   ],
   [
@@ -109,7 +191,7 @@ const rules: [
         return brightness >= 0 && brightness <= 1;
       });
     },
-    createErrorMaker(ErrorType.INCOMPATIBLE_BRIGHTNESS_VALUE),
+    createErrorMaker(ValidationErrorType.INCOMPATIBLE_BRIGHTNESS_VALUE),
     undefined,
   ],
   [
@@ -118,7 +200,18 @@ const rules: [
         return contrast >= 0 && contrast <= 1;
       });
     },
-    createErrorMaker(ErrorType.INCOMPATIBLE_CONTRAST_VALUE),
+    createErrorMaker(ValidationErrorType.INCOMPATIBLE_CONTRAST_VALUE),
+    undefined,
+  ],
+  [
+    ({ data }) => {
+      return every(values(data), ({ analysis }) => {
+        return (
+          isString(analysis) || analysis === null
+        );
+      });
+    },
+    createErrorMaker(ValidationErrorType.INVALID_TRACING_DATA),
     undefined,
   ],
 ];

@@ -18,6 +18,10 @@ export function isGeometricalVector(object: any): object is GeometricalVector {
   return has(object, 'x2') && has(object, 'y1') && has(object, 'x2') && has(object, 'y2');
 }
 
+export function isGeometricalObject(object: any): object is GeometricalObject {
+  return isGeometricalPoint(object) || isGeometricalVector(object);
+}
+
 export function isBehind(point: GeometricalPoint, line: GeometricalVector) {
   return ((line.x2 - line.x1) * (point.y - line.y1) - (line.y2 - line.y1) * (point.x - line.x1)) > 0;
 }
