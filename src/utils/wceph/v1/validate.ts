@@ -37,6 +37,10 @@ enum ValidationErrorType {
   INCOMPATIBLE_CONTRAST_VALUE,
   INVALID_IMAGE_DATA,
   INVALID_TRACING_DATA,
+  INVALID_ANALYSIS_ID,
+  INVALID_TRACING_MODE,
+  INVALID_MANUAL_LANDMARKS,
+  INVALID_SKIPPED_STEPS,
 }
 
 const getMessageForError = (type: ValidationErrorType, data?: any) => {
@@ -103,7 +107,6 @@ const rules: [
     ({ data }) => {
       return every(values(data), (image) => {
         return (
-          isString(image.type) &&
           isBoolean(image.flipX) &&
           isBoolean(image.flipY) &&
           isBoolean(image.invertColors) &&
@@ -142,7 +145,7 @@ const rules: [
         );
       });
     },
-    createErrorMaker(ValidationErrorType.INVALID_TRACING_DATA),
+    createErrorMaker(ValidationErrorType.INVALID_TRACING_MODE),
     undefined,
   ],
   [
@@ -154,7 +157,7 @@ const rules: [
         );
       });
     },
-    createErrorMaker(ValidationErrorType.INVALID_TRACING_DATA),
+    createErrorMaker(ValidationErrorType.INVALID_MANUAL_LANDMARKS),
     undefined,
   ],
   [
@@ -166,7 +169,7 @@ const rules: [
         );
       });
     },
-    createErrorMaker(ValidationErrorType.INVALID_TRACING_DATA),
+    createErrorMaker(ValidationErrorType.INVALID_SKIPPED_STEPS),
     undefined,
   ],
   [
@@ -207,11 +210,12 @@ const rules: [
     ({ data }) => {
       return every(values(data), ({ analysis }) => {
         return (
-          isString(analysis) || analysis === null
+          isPlainObject(analysis) &&
+          (isString(analysis.activeId) || analysis.activeId === null)
         );
       });
     },
-    createErrorMaker(ValidationErrorType.INVALID_TRACING_DATA),
+    createErrorMaker(ValidationErrorType.INVALID_ANALYSIS_ID),
     undefined,
   ],
 ];
