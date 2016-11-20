@@ -209,7 +209,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
     return (
       <div style={{ height: minHeight, width: minWidth }}>
         <svg
-          ref='canvas'
+          ref="canvas"
           className={cx(classes.canvas, className)}
           width={minWidth} height={minHeight}
           onWheel={this.handleMouseWheel}
@@ -219,17 +219,17 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
           style={{ cursor: mapCursor(getCursorForCanvas()) }}
         >
           <defs>
-            <BrightnessFilter id='brightness' value={brightness} />
-            <DropShadow id='shadow' />
-            <InvertFilter id='invert' />
-            <ContrastFilter id='contrast' value={contrast} />
+            <BrightnessFilter id="brightness" value={brightness} />
+            <DropShadow id="shadow" />
+            <InvertFilter id="invert" />
+            <ContrastFilter id="contrast" value={contrast} />
           </defs>
           <g>
-            <g filter='url(#shadow)'>
-              <g filter='url(#brightness)'>
+            <g filter="url(#shadow)">
+              <g filter="url(#brightness)">
                 <g>
                   <image
-                    ref='image'
+                    ref="image"
                     xlinkHref={src}
                     x={0} y={0}
                     width={imageWidth} height={imageHeight}

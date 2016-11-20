@@ -40,7 +40,7 @@ type LoadError = StoreEntries.workspace.analysis.loadError;
 type AreResultsShown = StoreEntries.workspace.analysis.results.areShown;
 type IsAnalysisLoading = StoreEntries.workspace.analysis.isLoading;
 
-const defaultAnalysisId: AnalysisId = null;
+const defaultAnalysisId: AnalysisId = 'common';
 
 const activeAnalysisIdReducer = handleActions<AnalysisId, any>(
   {

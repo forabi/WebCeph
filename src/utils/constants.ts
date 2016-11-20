@@ -8,6 +8,8 @@ export const StoreKeys = {
   connectionIsSlow: 'env.connection.isSlow',
   connectionIsMetered: 'env.connection.isMetered',
 
+  appIsInitialized: 'env.init.isInitialized',
+
   appUpdateProgress: 'env.app.update.progress',
   appUpdateComplete: 'env.app.update.complete',
   appUpdateError: 'env.app.update.error',

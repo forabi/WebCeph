@@ -1,7 +1,6 @@
 import { Event, StoreKeys } from 'utils/constants';
 import { Store, Middleware } from 'redux';
 import idb from 'idb-keyval';
-import has from 'lodash/has';
 
 import {
   persistStateStarted,
@@ -36,6 +35,11 @@ const isStoreEntryPersistable = (key: string): boolean => {
   return indexOf(PERSISTABLE_KEYS, key) > -1;
 };
 
+declare var window: Window & { requestIdleCallback?: RequestIdleCallback };
+
+// @TODO: replace with a polyfill?
+const rIC = window.requestIdleCallback || ((fn: Function) => fn());
+
 const saveStateMiddleware: Middleware = ({ getState }: Store<any>) => (next: DispatchFunction) =>
   async (action: Action<any>) => {
     if (isPersistenceNeededForAction(action)) {
@@ -43,28 +47,31 @@ const saveStateMiddleware: Middleware = ({ getState }: Store<any>) => (next: Dis
       console.info(
         `Action ${action.type} has triggered state persistence`
       );
-      try {
-        next(persistStateStarted());
-        console.info('Persisting state...');
-        const stateToPersist = pickBy(
-          getState(),
-          (_, k) => isStoreEntryPersistable(k as string),
-        );
-        // @TODO: persist state along with app version
-        await idb.set(__VERSION__, stateToPersist);
-        return next(persistStateSucceeded());
-      } catch (e) {
-        console.error(
-          `Failed to persist state.`,
-          e,
-        );
-        return next(persistStateFailed({ message: e.message }));
-      }
+      rIC(async () => {
+        try {
+          next(persistStateStarted());
+          console.info('Persisting state...');
+          const stateToPersist = pickBy(
+            getState(),
+            (_, k) => isStoreEntryPersistable(k as string),
+          );
+          // @TODO: persist state along with app version
+          await idb.set(__VERSION__, stateToPersist);
+          console.info('State persisted successfully.');
+          return next(persistStateSucceeded());
+        } catch (e) {
+          console.error(
+            `Failed to persist state.`,
+            e,
+          );
+          return next(persistStateFailed({ message: e.message }));
+        }
+      });
     } else {
-      console.info(
-        `Action ${action.type} does not trigger state ` +
-        `persistence, so it has been forwarded.`,
-      );
+      /**
+       * Action does not trigger state
+       * persistence, so it has been forwarded.
+       */
       return next(action);
     }
   };
@@ -79,8 +86,10 @@ const loadStateMiddleware: Middleware = (_: Store<any>) => (next: DispatchFuncti
       next(action);
       try {
         const keys = await idb.keys();
-        let restoredState: RestoredState;
-        if (has(keys, __VERSION__)) {
+        let restoredState: RestoredState = { };
+        if (keys.length === 0) {
+          console.info('No persisted state was found.');
+        } else if (indexOf(keys, __VERSION__) > -1) {
           console.info(`Found persisted state compatible with this version (${__VERSION__})`);
           restoredState = await idb.get<RestoredState>(__VERSION__);
         } else {

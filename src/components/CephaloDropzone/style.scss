@@ -11,10 +11,8 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   width: 100%;
-  background-size: 50% 50%;
-  background-position: center;
   background-color: #EEEEEE;
 
   .dropzone_load_demo {

@@ -36,32 +36,33 @@ const addLifeCycleHooks = lifecycle({
   },
 });
 
-const showSpinner = branch(
-  ({ isReady }: Props) => !isReady,
-  renderComponent(Progress),
-  identity,
-);
+const enhance = compose<Props, State>(pure, addLifeCycleHooks);
 
-const enhance = compose<Props, State>(pure, addLifeCycleHooks, showSpinner);
-
-const App = enhance(({ userAgent, isSummaryShown = false, shouldShowStepper = false }: Props) => (
+const App = enhance(({ userAgent, isReady, isSummaryShown = false, shouldShowStepper = false }: Props) => (
   <MuiThemeProvider muiTheme={getMuiTheme()}>
-    <div className={classes.root}>
-      <CommandPalette className={classes.command_palette} />
-      <AnalysisResultsViewer open={isSummaryShown} />
-      <CompatibilityChecker userAgent={userAgent} />
-      <div className={classes.container}>
-        <Menu className={classes.menu} />
-        <div className={classes.row}>
-          <CephaloCanvasContainer className={classes.main} />
-          <div className={cx(classes.sidebar, { [classes.sidebar_hidden]: !shouldShowStepper })}>
-            <AnalysisSelector className={classes.selector} />
-            <AnalysisStepper className={classes.stepper} />
+    { isReady ? (
+        <div className={classes.root}>
+          <CommandPalette className={classes.command_palette} />
+          <AnalysisResultsViewer open={isSummaryShown} />
+          <CompatibilityChecker userAgent={userAgent} />
+          <div className={classes.container}>
+            <Menu className={classes.menu} />
+            <div className={classes.row}>
+              <CephaloCanvasContainer className={classes.main} />
+              <div className={cx(classes.sidebar, { [classes.sidebar_hidden]: !shouldShowStepper })}>
+                <AnalysisSelector className={classes.selector} />
+                <AnalysisStepper className={classes.stepper} />
+              </div>
+            </div>
+            <Toolbar className={classes.toolbar} />
           </div>
         </div>
-        <Toolbar className={classes.toolbar} />
-      </div>
-    </div>
+      ) : (
+        <div className={classes.root_loading}>
+          <Progress />
+        </div>
+      )
+    }
   </MuiThemeProvider>
 ));
 

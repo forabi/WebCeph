@@ -13,7 +13,7 @@ import {
 } from './props';
 
 import {
-  isAppReady,
+  isAppInitialized,
 } from 'store/reducers/env/init';
 
 import {
@@ -38,7 +38,6 @@ import {
 
 import {
   checkBrowserCompatibility,
-  appIsReady,
 } from 'actions/initialization';
 
 import {
@@ -52,7 +51,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
     return {
       isSummaryShown: areResultsShown(state) && canShowResults(state),
       shouldShowStepper: hasImage(state) || isImageLoading(state),
-      isReady: isAppReady(state),
+      isReady: isAppInitialized(state),
       shouldCheckCompatibility: (
         isBrowserCompatible(state)(userAgent) ||
         isCheckingCompatiblity(state) ||
@@ -80,10 +79,7 @@ const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> =
       {
         onComponentMount: async () => {
           if (!isReady) {
-            await Promise.all([
-              dispatch(restorePersistedState()),
-            ]);
-            dispatch(appIsReady());
+            dispatch(restorePersistedState());
           } else if (shouldCheckCompatibility) {
             dispatch(checkBrowserCompatibility());
           }
@@ -93,7 +89,7 @@ const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> =
   };
 
 const connected = connect<StateProps, DispatchProps, OwnProps>(
-  mapStateToProps, mapDispatchToProps, mergeProps
+  mapStateToProps, mapDispatchToProps, mergeProps,
 )(App);
 
 

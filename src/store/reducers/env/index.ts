@@ -1,3 +1,10 @@
 import compatibility from './compatibility';
+import init from './init';
 
-export default compatibility;
+import assign from 'lodash/assign';
+
+export default assign(
+  { },
+  init,
+  compatibility,
+);

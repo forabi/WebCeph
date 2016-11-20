@@ -189,6 +189,9 @@ declare namespace StoreEntries {
     namespace connection {
       type isOffline = boolean;
     }
+    namespace init {
+      type isInitialized = boolean;
+    }
     namespace app {
       type isUpdating = boolean;
       type isCaching = boolean;

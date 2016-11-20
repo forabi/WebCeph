@@ -3,6 +3,15 @@
   font-family: Roboto, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.root_loading {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  align-items: center;
+  justify-content: center;
+  background-color: #EEEEEE;
+}
+
 .container {
   height: 100vh;
   max-height: 100vh;
