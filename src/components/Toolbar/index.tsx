@@ -4,6 +4,7 @@ import * as React from 'react';
 // import Divider from 'material-ui/Divider';
 import FlatButton from 'material-ui/FlatButton';
 // import Slider from 'material-ui/Slider';
+import CircularProgress from 'material-ui/CircularProgress';
 
 import IconAddPoint from 'material-ui/svg-icons/content/add';
 import IconSelect from 'material-ui/svg-icons/action/help-outline';
@@ -21,9 +22,9 @@ const classes = require('./style.scss');
 
 import { ToolsIds } from 'editorTools';
 
-import ToolbarProps from './props';
+import Props from './props';
 
-const CephaloEditorToolbar = (props: ToolbarProps) => {
+const CephaloEditorToolbar = (props: Props) => {
   const {
     canEdit, canRedo, canUndo,
     contrast, brightness, isImageInverted,
@@ -46,38 +47,38 @@ const CephaloEditorToolbar = (props: ToolbarProps) => {
   const cannotEdit = !canEdit;
   return (
     <div className={cx(classes.root, props.className)}>
-      <FlatButton onClick={onUndoClick} disabled={cannotEdit || !canUndo} label="Undo" icon={<IconUndo/>} />
-      <FlatButton onClick={onRedoClick} disabled={cannotEdit || !canRedo} label="Redo" icon={<IconRedo/>} />
-      <FlatButton onClick={onFlipXClick} disabled={cannotEdit} label="Flip" icon={<IconFlip/>} />
+      <FlatButton onTouchTap={onUndoClick} disabled={cannotEdit || !canUndo} label="Undo" icon={<IconUndo/>} />
+      <FlatButton onTouchTap={onRedoClick} disabled={cannotEdit || !canRedo} label="Redo" icon={<IconRedo/>} />
+      <FlatButton onTouchTap={onFlipXClick} disabled={cannotEdit} label="Flip" icon={<IconFlip/>} />
       <FlatButton
         disabled={cannotEdit || activeToolId === ToolsIds.SELECT}
         label=""
         icon={<IconSelect />}
-        onClick={onToolButtonClick.bind(null, ToolsIds.SELECT)}
+        onTouchTap={onToolButtonClick.bind(null, ToolsIds.SELECT)}
       />
       <FlatButton
         disabled={cannotEdit || activeToolId === ToolsIds.ADD_POINT}
         label=""
         icon={<IconAddPoint />}
-        onClick={onToolButtonClick.bind(null, ToolsIds.ADD_POINT)}
+        onTouchTap={onToolButtonClick.bind(null, ToolsIds.ADD_POINT)}
       />
       <FlatButton
         disabled={cannotEdit || activeToolId === ToolsIds.ERASER}
         label=""
         icon={<IconEraser />}
-        onClick={onToolButtonClick.bind(null, ToolsIds.ERASER)}
+        onTouchTap={onToolButtonClick.bind(null, ToolsIds.ERASER)}
       />
       <FlatButton
         disabled={true || cannotEdit || activeToolId === ToolsIds.ZOOM_WITH_CLICK}
         label=""
         icon={<IconZoom />}
-        onClick={onToolButtonClick.bind(null, ToolsIds.ZOOM_WITH_CLICK)}
+        onTouchTap={onToolButtonClick.bind(null, ToolsIds.ZOOM_WITH_CLICK)}
       />
       <FlatButton
         disabled={!canShowSummary}
         label="Summary"
         icon={<IconList />}
-        onClick={onShowSummaryClick}
+        onTouchTap={onShowSummaryClick}
       />
       <FlatButton
         disabled={!canExport}
