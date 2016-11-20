@@ -124,15 +124,24 @@ const createExport: WCeph.Exporter = async (state, options, onUpdate) => {
     },
   };
 
-  if (__DEBUG__) {
     const errors = validateIndexJSON(json);
     if (errors.length > 0) {
+    if (__DEBUG__) {
       console.warn(
-        `Trying to export file as an invalid WCeph format`,
+        '[BUG] Failed to export file. ' +
+        'Trying to export file as an invalid WCeph format. ' +
+        'This is a bug either in validation or in export logic.',
         map(errors, e => e.message),
       );
-      throw new TypeError('Invalid file');
     }
+    throw new TypeError(
+      `Could not export file. ` + (
+        (errors.length === 1) ? errors[0].message : (
+          `The following errors were encoutered while exporting: \n` +
+            map(errors, e => e.message).join('\n')
+        )
+      ),
+    );
   }
 
   zip.file(JSON_FILE_NAME, JSON.stringify(json, undefined, 2));
