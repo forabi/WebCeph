@@ -14,7 +14,7 @@ import {
 } from 'actions/persistence';
 
 import pickBy from 'lodash/pickBy';
-import find from 'lodash/find';
+import indexOf from 'lodash/indexOf';
 
 const PERSISTABLE_EVENTS = [
   Event.BROWSER_COMPATIBLITY_CHECK_SUCCEEDED,
@@ -22,7 +22,7 @@ const PERSISTABLE_EVENTS = [
 ];
 
 const isPersistenceNeededForAction = ({ type }: Action<any>): boolean => {
-  return Boolean(find(PERSISTABLE_EVENTS, type));
+  return indexOf(PERSISTABLE_EVENTS, type) > -1;
 };
 
 const PERSISTABLE_KEYS = [
@@ -33,15 +33,19 @@ const PERSISTABLE_KEYS = [
 ];
 
 const isStoreEntryPersistable = (key: string): boolean => {
-  return Boolean(find(PERSISTABLE_KEYS, key));
+  return indexOf(PERSISTABLE_KEYS, key) > -1;
 };
 
 const saveStateMiddleware: Middleware = ({ getState }: Store<any>) => (next: DispatchFunction) =>
   async (action: Action<any>) => {
     if (isPersistenceNeededForAction(action)) {
       next(action);
+      console.info(
+        `Action ${action.type} has triggered state persistence`
+      );
       try {
         next(persistStateStarted());
+        console.info('Persisting state...');
         const stateToPersist = pickBy(
           getState(),
           (_, k) => isStoreEntryPersistable(k as string),
@@ -57,22 +61,33 @@ const saveStateMiddleware: Middleware = ({ getState }: Store<any>) => (next: Dis
         return next(persistStateFailed({ message: e.message }));
       }
     } else {
+      console.info(
+        `Action ${action.type} does not trigger state ` +
+        `persistence, so it has been forwarded.`,
+      );
       return next(action);
     }
   };
+
+type RestoredState = { [id: string]: any };
 
 const loadStateMiddleware: Middleware = (_: Store<any>) => (next: DispatchFunction) =>
   async (action: Action<any>) => {
     const { type } = action;
     if (type === Event.LOAD_PERSISTED_STATE_REQUESTED) {
+      console.info('Requested loading persisted state');
       next(action);
       try {
         const keys = await idb.keys();
-        type RestoredState = { [id: string]: any };
         let restoredState: RestoredState;
         if (has(keys, __VERSION__)) {
+          console.info(`Found persisted state compatible with this version (${__VERSION__})`);
           restoredState = await idb.get<RestoredState>(__VERSION__);
         } else {
+          console.info(
+            `Could not find persisted state compatible with this ` +
+            `version (${__VERSION__}). Upgrading...`,
+          );
           // @TODO: perform any necessary upgrade operations
           // @NOTE: Do not break on switch cases.
           switch (__VERSION__) {
@@ -80,10 +95,11 @@ const loadStateMiddleware: Middleware = (_: Store<any>) => (next: DispatchFuncti
               restoredState = { };
           }
         }
+        console.info('Persisted state loaded successfully');
         return next(restorePersistedStateSucceeded(restoredState));
       } catch (e) {
         console.error(
-          `Failed to load state.`,
+          `Failed to load persisted state.`,
           e,
         );
         return next(restorePersistedStateFailed({ message: e.message }));
@@ -101,7 +117,7 @@ const clearStateMiddleware: Middleware = (_: Store<any>) => (next: DispatchFunct
         return next(clearPersistedStateSucceeded());
       } catch (e) {
         console.error(
-          `Failed to persist state.`,
+          `Failed to clean persisted state.`,
           e,
         );
         return next(clearPersistedStateFailed({ message: e.message }));

@@ -188,10 +188,10 @@ import memoize from 'lodash/memoize';
 
 declare var require: __WebpackModuleApi.RequireFunction;
 
-const requireCursor = require.context('file!./cursors', false, /.png$/i);
+const requireCursor = require.context('file-loader!./cursors', false, /.png$/i);
 
 export const mapCursor = memoize((cursor: string | undefined): string => {
-  let value: string = '';
+  let value = '';
   if (cursor !== undefined) {
     const customCursor = cursorToCSSMap[cursor][0];
     if (customCursor !== null) {

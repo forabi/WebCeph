@@ -18,11 +18,11 @@ export const persistStateStarted = createAction<Payloads.persistStateRequested>(
 );
 
 export const persistStateSucceeded = createAction<Payloads.persistStateSucceeded>(
-  Event.LOAD_PERSISTED_STATE_SUCCEEDED,
+  Event.PERSIST_STATE_SUCCEEDED,
 );
 
 export const persistStateFailed = createAction<Payloads.persistStateFailed>(
-  Event.LOAD_PERSISTED_STATE_SUCCEEDED,
+  Event.PERSIST_STATE_FAILED,
 );
 
 export const clearPersistedStateRequested = createAction<Payloads.clearPersistedStateRequested>(
