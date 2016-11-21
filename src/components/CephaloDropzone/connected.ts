@@ -21,10 +21,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = () => ({ });
 
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = (dispatch) => (
   {
-    onFilesDropped: (files) => {
-      console.log(files);
-      dispatch(importFileRequested(files[0]));
-    },
+    onFilesDropped: (files) => dispatch(importFileRequested(files[0])),
     onDemoButtonClick: () => dispatch(loadImageFromURL({ url: DEMO_IMAGE_URL })),
   }
 );

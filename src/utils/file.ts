@@ -15,3 +15,11 @@ export function readFileAsDataURL(file: File): Promise<string> {
     reader.readAsDataURL(file);
   });
 }
+
+export function getBaseName(path: string) {
+  let base = String(path).substring(path.lastIndexOf('/') + 1);
+  if (base.lastIndexOf('.') !== -1) {
+    base = base.substring(0, base.lastIndexOf('.'));
+  }
+  return base;
+};

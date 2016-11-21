@@ -5,6 +5,9 @@ export type WCephJSON = {
   /** Mandatory version specifier, always 1. */
   version: 1;
 
+  /** Indicates that this file was exported in development environment */
+  debug?: true;
+
   /**
    * A map of object IDs to the paths of files inside the ZIP
    */
@@ -25,6 +28,7 @@ export type WCephJSON = {
   /** Data indexed by image ID */
   data: {
     [imageId: string]: {
+      name: string | null;
       /** A null value indicates that the image type is not set or is unknown */
       type: (
         'ceph_lateral' | 'ceph_pa' |

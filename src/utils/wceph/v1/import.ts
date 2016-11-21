@@ -32,22 +32,38 @@ const importFile: WCeph.Importer = async (fileToImport, options) => {
     await zip.file(JSON_FILE_NAME).async('string')
   );
 
-  if (__DEBUG__) {
-    const errors = validateIndexJSON(json);
-    if (errors.length > 0) {
+  const errors = validateIndexJSON(json);
+  if (errors.length > 0) {
+    if (__DEBUG__) {
       console.warn(
-        `Trying to import an invalid WCeph file`,
+        '[BUG] Failed to import file. ' +
+        'Trying to import an invalid WCeph format. ' + (
+          json.debug ? (
+            'Looks like the file have been exported ' +
+            'while in development.'
+          ) : (
+            'This might be a bug in validation or import. '
+          )
+        ),
         map(errors, e => e.message),
       );
     }
+    throw new TypeError(
+      `Could not export file. ` + (
+        (errors.length === 1) ? errors[0].message : (
+          `The following errors were encoutered while exporting: \n` +
+            map(errors, e => e.message).join('\n')
+        )
+      ),
+    );
   }
 
   const loadImages = await Promise.all(map(
     json.refs.images,
     async (path: string, id: string) => {
       const blob = await zip.file(path).async('blob');
-      // const type = json.data[id].fileType; // @TODO
-      const imageFile = new File([blob], id, { type: 'image/bmp' });
+      const name = json.data[id].name;
+      const imageFile = new File([blob], name || id, { type: 'image/bmp' });
       return loadImageFile(imageFile);
     }
   ));

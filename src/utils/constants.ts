@@ -42,6 +42,7 @@ export const StoreKeys = {
   imageHeight: 'cephalo.workspace.image.height',
   imageWidth: 'cephalo.workspace.image.width',
   imageData: 'cephalo.workspace.image.data',
+  imageName: 'cephalo.workspace.image.name',
   imageLoadError: 'cephalo.workspace.image.load.error',
   imageIsLoading: 'cephalo.workspace.image.load.isLoading',
   imageBrightness: 'cephalo.workspace.image.corrections.brightness',
@@ -86,6 +87,9 @@ export const Event = {
   IMPORT_PROGRESS_CHANGED: 'IMPORT_PROGRESS_CHANGED',
 
   /* Workspace */
+  LOAD_IMAGE_REQUESTED: 'LOAD_IMAGE_REQUESTED',
+  LOAD_IMAGE_SUCCEEDED: 'LOAD_IMAGE_SUCCEEDED',
+  LOAD_IMAGE_FAILED: 'LOAD_IMAGE_FAILED',
   TOGGLE_TOOL_REQUESTED: 'TOGGLE_TOOL_REQUESTED',
   ENABLE_TOOL_REQUESTED: 'ENABLE_TOOL_REQUESTED',
   DISABLE_TOOL_REQUESTED: 'DISABLE_TOOL_REQUESTED',
@@ -97,9 +101,6 @@ export const Event = {
   SET_IMAGE_BRIGHTNESS_REQUESTED: 'SET_IMAGE_BRIGHTNESS_REQUESTED',
   SET_IMAGE_CONTRAST_REQUESTED: 'SET_IMAGE_CONTRAST_REQUESTED',
   INVERT_IMAGE_REQUESTED: 'INVERT_IMAGE_REQUESTED',
-  LOAD_IMAGE_REQUESTED: 'LOAD_IMAGE_REQUESTED',
-  LOAD_IMAGE_SUCCEEDED: 'LOAD_IMAGE_SUCCEEDED',
-  LOAD_IMAGE_FAILED: 'LOAD_IMAGE_FAILED',
   RESET_WORKSPACE_REQUESTED: 'RESET_WORKSPACE_REQUESTED',
   IGNORE_WORKSPACE_ERROR_REQUESTED: 'IGNORE_WORKSPACE_ERROR_REQUESTED',
 
@@ -180,7 +181,7 @@ export const Cursor = {
 
 const cursorToCSSMap: { [id: string]: (null | string)[] } = {
   [Cursor.SELECT]: [null],
-  [Cursor.ADD_LANDMARK]: [null, 'cell', 'crosshair'],
+  [Cursor.ADD_LANDMARK]: [null, 'crosshair', 'cell'],
   [Cursor.REMOVE_LANDMARK]: ['draw-eraser', 'cell', 'crosshair'],
   [Cursor.REMOVE_LANDMARK_NO_TARGET]: [null, 'not-allowed'],
   [Cursor.REMOVE_LANDMARK_DISABLED]: [null, 'not-allowed', 'no-drop'],

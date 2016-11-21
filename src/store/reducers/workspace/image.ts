@@ -4,14 +4,10 @@ import { printUnexpectedPayloadWarning } from 'utils/debug';
 
 import { createSelector } from 'reselect';
 
-import assign from 'lodash/assign';
-
-import undoable, { includeAction } from 'redux-undo';
-import { undoableConfig } from 'utils/config';
-
 type Height = StoreEntries.workspace.image.height;
 type Width = StoreEntries.workspace.image.width;
 type Data = StoreEntries.workspace.image.data;
+type Name = StoreEntries.workspace.image.name;
 type LoadError = StoreEntries.workspace.image.loadError;
 
 // @TODO: normalize to [0, 1] instead of 0-100
@@ -21,6 +17,7 @@ const defaultContrast = 0.5;
 const KEY_IMAGE_HEIGHT = StoreKeys.imageHeight;
 const KEY_IMAGE_WIDTH = StoreKeys.imageWidth;
 const KEY_IMAGE_DATA = StoreKeys.imageData;
+const KEY_IMAGE_NAME = StoreKeys.imageName;
 const KEY_IMAGE_INVERT = StoreKeys.imageInvert;
 const KEY_IMAGE_CONTRAST = StoreKeys.imageContrast;
 const KEY_IMAGE_BRIGHTNESS = StoreKeys.imageBrightness;
@@ -31,6 +28,7 @@ const KEY_IMAGE_LOAD_ERROR = StoreKeys.imageLoadError;
 const defaultWidth: Height = null;
 const defaultHeight: Width = null;
 const defaultData: Data = null;
+const defaultName: Name = null;
 
 const setHeight = handleActions<
   Height,
@@ -92,7 +90,25 @@ const setData = handleActions<
   defaultData,
 );
 
-
+const setName = handleActions<
+  Name,
+  Payloads.imageLoadSucceeded | Payloads.imageLoadFailed | Payloads.imageLoadRequested
+>(
+  {
+    [Event.LOAD_IMAGE_SUCCEEDED]: (state, action) => {
+      const payload = action.payload as Payloads.imageLoadSucceeded | undefined;
+      if (payload === undefined) {
+        printUnexpectedPayloadWarning(action.type, state);
+        return state;
+      }
+      return payload.name;
+    },
+    [Event.LOAD_IMAGE_REQUESTED]: (_, __) => {
+      return null;
+    },
+  },
+  defaultName,
+);
 
 const setLoadError = handleActions<LoadError, Payloads.imageLoadFailed>({
   [Event.IGNORE_WORKSPACE_ERROR_REQUESTED]: (_, __) => null,
@@ -108,10 +124,10 @@ const setLoadError = handleActions<LoadError, Payloads.imageLoadFailed>({
 }, null);
 
 const setLoadStatus = handleActions<boolean, boolean>({
-  [Event.LOAD_IMAGE_REQUESTED]: () => true,
+  [Event.IMPORT_FILE_REQUESTED]: () => true,
+  [Event.IMPORT_FILE_FAILED]: () => false,
+  [Event.IMPORT_FILE_SUCEEDED]: () => false,
   [Event.LOAD_IMAGE_FROM_URL_REQUESTED]: () => true,
-  [Event.LOAD_IMAGE_FAILED]: () => false,
-  [Event.LOAD_IMAGE_SUCCEEDED]: () => false,
   [Event.RESET_WORKSPACE_REQUESTED]: () => false,
 }, false);
 
@@ -161,6 +177,7 @@ export default {
   [KEY_IMAGE_HEIGHT]: setHeight,
   [KEY_IMAGE_WIDTH]: setWidth,
   [KEY_IMAGE_DATA]: setData,
+  [KEY_IMAGE_NAME]: setName,
   [KEY_IMAGE_INVERT]: setInvert,
   [KEY_IMAGE_CONTRAST]: setContrast,
   [KEY_IMAGE_BRIGHTNESS]: setBrightness,
@@ -170,8 +187,8 @@ export default {
   [KEY_IMAGE_LOAD_ERROR]: setLoadError,
 };
 
-export const isImageLoading = (state: GenericState) => {
-  return state[KEY_IMAGE_IS_LOADING] as boolean;
+export const isImageLoading = (state: GenericState): boolean => {
+  return state[KEY_IMAGE_IS_LOADING];
 };
 
 export const getImageWidth = (state: GenericState) => {
@@ -184,6 +201,10 @@ export const getImageHeight = (state: GenericState) => {
 
 export const getImageData = (state: GenericState) => {
   return state[KEY_IMAGE_DATA] as Data;
+};
+
+export const getImageName = (state: GenericState) => {
+  return state[KEY_IMAGE_NAME] as Name;
 };
 
 export const hasImage = createSelector(

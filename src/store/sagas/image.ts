@@ -1,6 +1,6 @@
 import uniqueId from 'lodash/uniqueId';
 import { Event } from 'utils/constants';
-import { takeLatest, takeEvery, eventChannel, END, Channel } from 'redux-saga';
+import { takeLatest, eventChannel, END, Channel } from 'redux-saga';
 import { select, put, take, cps, fork, call, Effect } from 'redux-saga/effects';
 import { ImageWorkerAction } from 'utils/constants';
 import { ImageWorkerInstance, ImageWorkerEvent, ImageWorkerResponse } from 'utils/image-worker.d';
@@ -9,6 +9,7 @@ import {
   addWorker,
   updateWorker,
   loadImageFile,
+  importFileRequested,
   importFileSucceeded,
   importFileFailed,
 } from 'actions/workspace';
@@ -41,7 +42,6 @@ function processImageInWorker(file: File, actions: any[]) {
 
 const WCEPH_REGEXP = /\.wceph$/i;
 
-
 function* loadImage({ payload }: Action<Payloads.imageLoadRequested>): IterableIterator<Effect> {
   const file: File = payload;
   const workerId = uniqueId('worker_');
@@ -70,7 +70,7 @@ function* loadImage({ payload }: Action<Payloads.imageLoadRequested>): IterableI
         if (actionId === 0) {
           const img = new Image();
           img.src = payload.url;
-          const { height = 600, width = 600 } = yield cps((cb) => {
+          const { height, width } = yield cps((cb) => {
             img.onload = () => {
               const { height, width } = img;
               cb(null, { height, width });
@@ -83,6 +83,7 @@ function* loadImage({ payload }: Action<Payloads.imageLoadRequested>): IterableI
           yield put({
             type: Event.LOAD_IMAGE_SUCCEEDED,
             payload: {
+              name: file.name,
               data: payload.url,
               height,
               width,
@@ -110,7 +111,7 @@ function* loadImage({ payload }: Action<Payloads.imageLoadRequested>): IterableI
 
 import importFile from 'utils/wceph/v1/import';
 
-function* loadLocalFile(action: Action<Payloads.importFileRequested>): IterableIterator<Effect> {
+function* loadFile(action: Action<Payloads.importFileRequested>): IterableIterator<Effect> {
   try {
     const file: File = action.payload;
     if (file.name.match(WCEPH_REGEXP)) {
@@ -118,10 +119,10 @@ function* loadLocalFile(action: Action<Payloads.importFileRequested>): IterableI
       for (const importAction of actions) {
         yield put(importAction);
       }
-      yield put(importFileSucceeded());
     } else {
       yield put(loadImageFile(file));
     }
+    yield put(importFileSucceeded());
   } catch (e) {
     console.error('Error importing file', e);
     yield put(importFileFailed({ message: e.message }));
@@ -138,7 +139,7 @@ function* loadSampleImage({ payload }: Action<Payloads.imageLoadFromURLRequested
     console.log('Loading sample image', payload.url);
     const blob = yield call(fetchBlob, payload.url);
     const file = new File([blob], 'demo_image');
-    yield put(loadImageFile(file));
+    yield put(importFileRequested(file));
   } catch (error) {
     console.error('Failed to load sample image', error);
     yield put({
@@ -150,8 +151,8 @@ function* loadSampleImage({ payload }: Action<Payloads.imageLoadFromURLRequested
 }
 
 function* watchImageRequests() {
-  yield fork(takeLatest, Event.IMPORT_FILE_REQUESTED, loadLocalFile);
   yield fork(takeLatest, Event.LOAD_IMAGE_REQUESTED, loadImage);
+  yield fork(takeLatest, Event.IMPORT_FILE_REQUESTED, loadFile);
   yield fork(takeLatest, Event.LOAD_IMAGE_FROM_URL_REQUESTED, loadSampleImage);
 }
 

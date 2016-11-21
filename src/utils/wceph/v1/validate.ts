@@ -41,6 +41,7 @@ enum ValidationErrorType {
   INVALID_TRACING_MODE,
   INVALID_MANUAL_LANDMARKS,
   INVALID_SKIPPED_STEPS,
+  INVALID_IMAGE_NAME,
 }
 
 const getMessageForError = (type: ValidationErrorType, data?: any) => {
@@ -116,6 +117,17 @@ const rules: [
       });
     },
     createErrorMaker(ValidationErrorType.INVALID_IMAGE_DATA),
+    undefined,
+  ],
+  [
+    ({ data }) => {
+      return every(values(data), ({ name }) => {
+        return (
+          isString(name) || name === null
+        );
+      });
+    },
+    createErrorMaker(ValidationErrorType.INVALID_IMAGE_NAME),
     undefined,
   ],
   [

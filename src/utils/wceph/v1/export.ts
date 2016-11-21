@@ -6,7 +6,8 @@ import {
 
 import JSZip from 'jszip';
 
-import each from 'lodash/each';
+import { getBaseName } from 'utils/file';
+
 import find from 'lodash/find';
 import zipObject from 'lodash/zipObject';
 import map from 'lodash/map';
@@ -20,6 +21,7 @@ import {
 
 import {
   getImageData,
+  getImageName,
   getImageBrightness,
   getImageContrast,
   isImageInverted,
@@ -41,6 +43,7 @@ const createExport: WCeph.Exporter = async (state, options, onUpdate) => {
    * @TODO: replace with real selectors when superimposition branch is merged
    */
   const getData = (_: string) => getImageData(state);
+  const getName = (_: string) => getImageName(state);
   const getType = (_: string) => null;
   const getBrightness = (_: string) => getImageBrightness(state);
   const getContrast = (_: string) => getImageContrast(state);
@@ -73,6 +76,7 @@ const createExport: WCeph.Exporter = async (state, options, onUpdate) => {
 
   const json: WCephJSON = {
     version: 1,
+    debug: __DEBUG__ || undefined,
     refs: {
       thumbs: {
 
@@ -83,13 +87,14 @@ const createExport: WCeph.Exporter = async (state, options, onUpdate) => {
           imagesToSave,
           (id) => `${IMAGES_FOLDER_NAME}/${id}`
         ),
-      ),
+      ), // @FIXME @TODO
     },
     data: zipObject(
       imagesToSave,
       map(
         imagesToSave,
         (id) => ({
+          name: getName(id),
           type: getType(id),
           flipX: isFlippedX(id),
           flipY: isFlippedY(id),
@@ -105,7 +110,7 @@ const createExport: WCeph.Exporter = async (state, options, onUpdate) => {
           analysis: {
             activeId: getAnalysisIdForImage(id),
           },
-        })
+        }), // @FIXME @TODO
       ),
     ),
     superimposition: {
@@ -155,7 +160,7 @@ const createExport: WCeph.Exporter = async (state, options, onUpdate) => {
   }
 
   zip.file(JSON_FILE_NAME, JSON.stringify(json, undefined, 2));
-  return zip.generateAsync(
+  const blob: Blob = await zip.generateAsync(
     {
       type : 'blob',
       compression: 'DEFLATE',
@@ -164,7 +169,12 @@ const createExport: WCeph.Exporter = async (state, options, onUpdate) => {
     onUpdate !== undefined ? ({ percent }: { percent: number }) => {
       onUpdate(percent);
     } : undefined,
-  ) as Promise<Blob>;
+  );
+  // @TODO: better naming
+  const imageName = getName(imagesToSave[0]);
+  const imageId = imagesToSave[0];
+  const basename = imageName !== null ? getBaseName(imageName) : imageId;
+  return new File([blob], `${basename}.wceph`);
 };
 
 export default createExport;

@@ -16,10 +16,8 @@ const middleware: Middleware = ({ getState }: Store<any>) => (next: Dispatch<any
       if (payload.format === 'wceph_v1') {
         const options: WCeph.ExportOptions = { };
         const state = getState();
-        const blob = await createExport(state, options);
-        const filename =  'tracing.wceph'; // @TODO
-        const file = new File([blob], filename);
-        saveAs(file, filename);
+        const file = await createExport(state, options);
+        saveAs(file, file.name);
       } else {
         console.warn(
           `${payload.format} is not a valid export format. ` +

@@ -260,6 +260,7 @@ declare namespace StoreEntries {
       type scaleOrigin = null | { x: number, y: number };
     }
     namespace image {
+      type name = string | null;
       type type = 'ceph_lateral' | 'ceph_pa' | 'panoramic' | null;
       type data = string | null;
       type width = number | null;
@@ -373,7 +374,7 @@ declare namespace Payloads {
   type removeActiveTool = string;
   type updateCanvasSize = { top: number, left: number, width: number, height: number };
   type updateMousePosition = { x: number, y: number };
-  type imageLoadSucceeded = { data: string, height: number, width: number };
+  type imageLoadSucceeded = { data: string, name: string, height: number, width: number };
   type imageLoadFailed = { message: string; };
   type imageLoadRequested = File;
   type imageLoadFromURLRequested = { url: string; };
@@ -550,7 +551,7 @@ namespace WCeph {
     state: GenericState,
     options: ExportOptions,
     progressCallback?: ExportProgressCallback,
-  ) => Promise<Blob>;
+  ) => Promise<File>;
 
   /**
    * A WCeph validator recieves the file to validate and returns zero, one or more validation errors.
