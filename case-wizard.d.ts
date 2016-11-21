@@ -321,6 +321,10 @@ declare namespace Payloads {
     options?: ExportFileOptions;
   };
 
+  type importFileRequested = File;
+  type importFileFailed = GenericError;
+  type importFileSucceeded = void;
+
   type exportProgress = {
     value: number,
     data?: any; // @TODO;

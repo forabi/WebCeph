@@ -56,10 +56,20 @@ const createExport: WCeph.Exporter = async (state, options, onUpdate) => {
   const getAnalysisIdForImage = (_: string) => getActiveAnalysisId(state);
 
   // @TODO: use selectors to get data;
-  each(imagesToSave, (imageId) => {
-    const blob = getData(imageId);
-    imgFolder.file(imageId, blob);
-  });
+  await Promise.all(
+    map(imagesToSave, async (imageId) => {
+      const dataURI = getData(imageId);
+      if (dataURI !== null) {
+        const response = await fetch(dataURI);
+        const blob = await response.blob();
+        imgFolder.file(imageId, blob);
+      } else {
+        console.warn(
+          `[BUG] Trying to export a file without image data`
+        );
+      }
+    }),
+  );
 
   const json: WCephJSON = {
     version: 1,

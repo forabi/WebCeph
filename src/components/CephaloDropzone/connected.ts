@@ -10,7 +10,7 @@ import {
   OwnProps,
 } from './props';
 import {
-  loadImageFile,
+  importFileRequested,
   loadImageFromURL,
 } from 'actions/workspace';
 import {
@@ -21,7 +21,10 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = () => ({ });
 
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = (dispatch) => (
   {
-    onFilesDropped: (files) => dispatch(loadImageFile(files[0])),
+    onFilesDropped: (files) => {
+      console.log(files);
+      dispatch(importFileRequested(files[0]));
+    },
     onDemoButtonClick: () => dispatch(loadImageFromURL({ url: DEMO_IMAGE_URL })),
   }
 );

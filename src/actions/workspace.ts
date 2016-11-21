@@ -54,6 +54,18 @@ export const setScale: (scale: number, x?: number, y?: number) => Action<Payload
 export const tryAutomaticSteps: () => any = createAction(Event.TRY_AUTOMATIC_STEPS_REQUESTED);
 
 /* Image editing actions */
+export const importFileRequested:
+  (file: File) => Action<Payloads.importFileRequested> =
+    createAction(Event.IMPORT_FILE_REQUESTED);
+
+export const importFileSucceeded:
+  () => Action<Payloads.importFileSucceeded> =
+    createAction(Event.IMPORT_FILE_SUCEEDED);
+
+export const importFileFailed:
+  (payload: Payloads.importFileFailed) => Action<Payloads.importFileFailed> =
+    createAction(Event.IMPORT_FILE_FAILED);
+
 export const loadImageFile:
   (file: File) => Action<Payloads.imageLoadRequested> =
     createAction(Event.LOAD_IMAGE_REQUESTED);

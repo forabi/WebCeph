@@ -24,11 +24,11 @@ function mapError({ message }: Error): ImageWorkerError {
   } else {
     return {
       message: (
-        genericErrorMessage + 
+        genericErrorMessage +
         '\n' +
         `Details: ${message}`
       ),
-      code: ErrorCode.UNKNOWN
+      code: ErrorCode.UNKNOWN,
     };
   }
 }

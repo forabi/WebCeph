@@ -14,9 +14,9 @@ type Width = StoreEntries.workspace.image.width;
 type Data = StoreEntries.workspace.image.data;
 type LoadError = StoreEntries.workspace.image.loadError;
 
-// @TODO: normalize to [-1, 1] instead of 0-100
+// @TODO: normalize to [0, 1] instead of 0-100
 const defaultBrightness = 50;
-const defaultContrast = 1;
+const defaultContrast = 0.5;
 
 const KEY_IMAGE_HEIGHT = StoreKeys.imageHeight;
 const KEY_IMAGE_WIDTH = StoreKeys.imageWidth;

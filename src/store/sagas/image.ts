@@ -1,15 +1,22 @@
 import uniqueId from 'lodash/uniqueId';
 import { Event } from 'utils/constants';
-import { takeLatest, eventChannel, END, Channel } from 'redux-saga';
+import { takeLatest, takeEvery, eventChannel, END, Channel } from 'redux-saga';
 import { select, put, take, cps, fork, call, Effect } from 'redux-saga/effects';
 import { ImageWorkerAction } from 'utils/constants';
 import { ImageWorkerInstance, ImageWorkerEvent, ImageWorkerResponse } from 'utils/image-worker.d';
-import { setScale, addWorker, updateWorker , loadImageFile} from 'actions/workspace';
+import {
+  setScale,
+  addWorker,
+  updateWorker,
+  loadImageFile,
+  importFileSucceeded,
+  importFileFailed,
+} from 'actions/workspace';
 import { getCanvasSize } from 'store/reducers/workspace/canvas';
 
 const ImageWorker = require('worker-loader!utils/image-worker');
 
-const worker: ImageWorkerInstance = new ImageWorker;
+const worker: ImageWorkerInstance = new ImageWorker();
 
 function processImageInWorker(file: File, actions: any[]) {
   const requestId = uniqueId('worker_request_');
@@ -32,8 +39,11 @@ function processImageInWorker(file: File, actions: any[]) {
   });
 }
 
+const WCEPH_REGEXP = /\.wceph$/i;
+
+
 function* loadImage({ payload }: Action<Payloads.imageLoadRequested>): IterableIterator<Effect> {
-  const file = payload;
+  const file: File = payload;
   const workerId = uniqueId('worker_');
   yield put(addWorker({
     id: workerId,
@@ -60,10 +70,14 @@ function* loadImage({ payload }: Action<Payloads.imageLoadRequested>): IterableI
         if (actionId === 0) {
           const img = new Image();
           img.src = payload.url;
-          const { height, width } = yield cps((cb) => {
+          const { height = 600, width = 600 } = yield cps((cb) => {
             img.onload = () => {
               const { height, width } = img;
               cb(null, { height, width });
+            };
+            img.onerror = (ev) => {
+              console.error('Error event', ev, payload);
+              cb(ev.error, null);
             };
           });
           yield put({
@@ -94,6 +108,26 @@ function* loadImage({ payload }: Action<Payloads.imageLoadRequested>): IterableI
   }
 }
 
+import importFile from 'utils/wceph/v1/import';
+
+function* loadLocalFile(action: Action<Payloads.importFileRequested>): IterableIterator<Effect> {
+  try {
+    const file: File = action.payload;
+    if (file.name.match(WCEPH_REGEXP)) {
+      const actions = yield call(importFile, file, { });
+      for (const importAction of actions) {
+        yield put(importAction);
+      }
+      yield put(importFileSucceeded());
+    } else {
+      yield put(loadImageFile(file));
+    }
+  } catch (e) {
+    console.error('Error importing file', e);
+    yield put(importFileFailed({ message: e.message }));
+  }
+}
+
 async function fetchBlob(url: string) {
   const response = await fetch(url);
   return response.blob();
@@ -116,6 +150,7 @@ function* loadSampleImage({ payload }: Action<Payloads.imageLoadFromURLRequested
 }
 
 function* watchImageRequests() {
+  yield fork(takeLatest, Event.IMPORT_FILE_REQUESTED, loadLocalFile);
   yield fork(takeLatest, Event.LOAD_IMAGE_REQUESTED, loadImage);
   yield fork(takeLatest, Event.LOAD_IMAGE_FROM_URL_REQUESTED, loadSampleImage);
 }
