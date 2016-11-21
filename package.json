@@ -51,7 +51,8 @@
     "resize-observer-polyfill": "^1.1.4",
     "scroll-into-view-if-needed": "^1.0.4",
     "serviceworker-webpack-plugin": "^0.1.6",
-    "sw-toolbox": "^3.4.0"
+    "sw-toolbox": "^3.4.0",
+    "typescript": "2.1.0-dev.20161109"
   },
   "devDependencies": {
     "@types/bluebird": "^3.0.35",
@@ -117,8 +118,8 @@
     "ts-node": "^1.4.3",
     "tslint": "latest",
     "tslint-react": "^1.1.0",
-    "typings": "^2.0.0",
     "typescript": "^2.1.0",
+    "typings": "^2.0.0",
     "url-loader": "^0.5.7",
     "webpack": "^2.1.0-beta.25",
     "webpack-dashboard": "^0.2.0",
