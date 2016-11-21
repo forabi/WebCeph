@@ -21,13 +21,11 @@ const Lens = pure((props: Props) => {
   const transform = `translate(-${ x - (width / 2) }px, -${ y - (height / 2) }px)`;
   const style = {
     ...ownStyle,
-    ...{
-      top, left,
-      width, height,
-      position: 'absolute',
-      overflow: 'hidden',
-      transform: `scale(${ isFlippedX ? -1 : 1 }, ${ isFlippedY ? -1 : 1 })`,
-    },
+    top, left,
+    width, height,
+    position: 'absolute',
+    overflow: 'hidden',
+    transform: `scale(${ isFlippedX ? -1 : 1 }, ${ isFlippedY ? -1 : 1 })`,
   };
 
   return (

@@ -71,16 +71,14 @@ const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> =
       ...stateProps,
       ...dispatchProps,
       ...ownProps,
-      ...{
-        onComponentMount: async () => {
-          if (!isReady) {
-            dispatch(restorePersistedState());
-          }
-          if (shouldCheckCompatibility) {
-            dispatch(checkBrowserCompatibility());
-          }
-          dispatch(connectionStatusChanged({ isOffline: !navigator.onLine }));
-        },
+      onComponentMount: async () => {
+        if (!isReady) {
+          dispatch(restorePersistedState());
+        }
+        if (shouldCheckCompatibility) {
+          dispatch(checkBrowserCompatibility());
+        }
+        dispatch(connectionStatusChanged({ isOffline: !navigator.onLine }));
       },
     };
   };
