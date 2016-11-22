@@ -50,10 +50,10 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
       isSummaryShown: areResultsShown(state) && canShowResults(state),
       shouldShowStepper: hasImage(state) || isImageLoading(state),
       isReady: isAppInitialized(state),
-      shouldCheckCompatibility: (
+      shouldCheckCompatibility: !(
         isBrowserCompatible(state)(userAgent) ||
-        isCheckingCompatiblity(state) ||
-        !isCompatibilityIgnored(state)
+        isCompatibilityIgnored(state) ||
+        isCheckingCompatiblity(state)
       ),
     };
   };
