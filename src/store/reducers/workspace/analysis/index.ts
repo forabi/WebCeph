@@ -3,6 +3,7 @@ import { createSelector } from 'reselect';
 
 import assign from 'lodash/assign';
 import every from 'lodash/every';
+import some from 'lodash/some';
 import filter from 'lodash/filter';
 import find from 'lodash/find';
 import flatten from 'lodash/flatten';
@@ -271,10 +272,14 @@ export const getAllLandmarks = createSelector(
 
 export const isStepEligibleForComputation = createSelector(
   getAllLandmarks,
-  (allLandmarks) => (step: CephaloLandmark) => {
+  findEqualComponents,
+  (allLandmarks, findEqual) => (step: CephaloLandmark) => {
     return (
       isStepComputable(step) &&
-      every(step.components, (c: CephaloLandmark) => allLandmarks[c.symbol] !== undefined)
+      every(step.components, (c: CephaloLandmark) => some(
+        [c, ...findEqual(c)],
+        eq => allLandmarks[eq.symbol] !== undefined
+      ))
     );
   }
 );
