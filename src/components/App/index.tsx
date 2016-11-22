@@ -33,9 +33,6 @@ const addLifeCycleHooks = lifecycle({
   componentDidMount(this: React.Component<Props, { }>) {
     this.props.onComponentMount();
   },
-  componentDidUpdate(this: React.Component<Props, { }>) {
-    this.props.onComponentDidUpdate();
-  },
 });
 
 const enhance = compose<Props, State>(pure, addLifeCycleHooks);
