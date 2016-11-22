@@ -23,6 +23,7 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
     const {
       onFilesDropped,
       onDemoButtonClick,
+      isOffline,
       // supportedImageTypes = [
       //   'image/jpeg',
       //   'image/png',
@@ -54,21 +55,26 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
             onClick={this.openFilePicker}
           />
         </div>
-        <div className={cx(classes.dropzone_load_demo, classes.text_center)}>
-          <small
-            className={classes.muted}
-          >
-            Don't have one around? Try a sample image from Wikipedia!
-          </small>
-          <br />
-          <FlatButton
-            secondary
-            primary
-            style={demoButtonStyle}
-            label="Load sample image"
-            onClick={onDemoButtonClick}
-          />
-        </div>
+        { isOffline ? (
+          null
+        ) : (
+          <div className={cx(classes.dropzone_load_demo, classes.text_center)}>
+            <small
+              className={classes.muted}
+            >
+              Don't have one around? Try a sample image from Wikipedia!
+            </small>
+            <br />
+            <FlatButton
+              secondary
+              primary
+              style={demoButtonStyle}
+              label="Load sample image"
+              onClick={onDemoButtonClick}
+            />
+          </div>
+          )
+        }
       </Dropzone>
     );
   };

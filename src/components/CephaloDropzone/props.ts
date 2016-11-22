@@ -1,6 +1,7 @@
 export interface StateProps {
   supportedImageTypes?: string[];
   allowsMultipleFiles?: boolean;
+  isOffline: boolean;
 }
 
 export interface DispatchProps {

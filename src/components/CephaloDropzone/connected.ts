@@ -17,7 +17,11 @@ import {
   DEMO_IMAGE_URL,
 } from 'utils/config';
 
-const mapStateToProps: MapStateToProps<StateProps, OwnProps> = () => ({ });
+import { isAppOffline } from 'store/reducers/env/offline';
+
+const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state) => ({
+  isOffline: isAppOffline(state),
+});
 
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = (dispatch) => (
   {
