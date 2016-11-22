@@ -66,6 +66,7 @@ export const StoreKeys = {
 export const Event = {
   /** Connection */
   CONNECTION_STATUS_CHANGED: 'CONNECTION_STATUS_CHANGED',
+  APP_CACHING_STATUS_CHANGED: 'APP_CACHING_STATUS_CHANGED',
 
   /* Worker creation and termination */
   WORKER_CREATED: 'WORKER_CREATED',

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import ReduxApp from './ReduxApp';
+import ReduxApp, { store } from './ReduxApp';
+import { setAppUpdateStatus } from 'actions/env';
 
 declare var System: any;
 declare var module: __WebpackModuleApi.Module;
@@ -17,7 +18,26 @@ if (window.ResizeObserver === undefined) {
 
 if (!__DEBUG__ && 'serviceWorker' in navigator) {
   const runtime = require('serviceworker-webpack-plugin/lib/runtime');
-  runtime.register();
+  runtime.register().then((reg: ServiceWorkerRegistration) => {
+    reg.onupdatefound = () => {
+      const newWorker = reg.installing;
+      if (newWorker !== undefined) {
+        switch (newWorker.state) {
+          case 'installing':
+            store.dispatch(
+              setAppUpdateStatus({ complete: false })
+            );
+            break;
+          case 'installed':
+            store.dispatch(
+              setAppUpdateStatus({ complete: true })
+            );
+          default:
+            break;
+        }
+      }
+    };
+  });
 }
 
 const rootEl = document.getElementById('container');

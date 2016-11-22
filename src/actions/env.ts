@@ -6,3 +6,9 @@ export const connectionStatusChanged: (
 ) => Action<Payloads.connectionStatusChanged> = createAction<Payloads.connectionStatusChanged>(
   Event.CONNECTION_STATUS_CHANGED,
 );
+
+export const setAppUpdateStatus: (
+  payload: Payloads.setAppUpdateStatus
+) => Action<Payloads.connectionStatusChanged> = createAction<Payloads.connectionStatusChanged>(
+  Event.APP_CACHING_STATUS_CHANGED,
+);

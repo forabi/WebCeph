@@ -10,8 +10,7 @@ import { connectionStatusChanged } from 'actions/env';
 
 declare var window: Window & { __STORE__?: Store<any> };
 
-
-const store = createConfiguredStore() as Store<FinalState>;
+export const store = createConfiguredStore() as Store<FinalState>;
 
 if (__DEBUG__) {
   window.__STORE__ = store;
