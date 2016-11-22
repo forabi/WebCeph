@@ -33,6 +33,7 @@ const isBeingChecked = handleActions<IsBeingChecked, Payloads.isCheckingCompatib
 
 const missingFeatures = handleActions<CheckResults, Payloads.foundMissingFeature>({
   [Event.BROWSER_COMPATIBLITY_CHECK_MISSING_FEATURE_DETECTED]: (state, { type, payload }) => {
+    console.log('user agent', payload);
     if (payload === undefined) {
       printUnexpectedPayloadWarning(type, state);
       return state;
