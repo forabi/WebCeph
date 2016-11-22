@@ -17,6 +17,7 @@ export interface DispatchProps {
 
 export interface MergeProps {
   onComponentMount: () => any;
+  onComponentDidUpdate: () => any;
 }
 
 export type ConnectableProps = StateProps & DispatchProps & MergeProps;

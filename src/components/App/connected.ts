@@ -40,9 +40,7 @@ import {
   checkBrowserCompatibility,
 } from 'actions/initialization';
 
-import {
-  setAnalysis,
-} from 'actions/workspace';
+import { connectionStatusChanged } from 'actions/env';
 
 import assign from 'lodash/assign';
 
@@ -80,7 +78,11 @@ const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> =
         onComponentMount: async () => {
           if (!isReady) {
             dispatch(restorePersistedState());
-          } else if (shouldCheckCompatibility) {
+          }
+          dispatch(connectionStatusChanged({ isOffline: !navigator.onLine }));
+        },
+        onComponentDidUpdate: async () => {
+          if (shouldCheckCompatibility) {
             dispatch(checkBrowserCompatibility());
           }
         },

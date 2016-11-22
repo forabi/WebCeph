@@ -18,9 +18,8 @@ import * as cx from 'classnames';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import attempt from 'lodash/attempt';
-import identity from 'lodash/identity';
 
-import { compose, lifecycle, pure, branch, renderComponent } from 'recompose';
+import { compose, lifecycle, pure } from 'recompose';
 
 import Props from './props';
 
@@ -33,6 +32,9 @@ const classes = require('./style.scss');
 const addLifeCycleHooks = lifecycle({
   componentDidMount(this: React.Component<Props, { }>) {
     this.props.onComponentMount();
+  },
+  componentDidUpdate(this: React.Component<Props, { }>) {
+    this.props.onComponentDidUpdate();
   },
 });
 
