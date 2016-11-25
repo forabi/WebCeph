@@ -5,6 +5,8 @@ import reducers from './reducers';
 import analyticsMiddleware from './middleware/analytics';
 import fetchAnalysis from './middleware/fetchAnalysis';
 import exportMiddleware from './middleware/export';
+import importMiddleware from './middleware/import';
+import autoScaleMiddleware from './middleware/autoScale';
 import {
   saveStateMiddleware,
   loadStateMiddleware,
@@ -22,7 +24,9 @@ const sagaMiddleware = createSagaMiddleware();
 const middlewares: Middleware[] = [
   sagaMiddleware,
   fetchAnalysis,
+  importMiddleware,
   exportMiddleware,
+  autoScaleMiddleware,
   saveStateMiddleware,
   loadStateMiddleware,
   clearStateMiddleware,

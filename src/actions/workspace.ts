@@ -56,19 +56,31 @@ export const tryAutomaticSteps: () => any = createAction(Event.TRY_AUTOMATIC_STE
 /* Image editing actions */
 export const importFileRequested:
   (file: File) => Action<Payloads.importFileRequested> =
-    createAction(Event.IMPORT_FILE_REQUESTED);
+    createAction<Payloads.importFileRequested>(Event.IMPORT_FILE_REQUESTED);
 
 export const importFileSucceeded:
   () => Action<Payloads.importFileSucceeded> =
-    createAction(Event.IMPORT_FILE_SUCEEDED);
+    createAction<Payloads.importFileSucceeded>(Event.IMPORT_FILE_SUCCEEDED);
 
 export const importFileFailed:
   (payload: Payloads.importFileFailed) => Action<Payloads.importFileFailed> =
-    createAction(Event.IMPORT_FILE_FAILED);
+    createAction<Payloads.importFileFailed>(Event.IMPORT_FILE_FAILED);
 
 export const loadImageFile:
   (file: File) => Action<Payloads.imageLoadRequested> =
-    createAction(Event.LOAD_IMAGE_REQUESTED);
+    createAction<Payloads.imageLoadRequested>(Event.LOAD_IMAGE_REQUESTED);
+
+export const loadImageSucceeded:
+  (payload: Payloads.imageLoadSucceeded) => Action<Payloads.imageLoadSucceeded> =
+    createAction<Payloads.imageLoadSucceeded>(
+      Event.LOAD_IMAGE_SUCCEEDED
+    );
+
+export const loadImageFailed:
+  (payload: Payloads.imageLoadFailed) => Action<Payloads.imageLoadFailed> =
+    createAction<Payloads.imageLoadFailed>(
+      Event.LOAD_IMAGE_FAILED
+    );
 
 export const loadImageFromURL = createAction<Payloads.imageLoadFromURLRequested>(Event.LOAD_IMAGE_FROM_URL_REQUESTED);
 

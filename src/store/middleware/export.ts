@@ -4,7 +4,7 @@ import { saveAs } from 'file-saver';
 
 import { exportFileSucceeded, exportFileFailed } from 'actions/workspace';
 
-import createExport from 'utils/wceph/v1/export';
+import createExport from 'utils/importers/wceph/v1/export';
 
 const middleware: Middleware = ({ getState }: Store<any>) => (next: Dispatch<any>) => async (action: Action<any>) => {
   const { type } = action;
