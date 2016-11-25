@@ -6,7 +6,11 @@ import FlatButton from 'material-ui/FlatButton';
 // import join from 'lodash/join';
 import Props from './props';
 
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+
 const classes = require('./style.scss');
+const scaleInAndRotate = require('transitions/scale-in-and-rotate.scss');
+
 const DropzonePlaceholder = require(
   'svg-react-loader?name=DropzonePlaceholder!svgo-loader?useConfig=svgoConfig!./assets/placeholder.svg'
 ) as React.SFCFactory<React.ReactSVGElement>;
@@ -45,7 +49,23 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
         disablePreview
       >
         <div className={classes.dropzone_placeholder}>
-          <DropzonePlaceholder className={classes.dropzone_placeholder_image} />
+          <ReactCSSTransitionGroup
+            transitionAppear
+            className={cx(scaleInAndRotate.root, classes.dropzone_placeholder_image)}
+            transitionName={{
+              appear: scaleInAndRotate.appear,
+              appearActive: scaleInAndRotate.appearActive,
+              enter: scaleInAndRotate.enter,
+              enterActive: scaleInAndRotate.enterActive,
+              leave: scaleInAndRotate.leave,
+              leaveActive: scaleInAndRotate.leaveActive,
+            }}
+            transitionAppearTimeout={1000}
+            transitionEnterTimeout={1000}
+            transitionLeaveTimeout={1000}
+          >
+            <DropzonePlaceholder />
+          </ReactCSSTransitionGroup>
           <span className={cx(classes.dropzone_placeholder_text, classes.text_center, classes.muted)}>
             To start tracing, drop a cephalometric radiograph here or
           </span>

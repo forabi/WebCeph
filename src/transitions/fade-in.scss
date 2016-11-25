@@ -1,0 +1,17 @@
+$default-transition-duration: 0.3s;
+
+.root {
+  will-change: opacity;
+  transition-property: opacity;
+  transition-duration: $default-transition-duration;
+  transition-timing-function: ease-out;
+}
+
+.appear {
+  @extend .root;
+  opacity: 0;
+  &Active {
+    @extend .root;
+  opacity: 1;
+  }
+}
