@@ -60,14 +60,7 @@ const App = enhance(({ userAgent, isReady, isSummaryShown = false, shouldShowSte
             <ReactCSSTransitionGroup
               className={cx(fadeIn.root, classes.toolbar)}
               transitionAppear
-              transitionName={{
-                appear: fadeIn.appear,
-                appearActive: fadeIn.appearActive,
-                enter: fadeIn.enter,
-                enterActive: fadeIn.enterActive,
-                leave: fadeIn.leave,
-                leaveActive: fadeIn.leaveActive,
-              }}
+              transitionName={fadeIn}
               transitionAppearTimeout={1000}
               transitionEnterTimeout={1000}
               transitionLeaveTimeout={1000}

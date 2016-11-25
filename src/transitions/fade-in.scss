@@ -5,13 +5,15 @@ $default-transition-duration: 0.3s;
   transition-property: opacity;
   transition-duration: $default-transition-duration;
   transition-timing-function: ease-out;
+  transition-delay: 0.1s;
 }
 
-.appear {
+.appear, .leaveActive {
   @extend .root;
   opacity: 0;
-  &Active {
-    @extend .root;
-  opacity: 1;
-  }
+}
+
+.appearActive, .leave {
+  @extend .root;
+opacity: 1;
 }

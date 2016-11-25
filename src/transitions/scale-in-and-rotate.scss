@@ -7,13 +7,14 @@ $default-transition-duration: 0.3s;
   transition-timing-function: ease-out;
 }
 
-.appear {
+.appear, .leaveActive {
   @extend .root;
   transform: scale(2.5) rotate(25deg);
   opacity: 0;
-  &Active {
-    @extend .root;
-    opacity: 1;
-    transform: scale(1);
-  }
+}
+
+.appearActive, .leave {
+  @extend .root;
+  opacity: 1;
+  transform: scale(1);
 }
