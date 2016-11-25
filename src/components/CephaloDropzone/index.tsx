@@ -9,7 +9,7 @@ import Props from './props';
 const classes = require('./style.scss');
 const DropzonePlaceholder = require(
   'svg-react-loader?name=DropzonePlaceholder!svgo-loader?useConfig=svgoConfig!./assets/placeholder.svg'
-) as React.SFCFactory<React.SVGAttributes<SVGElement>>;
+) as React.SFCFactory<React.ReactSVGElement>;
 
 const demoButtonStyle = { marginTop: 5 };
 
