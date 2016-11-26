@@ -46,6 +46,7 @@ const middleware: Middleware = ({ dispatch }: Store<any>) =>
         if (importer) {
           const actions = await importer.importFn(file, { });
           console.log('actions', actions);
+          next(importFileSucceeded());
           each(actions, dispatch);
         } else {
           console.warn(
@@ -53,7 +54,6 @@ const middleware: Middleware = ({ dispatch }: Store<any>) =>
           );
           throw new Error('Incompatible file type');
         }
-        return next(importFileSucceeded());
       } else {
         return next(action);
       }
