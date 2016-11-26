@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+
 import AnalysisResultsViewer from 'components/AnalysisResultsViewer/connected';
 import AnalysisSelector from 'components/AnalysisSelector/connected';
 import AnalysisStepper from 'components/AnalysisStepper/connected';
@@ -29,6 +31,8 @@ type State = { };
 
 const classes = require('./style.scss');
 
+const fadeIn = require('transitions/fade-in.scss');
+
 const addLifeCycleHooks = lifecycle({
   componentDidMount(this: React.Component<Props, { }>) {
     this.props.onComponentMount();
@@ -53,7 +57,16 @@ const App = enhance(({ userAgent, isReady, isSummaryShown = false, shouldShowSte
                 <AnalysisStepper className={classes.stepper} />
               </div>
             </div>
-            <Toolbar className={classes.toolbar} />
+            <ReactCSSTransitionGroup
+              className={cx(fadeIn.root, classes.toolbar)}
+              transitionAppear
+              transitionName={fadeIn}
+              transitionAppearTimeout={1000}
+              transitionEnterTimeout={1000}
+              transitionLeaveTimeout={1000}
+            >
+              <Toolbar />
+            </ReactCSSTransitionGroup>
           </div>
         </div>
       ) : (

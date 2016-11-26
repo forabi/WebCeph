@@ -1,0 +1,20 @@
+$default-transition-duration: 0.3s;
+
+.root {
+  will-change: transform, opacity;
+  transition-property: transform, opacity;
+  transition-duration: $default-transition-duration;
+  transition-timing-function: ease-out;
+}
+
+.appear, .leaveActive {
+  @extend .root;
+  transform: scale(2.5) rotate(25deg);
+  opacity: 0;
+}
+
+.appearActive, .leave {
+  @extend .root;
+  opacity: 1;
+  transform: scale(1);
+}

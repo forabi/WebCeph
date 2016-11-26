@@ -6,10 +6,15 @@ import FlatButton from 'material-ui/FlatButton';
 // import join from 'lodash/join';
 import Props from './props';
 
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+
 const classes = require('./style.scss');
+const scaleInAndRotate = require('transitions/scale-in-and-rotate.scss');
+const fadeIn = require('transitions/fade-in.scss');
+
 const DropzonePlaceholder = require(
   'svg-react-loader?name=DropzonePlaceholder!svgo-loader?useConfig=svgoConfig!./assets/placeholder.svg'
-) as React.SFCFactory<React.SVGAttributes<SVGElement>>;
+) as React.SFCFactory<React.ReactSVGElement>;
 
 const demoButtonStyle = { marginTop: 5 };
 
@@ -44,17 +49,39 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
         disableClick
         disablePreview
       >
-        <div className={classes.dropzone_placeholder}>
-          <DropzonePlaceholder className={classes.dropzone_placeholder_image} />
-          <span className={cx(classes.dropzone_placeholder_text, classes.text_center, classes.muted)}>
-            To start tracing, drop a cephalometric radiograph here or
-          </span>
-          <RaisedButton
-            primary
-            label="Click to pick an image"
-            onClick={this.openFilePicker}
-          />
-        </div>
+        <ReactCSSTransitionGroup
+          className={cx(
+            fadeIn.root,
+            classes.dropzone_load_demo,
+            classes.text_center,
+          )}
+          transitionAppear
+          transitionName={fadeIn}
+          transitionAppearTimeout={1000}
+          transitionEnterTimeout={1000}
+          transitionLeaveTimeout={1000}
+        >
+          <div className={classes.dropzone_placeholder}>
+            <ReactCSSTransitionGroup
+              transitionAppear
+              className={cx(scaleInAndRotate.root, classes.dropzone_placeholder_image)}
+              transitionName={scaleInAndRotate}
+              transitionAppearTimeout={1000}
+              transitionEnterTimeout={1000}
+              transitionLeaveTimeout={1000}
+            >
+              <DropzonePlaceholder />
+            </ReactCSSTransitionGroup>
+            <span className={cx(classes.dropzone_placeholder_text, classes.text_center, classes.muted)}>
+              To start tracing, drop a cephalometric radiograph here or
+            </span>
+            <RaisedButton
+              primary
+              label="Click to pick an image"
+              onClick={this.openFilePicker}
+            />
+          </div>
+        </ReactCSSTransitionGroup>
         {
           isOffline ? (
             null

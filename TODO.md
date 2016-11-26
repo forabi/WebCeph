@@ -27,6 +27,8 @@ TODO
   * [x] HTTP/2
   * [ ] Bundling?
   * [ ] Investigate handling some redux action using a rAF scheduler?
+  * [ ] use bundle-loader?
+  * [ ] AggressiveSplittingPlugin
 * [ ] Namespaces
 * [x] Typings for reducers
 * [x] Selectors with corresponding reducers in one file

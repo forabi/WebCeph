@@ -149,6 +149,7 @@ const config = {
         test: /\.scss$/,
         include: [
           path.resolve(path.resolve(__dirname, 'src/components')),
+          path.resolve(path.resolve(__dirname, 'src/transitions')),
         ],
         use: [...localCSSLoaders, ...sassLoaders],
       },
