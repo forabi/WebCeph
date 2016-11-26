@@ -98,6 +98,7 @@ const loadStateMiddleware: Middleware = (_: Store<any>) => (next: DispatchFuncti
             `version (${__VERSION__}). Upgrading...`,
           );
           // @TODO: perform any necessary upgrade operations
+          await idb.clear(); // @FIXME: Workaround
           // @NOTE: Do not break on switch cases.
           switch (__VERSION__) {
             default:

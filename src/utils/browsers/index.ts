@@ -61,14 +61,16 @@ export const currentBrowser: Browser = {
 };
 
 export const getApplicapleBrowsers = memoize(
-  (excludeCurrentBrowser: boolean = true) => filter(browsersById, (browser, id) => {
-    if (excludeCurrentBrowser && id === currentBrowser.id) return false;
+  (excludeCurrentBrowser = true) => filter(recommendedBrowsers, (browser) => {
+    if (excludeCurrentBrowser && browser.id === currentBrowser.id) {
+      return false;
+    }
     if (typeof browser.isApplicable === 'function') {
       return browser.isApplicable();
     } else if (typeof browser.isApplicable === 'boolean') {
       return browser.isApplicable;
     }
-    return false;
+    return true;
   }),
 );
 

@@ -7,6 +7,7 @@ import fetchAnalysis from './middleware/fetchAnalysis';
 import exportMiddleware from './middleware/export';
 import importMiddleware from './middleware/import';
 import autoScaleMiddleware from './middleware/autoScale';
+import compatibilityMiddleware from './middleware/compatibility';
 import {
   saveStateMiddleware,
   loadStateMiddleware,
@@ -19,10 +20,8 @@ declare const window: Window & { devToolsExtension?: () => any };
 
 const reducer = combineReducers(reducers);
 
-const sagaMiddleware = createSagaMiddleware();
-
 const middlewares: Middleware[] = [
-  sagaMiddleware,
+  compatibilityMiddleware,
   fetchAnalysis,
   importMiddleware,
   exportMiddleware,
@@ -66,7 +65,6 @@ const createConfiguredStore = () => {
       addDevTools(),
     ),
   );
-  sagaMiddleware.run(rootSaga);
   return store;
 };
 

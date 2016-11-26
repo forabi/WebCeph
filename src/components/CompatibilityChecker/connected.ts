@@ -2,9 +2,7 @@ import {
   connect,
   MapStateToProps,
   MapDispatchToPropsFunction,
-  MergeProps,
 } from 'react-redux';
-import assign from 'lodash/assign';
 import noop from 'lodash/noop';
 import CompatibilityChecker from './index';
 import { currentBrowser, getApplicapleBrowsers } from 'utils/browsers';
@@ -12,7 +10,6 @@ import {
   StateProps,
   DispatchProps,
   OwnProps,
-  ConnectableProps,
 } from './props';
 import {
   isCheckingCompatiblity,
@@ -21,13 +18,15 @@ import {
 } from 'store/reducers/env/compatibility';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalState, { userAgent }: OwnProps) => {
+  const isCompatible = isBrowserCompatible(state)(userAgent);
+  const isChecking = isCheckingCompatiblity(state);
   return {
-    shouldUpgradeCurrentBrowser: isBrowserCompatible(state)(userAgent),
-    missingFeatures: getMissingFeatures(state)(userAgent),
-    isChecking: isCheckingCompatiblity(state),
-    open: isCheckingCompatiblity(state),
-    isNerdMode: false,
     currentBrowser,
+    isChecking,
+    shouldUpgradeCurrentBrowser: !isCompatible,
+    missingFeatures: getMissingFeatures(state)(userAgent),
+    open: isChecking || !isCompatible,
+    isNerdMode: false,
     recommendedBrowsers: getApplicapleBrowsers(true),
   };
 };
@@ -38,16 +37,8 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = 
   }
 );
 
-const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> = (stateProps, dispatchProps): ConnectableProps => {
-  return assign(
-    { },
-    stateProps,
-    dispatchProps,
-  );
-};
-
 const connected = connect<StateProps, DispatchProps, OwnProps>(
-  mapStateToProps, mapDispatchToProps, mergeProps
+  mapStateToProps, mapDispatchToProps,
 )(CompatibilityChecker);
 
 

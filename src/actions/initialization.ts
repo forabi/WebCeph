@@ -3,6 +3,9 @@ import { createAction } from 'redux-actions';
 
 export const checkBrowserCompatibility = createAction<void>(Event.BROWSER_COMPATIBLITY_CHECK_REQUESTED);
 
+export const compatiblityCheckSucceeded = createAction(Event.BROWSER_COMPATIBLITY_CHECK_SUCCEEDED);
+export const compatiblityCheckFailed = createAction(Event.BROWSER_COMPATIBLITY_CHECK_FAILED);
+
 export const foundMissingFeature:
   (payload: Payloads.foundMissingFeature) => Action<Payloads.foundMissingFeature> =
     createAction<Payloads.foundMissingFeature>(

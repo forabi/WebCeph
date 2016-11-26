@@ -4,8 +4,8 @@ import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 import { createSelector } from 'reselect';
 
-import has from 'lodash/has';
-import toArray from 'lodash/toArray';
+import values from 'lodash/values';
+import memoize from 'lodash/memoize';
 
 const KEY_IS_IGNORED =  StoreKeys.compatibilityIsIgnored;
 const KEY_IS_BEING_CHEKED = StoreKeys.compatiblityIsBeingChcecked;
@@ -37,20 +37,20 @@ const missingFeatures = handleActions<CheckResults, Payloads.foundMissingFeature
       printUnexpectedPayloadWarning(type, state);
       return state;
     }
-    const { userAgent, feature: { id: featureId } } = payload;
+    const { userAgent, feature } = payload;
     return assign(
       { },
       state,
       {
         [userAgent]: assign(
           { },
-          state[userAgent],
+          state[userAgent] || { missing: { } },
           {
             missing: assign(
               { },
               state[userAgent].missing,
               {
-                [featureId]: true,
+                [feature.id]: feature,
               },
             ),
           }
@@ -64,30 +64,34 @@ export const isCheckingCompatiblity = (state: GenericState): IsBeingChecked => s
 
 export const isCompatibilityIgnored = (state: GenericState): IsIgnored => state[KEY_IS_IGNORED];
 
-
 export const getCheckResults = (state: GenericState) =>
-  (userAgent: string): { missing: { [id: string]: MissingBrowserFeature } } | undefined =>
-    state[KEY_MISSING_FEATURES][userAgent];
+  (userAgent: string): { missing: { [id: string]: MissingBrowserFeature } } | undefined => {
+    return state[KEY_MISSING_FEATURES][userAgent];
+  };
 
 export const getMissingFeatures = createSelector(
   getCheckResults,
-  (getResults) => (userAgent: string): MissingBrowserFeature[] => {
+  (getResults) => memoize((userAgent: string): MissingBrowserFeature[] => {
     const results = getResults(userAgent);
     if (results !== undefined) {
-      return toArray(results.missing);
+      return values(results.missing);
     }
     return [];
-  }
+  })
 );
 
-export const isBrowserChecked = (state: GenericState) =>
-  (userAgent: string) => has(state[KEY_MISSING_FEATURES], userAgent);
+export const isBrowserChecked = createSelector(
+  getCheckResults,
+  (getResults) => (userAgent: string) => {
+    return getResults(userAgent) !== undefined;
+  },
+);
 
 export const isBrowserCompatible = createSelector(
-  isBrowserChecked,
+  isCheckingCompatiblity,
   getMissingFeatures,
-  (isChecked, getMissing) => (userAgent: string) => {
-    return isChecked(userAgent) && getMissing(userAgent).length > 0;
+  (isChecking, getMissing) => (userAgent: string) => {
+    return !isChecking && getMissing(userAgent).length === 0;
   },
 );
 

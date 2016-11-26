@@ -1,5 +1,5 @@
 import { Event } from 'utils/constants';
-import { Store, Dispatch, Middleware } from 'redux';
+import { Store, Middleware } from 'redux';
 
 import {
   setScale,
@@ -10,9 +10,11 @@ import {
 } from 'store/reducers/workspace/canvas';
 
 const middleware: Middleware = ({ getState, dispatch }: Store<any>) =>
-  (next: Dispatch<any>) => async (action: Action<any>) => {
+  (next: DispatchFunction) => async (action: Action<any>) => {
     const { type } = action;
-    if (type === Event.LOAD_IMAGE_SUCCEEDED) {
+    if (type !== Event.LOAD_IMAGE_SUCCEEDED) {
+      return next(action);
+    } else {
       const { height, width }: Payloads.imageLoadSucceeded = action.payload;
       try {
         const {
@@ -24,15 +26,13 @@ const middleware: Middleware = ({ getState, dispatch }: Store<any>) =>
           width / canvasWidth,
         );
         dispatch(setScale(scale));
-        next(action);
+        return next(action);
       } catch (e) {
         console.error(
           `Failed to set scale automatically.`,
           e,
         );
       }
-    } else {
-      next(action);
     }
   };
 
