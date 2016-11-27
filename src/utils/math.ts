@@ -1,4 +1,5 @@
 import has from 'lodash/has';
+import each from 'lodash/each';
 
 export function radiansToDegrees(value: number): number {
   return value * 180 / Math.PI;
@@ -18,8 +19,13 @@ export function isGeometricalVector(object: any): object is GeometricalVector {
   return has(object, 'x2') && has(object, 'y1') && has(object, 'x2') && has(object, 'y2');
 }
 
+/** Checks whether an object conforms to the GeometricalVector interface */
+export function isGeometricalAngle(object: any): object is GeometricalAngle {
+  return has(object, 'vectors') && object.vectors.length === 2 && each(object.vectors, isGeometricalVector);
+}
+
 export function isGeometricalObject(object: any): object is GeometricalObject {
-  return isGeometricalPoint(object) || isGeometricalVector(object);
+  return isGeometricalPoint(object) || isGeometricalVector(object) || isGeometricalAngle(object);
 }
 
 export function isBehind(point: GeometricalPoint, line: GeometricalVector) {

@@ -25,6 +25,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
         'common',
         'dental',
         'bjork',
+        'softTissues',
       ],
       currentAnalysisId: getActiveAnalysisId(state),
       isLoading: isAnalysisLoading(state),

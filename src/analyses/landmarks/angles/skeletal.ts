@@ -1,5 +1,5 @@
-import { S, N, A, B, Ar, Go, Me, Gn } from 'analyses/landmarks/points';
-import { FH_PLANE, SELLA_NASION_LINE, MP, SPP, U1_AXIS, L1_AXIS } from 'analyses/landmarks/lines';
+import { S, N, A, B, Ar, Go, Me, Gn } from 'analyses/landmarks/points/skeletal';
+import { FH_PLANE, SELLA_NASION_LINE, MP, SPP, U1_AXIS, L1_AXIS } from 'analyses/landmarks/lines/skeletal';
 import { line, angleBetweenLines, angleBetweenPoints } from 'analyses/helpers';
 import { radiansToDegrees, calculateAngleBetweenTwoVectors } from 'utils/math';
 

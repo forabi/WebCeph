@@ -4,7 +4,7 @@ import {
   N, S, Po, Or, Go, Me, ANS, PNS,
   U1_APEX, U1_INCISAL_EDGE,
   L1_APEX, L1_INCISAL_EDGE,
-} from 'analyses/landmarks/points';
+} from 'analyses/landmarks/points/skeletal';
 
 /**
  * Frankfort Horizontal Plane

@@ -5,8 +5,8 @@ import {
   angleBetweenLines, flipVector,
 } from './helpers';
 
-import { U1_AXIS, L1_AXIS } from 'analyses/landmarks/lines';
-import { U1_SN, L1_MP } from 'analyses/landmarks/angles';
+import { U1_AXIS, L1_AXIS } from 'analyses/landmarks/lines/skeletal';
+import { U1_SN, L1_MP } from 'analyses/landmarks/angles/skeletal';
 
 const INTERINCISAL_ANGLE: CephaloAngle = angleBetweenLines(
   flipVector(U1_AXIS),

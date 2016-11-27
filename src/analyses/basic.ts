@@ -1,6 +1,6 @@
 import bjork from 'analyses/bjork';
 import { components as commonComponents } from 'analyses/common';
-import { MM } from 'analyses/landmarks/angles';
+import { MM } from 'analyses/landmarks/angles/skeletal';
 import dental from './dental';
 import { angleOfConvexity, angleOfYAxis, interpret as interpretDowns } from './downs';
 import { ProblemSeverity, SkeletalBite} from './helpers';

@@ -4,7 +4,7 @@ import {
   GrowthPattern,
 } from 'analyses/helpers';
 
-import { NSAr, SArGo, ArGoMe } from 'analyses/landmarks/angles';
+import { NSAr, SArGo, ArGoMe } from 'analyses/landmarks/angles/skeletal';
 
 export const BJORK_SUM = angularSum([NSAr, SArGo, ArGoMe], 'Björk\'s sum', 'Björk');
 

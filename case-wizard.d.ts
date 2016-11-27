@@ -11,35 +11,41 @@ type LandmarkType = 'angle' | 'point' | 'line' | 'distance' | 'sum';
  * Landmarks may also have names and units.
  */
 interface BaseCephaloLandmark {
-  name?: string,
+  name?: string;
   /**
    * Each landmark must have a symbol which acts as the unique identifier for that landmark.
    */
-  symbol: string,
-  description?: string,
-  type: LandmarkType,
-  unit?: AngularUnit | LinearUnit,
+  symbol: string;
+  description?: string;
+  type: LandmarkType;
+  unit?: AngularUnit | LinearUnit;
   /**
    * Some landmarks are composed of more basic components; for example, a line is
    * composed of two points.
    */
-  components: CephaloLandmark[],
+  components: CephaloLandmark[];
   /**
    * An optional custom calculation method.
    * It is passed the computed values for each of this landmark's components
-   * in the same order they were declared.
+   * in the same order they were defined.
    */
-  calculate?(...args: number[]): number,
+  calculate?(mapper: CephaloMapper, ...args: number[]): number;
+
+  /** An optional custom mapping method.
+   * It is passed the geometrical representation of this landmark's components
+   * in the same order they were defined.
+   */
+  map?(mapper: CephaloMapper, ...args: (GeometricalObject | undefined)[]): GeometricalObject;
 }
 
 interface CephaloPoint extends BaseCephaloLandmark {
-  type: 'point',
+  type: 'point';
 }
 
  interface CephaloLine extends BaseCephaloLandmark {
-  type: 'line',
-  unit: LinearUnit,
-  components: CephaloPoint[],
+  type: 'line';
+  unit: LinearUnit;
+  components: CephaloPoint[];
 }
 
 interface CephaloDistance extends BaseCephaloLandmark {

@@ -3,7 +3,7 @@ import {
   MandibularRotation,
 } from './helpers';
 
-import { SNA, SNB, ANB, FMPA, SN_MP } from 'analyses/landmarks/angles';
+import { SNA, SNB, ANB, FMPA, SN_MP } from 'analyses/landmarks/angles/skeletal';
 
 export const components: AnalysisComponent[] = [
   {

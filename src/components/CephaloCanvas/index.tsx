@@ -15,7 +15,7 @@ import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
 
 import { mapCursor } from 'utils/constants';
-import { isGeometricalPoint, isGeometricalVector } from 'utils/math';
+import { isGeometricalPoint, isGeometricalVector, isGeometricalAngle } from 'utils/math';
 
 const classes = require('./style.scss');
 
@@ -67,6 +67,12 @@ const Landmark = (_props: LandmarkProps) => {
         {...value}
         {...props}
       />
+    );
+  } else if (isGeometricalAngle(value)) {
+    return (
+      <g>
+        {map(value.vectors, (vector, i) => <Landmark key={i} value={vector} />)}
+      </g>
     );
   } else {
     return <span/>;

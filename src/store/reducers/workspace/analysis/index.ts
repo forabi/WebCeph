@@ -119,6 +119,7 @@ import basic from 'analyses/basic';
 import bjork from 'analyses/bjork';
 import common from 'analyses/basic';
 import dental from 'analyses/dental';
+import softTissues from 'analyses/softTissues';
 
 const analyses: { [id: string]: Analysis } = {
   downs,
@@ -126,6 +127,7 @@ const analyses: { [id: string]: Analysis } = {
   bjork,
   common,
   dental,
+  softTissues,
 };
 
 export const getActiveAnalysis = createSelector(

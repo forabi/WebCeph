@@ -14,15 +14,15 @@ import common, {
 
 import {
   N, Pog, A, B,
-} from 'analyses/landmarks/points';
+} from 'analyses/landmarks/points/skeletal';
 
 import {
   ANGLE_OF_Y_AXIS,
-} from 'analyses/landmarks/angles';
+} from 'analyses/landmarks/angles/skeletal';
 
 import {
   FH_PLANE,
-} from 'analyses/landmarks/lines';
+} from 'analyses/landmarks/lines/skeletal';
 
 import { radiansToDegrees, calculateAngleBetweenTwoVectors } from 'utils/math';
 

@@ -9,6 +9,8 @@ import join from 'lodash/join';
 import reduce from 'lodash/reduce';
 import isPlainObject from 'lodash/isPlainObject';
 
+import { isGeometricalAngle } from 'utils/math';
+
 export function getSymbolForAngle(line1: CephaloLine, line2: CephaloLine): string {
   const A = line1.components[0]; // N
   const B = line1.components[1]; // S
@@ -189,7 +191,9 @@ export function computeOrMap(landmark: CephaloLandmark, mapper: CephaloMapper): 
  * Returns undefined if the landmark type is not mappable.
  */
 export function tryMap(landmark: CephaloLandmark, mapper: CephaloMapper): GeometricalObject | undefined {
-  if (isCephaloAngle(landmark)) {
+  if (typeof landmark.map === 'function') {
+    return landmark.map(mapper, ...map(landmark.components, c => tryMap(c, mapper)));
+  } else if (isCephaloAngle(landmark)) {
     return mapper.toAngle(landmark);
   } else if (isCephaloLine(landmark)) {
     return mapper.toVector(landmark);
@@ -210,14 +214,11 @@ export function compute(landmark: CephaloLandmark, mapper: CephaloMapper): numbe
     );
   } else if (landmark.type === 'angle') {
     let result: number;
-    if (landmark.components[0].type === 'point') {
-      const points: GeometricalPoint[] = map(landmark.components as CephaloPoint[], mapper.toPoint);
-      result = calculateAngleBetweenPoints(points[0], points[1], points[2]);
-    } else {
-      const lines = map(landmark.components as CephaloLine[], mapper.toVector);
-      result = calculateAngleBetweenTwoVectors(lines[0], lines[1]);
+    const angle = tryMap(landmark, mapper);
+    if (isGeometricalAngle(angle)) {
+      result = calculateAngleBetweenTwoVectors(angle.vectors[0], angle.vectors[1]);
+      return landmark.unit === 'degree' ? radiansToDegrees(result) : result;
     }
-    return landmark.unit === 'degree' ? radiansToDegrees(result) : result;
   } else if (landmark.type === 'distance') {
     if (mapper.scaleFactor === null) {
       return undefined;
