@@ -2,38 +2,11 @@ import {
   LowerIncisorInclination,
   ProblemSeverity,
   UpperIncisorInclination,
-  angleBetweenLines, flipVector, line, point,
+  angleBetweenLines, flipVector,
 } from './helpers';
 
-import { Go, Me, N, S } from './common';
-
-const U1_APEX = point('U1 Apex', undefined, 'Apex of Upper Incisor');
-const U1_INCISAL_EDGE = point('U1 Incisal Edge', undefined, 'Incisal Edge of Upper Incisor');
-
-const L1_APEX = point('L1 Apex', undefined, 'Apex of Lower Incisor');
-const L1_INCISAL_EDGE = point('L1 Incisal Edge', undefined, 'Incisal Edge of Lower Incisor');
-
-/**
- * A line connecting the incisal edge and root apex of the most prominent maxillary incisor
- */
-const U1_AXIS = line(U1_APEX, U1_INCISAL_EDGE, 'Upper Incisor Axis', 'U1');
-
-/**
- * Angle between the upper incisor to S-N line
- */
-const U1_SN = angleBetweenLines(line(N, S), U1_AXIS, undefined, 'U1-SN');
-
-/**
- * Axis of lower incisor.
- * A line connecting the apex of the lower incisor with its incisal edge
- */
-const L1_AXIS = line(L1_APEX, L1_INCISAL_EDGE, 'Lower Incisor Axis', 'L1');
-
-/**
- * Incisor Mandibular Plane Angle
- * Angle between the lower incisor to the mandibular plane
- */
-const L1_MP = angleBetweenLines(line(Me, Go), L1_AXIS, 'Incisor Mandibular Plane Angle', 'IMPA');
+import { U1_AXIS, L1_AXIS } from 'analyses/landmarks/lines';
+import { U1_SN, L1_MP } from 'analyses/landmarks/angles';
 
 const INTERINCISAL_ANGLE: CephaloAngle = angleBetweenLines(
   flipVector(U1_AXIS),
@@ -54,7 +27,6 @@ const angleBetweenLowerIncisorToMP: AnalysisComponent = {
   stdDev: 3,
 };
 
-
 const interincisalAngle: AnalysisComponent = {
   landmark: INTERINCISAL_ANGLE,
   norm: 130,
@@ -74,7 +46,6 @@ const analysis: Analysis = {
       // @TODO
     }
 
-
     const valueOfL1_MP = values[L1_MP.symbol];
     if (typeof values[L1_MP.symbol] === 'number') {
       let severity = ProblemSeverity.NONE;
@@ -91,7 +62,6 @@ const analysis: Analysis = {
         relevantComponents: [L1_MP.symbol],
       });
     }
-
 
     const valueOfU1_SN = values[U1_SN.symbol];
     if (typeof valueOfU1_SN === 'number') {

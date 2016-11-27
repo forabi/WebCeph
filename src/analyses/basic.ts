@@ -1,28 +1,9 @@
-import bjork from './bjork';
-import { MP, components as commonComponents } from './common';
+import bjork from 'analyses/bjork';
+import { components as commonComponents } from 'analyses/common';
+import { MM } from 'analyses/landmarks/angles';
 import dental from './dental';
 import { angleOfConvexity, angleOfYAxis, interpret as interpretDowns } from './downs';
-import { ProblemSeverity, SkeletalBite, angleBetweenLines, line, point } from './helpers';
-
-/**
- * Anterior point on maxillary bone
- */
-const ANS = point('ANS', 'Anterior nasal spine', 'Anterior point on maxillary bone');
-
-/**
- * Posterior limit of bony palate or maxilla
- */
-const PNS = point('PNS', 'Poseterior nasal spine', 'Posterior limit of bony palate or maxilla');
-
-/**
- * 
- */
-const SPP = line(PNS, ANS, undefined, 'SPP');
-
-/**
- * 
- */
-const MM = angleBetweenLines(SPP, MP, undefined, 'MM');
+import { ProblemSeverity, SkeletalBite} from './helpers';
 
 const angleMM: AnalysisComponent = {
   landmark: MM,
