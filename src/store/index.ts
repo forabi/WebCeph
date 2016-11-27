@@ -35,16 +35,13 @@ if (__DEBUG__) {
   middlewares.push(analyticsMiddleware);
 }
 
-import assign from 'lodash/assign';
-
 const enableLoadingPersistedState = (r: Reducer<any>): Reducer<any> => {
   return (state: FinalState, action: Action<any>) => {
     if (action.type === Event.LOAD_PERSISTED_STATE_SUCCEEDED) {
-      return assign(
-        { },
-        r(state, action),
-        action.payload,
-      );
+      return {
+        ...r(state, action),
+        ...action.payload,
+      };
     }
     return r(state, action);
   };
