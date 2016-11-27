@@ -44,14 +44,16 @@ const ANGLE_OF_CONVEXITY: CephaloAngle = {
 
 const AB_PLANE_ANGLE: CephaloAngle = {
   ...angleBetweenLines(line(B, A), line(Pog, N), 'A-B Plane Angle'),
-  calculate(mapper: CephaloMapper, lineBA: GeometricalVector, linePogN: GeometricalVector) {
-    const A = { x: lineBA.x2, y: lineBA.y2 };
-    const positiveValue = Math.abs(radiansToDegrees(calculateAngleBetweenTwoVectors(lineBA, linePogN)));
-    if (!mapper.isBehind(A, linePogN)) {
-      return -1 * positiveValue;
-    }
-    return positiveValue;
-  },
+  ...{
+    calculate(mapper: CephaloMapper, lineBA: GeometricalVector, linePogN: GeometricalVector) {
+      const A = { x: lineBA.x2, y: lineBA.y2 };
+      const positiveValue = Math.abs(radiansToDegrees(calculateAngleBetweenTwoVectors(lineBA, linePogN)));
+      if (!mapper.isBehind(A, linePogN)) {
+        return -1 * positiveValue;
+      }
+      return positiveValue;
+    },
+  }
 };
 
 const interpretAngleOfConvexity = (value: number, min = -5, max = 5): AnalysisInterpretation => {
