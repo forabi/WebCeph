@@ -10,8 +10,19 @@ import {
 
 import common, {
   components as commonComponents,
-  FH_PLANE, N, Pog, A, B, Gn, S,
 } from 'analyses/common';
+
+import {
+  N, Pog, A, B,
+} from 'analyses/landmarks/points';
+
+import {
+  ANGLE_OF_Y_AXIS,
+} from 'analyses/landmarks/angles';
+
+import {
+  FH_PLANE,
+} from 'analyses/landmarks/lines';
 
 import { radiansToDegrees, calculateAngleBetweenTwoVectors } from 'utils/math';
 
@@ -32,8 +43,6 @@ const ANGLE_OF_CONVEXITY: CephaloAngle = assign(
      },
    },
 );
-
-const ANGLE_OF_Y_AXIS = angleBetweenLines(line(S, Gn, 'Y Axis'), FH_PLANE, 'Y Axis-FH Angle', 'Y-FH Angle');
 
 const AB_PLANE_ANGLE: CephaloAngle = assign(
   angleBetweenLines(line(B, A), line(Pog, N), 'A-B Plane Angle'),

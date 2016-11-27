@@ -1,25 +1,10 @@
 import {
-  angularSum, angleBetweenPoints,
+  angularSum,
   ProblemSeverity,
   GrowthPattern,
-} from './helpers';
+} from 'analyses/helpers';
 
-import { N, S, Ar, Go, Me } from './common';
-
-/**
- * Saddle Angle
- */
-export const NSAr = angleBetweenPoints(N, S, Ar, 'Saddle Angle');
-
-/**
- * Articular Angle
- */
-export const SArGo = angleBetweenPoints(S, Ar, Go, 'Articular Angle');
-
-/**
- * Gonial Angle
- */
-export const ArGoMe = angleBetweenPoints(Ar, Go, Me, 'Gonial Angle');
+import { NSAr, SArGo, ArGoMe } from 'analyses/landmarks/angles';
 
 export const BJORK_SUM = angularSum([NSAr, SArGo, ArGoMe], 'Björk\'s sum', 'Björk');
 

@@ -15,5 +15,5 @@ $default-transition-duration: 0.3s;
 
 .appearActive, .leave {
   @extend .root;
-opacity: 1;
+  opacity: 1;
 }
