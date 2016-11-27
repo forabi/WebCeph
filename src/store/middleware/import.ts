@@ -1,5 +1,5 @@
 import { Event } from 'utils/constants';
-import { Store, Dispatch, Middleware } from 'redux';
+import { Store, Middleware } from 'redux';
 
 import find from 'lodash/find';
 import each from 'lodash/each';
