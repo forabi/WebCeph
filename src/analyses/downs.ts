@@ -53,7 +53,7 @@ const AB_PLANE_ANGLE: CephaloAngle = {
       }
       return positiveValue;
     },
-  }
+  },
 };
 
 const interpretAngleOfConvexity = (value: number, min = -5, max = 5): AnalysisInterpretation => {
