@@ -37,7 +37,7 @@ const missingFeatures = handleActions<CheckResults, Payloads.foundMissingFeature
       return state;
     }
     const { userAgent, feature } = payload;
-    return {;
+    return {
       ...state,
       [userAgent]: {
         ...state[userAgent],

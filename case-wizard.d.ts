@@ -211,7 +211,7 @@ declare namespace StoreEntries {
       interface checkResults {
         [userAgent: string]: {
           missing: {
-            [id: string]: true;
+            [id: string]: MissingBrowserFeature;
           },
         }
       }

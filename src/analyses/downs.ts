@@ -26,7 +26,8 @@ import { radiansToDegrees, calculateAngleBetweenTwoVectors } from 'utils/math';
 
 const ANGLE_OF_CONVEXITY: CephaloAngle = {
    ...angleBetweenPoints(N, A, Pog, 'Angle of Convexity'),
-    calculate: (mapper: CephaloMapper, NA: GeometricalVector, APog: GeometricalVector) => {
+  ...{
+    calculate(mapper: CephaloMapper, NA: GeometricalVector, APog: GeometricalVector) {
       const _A = { x: NA.x1, y: NA.y1 };
       const _N = { x: NA.x2, y: NA.y2 };
       const _Pog = { x: APog.x2, y: APog.y2 };
@@ -38,18 +39,21 @@ const ANGLE_OF_CONVEXITY: CephaloAngle = {
         return positiveValue;
       }
     },
+  }
 };
 
 const AB_PLANE_ANGLE: CephaloAngle = {
   ...angleBetweenLines(line(B, A), line(Pog, N), 'A-B Plane Angle'),
-  calculate(mapper: CephaloMapper, lineBA: GeometricalVector, linePogN: GeometricalVector) {
-    const A = { x: lineBA.x2, y: lineBA.y2 };
-    const positiveValue = Math.abs(radiansToDegrees(calculateAngleBetweenTwoVectors(lineBA, linePogN)));
-    if (!mapper.isBehind(A, linePogN)) {
-      return -1 * positiveValue;
-    }
-    return positiveValue;
-  },
+  ...{
+    calculate(mapper: CephaloMapper, lineBA: GeometricalVector, linePogN: GeometricalVector) {
+      const A = { x: lineBA.x2, y: lineBA.y2 };
+      const positiveValue = Math.abs(radiansToDegrees(calculateAngleBetweenTwoVectors(lineBA, linePogN)));
+      if (!mapper.isBehind(A, linePogN)) {
+        return -1 * positiveValue;
+      }
+      return positiveValue;
+    },
+  }
 };
 
 const interpretAngleOfConvexity = (value: number, min = -5, max = 5): AnalysisInterpretation => {
