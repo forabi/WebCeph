@@ -3,8 +3,6 @@ import { FH_PLANE, SELLA_NASION_LINE, MP, SPP, U1_AXIS, L1_AXIS } from 'analyses
 import { line, angleBetweenLines, angleBetweenPoints } from 'analyses/helpers';
 import { radiansToDegrees, calculateAngleBetweenTwoVectors } from 'utils/math';
 
-import assign from 'lodash/assign';
-
 /**
  * SNA (sella, nasion, A point) indicates whether or not the maxilla is normal, prognathic, or retrognathic.
  */
@@ -21,19 +19,17 @@ export const SNB = angleBetweenPoints(S, N, B);
  * a skeletal Class II (+4 degrees or more), or skeletal class III (0 or negative) relationship.
  * ANB is a custom landmark that has a positive sign if A is in front of N-B, negative otherwise.
  */
-export const ANB: CephaloAngle = assign(
-  angleBetweenLines(line(N, A), line(N, B)),
-  {
-    calculate(mapper: CephaloMapper, lineNA: GeometricalVector, lineNB: GeometricalVector) {
-      const _A = { x: lineNA.x2, y: lineNA.y2 };
-      const positiveValue = Math.abs(radiansToDegrees(calculateAngleBetweenTwoVectors(lineNA, lineNB)));
-      if (mapper.isBehind(_A, lineNB)) {
-        return -1 * positiveValue;
-      }
-      return positiveValue;
-    },
+export const ANB: CephaloAngle = {
+  ...angleBetweenLines(line(N, A), line(N, B)),
+  calculate(mapper: CephaloMapper, lineNA: GeometricalVector, lineNB: GeometricalVector) {
+    const _A = { x: lineNA.x2, y: lineNA.y2 };
+    const positiveValue = Math.abs(radiansToDegrees(calculateAngleBetweenTwoVectors(lineNA, lineNB)));
+    if (mapper.isBehind(_A, lineNB)) {
+      return -1 * positiveValue;
+    }
+    return positiveValue;
   },
-);
+};
 
 /**
  * Angle between Frankfort horizontal line and the line intersecting Gonion-Menton
