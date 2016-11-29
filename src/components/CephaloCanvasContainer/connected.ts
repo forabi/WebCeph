@@ -24,7 +24,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalStat
   return {
     hasImage: hasImage(state),
     isLoading: isImageLoading(state),
-    shouldShowLens: shouldShowLens(state),
+    shouldShowLens: false, // shouldShowLens(state),
     hasError: workspaceHasError(state),
     errorMessage: getWorkspaceErrorMessage(state),
   };

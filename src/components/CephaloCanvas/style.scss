@@ -5,3 +5,10 @@
 .canvas {
   background: #272727;
 }
+
+.image {
+  will-change: transform;
+  transition-property: transform;
+  transition-duration: 0.1s;
+  /*pointer-events: none;*/
+}
