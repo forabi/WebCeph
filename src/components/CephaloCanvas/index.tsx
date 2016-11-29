@@ -146,22 +146,19 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
     return f;
   }
 
-  private getTransformProps = () => {
+  private getTransformAttribute = () => {
     let transform = '';
-  //   const translateX = (this.props.scaleOriginX * this.props.scale) - (this.props.scaleOriginX);
-  //   const translateY = (this.props.scaleOriginY * this.props.scale) - (this.props.scaleOriginY);
-  //   let t = ` translate(${-1 * Math.round(translateX)}px, ${-1 * Math.round(translateY)}px) `;
-    transform += ` scale(${this.props.scale})`;
     if (this.props.isFlippedX) {
-      transform += ` scaleX(-1)`;
+      transform += ` scale(-1, 1) translate(-${this.props.imageWidth}, 0)`;
     }
     if (this.props.isFlippedY) {
-      transform += ` scaleY(-1)`;
+      transform += ` scale(1, -1) translate(0, -${this.props.imageHeight})`;
     }
-    return {
-      transform: transform,
-      transformOrigin: `${this.props.scaleOriginX}px ${this.props.scaleOriginY}px`,
-    };
+    const translateX = (this.props.scaleOriginX * this.props.scale) - (this.props.scaleOriginX);
+    const translateY = (this.props.scaleOriginY * this.props.scale) - (this.props.scaleOriginY);
+    transform += ` translate(${-1 * translateX}, ${-1 * translateY}) `;
+    transform += ` scale(${this.props.scale}, ${this.props.scale})`;
+    return transform;
   }
 
   private handleMouseWheel = (e: React.WheelEvent<SVGElement>) => {
