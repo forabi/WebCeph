@@ -36,6 +36,8 @@ interface LandmarkProps {
   imageWidth: number;
 }
 
+import assign from 'lodash/assign';
+
 const getTranslateToCenter = (
   containerWidth: number, containerHeight: number,
   width: number, height: number,
@@ -45,6 +47,15 @@ const getTranslateToCenter = (
   const translateY = Math.abs(containerHeight - height * scale) / 2;
   return [translateX, translateY];
 };
+
+
+const segmentProps = { };
+
+const parallelProps = {
+  strokeDasharray: '10, 5',
+};
+
+const extendedProps = assign({ }, segmentProps, parallelProps);
 
 const Landmark = (_props: LandmarkProps) => {
   const { value, fill, fillOpacity, scale = 1, stroke, onClick, onMouseEnter, onMouseLeave } = _props;
@@ -77,6 +88,7 @@ const Landmark = (_props: LandmarkProps) => {
     return (
       <Angle
         vectors={value.vectors}
+        {...{ segmentProps, parallelProps, extendedProps }}
         boundingRect={
           {
             top: 0,
@@ -85,6 +97,7 @@ const Landmark = (_props: LandmarkProps) => {
             right: imageWidth
           }
         }
+        moreProps={props}
       />
     );
   } else {
@@ -266,11 +279,11 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
                 map(
                   sortBy(
                     map(
-                      [...this.props.landmarks, ...highlighted],
+                      Object.assign({ }, this.props.landmarks, highlighted),
                       (landmark: GeometricalObject, symbol: string) => {
                         let props = { };
                         if (isHighlightModeActive) {
-                          if (findIndex(highlighted, symbol) !== -1) {
+                          if (highlighted[symbol] !== undefined) {
                             props = { stroke: 'orange', fill: 'orange', zIndex: 1 };
                           } else {
                             props = { fillOpacity: 0.5, zIndex: 0 };

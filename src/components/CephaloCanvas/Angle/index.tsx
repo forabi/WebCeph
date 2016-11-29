@@ -12,6 +12,10 @@ interface Rect {
 interface AngleProps {
   boundingRect: Rect;
   vectors: [GeometricalVector, GeometricalVector];
+  extendedProps: React.SVGAttributes<SVGLineElement>;
+  segmentProps: React.SVGAttributes<SVGLineElement>;
+  parallelProps: React.SVGAttributes<SVGLineElement>;
+  moreProps: React.SVGAttributes<SVGLineElement>;
 }
 
 const isPointWithinRect = ({ x, y }: GeometricalPoint, { top, left, bottom, right }: Rect) => {
@@ -21,11 +25,14 @@ const isPointWithinRect = ({ x, y }: GeometricalPoint, { top, left, bottom, righ
   );
 };
 
-const getSlope = ({ x1, y1, x2, y2}: GeometricalVector) => (y1 - y2) / (x1 - x2);
+const getSlope = ({ x1, y1, x2, y2 }: GeometricalVector) => (y2 - y1) / (x2 - x1);
 
 const getYInterceptEquation = (vector: GeometricalVector) => {
   const { x1, y1 } = vector;
-  return (x: number) => getSlope(vector) * (x - x1) + y1;
+  const { x2, y2 } = vector;
+  const eq = (x: number) => getSlope(vector) * (x - x1) + y1;
+  console.log('y intercept correct?', eq(x2) === y2, eq(x2), y2);
+  return eq;
 };
 
 const isPointCloserTo = (
@@ -82,81 +89,74 @@ const getIntersectionPoint = (
   }
 };
 
-const segmentStyle = {
-  stroke: 'white',
-  strokeWidth: 3,
-};
-
-const extensionStyle = segmentStyle;
-
-const parallelStyle = {
-  stroke: 'red',
-  strokeWidth: 3,
-  strokeDasharray: '10, 5',
-};;
-
-const Angle = ({ boundingRect, vectors }: AngleProps) => {
+const Angle = ({ boundingRect, vectors, segmentProps, parallelProps, extendedProps, moreProps }: AngleProps) => {
   const [vector1, vector2] = vectors;
 
   const intersection = getIntersectionPoint(vector1, vector2);
   if (intersection === undefined) {
+    console.info('The two vectors are parallel. No extension.');
     return <g/>;
   } 
 
   const inVector1 = isPointInSegment(intersection, vector1);
   const inVector2 = isPointInSegment(intersection, vector2);
   if (inVector1 && inVector2) {
+    console.info('Intersection point belongs to both vectors, no need for extension.');
     return (
       <g>
-        <line {...vector1} style={segmentStyle} />
-        <line {...vector2} style={segmentStyle} />
+        <line {...moreProps} {...segmentProps} {...vector1} />
+        <line {...moreProps} {...segmentProps} {...vector2} />
       </g>
     );
   }
 
   const extendedVector2 = {
-    x1: vector2.x1,
-    y1: vector2.y1,
+    x1: vector2.x1 === intersection.x ? vector2.x2 : vector2.x1,
+    y1: vector2.y1 === intersection.y ? vector2.y2 : vector2.y1,
     x2: intersection.x,
     y2: intersection.y,
   }
   if (inVector1) {
+    console.info('Intersection point belongs to vector 1, extending vector 2...');
     return (
       <g>
-        <line {...vector1} style={segmentStyle} />
-        <line {...extendedVector2} style={extensionStyle} />
-        <line {...vector2} style={segmentStyle} />
+        <line {...moreProps} {...segmentProps} {...vector1} />
+        <line {...moreProps} {...extendedProps} {...extendedVector2} />
+        <line {...moreProps} {...segmentProps} {...vector2} />
       </g>
     );
   }
 
   const extendedVector1 = {
-    x1: vector1.x1,
-    y1: vector1.y1,
+    x1: vector1.x1 === intersection.x ? vector1.x2 : vector1.x1,
+    y1: vector1.y1 === intersection.y ? vector1.y2 : vector1.y1,
     x2: intersection.x,
     y2: intersection.y,
   }
   if (inVector2) {
+    console.info('Intersection point belongs to vector 2, extending vector 1...');
     return (
       <g>
-        <line {...extendedVector1} style={extensionStyle} />
-        <line {...vector1} style={segmentStyle} />
-        <line {...vector2} style={segmentStyle} />
+        <line {...moreProps} {...extendedProps} {...extendedVector1} />
+        <line {...moreProps} {...segmentProps} {...vector1} />
+        <line {...moreProps} {...segmentProps} {...vector2} />
       </g>
     );
   } else if (isPointWithinRect(intersection, boundingRect)) {
+    console.info('Intersection point is within boundaries, extending vectors...');
     return (
       <g>
-        <line {...extendedVector1} style={extensionStyle} />
-        <line {...vector1} style={segmentStyle} />
-        <line {...extendedVector2} style={extensionStyle} />
-        <line {...vector2} style={segmentStyle} />
+        <line {...moreProps} {...extendedProps} {...extendedVector1} />
+        <line {...moreProps} {...segmentProps} {...vector1} />
+        <line {...moreProps} {...extendedProps} {...extendedVector2} />
+        <line {...moreProps} {...segmentProps} {...vector2} />
       </g>
     );
   } else if (isPointCloserTo(intersection, vector1, vector2)) {
     // @TODO: create parallel to vector 2
     return <g />;
   } else {
+    console.info('Creating parallel to vector 1');
     const { x1, y1 } = vector1;
     const slope = getSlope(vector1);
     const getY = (x: number) => slope * (x - x1) + y1;
@@ -169,9 +169,9 @@ const Angle = ({ boundingRect, vectors }: AngleProps) => {
     }
     return (
       <g>
-        <line {...vector1} style={segmentStyle} />
-        <line {...parallelToVector1} style={parallelStyle} />
-        <line {...vector2} style={segmentStyle} />
+        <line {...moreProps} {...segmentProps} {...vector1} />
+        <line {...moreProps} {...parallelProps} {...parallelToVector1} />
+        <line {...moreProps} {...segmentProps} {...vector2} />
       </g>
     );
   }
