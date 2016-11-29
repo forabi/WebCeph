@@ -12,8 +12,8 @@ export interface StateProps {
   scale: number;
   scaleOriginX: number | null;
   scaleOriginY: number | null;
-  landmarks: { [symbol: string]: GeometricalObject } | { };
-  highlightedLandmarks: { [symbol: string]: GeometricalObject } | { };
+  landmarks: GeometricalObject[];
+  highlightedLandmarks: GeometricalObject[];
   activeTool: (dispatch: DispatchFunction) => EditorTool;
 };
 

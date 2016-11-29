@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import canvas, { getHighlightedStep } from './canvas';
-import analysis, { getLandmarkWithAllNestedLandmarks, getManualLandmarks } from './analysis';
+import analysis, { getGeometricalRepresentationBySymbol, getManualLandmarks } from './analysis';
 import image, { hasImage } from './image';
 import workers from './workers';
 import fileExport, { getExportError, hasExportError } from './export';
@@ -21,12 +21,12 @@ export const canEdit = hasImage;
 
 export const getHighlightedLandmarks = createSelector(
   getHighlightedStep,
-  getLandmarkWithAllNestedLandmarks,
-  (step, getWithNested): { [symbol: string]: GeometricalObject | undefined } | { } => {
+  getGeometricalRepresentationBySymbol,
+  (step, getGeoRepresentation): { [symbol: string]: GeometricalObject | undefined } | { } => {
     if (step === null) {
       return { };
     }
-    return getWithNested(step);
+    return getGeoRepresentation(step);
   },
 );
 

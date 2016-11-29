@@ -9,7 +9,7 @@ import * as cx from 'classnames';
 
 import Props from './props';
 
-import assign from 'lodash/assign';
+import findIndex from 'lodash/findIndex';
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
@@ -253,11 +253,11 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
                 map(
                   sortBy(
                     map(
-                      assign({ }, this.props.landmarks, highlighted),
+                      [...this.props.landmarks, ...highlighted],
                       (landmark: GeometricalObject, symbol: string) => {
                         let props = { };
                         if (isHighlightModeActive) {
-                          if (highlighted[symbol] !== undefined) {
+                          if (findIndex(highlighted, symbol) !== -1) {
                             props = { stroke: 'orange', fill: 'orange', zIndex: 1 };
                           } else {
                             props = { fillOpacity: 0.5, zIndex: 0 };

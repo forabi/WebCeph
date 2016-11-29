@@ -1,8 +1,6 @@
 import { Ls, Li, softPog } from 'analyses/landmarks/points/soft';
 import { FH_PLANE } from 'analyses/landmarks/lines/skeletal';
-import { line, flipVector, angleBetweenLines } from 'analyses/helpers';
-
-import assign from 'lodash/assign';
+import { flipVector } from 'analyses/helpers';
 
 /**
  * A profile line is established by drawing a line tangent
@@ -17,7 +15,7 @@ export const Z: BaseCephaloLandmark = {
   type: 'angle',
   name: 'Merrifield\'s Z Angle',
   unit: 'degree',
-  components: [FH_PLANE, Li, Ls, softPog],
+  components: [flipVector(FH_PLANE), Li, Ls, softPog],
   map: (
     mapper: CephaloMapper,
     FH: GeometricalVector,

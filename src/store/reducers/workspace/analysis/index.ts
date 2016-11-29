@@ -384,11 +384,11 @@ export const getComponentWithAllPossibleNestedComponents = createSelector(
   }),
 );
 
-export const getLandmarkWithAllNestedLandmarks = createSelector(
+export const getGeometricalRepresentationBySymbol = createSelector(
   findStepBySymbol,
   getComponentWithAllPossibleNestedComponents,
   getCephaloMapper,
-  (findStep, getWithNested, mapper) => (symbol: string) => {
+  (findStep, getWithNested, mapper) => memoize((symbol: string) => {
     type TResult = { [symbol: string]: GeometricalObject | undefined } | { };
     return reduce<TResult, TResult>(
       map(
@@ -404,7 +404,7 @@ export const getLandmarkWithAllNestedLandmarks = createSelector(
       assign,
       { },
     );
-  },
+  }),
 );
 
 export const getAllLandmarksAndValues = createSelector(
