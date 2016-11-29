@@ -1,5 +1,6 @@
 import assign from 'lodash/assign';
 import omit from 'lodash/omit';
+import mapValues from 'lodash/mapValues';
 import { handleActions } from 'redux-actions';
 import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
@@ -34,7 +35,7 @@ const manualLandmarksReducer = handleActions<
         { },
         state,
         {
-          [payload.symbol]: payload.value,
+          [payload.symbol]: mapValues(payload.value, Math.round),
         },
       );
     },

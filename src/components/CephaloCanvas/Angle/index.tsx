@@ -29,10 +29,7 @@ const getSlope = ({ x1, y1, x2, y2 }: GeometricalVector) => (y2 - y1) / (x2 - x1
 
 const getYInterceptEquation = (vector: GeometricalVector) => {
   const { x1, y1 } = vector;
-  const { x2, y2 } = vector;
-  const eq = (x: number) => getSlope(vector) * (x - x1) + y1;
-  console.log('y intercept correct?', eq(x2) === y2, eq(x2), y2);
-  return eq;
+  return (x: number) => getSlope(vector) * (x - x1) + y1;
 };
 
 const isPointCloserTo = (
@@ -44,7 +41,7 @@ const isPointCloserTo = (
 };
 
 const isPointInLine = (
-  { x,  y }: GeometricalPoint,
+  { x, y }: GeometricalPoint,
   vector: GeometricalVector,
 ) => {
   const getY = getYInterceptEquation(vector);
@@ -60,6 +57,7 @@ const isPointInSegment = (
   const minY = Math.min(y1, y2);
   const maxX = Math.max(x1, x2);
   const minX = Math.min(x1, x2);
+  console.log({ minY, maxY, minX, maxX });
   return (
     point.x >= minX && point.x <= maxX &&
     point.y >= minY && point.y <= maxY
@@ -98,9 +96,9 @@ const Angle = ({ boundingRect, vectors, segmentProps, parallelProps, extendedPro
     return <g/>;
   } 
 
-  const inVector1 = isPointInSegment(intersection, vector1);
-  const inVector2 = isPointInSegment(intersection, vector2);
-  if (inVector1 && inVector2) {
+  const inSegment1 = isPointInSegment(intersection, vector1);
+  const inSegment2 = isPointInSegment(intersection, vector2);
+  if (inSegment1 && inSegment2) {
     console.info('Intersection point belongs to both vectors, no need for extension.');
     return (
       <g>
@@ -116,7 +114,7 @@ const Angle = ({ boundingRect, vectors, segmentProps, parallelProps, extendedPro
     x2: intersection.x,
     y2: intersection.y,
   }
-  if (inVector1) {
+  if (inSegment1) {
     console.info('Intersection point belongs to vector 1, extending vector 2...');
     return (
       <g>
@@ -133,7 +131,7 @@ const Angle = ({ boundingRect, vectors, segmentProps, parallelProps, extendedPro
     x2: intersection.x,
     y2: intersection.y,
   }
-  if (inVector2) {
+  if (inSegment2) {
     console.info('Intersection point belongs to vector 2, extending vector 1...');
     return (
       <g>
@@ -157,13 +155,13 @@ const Angle = ({ boundingRect, vectors, segmentProps, parallelProps, extendedPro
     return <g />;
   } else {
     console.info('Creating parallel to vector 1');
-    const { x1, y1 } = vector1;
     const slope = getSlope(vector1);
-    const getY = (x: number) => slope * (x - x1) + y1;
-    const x2 = boundingRect.right;
+    const { x1, x2, y1 } = vector2;
+    const intercept = y1 - (slope * x1); 
+    const getY = (x: number) => (slope * x) + intercept;
     const parallelToVector1 = {
-      x1: intersection.x,
-      y1: intersection.y,
+      x1,
+      y1,
       x2,
       y2: getY(x2),
     }

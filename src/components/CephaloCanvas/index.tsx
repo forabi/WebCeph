@@ -51,37 +51,44 @@ const getTranslateToCenter = (
 
 const segmentProps = { };
 
-const parallelProps = {
-  strokeDasharray: '10, 5',
+const extendedProps = {
+  strokeDasharray: '15, 10',
+  fillOpacity: 1,
+  strokeOpacity: 1,
 };
 
-const extendedProps = assign({ }, segmentProps, parallelProps);
+const parallelProps = assign({ }, segmentProps, extendedProps);
 
-const Landmark = (_props: LandmarkProps) => {
-  const { value, fill, fillOpacity, scale = 1, stroke, onClick, onMouseEnter, onMouseLeave } = _props;
-  const { imageWidth, imageHeight } = _props;
-  const props = {
-    onClick, onMouseEnter, onMouseLeave,
-    stroke: stroke || 'black',
-    fill: fill || 'white',
+const Landmark = (props: LandmarkProps) => {
+  const {
+    scale = 1,
+    value,
+    imageWidth, imageHeight,
+    fillOpacity = 1, strokeOpacity = 1, stroke = 'black',
+  } = props;
+
+  const additionalProps = {
+    stroke,
     strokeWidth: 2 * scale,
-    fillOpacity: fillOpacity || 1,
-    strokeOpacity: fillOpacity || 1,
+    fill: 'white',
+    fillOpacity,
+    strokeOpacity,
   };
+
   if (isGeometricalPoint(value)) {
     return (
       <circle
         r={3 * scale}
         cx={value.x}
         cy={value.y}
-        {...props}
+        {...additionalProps}
       />
     );
   } else if (isGeometricalVector(value)) {
     return (
       <line
         {...value}
-        {...props}
+        {...additionalProps}
       />
     );
   } else if (isGeometricalAngle(value)) {
@@ -97,7 +104,7 @@ const Landmark = (_props: LandmarkProps) => {
             right: imageWidth
           }
         }
-        moreProps={props}
+        moreProps={additionalProps}
       />
     );
   } else {
