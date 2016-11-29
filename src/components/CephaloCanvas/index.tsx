@@ -14,6 +14,8 @@ import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
 
+import Angle from './Angle';
+
 import { mapCursor } from 'utils/constants';
 import { isGeometricalPoint, isGeometricalVector, isGeometricalAngle } from 'utils/math';
 
@@ -30,6 +32,8 @@ interface LandmarkProps {
   onMouseEnter: React.EventHandler<React.MouseEvent<MouseEvent>>;
   onMouseLeave: React.EventHandler<React.MouseEvent<MouseEvent>>;
   scale?: number;
+  imageHeight: number;
+  imageWidth: number;
 }
 
 const getTranslateToCenter = (
@@ -44,6 +48,7 @@ const getTranslateToCenter = (
 
 const Landmark = (_props: LandmarkProps) => {
   const { value, fill, fillOpacity, scale = 1, stroke, onClick, onMouseEnter, onMouseLeave } = _props;
+  const { imageWidth, imageHeight } = _props;
   const props = {
     onClick, onMouseEnter, onMouseLeave,
     stroke: stroke || 'black',
@@ -70,9 +75,17 @@ const Landmark = (_props: LandmarkProps) => {
     );
   } else if (isGeometricalAngle(value)) {
     return (
-      <g>
-        {map(value.vectors, (vector, i) => <Landmark key={i} value={vector} />)}
-      </g>
+      <Angle
+        vectors={value.vectors}
+        boundingRect={
+          {
+            top: 0,
+            left: 0,
+            bottom: imageHeight,
+            right: imageWidth
+          }
+        }
+      />
     );
   } else {
     return <span/>;
@@ -272,6 +285,8 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
                             onMouseLeave={this.handleLandmarkMouseLeave(symbol)}
                             onClick={this.handleLandmarkClick(symbol)}
                             scale={1 / this.props.scale}
+                            imageWidth={imageWidth}
+                            imageHeight={imageHeight}
                             {...props}
                           />
                         );
