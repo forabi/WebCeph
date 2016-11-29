@@ -16,16 +16,6 @@ import { mapCursor } from 'utils/constants';
 
 const classes = require('./style.scss');
 
-const getTranslateToCenter = (
-  containerWidth: number, containerHeight: number,
-  width: number, height: number,
-  scale: number,
-): [number, number] => {
-  const translateX = Math.abs(containerWidth - width * scale) / 2;
-  const translateY = Math.abs(containerHeight - height * scale) / 2;
-  return [translateX, translateY];
-};
-
 const noop = () => undefined;
 
 function isMouseEvent<T>(e: any): e is React.MouseEvent<T> {
@@ -156,29 +146,27 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
     return f;
   }
 
-  private getTransformAttribute = () => {
-    const [translateX, translateY] = getTranslateToCenter(
-      Math.max(this.props.canvasWidth, this.props.imageWidth),
-      Math.max(this.props.canvasHeight, this.props.imageHeight),
-      this.props.imageWidth,
-      this.props.imageHeight,
-      this.props.scale,
-    );
-    const tScaleX = (this.props.scaleOriginX * this.props.scale) - (this.props.scaleOriginX);
-    const tScaleY = (this.props.scaleOriginY * this.props.scale) - (this.props.scaleOriginY);
-    let t = ` translate(${translateX}, ${translateY}) scale(${this.props.scale}, ${this.props.scale})`;
-    t += ` translate(${tScaleX}, ${tScaleY})`;
+  private getTransformProps = () => {
+    let transform = '';
+  //   const translateX = (this.props.scaleOriginX * this.props.scale) - (this.props.scaleOriginX);
+  //   const translateY = (this.props.scaleOriginY * this.props.scale) - (this.props.scaleOriginY);
+  //   let t = ` translate(${-1 * Math.round(translateX)}px, ${-1 * Math.round(translateY)}px) `;
+    transform += ` scale(${this.props.scale})`;
     if (this.props.isFlippedX) {
-      t += ` scale(-1, 1) translate(-${this.props.imageWidth}, 0)`;
+      transform += ` scaleX(-1)`;
     }
     if (this.props.isFlippedY) {
-      t += ` scale(1, -1) translate(0, -${this.props.imageHeight})`;
+      transform += ` scaleY(-1)`;
     }
-    return t;
+    return {
+      transform: transform,
+      transformOrigin: `${this.props.scaleOriginX}px ${this.props.scaleOriginY}px`,
+    };
   }
 
   private handleMouseWheel = (e: React.WheelEvent<SVGElement>) => {
     if (typeof this.props.onCanvasMouseWheel === 'function') {
+      e.preventDefault();
       const { x, y } = this.convertMousePositionRelativeToOriginalImage(e);
       this.props.onCanvasMouseWheel(x, y, e.deltaY);
     }

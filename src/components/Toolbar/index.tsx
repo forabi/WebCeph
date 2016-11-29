@@ -69,7 +69,7 @@ const CephaloEditorToolbar = (props: Props) => {
         onTouchTap={onToolButtonClick.bind(null, ToolsIds.ERASER)}
       />
       <FlatButton
-        disabled={true || cannotEdit || activeToolId === ToolsIds.ZOOM_WITH_CLICK}
+        disabled={cannotEdit || activeToolId === ToolsIds.ZOOM_WITH_CLICK}
         label=""
         icon={<IconZoom />}
         onTouchTap={onToolButtonClick.bind(null, ToolsIds.ZOOM_WITH_CLICK)}

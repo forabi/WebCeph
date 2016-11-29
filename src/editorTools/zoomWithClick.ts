@@ -1,6 +1,10 @@
 import createZoomWithWheel from './zoomWithWheel';
 import { Cursor } from 'utils/constants';
 
+import { getScale } from 'store/reducers/workspace/canvas/scale';
+
+import { setScale } from 'actions/workspace';
+
 import assign from 'lodash/assign';
 
 export const createZoomWithClick: EditorToolCreator = (
@@ -10,10 +14,10 @@ export const createZoomWithClick: EditorToolCreator = (
   createZoomWithWheel(state, dispatch),
   {
     onCanvasLeftClick(x, y) {
-      // @TODO
+      dispatch(setScale(getScale(state) * 1.2, x, y));
     },
     onCanvasRightClick(x, y) {
-      // @TODO
+      dispatch(setScale(getScale(state) * 0.8, x, y));
     },
     getCursorForCanvas() {
       return Cursor.ZOOM;
