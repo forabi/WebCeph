@@ -1,6 +1,5 @@
 import assign from 'lodash/assign';
 import createZoomWithWheel from './zoomWithWheel';
-import createTrackCursor from './trackCursor';
 import { Cursor } from 'utils/constants';
 
 import {
@@ -21,7 +20,6 @@ export const createAddPoint: EditorToolCreator = (
 ) => (
   assign(
     createZoomWithWheel(state, dispatch),
-    createTrackCursor(state, dispatch),
     {
       onCanvasMouseEnter() {
         if (!isAnalysisComplete(state)) {
