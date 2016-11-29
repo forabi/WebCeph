@@ -35,7 +35,7 @@ interface LandmarkProps {
 const getTranslateToCenter = (
   containerWidth: number, containerHeight: number,
   width: number, height: number,
-  scale: number
+  scale: number,
 ): [number, number] => {
   const translateX = Math.abs(containerWidth - width * scale) / 2;
   const translateY = Math.abs(containerHeight - height * scale) / 2;
@@ -91,11 +91,11 @@ function isTouchEvent<T>(e: any): e is React.TouchEvent<T> {
 export class CephaloCanvas extends React.PureComponent<Props, { }> {
   public refs: {
     canvas: React.ReactInstance,
-    image: React.ReactInstance
+    image: React.ReactInstance,
   };
 
   private convertMousePositionRelativeToOriginalImage = (
-    e: React.MouseEvent<SVGElement> | React.TouchEvent<SVGElement>
+    e: React.MouseEvent<SVGElement> | React.TouchEvent<SVGElement>,
   ) => {
     const element = e.currentTarget as Element;
     const rect = element.getBoundingClientRect();
@@ -134,7 +134,10 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
       this.props.imageHeight,
       this.props.scale,
     );
+    const tScaleX = (this.props.scaleOriginX * this.props.scale) - (this.props.scaleOriginX);
+    const tScaleY = (this.props.scaleOriginY * this.props.scale) - (this.props.scaleOriginY);
     let t = ` translate(${translateX}, ${translateY}) scale(${this.props.scale}, ${this.props.scale})`;
+    t += ` translate(${tScaleX}, ${tScaleY})`;
     if (this.props.isFlippedX) {
       t += ` scale(-1, 1) translate(-${this.props.imageWidth}, 0)`;
     }
@@ -142,7 +145,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
       t += ` scale(1, -1) translate(0, -${this.props.imageHeight})`;
     }
     return t;
-  };
+  }
 
   private handleMouseWheel = (e: React.WheelEvent<SVGElement>) => {
     if (typeof this.props.onCanvasMouseWheel === 'function') {
@@ -168,29 +171,29 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
         this.props.onCanvasRightClick(x, y);
       }
     }
-  };
+  }
 
   private handleContextMenu = (e: React.MouseEvent<SVGElement>) => {
     e.preventDefault();
-  };
+  }
 
   private handleLandmarkMouseEnter = (symbol: string) => (_: React.MouseEvent<SVGElement>) => {
     if (typeof this.props.onLandmarkMouseEnter === 'function') {
       this.props.onLandmarkMouseEnter(symbol);
     }
-  };
+  }
 
   private handleLandmarkMouseLeave = (symbol: string) => (_: React.MouseEvent<SVGElement>) => {
     if (typeof this.props.onLandmarkMouseLeave === 'function') {
       this.props.onLandmarkMouseLeave(symbol);
     }
-  };
+  }
 
   private handleLandmarkClick = (symbol: string) => (e: React.MouseEvent<SVGElement>) => {
     if (typeof this.props.onLandmarkClick === 'function') {
       this.props.onLandmarkClick(symbol, e.nativeEvent as MouseEvent);
     }
-  };
+  }
 
   render() {
     const {
@@ -269,7 +272,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
                             {...props}
                           />
                         );
-                      }
+                      },
                     ),
                     ({ props: { symbol, value } }) => highlighted[symbol] !== undefined || isGeometricalPoint(value),
                   ),
@@ -282,7 +285,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
                       }}>
                       {Landmark}
                     </g>
-                  ))
+                  )),
                 )
               }
             </g>
