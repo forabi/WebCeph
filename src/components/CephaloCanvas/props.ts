@@ -17,7 +17,7 @@ export interface StateProps {
     symbol: string;
     value: GeometricalObject;
   }>;
-  highlightedLandmarks: string[];
+  highlightedLandmarks: { [symbol: string]: true };
   activeTool: (dispatch: DispatchFunction) => EditorTool;
 };
 

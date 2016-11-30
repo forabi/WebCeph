@@ -28,7 +28,7 @@ const extendedProps = {
   className: classes.line_extended + ' ' + classes.highlighted,
 };
 
-const GeoViewer = pure(({ objects, boundingRect }: Props) => {
+const GeoViewer = pure(({ objects, top, left, width, height }: Props) => {
   return (
     <svg>
     {
@@ -57,7 +57,7 @@ const GeoViewer = pure(({ objects, boundingRect }: Props) => {
               key={symbol}
               rest={{ className: classes.angle }}
               {...value}
-              boundingRect={boundingRect}
+              boundingRect={{ top, left, right: width, bottom: height }}
               segmentProps={segmentProps}
               extendedProps={extendedProps}
               parallelProps={parallelProps}

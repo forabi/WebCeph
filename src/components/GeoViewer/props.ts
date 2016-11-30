@@ -1,12 +1,13 @@
-import { Rect } from 'utils/math';
-
 export interface StateProps {
   objects: ReadonlyArray<{
     label: string;
     symbol: string;
     value: GeometricalObject;
   }>;
-  boundingRect: Rect;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
 }
 
 export interface DispatchProps {

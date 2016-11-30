@@ -65,7 +65,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
     const minWidth = Math.max(canvasWidth, imageWidth);
     const isHighlightModeActive = !isEmpty(highlighted);
     const sortFn = (value, symbol) => (
-      highlighted[symbol] !== undefined ||
+      highlighted !== undefined ||
       isGeometricalPoint(value)
     );
     const landmarks = sortBy(this.props.landmarks, sortFn);
@@ -110,13 +110,11 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
             </g>
             <g transform={this.getTransformAttribute()}>
               <GeoViewer
+                top={0}
+                left={0}
+                width={imageWidth}
+                height={imageHeight}
                 objects={landmarks}
-                boundingRect={{
-                  top: 0,
-                  left: 0,
-                  right: imageWidth,
-                  bottom: imageHeight,
-                }}
               />
             </g>
           </g>

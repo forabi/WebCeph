@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { pure } from 'recompose';
+
 import {
   Rect,
   isPointInSegment,
@@ -18,7 +20,7 @@ export interface AngleProps {
   rest?: React.SVGAttributes<SVGLineElement>;
 }
 
-const Angle = (props: AngleProps) => {
+const Angle = pure((props: AngleProps) => {
   const {
     boundingRect,
     vectors,
@@ -112,6 +114,6 @@ const Angle = (props: AngleProps) => {
       </g>
     );
   }
-};
+});
 
 export default Angle;
