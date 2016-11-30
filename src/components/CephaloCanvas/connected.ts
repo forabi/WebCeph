@@ -70,7 +70,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
     const isHighlightMode = !isEmpty(highlightedLandmarks);
     const scale = getScale(state);
     const defaultGeoProps = {
-      strokeWidth: 3 / scale,
+      strokeWidth: 2 / scale,
       pointerEvents: 'none',
       transitionProperty: 'transform opacity',
       transitionDuration: '0.3s',
@@ -78,11 +78,12 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
     const pointProps = {
       stroke: 'darkviolet',
       fill: 'white',
-      r: 3 / scale,
+      r: 2 / scale,
+      strokeWidth: 1 / scale,
     };
     const vectorProps = {
       stroke: 'cornflowerblue',
-      strokeWidth: 3 / scale,
+      strokeWidth: 2 / scale,
     };
     const extendedProps = assign(
       { },
