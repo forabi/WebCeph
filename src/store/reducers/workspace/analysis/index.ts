@@ -11,6 +11,7 @@ import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 import reduce from 'lodash/reduce';
 import map from 'lodash/map';
+import keyBy from 'lodash/keyBy';
 import memoize from 'lodash/memoize';
 
 import { printUnexpectedPayloadWarning } from 'utils/debug';
@@ -269,6 +270,29 @@ export const getAllLandmarks = createSelector(
   getAutomaticLandmarks,
   ({ present: manual }, automatic) => {
     return assign({ }, manual, automatic);
+  }
+);
+
+export const getLandmarksToDisplay = createSelector(
+  getManualLandmarks,
+  getAllLandmarks,
+  getActiveAnalysisSteps,
+  getActiveAnalysis,
+  ({ present: manual }, all, steps, analysis) => {
+    if (analysis !== null) {
+      const s = keyBy(analysis.components, c => c.landmark.symbol);
+      return map(
+        filter(
+          steps,
+          (step) => (
+            manual[step.symbol] !== undefined ||
+            s[step.symbol] !== undefined
+          ),
+        ),
+        step => all[step.symbol],
+      );
+    }
+    return [];
   }
 );
 

@@ -9,34 +9,15 @@ import * as cx from 'classnames';
 
 import Props from './props';
 
-import findIndex from 'lodash/findIndex';
 import isEmpty from 'lodash/isEmpty';
-import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
 
-import Angle from './Angle';
+import GeoViewer from 'components/GeoViewer';
 
 import { mapCursor } from 'utils/constants';
-import { isGeometricalPoint, isGeometricalVector, isGeometricalAngle } from 'utils/math';
+import { isGeometricalPoint } from 'utils/math';
 
 const classes = require('./style.scss');
-
-interface LandmarkProps {
-  symbol: string;
-  value: GeometricalObject;
-  stroke?: string;
-  fill?: string;
-  fillOpacity?: number;
-  zIndex?: number;
-  onClick: React.EventHandler<React.MouseEvent<MouseEvent>>;
-  onMouseEnter: React.EventHandler<React.MouseEvent<MouseEvent>>;
-  onMouseLeave: React.EventHandler<React.MouseEvent<MouseEvent>>;
-  scale?: number;
-  imageHeight: number;
-  imageWidth: number;
-}
-
-import assign from 'lodash/assign';
 
 const getTranslateToCenter = (
   containerWidth: number, containerHeight: number,
@@ -46,70 +27,6 @@ const getTranslateToCenter = (
   const translateX = Math.abs(containerWidth - width * scale) / 2;
   const translateY = Math.abs(containerHeight - height * scale) / 2;
   return [translateX, translateY];
-};
-
-
-const segmentProps = { };
-
-const extendedProps = {
-  strokeDasharray: '15, 10',
-  fillOpacity: 1,
-  strokeOpacity: 1,
-};
-
-const parallelProps = assign({ }, segmentProps, extendedProps);
-
-const Landmark = (props: LandmarkProps) => {
-  const {
-    scale = 1,
-    value,
-    imageWidth, imageHeight,
-    fillOpacity = 1, strokeOpacity = 1, stroke = 'black',
-  } = props;
-
-  const additionalProps = {
-    stroke,
-    strokeWidth: 2 * scale,
-    fill: 'white',
-    fillOpacity,
-    strokeOpacity,
-  };
-
-  if (isGeometricalPoint(value)) {
-    return (
-      <circle
-        r={3 * scale}
-        cx={value.x}
-        cy={value.y}
-        {...additionalProps}
-      />
-    );
-  } else if (isGeometricalVector(value)) {
-    return (
-      <line
-        {...value}
-        {...additionalProps}
-      />
-    );
-  } else if (isGeometricalAngle(value)) {
-    return (
-      <Angle
-        vectors={value.vectors}
-        {...{ segmentProps, parallelProps, extendedProps }}
-        boundingRect={
-          {
-            top: 0,
-            left: 0,
-            bottom: imageHeight,
-            right: imageWidth
-          }
-        }
-        moreProps={additionalProps}
-      />
-    );
-  } else {
-    return <span/>;
-  }
 };
 
 const noop = () => undefined;
@@ -132,6 +49,81 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
     canvas: React.ReactInstance,
     image: React.ReactInstance
   };
+
+  render() {
+    const {
+      className,
+      src,
+      canvasWidth, canvasHeight,
+      imageHeight, imageWidth,
+      contrast = 50, brightness = 50,
+      highlightedLandmarks: highlighted,
+      getCursorForCanvas = noop,
+      getCursorForLandmark,
+    } = this.props;
+    const minHeight = Math.max(canvasHeight, imageHeight);
+    const minWidth = Math.max(canvasWidth, imageWidth);
+    const isHighlightModeActive = !isEmpty(highlighted);
+    const sortFn = (value, symbol) => (
+      highlighted[symbol] !== undefined ||
+      isGeometricalPoint(value)
+    );
+    const landmarks = sortBy(this.props.landmarks, sortFn);
+    return (
+      <div style={{ height: minHeight, width: minWidth }}>
+        <svg
+          ref="canvas"
+          className={cx(classes.canvas, className)}
+          width={minWidth}
+          height={minHeight}
+          onWheel={this.handleMouseWheel}
+          onContextMenu={this.handleContextMenu}
+          onMouseEnter={this.props.onCanvasMouseEnter}
+          onMouseLeave={this.props.onCanvasMouseLeave}
+          style={{ cursor: mapCursor(getCursorForCanvas()) }}
+        >
+          <defs>
+            <BrightnessFilter id="brightness" value={brightness} />
+            <DropShadow id="shadow" />
+            <InvertFilter id="invert" />
+            <ContrastFilter id="contrast" value={contrast} />
+          </defs>
+          <g>
+            <g filter="url(#shadow)">
+              <g filter="url(#brightness)">
+                <g>
+                  <image
+                    ref="image"
+                    xlinkHref={src}
+                    x={0}
+                    y={0}
+                    width={imageWidth}
+                    height={imageHeight}
+                    onMouseDown={this.handleClick}
+                    onMouseMove={this.handleCanvasMouseMove}
+                    onTouchMove={this.handleCanvasMouseMove}
+                    transform={this.getTransformAttribute()}
+                    filter={this.getFilterAttribute()}
+                  />
+                </g>
+              </g>
+            </g>
+            <g transform={this.getTransformAttribute()}>
+              <GeoViewer
+                objects={landmarks}
+                boundingRect={{
+                  top: 0,
+                  left: 0,
+                  right: imageWidth,
+                  bottom: imageHeight,
+                }}
+              />
+            </g>
+          </g>
+        </svg>
+      </div>
+    );
+  }
 
   private convertMousePositionRelativeToOriginalImage = (
     e: React.MouseEvent<SVGElement> | React.TouchEvent<SVGElement>
@@ -230,108 +222,6 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
       this.props.onLandmarkClick(symbol, e.nativeEvent as MouseEvent);
     }
   };
-
-  render() {
-    const {
-      className,
-      src,
-      canvasWidth, canvasHeight,
-      imageHeight, imageWidth,
-      contrast = 50, brightness = 50,
-      highlightedLandmarks: highlighted,
-      getCursorForCanvas = noop,
-      getCursorForLandmark,
-    } = this.props;
-    const minHeight = Math.max(canvasHeight, imageHeight);
-    const minWidth = Math.max(canvasWidth, imageWidth);
-    const isHighlightModeActive = !isEmpty(highlighted);
-    return (
-      <div style={{ height: minHeight, width: minWidth }}>
-        <svg
-          ref="canvas"
-          className={cx(classes.canvas, className)}
-          width={minWidth} height={minHeight}
-          onWheel={this.handleMouseWheel}
-          onContextMenu={this.handleContextMenu}
-          onMouseEnter={this.props.onCanvasMouseEnter}
-          onMouseLeave={this.props.onCanvasMouseLeave}
-          style={{ cursor: mapCursor(getCursorForCanvas()) }}
-        >
-          <defs>
-            <BrightnessFilter id="brightness" value={brightness} />
-            <DropShadow id="shadow" />
-            <InvertFilter id="invert" />
-            <ContrastFilter id="contrast" value={contrast} />
-          </defs>
-          <g>
-            <g filter="url(#shadow)">
-              <g filter="url(#brightness)">
-                <g>
-                  <image
-                    ref="image"
-                    xlinkHref={src}
-                    x={0} y={0}
-                    width={imageWidth} height={imageHeight}
-                    onMouseDown={this.handleClick}
-                    onMouseMove={this.handleCanvasMouseMove}
-                    onTouchMove={this.handleCanvasMouseMove}
-                    transform={this.getTransformAttribute()}
-                    filter={this.getFilterAttribute()}
-                  />
-                </g>
-              </g>
-            </g>
-            <g transform={this.getTransformAttribute()}>
-              {
-                map(
-                  sortBy(
-                    map(
-                      Object.assign({ }, this.props.landmarks, highlighted),
-                      (landmark: GeometricalObject, symbol: string) => {
-                        let props = { };
-                        if (isHighlightModeActive) {
-                          if (highlighted[symbol] !== undefined) {
-                            props = { stroke: 'orange', fill: 'orange', zIndex: 1 };
-                          } else {
-                            props = { fillOpacity: 0.5, zIndex: 0 };
-                          }
-                        }
-                        return (
-                          <Landmark
-                            key={symbol}
-                            symbol={symbol}
-                            value={landmark}
-                            onMouseEnter={this.handleLandmarkMouseEnter(symbol)}
-                            onMouseLeave={this.handleLandmarkMouseLeave(symbol)}
-                            onClick={this.handleLandmarkClick(symbol)}
-                            scale={1 / this.props.scale}
-                            imageWidth={imageWidth}
-                            imageHeight={imageHeight}
-                            {...props}
-                          />
-                        );
-                      }
-                    ),
-                    ({ props: { symbol, value } }) => highlighted[symbol] !== undefined || isGeometricalPoint(value),
-                  ),
-                  (Landmark => (
-                    <g
-                      key={Landmark.props.symbol}
-                      style={{
-                        cursor: getCursorForLandmark !== undefined ?
-                          mapCursor(getCursorForLandmark(Landmark.props.symbol)) : undefined,
-                      }}>
-                      {Landmark}
-                    </g>
-                  ))
-                )
-              }
-            </g>
-          </g>
-        </svg>
-      </div>
-    );
-  }
 }
 
 export default CephaloCanvas;

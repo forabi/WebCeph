@@ -34,13 +34,13 @@ import {
   getHighlightedLandmarks,
 } from 'store/reducers/workspace';
 import {
-  getAllLandmarks, getGeometricalRepresentationBySymbol,
+  getLandmarksToDisplay,
 } from 'store/reducers/workspace/analysis';
 
 import assign from 'lodash/assign';
 import curry from 'lodash/curry';
 import map from 'lodash/map';
-import values from 'lodash/values';
+import keys from 'lodash/keys';
 
 type OwnProps = { };
 
@@ -49,8 +49,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
     const origin = getScaleOrigin(state);
     const { height: canvasHeight, width: canvasWidth } = getCanvasSize(state);
     const { height: imageHeight, width: imageWidth } = getImageSize(state);
-    const allLandmarks = getAllLandmarks(state);
-    const getGeoRep = getGeometricalRepresentationBySymbol(state);
+    const landmarksToDisplay = getLandmarksToDisplay(state);
     return {
       canvasHeight,
       canvasWidth,
@@ -64,15 +63,16 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
       contrast: getImageContrast(state),
       isFlippedX: isImageFlippedX(state),
       isFlippedY: isImageFlippedY(state),
-      landmarks: [
-        ...values(allLandmarks),
-        map(
-          allLandmarks,
-          (_, symbol: string) => getGeoRep(symbol),
-        ),
-      ],
+      landmarks: map(
+        landmarksToDisplay,
+        (value: GeometricalObject, symbol: string) => ({
+          symbol,
+          label: symbol,
+          value,
+        }),
+      ),
       isInverted: isImageInverted(state),
-      highlightedLandmarks: values(getHighlightedLandmarks(state)),
+      highlightedLandmarks: keys(getHighlightedLandmarks(state)),
       activeTool: curry(getActiveToolCreator(state))(state),
     };
   };

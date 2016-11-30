@@ -1,0 +1,38 @@
+.common {
+  stroke-width: 10;
+  pointer-events: none;
+  transition-property: transform opacity;
+  transition-duration: 0.3s;
+}
+
+.highlighted {
+  opacity: 1 !important;
+  stroke: orange;
+}
+
+.line {
+  @extend .common;
+  stroke: cornflowerblue;
+
+  &_parallel, &_extended {
+    @extend .line;
+    stroke-dasharray: 15 10;
+    opacity: 0;
+    stroke: greenyellow;
+  }
+}
+
+.angle {
+  @extend .common;
+  &_segment {
+    @extend .angle;
+    stroke: greenyellow;
+  }
+}
+
+.point {
+  @extend .common;
+  stroke: darkviolet;
+  fill: white;
+  stroke-width: 5;  
+}

@@ -79,3 +79,81 @@ export function calculateAngleBetweenTwoVectors(line1: GeometricalVector, line2:
 
   return Math.acos(d / Math.sqrt(l2));
 }
+
+
+import clamp from 'lodash/clamp';
+
+export interface Rect {
+  top: number;
+  left: number;
+  bottom: number;
+  right: number;
+}
+
+export const isPointWithinRect = ({ x, y }: GeometricalPoint, { top, left, bottom, right }: Rect) => {
+  return (
+    clamp(x, left, right) === x &&
+    clamp(y, top, bottom) === y
+  );
+};
+
+export const getSlope = ({ x1, y1, x2, y2 }: GeometricalVector) => (y2 - y1) / (x2 - x1);
+
+export const getYInterceptEquation = (vector: GeometricalVector) => {
+  const { x1, y1 } = vector;
+  return (x: number) => getSlope(vector) * (x - x1) + y1;
+};
+
+export const isPointCloserTo = (
+  _: GeometricalPoint,
+  __: GeometricalVector,
+  ___: GeometricalVector,
+) => {
+  return false; // @TODO
+};
+
+export const isPointInLine = (
+  { x, y }: GeometricalPoint,
+  vector: GeometricalVector,
+) => {
+  const getY = getYInterceptEquation(vector);
+  return getY(x) === y;
+};
+
+export const isPointInSegment = (
+  point: GeometricalPoint,
+  vector: GeometricalVector,
+) => {
+  const { x1, y1, x2, y2 } = vector;
+  const maxY = Math.max(y1, y2);
+  const minY = Math.min(y1, y2);
+  const maxX = Math.max(x1, x2);
+  const minX = Math.min(x1, x2);
+  return (
+    point.x >= minX && point.x <= maxX &&
+    point.y >= minY && point.y <= maxY
+  ) && isPointInLine(point, vector);
+};
+
+export const getABCForLine = ({ x1, y1, x2, y2 }: GeometricalVector) => {
+  const A = y2 - y1;
+  const B = x1 - x2;
+  const C = (A * x1) + (B * y1);
+  return { A, B, C };
+};
+
+export const getIntersectionPoint = (
+  vector1: GeometricalVector,
+  vector2: GeometricalVector,
+) => {
+  const { A: A1, B: B1, C: C1 } = getABCForLine(vector1);
+  const { A: A2, B: B2, C: C2 } = getABCForLine(vector2);
+  const det = A1 * B2 - A2 * B1;
+  if (det === 0) {
+    return undefined;
+  } else {
+    const x = (B2 * C1 - B1 * C2) / det;
+    const y = (A1 * C2 - A2 * C1) / det;
+    return { x, y };
+  }
+};

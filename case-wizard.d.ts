@@ -98,7 +98,7 @@ interface GeometricalVector {
  * Describes an angle by its vectors
  */
 interface GeometricalAngle {
-  readonly vectors: ReadonlyArray<GeometricalVector>;
+  readonly vectors: [GeometricalVector, GeometricalVector];
 }
 
 type GeometricalObject = GeometricalVector | GeometricalPoint | GeometricalAngle;

@@ -8,12 +8,16 @@ export interface StateProps {
   canvasHeight: number;
   canvasWidth: number;
   imageHeight: number;
-  imageWidth: number; 
+  imageWidth: number;
   scale: number;
   scaleOriginX: number | null;
   scaleOriginY: number | null;
-  landmarks: GeometricalObject[];
-  highlightedLandmarks: GeometricalObject[];
+  landmarks: ReadonlyArray<{
+    label: string;
+    symbol: string;
+    value: GeometricalObject;
+  }>;
+  highlightedLandmarks: string[];
   activeTool: (dispatch: DispatchFunction) => EditorTool;
 };
 
