@@ -43,8 +43,8 @@ const Angle = pure((props: AngleProps) => {
     console.info('Intersection point belongs to both vectors, no need for extension.');
     return (
       <g>
-        <line {...rest} {...segmentProps} {...vector1} />
-        <line {...rest} {...segmentProps} {...vector2} />
+        <line {...segmentProps} {...rest} {...vector1} />
+        <line {...segmentProps} {...rest} {...vector2} />
       </g>
     );
   }
@@ -59,9 +59,9 @@ const Angle = pure((props: AngleProps) => {
     console.info('Intersection point belongs to vector 1, extending vector 2...');
     return (
       <g>
-        <line {...rest} {...segmentProps} {...vector1} />
-        <line {...rest} {...extendedProps} {...extendedVector2} />
-        <line {...rest} {...segmentProps} {...vector2} />
+        <line {...segmentProps} {...rest} {...vector1} />
+        <line {...extendedProps} {...rest} {...extendedVector2} />
+        <line {...segmentProps} {...rest} {...vector2} />
       </g>
     );
   }
@@ -76,19 +76,19 @@ const Angle = pure((props: AngleProps) => {
     console.info('Intersection point belongs to vector 2, extending vector 1...');
     return (
       <g>
-        <line {...rest} {...extendedProps} {...extendedVector1} />
-        <line {...rest} {...segmentProps} {...vector1} />
-        <line {...rest} {...segmentProps} {...vector2} />
+        <line {...extendedProps} {...rest} {...extendedVector1} />
+        <line {...segmentProps} {...rest} {...vector1} />
+        <line {...segmentProps} {...rest} {...vector2} />
       </g>
     );
   } else if (isPointWithinRect(intersection, boundingRect)) {
     console.info('Intersection point is within boundaries, extending vectors...');
     return (
       <g>
-        <line {...rest} {...extendedProps} {...extendedVector1} />
-        <line {...rest} {...segmentProps} {...vector1} />
-        <line {...rest} {...extendedProps} {...extendedVector2} />
-        <line {...rest} {...segmentProps} {...vector2} />
+        <line {...extendedProps} {...rest} {...extendedVector1} />
+        <line {...segmentProps} {...rest} {...vector1} />
+        <line {...extendedProps} {...rest} {...extendedVector2} />
+        <line {...segmentProps} {...rest} {...vector2} />
       </g>
     );
   } else if (isPointCloserTo(intersection, vector1, vector2)) {
@@ -100,7 +100,7 @@ const Angle = pure((props: AngleProps) => {
     const { x1, x2, y1 } = vector2;
     const intercept = y1 - (slope * x1);
     const getY = (x: number) => (slope * x) + intercept;
-    const parallelToVector1 = {
+    const parallel1 = {
       x1,
       y1,
       x2,
@@ -108,9 +108,9 @@ const Angle = pure((props: AngleProps) => {
     };
     return (
       <g>
-        <line {...rest} {...segmentProps} {...vector1} />
-        <line {...rest} {...parallelProps} {...parallelToVector1} />
-        <line {...rest} {...segmentProps} {...vector2} />
+        <line {...segmentProps} {...rest} {...vector1} />
+        <line {...parallelProps} {...rest} {...parallel1} />
+        <line {...segmentProps} {...rest} {...vector2} />
       </g>
     );
   }

@@ -60,15 +60,19 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
       highlightedLandmarks: highlighted,
       getCursorForCanvas = noop,
       getCursorForLandmark,
+      getPropsForPoint,
+      getPropsForVector,
+      getPropsForAngle,
+      landmarks,
     } = this.props;
     const minHeight = Math.max(canvasHeight, imageHeight);
     const minWidth = Math.max(canvasWidth, imageWidth);
     const isHighlightModeActive = !isEmpty(highlighted);
     const sortFn = (value, symbol) => (
-      highlighted !== undefined ||
-      isGeometricalPoint(value)
+      isGeometricalPoint(value) ||
+      (isHighlightModeActive && highlighted[symbol] !== undefined)
     );
-    const landmarks = sortBy(this.props.landmarks, sortFn);
+    const sortedLandmarks: (typeof landmarks) = sortBy(this.props.landmarks, sortFn);
     return (
       <div style={{ height: minHeight, width: minWidth }}>
         <svg
@@ -114,7 +118,10 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
                 left={0}
                 width={imageWidth}
                 height={imageHeight}
-                objects={landmarks}
+                objects={sortedLandmarks}
+                getPropsForPoint={getPropsForPoint}
+                getPropsForVector={getPropsForVector}
+                getPropsForAngle={getPropsForAngle}
               />
             </g>
           </g>

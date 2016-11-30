@@ -17,6 +17,9 @@ export interface StateProps {
     symbol: string;
     value: GeometricalObject;
   }>;
+  getPropsForPoint: (symbol: string) => any;
+  getPropsForVector: (symbol: string) => any;
+  getPropsForAngle: (symbol: string) => any;
   highlightedLandmarks: { [symbol: string]: true };
   activeTool: (dispatch: DispatchFunction) => EditorTool;
 };

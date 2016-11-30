@@ -40,9 +40,25 @@ import {
 import assign from 'lodash/assign';
 import curry from 'lodash/curry';
 import map from 'lodash/map';
-import keys from 'lodash/keys';
+import isEmpty from 'lodash/isEmpty';
+
+import {
+  isGeometricalPoint,
+  isGeometricalVector,
+  isGeometricalAngle,
+} from 'utils/math';
 
 type OwnProps = { };
+
+const highlightProps = {
+  stroke: 'orange',
+  fill: 'orange',
+  opacity: 1,
+};
+
+const unhighlightProps = {
+  opacity: 0.5,
+};
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: FinalState) => {
@@ -50,13 +66,60 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
     const { height: canvasHeight, width: canvasWidth } = getCanvasSize(state);
     const { height: imageHeight, width: imageWidth } = getImageSize(state);
     const landmarksToDisplay = getLandmarksToDisplay(state);
+    const highlightedLandmarks = getHighlightedLandmarks(state);
+    const isHighlightMode = !isEmpty(highlightedLandmarks);
+    const scale = getScale(state);
+    const defaultGeoProps = {
+      strokeWidth: 3 / scale,
+      pointerEvents: 'none',
+      transitionProperty: 'transform opacity',
+      transitionDuration: '0.3s',
+    };
+    const pointProps = {
+      stroke: 'darkviolet',
+      fill: 'white',
+      r: 3 / scale,
+    };
+    const vectorProps = {
+      stroke: 'cornflowerblue',
+      strokeWidth: 3 / scale,
+    };
+    const extendedProps = assign(
+      { },
+      vectorProps,
+      {
+        strokeDasharray: '15 10',
+        opacity: 0,
+        stroke: 'greenyellow',
+      },
+    );
+    const angleProps = {
+      segmentProps: vectorProps,
+      extendedProps,
+      parallelProps: extendedProps,
+    };
+    const extendProps = (props: any, symbol: string) => {
+      return assign(
+        { },
+        defaultGeoProps,
+        props,
+        isHighlightMode ? (
+          highlightedLandmarks[symbol] !== undefined ? (
+            highlightProps
+          ) : unhighlightProps
+        ) : undefined,
+      );
+    };
+    const getPropsForPoint = (symbol: string) => extendProps(pointProps, symbol);
+    const getPropsForVector = (symbol: string) => extendProps(vectorProps, symbol);
+    const getPropsForAngle = (symbol: string) => extendProps(angleProps, symbol);
     return {
       canvasHeight,
       canvasWidth,
       src: getImageData(state) as string,
       imageWidth: imageWidth as number,
       imageHeight: imageHeight as number,
-      scale: getScale(state),
+      scale,
       scaleOriginX: origin !== null ? origin.x : null,
       scaleOriginY: origin !== null ? origin.y : null,
       brightness: getImageBrightness(state),
@@ -71,8 +134,11 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
           value,
         }),
       ),
+      getPropsForPoint,
+      getPropsForVector,
+      getPropsForAngle,
       isInverted: isImageInverted(state),
-      highlightedLandmarks: keys(getHighlightedLandmarks(state)),
+      highlightedLandmarks,
       activeTool: curry(getActiveToolCreator(state))(state),
     };
   };

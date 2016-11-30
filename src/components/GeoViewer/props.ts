@@ -8,10 +8,12 @@ export interface StateProps {
   left: number;
   width: number;
   height: number;
+  getPropsForPoint: (symbol: string) => any; // @TODO: use partial
+  getPropsForVector: (symbol: string) => any; // @TODO: use partial
+  getPropsForAngle: (symbol: string) => any; // @TODO: use partial
 }
 
 export interface DispatchProps {
-
 }
 
 export interface OwnProps {
