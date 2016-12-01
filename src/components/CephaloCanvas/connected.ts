@@ -75,8 +75,10 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
       // filter: 'url(#glow)',
       style: {
         pointerEvents: 'none',
-        transitionProperty: 'transform opacity',
-        transitionDuration: '0.3s',
+        willChange: 'transform opacity',
+        transitionProperty: 'transform opacity fill stroke',
+        transitionDuration: '0.5s',
+        transformOrigin: '50% 50%',
       },
     };
     const pointProps = {

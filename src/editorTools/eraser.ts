@@ -61,13 +61,21 @@ export const createEraser: EditorToolCreator = (
       getPropsForLandmark(symbol) {
         if (isRemovable(symbol)) {
           return {
+            fill: '#af2121',
+            stroke: '#751616',
             style: {
               pointerEvents: undefined,
               cursor: mapCursor(Cursor.REMOVE_LANDMARK),
+              transform: 'scale(1.3)',
+            },
+          };
+        } else {
+          return {
+            style: {
+              cursor: mapCursor(Cursor.REMOVE_LANDMARK_DISABLED),
             },
           };
         }
-        return undefined;
       },
 
       shouldShowLens: false,
