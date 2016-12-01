@@ -25,23 +25,13 @@ export interface AngleProps {
   rest?: React.SVGAttributes<SVGLineElement>;
 }
 
-const Angle = pure((props: AngleProps) => {
-  const {
-    boundingRect,
-    vectors,
-    segmentProps,
-    parallelProps,
-    extendedProps,
-    rest,
-  } = props;
-  const [vector1, vector2] = vectors;
-  const intersection = getIntersectionPoint(vector1, vector2);
-  if (intersection === undefined) {
-    // console.info('The two vectors are parallel. No extension.');
-    return <g/>;
-  }
+interface ArcProps {
+  vector1: GeometricalVector;
+  vector2: GeometricalVector;
+  props: any;
+}
 
-  const Arc = ({ vector1, vector2 }: { vector1: GeometricalVector, vector2: GeometricalVector }) => {
+  const Arc = ({ vector1, vector2, props }: ArcProps) => {
     const i = getIntersectionPoint(vector1, vector2);
     if (i !== undefined) {
       const { x, y } = i;
@@ -60,12 +50,28 @@ const Angle = pure((props: AngleProps) => {
           <clipPath id={uid}>
             <polygon {...triangle}/>
           </clipPath>
-          <circle {...extendedProps} fill="none" clipPath={`url(#${uid})`} cx={x} cy={y} r={45} />
+          <circle {...props} fill="none" clipPath={`url(#${uid})`} cx={x} cy={y} r={45} />
         </g>
       );
     }
     return <g/>;
   };
+
+const Angle = pure((props: AngleProps) => {
+  const {
+    boundingRect,
+    vectors,
+    segmentProps,
+    parallelProps,
+    extendedProps,
+    rest,
+  } = props;
+  const [vector1, vector2] = vectors;
+  const intersection = getIntersectionPoint(vector1, vector2);
+  if (intersection === undefined) {
+    // console.info('The two vectors are parallel. No extension.');
+    return <g/>;
+  }
 
   const inSegment1 = isPointInSegment(intersection, vector1);
   const inSegment2 = isPointInSegment(intersection, vector2);
@@ -75,7 +81,7 @@ const Angle = pure((props: AngleProps) => {
       <g>
         <line {...segmentProps} {...rest} {...vector1} />
         <line {...segmentProps} {...rest} {...vector2} />
-        <Arc vector1={vector1} vector2={vector2} />
+        <Arc vector1={vector1} vector2={vector2} props={extendedProps} />
       </g>
     );
   }
@@ -93,7 +99,7 @@ const Angle = pure((props: AngleProps) => {
         <line {...segmentProps} {...rest} {...vector1} />
         <line {...extendedProps} {...rest} {...extendedVector2} />
         <line {...segmentProps} {...rest} {...vector2} />
-        <Arc vector1={vector1} vector2={vector2} />
+        <Arc vector1={vector1} vector2={vector2} props={extendedProps}  />
       </g>
     );
   }
@@ -111,7 +117,7 @@ const Angle = pure((props: AngleProps) => {
         <line {...extendedProps} {...rest} {...extendedVector1} />
         <line {...segmentProps} {...rest} {...vector1} />
         <line {...segmentProps} {...rest} {...vector2} />
-        <Arc vector1={vector1} vector2={vector2} />
+        <Arc vector1={vector1} vector2={vector2} props={extendedProps}  />
       </g>
     );
   } else if (isPointWithinRect(intersection, boundingRect)) {
@@ -122,7 +128,7 @@ const Angle = pure((props: AngleProps) => {
         <line {...segmentProps} {...rest} {...vector1} />
         <line {...extendedProps} {...rest} {...extendedVector2} />
         <line {...segmentProps} {...rest} {...vector2} />
-        <Arc vector1={extendedVector1} vector2={extendedVector2} />
+        <Arc vector1={extendedVector1} vector2={extendedVector2} props={extendedProps} />
       </g>
     );
   } else if (isPointCloserTo(intersection, vector1, vector2)) {
@@ -145,7 +151,7 @@ const Angle = pure((props: AngleProps) => {
         <line {...segmentProps} {...rest} {...vector1} />
         <line {...parallelProps} {...rest} {...parallel1} />
         <line {...segmentProps} {...rest} {...vector2} />
-        <Arc vector1={parallel1} vector2={vector2} />
+        <Arc vector1={parallel1} vector2={vector2} props={extendedProps} />
       </g>
     );
   }
