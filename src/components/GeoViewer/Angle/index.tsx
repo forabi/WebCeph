@@ -2,9 +2,10 @@ import * as React from 'react';
 
 import { pure } from 'recompose';
 
-import uniqueId from 'lodash/uniqueId';
 import reject from 'lodash/reject';
 import isEqual from 'lodash/isEqual';
+import last from 'lodash/last';
+import uniqueId from 'lodash/uniqueId';
 
 import {
   Rect,
@@ -13,7 +14,6 @@ import {
   isPointCloserTo,
   isPointWithinRect,
   getSlope,
-  calculateAngleBetweenTwoVectors,
 } from 'utils/math';
 
 export interface AngleProps {
@@ -40,8 +40,6 @@ const Angle = pure((props: AngleProps) => {
     // console.info('The two vectors are parallel. No extension.');
     return <g/>;
   }
-  const angle1 = Math.atan2(vector1.y2 - vector1.y1, vector1.x2 - vector1.x1);
-  const angle2 = angle1 + calculateAngleBetweenTwoVectors(vector1, vector2);
 
   const Arc = ({ vector1, vector2 }: { vector1: GeometricalVector, vector2: GeometricalVector }) => {
     const i = getIntersectionPoint(vector1, vector2);
@@ -51,10 +49,9 @@ const Angle = pure((props: AngleProps) => {
       const point2 = { x: vector1.x2, y: vector1.y2 };
       const point3 = { x: vector2.x1, y: vector2.y1 };
       const point4 = { x: vector2.x2, y: vector2.y2 };
-      const [p1, p2] = reject([
-        point1, point2, point3, point4,
-      ], p => isEqual(p, i));
-      const uid = uniqueId('angle_clip_path_');
+      const p1 = last(reject([point1, point2], p => isEqual(p, i)));
+      const p2 = last(reject([point3, point4], p => isEqual(p, i)));
+      const uid = uniqueId(`clip-path-`);
       const triangle = {
         points: [p1, i, p2].map(({ x, y }) => `${x},${y}`).join(' '),
       };
@@ -63,6 +60,7 @@ const Angle = pure((props: AngleProps) => {
           <clipPath id={uid}>
             <polygon {...triangle}/>
           </clipPath>
+          {__DEBUG__ ? <polygon {...triangle} fill="green" fillOpacity={0.5} /> : null}
           <circle {...segmentProps} fill="none" clipPath={`url(#${uid})`} cx={x} cy={y} r={45} />
         </g>
       );
@@ -125,7 +123,7 @@ const Angle = pure((props: AngleProps) => {
         <line {...segmentProps} {...rest} {...vector1} />
         <line {...extendedProps} {...rest} {...extendedVector2} />
         <line {...segmentProps} {...rest} {...vector2} />
-        <Arc vector1={vector1} vector2={vector2} />
+        <Arc vector1={extendedVector1} vector2={extendedVector2} />
       </g>
     );
   } else if (isPointCloserTo(intersection, vector1, vector2)) {

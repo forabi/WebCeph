@@ -54,8 +54,8 @@ const highlightProps = {
 };
 
 const unhighlightProps = {
-  fillOpacity: 0.5,
-  strokeOpacity: 0.5,
+  fillOpacity: 0,
+  strokeOpacity: 0,
 };
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
@@ -70,7 +70,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
     const scale = getScale(state);
     const defaultGeoProps = {
       strokeWidth: 2 / scale,
-      filter: 'url(#glow)',
+      // filter: 'url(#glow)',
       style: {
         pointerEvents: 'none',
         transitionProperty: 'transform opacity',

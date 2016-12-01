@@ -152,15 +152,15 @@ export const angleOfABPlane: AnalysisComponent = {
 };
 
 const components: AnalysisComponent[] = [
-  ...commonComponents,
-  angleOfConvexity,
+  // ...commonComponents,
+  // angleOfConvexity,
   angleOfYAxis,
-  angleOfABPlane,
-  {
-    landmark: angleBetweenLines(FH_PLANE, line(Pog, N), 'Facial Angle', 'FH-NPog'),
-    norm: 87.8,
-    stdDev: 3.6,
-  },
+  // angleOfABPlane,
+  // {
+  //   landmark: angleBetweenLines(FH_PLANE, line(Pog, N), 'Facial Angle', 'FH-NPog'),
+  //   norm: 87.8,
+  //   stdDev: 3.6,
+  // },
 ];
 
 export const interpret = (values: { [id: string]: EvaluatedValue }) => {
