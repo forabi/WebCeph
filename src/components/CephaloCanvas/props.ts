@@ -20,7 +20,10 @@ export interface StateProps {
   getPropsForPoint: (symbol: string) => any;
   getPropsForVector: (symbol: string) => any;
   getPropsForAngle: (symbol: string) => any;
-  highlightedLandmarks: { [symbol: string]: true };
+  isHighlightMode: boolean;
+  highlightedLandmarks: {
+    [symbol: string]: boolean
+  };
   activeTool: (dispatch: DispatchFunction) => EditorTool;
 };
 

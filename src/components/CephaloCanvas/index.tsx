@@ -9,13 +9,11 @@ import * as cx from 'classnames';
 
 import Props from './props';
 
-import isEmpty from 'lodash/isEmpty';
-import sortBy from 'lodash/sortBy';
-
 import GeoViewer from 'components/GeoViewer';
 
 import { mapCursor } from 'utils/constants';
-import { isGeometricalPoint } from 'utils/math';
+
+import filter from 'lodash/filter';
 
 const classes = require('./style.scss');
 
@@ -57,7 +55,6 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
       canvasWidth, canvasHeight,
       imageHeight, imageWidth,
       contrast = 50, brightness = 50,
-      highlightedLandmarks: highlighted,
       getCursorForCanvas = noop,
       getCursorForLandmark,
       getPropsForPoint,
@@ -67,12 +64,6 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
     } = this.props;
     const minHeight = Math.max(canvasHeight, imageHeight);
     const minWidth = Math.max(canvasWidth, imageWidth);
-    const isHighlightModeActive = !isEmpty(highlighted);
-    const sortFn = (value, symbol) => (
-      isGeometricalPoint(value) ||
-      (isHighlightModeActive && highlighted[symbol] !== undefined)
-    );
-    const sortedLandmarks: (typeof landmarks) = sortBy(this.props.landmarks, sortFn);
     return (
       <div style={{ height: minHeight, width: minWidth }}>
         <svg
@@ -118,7 +109,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
                 left={0}
                 width={imageWidth}
                 height={imageHeight}
-                objects={sortedLandmarks}
+                objects={landmarks}
                 getPropsForPoint={getPropsForPoint}
                 getPropsForVector={getPropsForVector}
                 getPropsForAngle={getPropsForAngle}

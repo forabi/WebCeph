@@ -228,7 +228,7 @@ export const isStepEligibleForAutomaticMapping = createSelector(
         return false;
       }
       return every(s.components, c => {
-        if (isCephaloPoint(c)) {
+        if (isStepManual(c)) {
           const state = getState(c.symbol);
           return state === 'done';
         }

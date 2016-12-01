@@ -33,14 +33,14 @@ const Angle = pure((props: AngleProps) => {
 
   const intersection = getIntersectionPoint(vector1, vector2);
   if (intersection === undefined) {
-    console.info('The two vectors are parallel. No extension.');
+    // console.info('The two vectors are parallel. No extension.');
     return <g/>;
   }
 
   const inSegment1 = isPointInSegment(intersection, vector1);
   const inSegment2 = isPointInSegment(intersection, vector2);
   if (inSegment1 && inSegment2) {
-    console.info('Intersection point belongs to both vectors, no need for extension.');
+    // console.info('Intersection point belongs to both vectors, no need for extension.');
     return (
       <g>
         <line {...segmentProps} {...rest} {...vector1} />
@@ -56,7 +56,7 @@ const Angle = pure((props: AngleProps) => {
     y2: intersection.y,
   };
   if (inSegment1) {
-    console.info('Intersection point belongs to vector 1, extending vector 2...');
+    // console.info('Intersection point belongs to vector 1, extending vector 2...');
     return (
       <g>
         <line {...segmentProps} {...rest} {...vector1} />
@@ -73,7 +73,7 @@ const Angle = pure((props: AngleProps) => {
     y2: intersection.y,
   };
   if (inSegment2) {
-    console.info('Intersection point belongs to vector 2, extending vector 1...');
+    // console.info('Intersection point belongs to vector 2, extending vector 1...');
     return (
       <g>
         <line {...extendedProps} {...rest} {...extendedVector1} />
@@ -82,7 +82,7 @@ const Angle = pure((props: AngleProps) => {
       </g>
     );
   } else if (isPointWithinRect(intersection, boundingRect)) {
-    console.info('Intersection point is within boundaries, extending vectors...');
+    // console.info('Intersection point is within boundaries, extending vectors...');
     return (
       <g>
         <line {...extendedProps} {...rest} {...extendedVector1} />
@@ -95,7 +95,7 @@ const Angle = pure((props: AngleProps) => {
     // @TODO: create parallel to vector 2
     return <g />;
   } else {
-    console.info('Creating parallel to vector 1');
+    // console.info('Creating parallel to vector 1');
     const slope = getSlope(vector1);
     const { x1, x2, y1 } = vector2;
     const intercept = y1 - (slope * x1);

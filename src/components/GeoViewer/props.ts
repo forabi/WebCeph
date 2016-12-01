@@ -1,4 +1,4 @@
-export interface StateProps {
+export interface StateProps extends React.SVGAttributes<SVGElement> {
   objects: ReadonlyArray<{
     label: string;
     symbol: string;

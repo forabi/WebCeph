@@ -22,9 +22,10 @@ const GeoViewer = pure((props: Props) => {
     getPropsForPoint,
     getPropsForVector,
     getPropsForAngle,
+    style,
   } = props;
   return (
-    <svg>
+    <svg style={style}>
     {
       map(objects, ({ value, symbol }) => {
         if (isGeometricalPoint(value)) {

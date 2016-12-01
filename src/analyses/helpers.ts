@@ -170,7 +170,6 @@ export function isCephaloAngle(object: any): object is CephaloAngle {
 
 import {
   calculateAngleBetweenTwoVectors,
-  calculateAngleBetweenPoints,
   calculateDistanceBetweenTwoPoints,
   radiansToDegrees,
 } from '../utils/math';
@@ -378,7 +377,9 @@ export function getDisplayNameForResult({ indication }: AnalysisInterpretation) 
  * to a geometrical object or computed as a numerical value
  */
 export const isStepAutomatic = (step: CephaloLandmark): boolean => {
-  if (step.type === 'point') {
+  if (typeof step.map === 'function') {
+    return true;
+  } if (step.type === 'point') {
     return false;
   } else if (step.type === 'line') {
     return every(step.components, s => s.type === 'point');
