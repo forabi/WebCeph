@@ -70,6 +70,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
     const scale = getScale(state);
     const defaultGeoProps = {
       strokeWidth: 2 / scale,
+      filter: 'url(#glow)',
       style: {
         pointerEvents: 'none',
         transitionProperty: 'transform opacity',

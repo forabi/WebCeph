@@ -4,6 +4,7 @@ import BrightnessFilter from './filters/Brightness';
 import ContrastFilter from './filters/Contrast';
 import DropShadow from './filters/DropShadow';
 import InvertFilter from './filters/Invert';
+import GlowFilter from './filters/Glow';
 
 import * as cx from 'classnames';
 
@@ -12,8 +13,6 @@ import Props from './props';
 import GeoViewer from 'components/GeoViewer';
 
 import { mapCursor } from 'utils/constants';
-
-import filter from 'lodash/filter';
 
 const classes = require('./style.scss');
 
@@ -82,6 +81,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
             <DropShadow id="shadow" />
             <InvertFilter id="invert" />
             <ContrastFilter id="contrast" value={contrast} />
+            <GlowFilter id="glow" />
           </defs>
           <g>
             <g filter="url(#shadow)">
