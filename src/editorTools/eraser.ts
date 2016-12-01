@@ -1,5 +1,6 @@
 import createZoomWithWheel from './zoomWithWheel';
-import { Cursor } from 'utils/constants';
+import { Cursor, mapCursor } from 'utils/constants';
+import createTrackCursor from './trackCursor';
 
 import assign from 'lodash/assign';
 
@@ -18,6 +19,7 @@ export const createEraser: EditorToolCreator = (
   const isRemovable = isLandmarkRemovable(state);
   return assign(
     createZoomWithWheel(state, dispatch),
+    createTrackCursor(state, dispatch),
     {
       onLandmarkClick(symbol) {
         if (isRemovable(symbol)) {
@@ -54,6 +56,18 @@ export const createEraser: EditorToolCreator = (
 
       getCursorForCanvas() {
         return Cursor.REMOVE_LANDMARK_NO_TARGET;
+      },
+
+      getPropsForLandmark(symbol) {
+        if (isRemovable(symbol)) {
+          return {
+            style: {
+              pointerEvents: undefined,
+              cursor: mapCursor(Cursor.REMOVE_LANDMARK),
+            },
+          };
+        }
+        return undefined;
       },
 
       shouldShowLens: false,

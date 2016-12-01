@@ -43,6 +43,8 @@ import curry from 'lodash/curry';
 import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
 import isEmpty from 'lodash/isEmpty';
+import reduce from 'lodash/reduce';
+import compact from 'lodash/compact';
 
 type OwnProps = { };
 
@@ -141,7 +143,10 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
             value,
           }),
         ),
-        ({ symbol }) => manualLandmarks[symbol] !== undefined || highlightedLandmarks[symbol] === true,
+        ({ symbol }) => (
+          manualLandmarks[symbol] !== undefined ||
+          highlightedLandmarks[symbol] === true
+        ),
       ),
       getPropsForPoint,
       getPropsForVector,
@@ -156,14 +161,60 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
   (dispatch) => ({ dispatch });
 
+const mergeElementProps = (props1, props2) => {
+  return assign(
+    { },
+    props1,
+    props2,
+    {
+      style: assign(
+        { },
+        props1 ? props1.style : undefined,
+        props2 ? props2.style : undefined,
+      ),
+    },
+  );
+}
+
 const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> =
   (stateProps, dispatchProps, ownProps): ConnectableProps => {
+    const activeTool = stateProps.activeTool(dispatchProps.dispatch);
+    let { getPropsForPoint, getPropsForVector, getPropsForAngle } = stateProps;
+    const {
+      getPropsForLandmark,
+      onLandmarkClick,
+      onLandmarkMouseEnter,
+      onLandmarkMouseLeave,
+    } = activeTool;
+    const fns = compact([
+      getPropsForLandmark,
+    ]);
+    [getPropsForPoint, getPropsForVector, getPropsForAngle] = map(
+      [getPropsForPoint, getPropsForVector, getPropsForAngle],
+      fn => {
+        return (symbol: string) => {
+          const props = fn(symbol);
+          return reduce(fns, (props, fn) => {
+            return mergeElementProps(props, fn ? fn(symbol) : { });
+          }, assign({ }, props, {
+            onClick: onLandmarkClick ? (e) => onLandmarkClick(symbol, e) : undefined,
+            onMouseEnter: onLandmarkMouseEnter ? () => onLandmarkMouseEnter(symbol) : undefined,
+            onMouseLeave: onLandmarkMouseLeave ? () => onLandmarkMouseLeave(symbol) : undefined,
+          }));
+        };
+      },
+    );
     return assign(
       { },
       ownProps,
       stateProps,
       dispatchProps,
-      stateProps.activeTool(dispatchProps.dispatch),
+      activeTool,
+      {
+        getPropsForPoint,
+        getPropsForVector,
+        getPropsForAngle,
+      },
     );
   };
 

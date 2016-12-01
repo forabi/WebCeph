@@ -498,6 +498,8 @@ interface EditorTool {
    * `null` indicates no preference.
    */
   shouldShowLens: boolean | null;
+
+  getPropsForLandmark?(symbol: string): { [id: string]: any } | undefined;
 }
 
 /** An EditorToolCreate is a function that is used to create editor tools.

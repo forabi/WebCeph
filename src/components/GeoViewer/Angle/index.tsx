@@ -60,8 +60,7 @@ const Angle = pure((props: AngleProps) => {
           <clipPath id={uid}>
             <polygon {...triangle}/>
           </clipPath>
-          {__DEBUG__ ? <polygon {...triangle} fill="green" fillOpacity={0.5} /> : null}
-          <circle {...segmentProps} fill="none" clipPath={`url(#${uid})`} cx={x} cy={y} r={45} />
+          <circle {...extendedProps} fill="none" clipPath={`url(#${uid})`} cx={x} cy={y} r={45} />
         </g>
       );
     }
