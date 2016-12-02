@@ -37,7 +37,7 @@ const analysis: Analysis = {
     const results: AnalysisInterpretation[] = [];
     const valueOfZAngle = values[Z.symbol];
     if (typeof valueOfZAngle === 'number') {
-      results.push(...interpretZAngle(valueOfZAngle));
+      // results.push(...interpretZAngle(valueOfZAngle));
     }
     return results;
   },
