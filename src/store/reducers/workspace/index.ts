@@ -1,6 +1,10 @@
 import { createSelector } from 'reselect';
 import canvas, { getHighlightedStep } from './canvas';
-import analysis, { getComponentWithAllPossibleNestedComponents, getAllLandmarks, getManualLandmarks } from './analysis';
+import analysis, {
+  getGeometricalRepresentationBySymbol,
+  getAllLandmarks,
+  getManualLandmarks,
+} from './analysis';
 import image, { hasImage } from './image';
 import workers from './workers';
 import fileExport, { getExportError, hasExportError } from './export';
@@ -21,16 +25,29 @@ export default assign(
 
 export const canEdit = hasImage;
 
+
+export const getLandmarksToDisplay = createSelector(
+  getHighlightedStep,
+  getGeometricalRepresentationBySymbol,
+  getAllLandmarks,
+  (highlighted, getGeo, all) => {
+    if (highlighted !== null) {
+      return assign({ }, getGeo(highlighted), all);
+    }
+    return all;
+  }
+);
+
 export const getHighlightedLandmarks = createSelector(
   getHighlightedStep,
   getAllLandmarks,
-  getComponentWithAllPossibleNestedComponents,
-  (step, all, getNested): { [symbol: string]: boolean } => {
+  getGeometricalRepresentationBySymbol,
+  (step, all, getGeo): { [symbol: string]: boolean } => {
     if (step === null) {
       return { };
     }
     const unhighlighted = mapValues(all, () => false);
-    const highlighted = mapValues(keyBy(getNested(step), l => l.symbol), () => true);
+    const highlighted = mapValues(getGeo(step), () => true);
     return assign({ }, unhighlighted, highlighted);
   },
 );

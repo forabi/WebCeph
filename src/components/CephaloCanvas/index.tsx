@@ -56,6 +56,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
       contrast = 50, brightness = 50,
       getCursorForCanvas = noop,
       getCursorForLandmark,
+      isHighlightMode,
       getPropsForPoint,
       getPropsForVector,
       getPropsForAngle,
@@ -89,6 +90,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
                 <g>
                   <image
                     ref="image"
+                    className={classes.image}
                     xlinkHref={src}
                     x={0}
                     y={0}
@@ -99,6 +101,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
                     onTouchMove={this.handleCanvasMouseMove}
                     transform={this.getTransformAttribute()}
                     filter={this.getFilterAttribute()}
+                    style={{ opacity: isHighlightMode ? 0.5 : 1 }}
                   />
                 </g>
               </g>

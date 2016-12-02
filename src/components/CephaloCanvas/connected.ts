@@ -32,9 +32,10 @@ import {
 
 import {
   getHighlightedLandmarks,
-} from 'store/reducers/workspace';
-import {
   getLandmarksToDisplay,
+} from 'store/reducers/workspace';
+
+import {
   getManualLandmarks,
 } from 'store/reducers/workspace/analysis';
 

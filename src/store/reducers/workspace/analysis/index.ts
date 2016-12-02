@@ -272,8 +272,6 @@ export const getAllLandmarks = createSelector(
   }
 );
 
-export const getLandmarksToDisplay = getAllLandmarks;
-
 export const isStepEligibleForComputation = createSelector(
   getAllLandmarks,
   findEqualComponents,
