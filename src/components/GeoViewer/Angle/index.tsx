@@ -14,9 +14,26 @@ import {
   isPointCloserTo,
   isPointWithinRect,
   getSlope,
+  getYInterceptEquation,
+  createVectorFromPoints,
+  getVectorPoints,
 } from 'utils/math';
 
+const getParallelForVector = (vector1: GeometricalVector, origin: GeometricalPoint, tailX: number) => {
+  const slope = getSlope(vector1);
+  const intercept = origin.y - (slope * origin.x);
+  const getY = (x: number) => (slope * x) + intercept;
+  const x2 = tailX;
+  return {
+    x1: origin.x,
+    y1: origin.y,
+    x2,
+    y2: getY(x2),
+  };
+}
+
 export interface AngleProps {
+  symbol: string;
   boundingRect: Rect;
   vectors: [GeometricalVector, GeometricalVector];
   extendedProps: React.SVGAttributes<SVGLineElement>;
@@ -35,10 +52,8 @@ interface ArcProps {
     const i = getIntersectionPoint(vector1, vector2);
     if (i !== undefined) {
       const { x, y } = i;
-      const point1 = { x: vector1.x1, y: vector1.y1 };
-      const point2 = { x: vector1.x2, y: vector1.y2 };
-      const point3 = { x: vector2.x1, y: vector2.y1 };
-      const point4 = { x: vector2.x2, y: vector2.y2 };
+      const [point1, point2] = getVectorPoints(vector1);
+      const [point3, point4] = getVectorPoints(vector2);
       const p1 = last(reject([point1, point2], p => isEqual(p, i)));
       const p2 = last(reject([point3, point4], p => isEqual(p, i)));
       const uid = uniqueId(`clip-path-`);
@@ -57,8 +72,9 @@ interface ArcProps {
     return <g/>;
   };
 
-const Angle = pure((props: AngleProps) => {
+const Angle = pure((props: AngleProps): JSX.Element => {
   const {
+    symbol,
     boundingRect,
     vectors,
     segmentProps,
@@ -75,86 +91,59 @@ const Angle = pure((props: AngleProps) => {
 
   const inSegment1 = isPointInSegment(intersection, vector1);
   const inSegment2 = isPointInSegment(intersection, vector2);
-  if (inSegment1 && inSegment2) {
-    // console.info('Intersection point belongs to both vectors, no need for extension.');
-    return (
-      <g>
-        <line {...segmentProps} {...rest} {...vector1} />
-        <line {...segmentProps} {...rest} {...vector2} />
-        <Arc vector1={vector1} vector2={vector2} props={extendedProps} />
-      </g>
-    );
-  }
-
-  const extendedVector2 = {
-    x1: vector2.x1 === intersection.x ? vector2.x2 : vector2.x1,
-    y1: vector2.y1 === intersection.y ? vector2.y2 : vector2.y1,
-    x2: intersection.x,
-    y2: intersection.y,
-  };
-  if (inSegment1) {
-    // console.info('Intersection point belongs to vector 1, extending vector 2...');
-    return (
-      <g>
-        <line {...segmentProps} {...rest} {...vector1} />
-        <line {...extendedProps} {...rest} {...extendedVector2} />
-        <line {...segmentProps} {...rest} {...vector2} />
-        <Arc vector1={vector1} vector2={vector2} props={extendedProps}  />
-      </g>
-    );
-  }
-
-  const extendedVector1 = {
-    x1: vector1.x1 === intersection.x ? vector1.x2 : vector1.x1,
-    y1: vector1.y1 === intersection.y ? vector1.y2 : vector1.y1,
-    x2: intersection.x,
-    y2: intersection.y,
-  };
-  if (inSegment2) {
-    // console.info('Intersection point belongs to vector 2, extending vector 1...');
-    return (
-      <g>
-        <line {...extendedProps} {...rest} {...extendedVector1} />
-        <line {...segmentProps} {...rest} {...vector1} />
-        <line {...segmentProps} {...rest} {...vector2} />
-        <Arc vector1={vector1} vector2={vector2} props={extendedProps}  />
-      </g>
-    );
+  const [head1, tail1] = getVectorPoints(vector1);
+  const [head2, tail2] = getVectorPoints(vector2);
+  console.log('Drawing angle %s...', symbol);
+  let additionalElements: any[] = [];
+  let finalVectors: [GeometricalVector, GeometricalVector];
+  if (inSegment1 && inSegment2) { 
+    if (isEqual(head1, head2) && isEqual(head1, intersection)) {
+      console.info('Vectors are head to head, no need for extension.');
+      finalVectors = vectors;
+    } else if (isEqual(head1, tail2) || isEqual(head2, tail1)) {
+      console.info('Vectors are head to tail');
+      const extended2 = getParallelForVector(vector2, head1, head1.x + (head1.x - tail1.x));
+      additionalElements = [
+        <line key="extended2" {...extendedProps} {...rest} {...extended2} />,
+      ];
+      finalVectors = [vector1, extended2];
+    } else if (inSegment1) {
+      console.info('Extending vector2...');
+      const extended1 = getParallelForVector(vector1, intersection, tail1.x);
+      const extended2 = getParallelForVector(vector2, intersection, tail2.x);
+      additionalElements = [
+        <line key="extended2" {...extendedProps} {...rest} {...extended2} />,
+      ];
+      finalVectors = [extended1, extended2];
+    } else {
+      return <Angle {...props} vectors={[vector2, vector1]} />;
+    }
   } else if (isPointWithinRect(intersection, boundingRect)) {
-    // console.info('Intersection point is within boundaries, extending vectors...');
-    return (
-      <g>
-        <line {...extendedProps} {...rest} {...extendedVector1} />
-        <line {...segmentProps} {...rest} {...vector1} />
-        <line {...extendedProps} {...rest} {...extendedVector2} />
-        <line {...segmentProps} {...rest} {...vector2} />
-        <Arc vector1={extendedVector1} vector2={extendedVector2} props={extendedProps} />
-      </g>
-    );
-  } else if (isPointCloserTo(intersection, vector1, vector2)) {
-    // @TODO: create parallel to vector 2
-    return <g />;
+    console.info('Extending both vectors...');
+    const extended1 = getParallelForVector(vector1, intersection, tail1.x);
+    const extended2 = getParallelForVector(vector2, intersection, tail2.x);
+    additionalElements = [
+      <line key="extended1" {...extendedProps} {...rest} {...extended1} />,
+      <line key="extended2" {...extendedProps} {...rest} {...extended2} />,
+    ];
+    finalVectors = [extended1, extended2];
   } else {
-    // console.info('Creating parallel to vector 1');
-    const slope = getSlope(vector1);
-    const { x1, x2, y1 } = vector2;
-    const intercept = y1 - (slope * x1);
-    const getY = (x: number) => (slope * x) + intercept;
-    const parallel1 = {
-      x1,
-      y1,
-      x2,
-      y2: getY(x2),
-    };
-    return (
-      <g>
-        <line {...segmentProps} {...rest} {...vector1} />
-        <line {...parallelProps} {...rest} {...parallel1} />
-        <line {...segmentProps} {...rest} {...vector2} />
-        <Arc vector1={parallel1} vector2={vector2} props={extendedProps} />
-      </g>
-    );
+    // Intersection point is outside the canvas boundaries, create parallel
+    console.log('Intersection point is outside the canvas boundaries, creating parallel...');
+    const parallel = getParallelForVector(vector1, head2, tail1.x);
+    additionalElements = [
+      <line key="parallel1" {...parallelProps} {...rest} {...parallel} />,
+    ];
+    finalVectors = [parallel, vector2];
   }
+  return (
+    <g>
+      <line {...segmentProps} {...rest} {...vector1} />
+      <line {...segmentProps} {...rest} {...vector2} />
+      {additionalElements}
+      <Arc vector1={finalVectors[0]} vector2={finalVectors[1]} props={extendedProps} />
+    </g>
+  );
 });
 
 export default Angle;

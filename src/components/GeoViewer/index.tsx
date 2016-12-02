@@ -23,45 +23,48 @@ const GeoViewer = pure((props: Props) => {
     getPropsForVector,
     getPropsForAngle,
     style,
+    children,
   } = props;
   return (
     <svg style={style}>
-    {
-      map(objects, ({ value, symbol }) => {
-        if (isGeometricalPoint(value)) {
-          const rest = getPropsForPoint(symbol);
-          return (
-            <circle
-              key={symbol}
-              cx={value.x}
-              cy={value.y}
-              r={15}
-              {...rest}
-            />
-          );
-        } else if (isGeometricalVector(value)) {
-          const rest = getPropsForVector(symbol);
-          return (
-            <line
-              key={symbol}
-              {...value}
-              {...rest}
-            />
-          );
-        } else if (isGeometricalAngle(value)) {
-          const rest = getPropsForAngle(symbol);
-          return (
-            <Angle
-              key={symbol}
-              {...value}
-              boundingRect={{ top, left, right: width, bottom: height }}
-              {...rest}
-            />
-          );
-        }
-        return null;
-      })
-    }
+      {children}
+      {
+        map(objects, ({ value, symbol }) => {
+          if (isGeometricalPoint(value)) {
+            const rest = getPropsForPoint(symbol);
+            return (
+              <circle
+                key={symbol}
+                cx={value.x}
+                cy={value.y}
+                r={15}
+                {...rest}
+              />
+            );
+          } else if (isGeometricalVector(value)) {
+            const rest = getPropsForVector(symbol);
+            return (
+              <line
+                key={symbol}
+                {...value}
+                {...rest}
+              />
+            );
+          } else if (isGeometricalAngle(value)) {
+            const rest = getPropsForAngle(symbol);
+            return (
+              <Angle
+                key={symbol}
+                symbol={symbol}
+                {...value}
+                boundingRect={{ top, left, right: width, bottom: height }}
+                {...rest}
+              />
+            );
+          }
+          return null;
+        })
+      }
     </svg>
   );
 });

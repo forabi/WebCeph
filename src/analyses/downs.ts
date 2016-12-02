@@ -1,12 +1,16 @@
 import assign from 'lodash/assign';
 
 import {
-  angleBetweenPoints,
   line, angleBetweenLines,
   SkeletalProfile, ProblemSeverity,
   MandibularRotation,
   Mandible,
 } from 'analyses/helpers';
+
+import {
+  createVectorFromPoints,
+  getVectorPoints,
+} from 'utils/math';
 
 import common, {
   components as commonComponents,
@@ -27,19 +31,17 @@ import {
 import { radiansToDegrees, calculateAngleBetweenTwoVectors } from 'utils/math';
 
 const ANGLE_OF_CONVEXITY: CephaloAngle = assign(
-   angleBetweenPoints(N, A, Pog, 'Angle of Convexity'),
+   angleBetweenLines(line(A, N), line(Pog, A), 'Angle of Convexity', 'NAPog'),
    {
-     calculate: (mapper: CephaloMapper, NA: GeometricalVector, APog: GeometricalVector) => {
-       const _A = { x: NA.x1, y: NA.y1 };
-       const _N = { x: NA.x2, y: NA.y2 };
-       const _Pog = { x: APog.x2, y: APog.y2 };
-       const _NPog = { x1: _N.x, y1: _N.y, x2: _Pog.x, y2: _Pog.y };
-       const positiveValue = Math.abs(radiansToDegrees(Math.PI - calculateAngleBetweenTwoVectors(NA, APog)));
-       if (mapper.isBehind(_A, _NPog)) {
+     calculate: (mapper: CephaloMapper, AN: GeometricalVector, PogA: GeometricalVector) => {
+       const [Pog, A] = getVectorPoints(PogA);
+       const [   , N] = getVectorPoints(AN);
+       const NPog = createVectorFromPoints(N, Pog);
+       const positiveValue = Math.abs(radiansToDegrees(calculateAngleBetweenTwoVectors(AN, PogA)));
+       if (mapper.isBehind(A, NPog)) {
          return -1 * positiveValue;
-       } else {
-         return positiveValue;
        }
+       return positiveValue;
      },
    },
 );
@@ -152,15 +154,15 @@ export const angleOfABPlane: AnalysisComponent = {
 };
 
 const components: AnalysisComponent[] = [
-  // ...commonComponents,
-  // angleOfConvexity,
+  ...commonComponents,
+  angleOfConvexity,
   angleOfYAxis,
-  // angleOfABPlane,
-  // {
-  //   landmark: angleBetweenLines(FH_PLANE, line(Pog, N), 'Facial Angle', 'FH-NPog'),
-  //   norm: 87.8,
-  //   stdDev: 3.6,
-  // },
+  angleOfABPlane,
+  {
+    landmark: angleBetweenLines(FH_PLANE, line(Pog, N), 'Facial Angle', 'FH-NPog'),
+    norm: 87.8,
+    stdDev: 3.6,
+  },
 ];
 
 export const interpret = (values: { [id: string]: EvaluatedValue }) => {

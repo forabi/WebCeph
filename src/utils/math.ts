@@ -157,3 +157,19 @@ export const getIntersectionPoint = (
     return { x, y };
   }
 };
+
+export const getVectorPoints = ({ x1, y1, x2, y2 }: GeometricalVector): [GeometricalPoint, GeometricalPoint] => {
+  return [
+    { x: x1, y: y1 },
+    { x: x2, y: y2 },
+  ];
+};
+
+export const createVectorFromPoints = (point1: GeometricalPoint, point2: GeometricalPoint): GeometricalVector => {
+  return {
+    x1: point1.x,
+    y1: point1.y,
+    x2: point2.x,
+    y2: point2.y,
+  };
+}

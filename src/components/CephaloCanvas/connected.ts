@@ -53,6 +53,7 @@ const highlightProps = {
   fill: 'orange',
   fillOpacity: 1,
   strokeOpacity: 1,
+  filter: 'url(#shadow)',
 };
 
 const unhighlightProps = {
@@ -72,7 +73,6 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
     const scale = getScale(state);
     const defaultGeoProps = {
       strokeWidth: 2 / scale,
-      // filter: 'url(#glow)',
       style: {
         pointerEvents: 'none',
         willChange: 'transform opacity',
@@ -163,7 +163,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
   (dispatch) => ({ dispatch });
 
-const mergeElementProps = (props1, props2) => {
+const mergeElementProps = (props1?: { style?: any }, props2?: { style?: any }) => {
   return assign(
     { },
     props1,
