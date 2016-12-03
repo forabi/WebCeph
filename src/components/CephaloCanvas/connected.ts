@@ -47,6 +47,12 @@ import isEmpty from 'lodash/isEmpty';
 import reduce from 'lodash/reduce';
 import compact from 'lodash/compact';
 
+import memoize from 'lodash/memoize';
+import randomColor from 'randomcolor';
+
+const getColorForSymbol = memoize((_: string) => randomColor({ seed: 1 }));
+const getStrokeColorForSymbol = getColorForSymbol;
+
 type OwnProps = { };
 
 const highlightProps = {
@@ -107,6 +113,10 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
         { },
         defaultGeoProps,
         props,
+        {
+          fill: getColorForSymbol(symbol),
+          stroke: getStrokeColorForSymbol(symbol),
+        },
         highlightedLandmarks[symbol] === true ? highlightProps : 
           highlightedLandmarks[symbol] === false ? unhighlightProps : undefined,
       );
@@ -177,7 +187,7 @@ const mergeElementProps = (props1?: { style?: any }, props2?: { style?: any }) =
       ),
     },
   );
-}
+};
 
 const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> =
   (stateProps, dispatchProps, ownProps): ConnectableProps => {
