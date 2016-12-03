@@ -3,34 +3,38 @@ import each from 'lodash/each';
 
 export function radiansToDegrees(value: number): number {
   return value * 180 / Math.PI;
-}
+};
 
 export function degreesToRadians(value: number): number {
   return value *  Math.PI / 180;
-}
+};
 
 /** Checks whether an object conforms to the GeometricalPoint interface */
 export function isGeometricalPoint(object: any): object is GeometricalPoint {
   return has(object, 'x') && has(object, 'y');
-}
+};
 
 /** Checks whether an object conforms to the GeometricalVector interface */
 export function isGeometricalVector(object: any): object is GeometricalVector {
   return has(object, 'x2') && has(object, 'y1') && has(object, 'x2') && has(object, 'y2');
-}
+};
 
 /** Checks whether an object conforms to the GeometricalVector interface */
 export function isGeometricalAngle(object: any): object is GeometricalAngle {
   return has(object, 'vectors') && object.vectors.length === 2 && each(object.vectors, isGeometricalVector);
-}
+};
 
 export function isGeometricalObject(object: any): object is GeometricalObject {
   return isGeometricalPoint(object) || isGeometricalVector(object) || isGeometricalAngle(object);
-}
+};
 
 export function isBehind(point: GeometricalPoint, line: GeometricalVector) {
   return ((line.x2 - line.x1) * (point.y - line.y1) - (line.y2 - line.y1) * (point.x - line.x1)) > 0;
-}
+};
+
+export function getSegmentLength({ x1, x2, y1, y2 }: GeometricalVector) {
+  return (x2 - x1) ** 2 + (y2 - y1) ** 2;
+};
 
 /**
  * Calculates distance between two points
@@ -39,7 +43,7 @@ export function isBehind(point: GeometricalPoint, line: GeometricalVector) {
  */
 export function calculateDistanceBetweenTwoPoints(A: GeometricalPoint, B: GeometricalPoint): number {
     return Math.sqrt(Math.pow(B.x - A.x, 2) + Math.pow(B.y - A.y, 2));
-}
+};
 
 /**
  * Calculates an angle between three points
@@ -78,7 +82,7 @@ export function calculateAngleBetweenTwoVectors(line1: GeometricalVector, line2:
   const l2 = (dx1 ** 2 + dy1 ** 2) * (dx2 ** 2 + dy2 ** 2); // product of the squared lengths
 
   return Math.acos(d / Math.sqrt(l2));
-}
+};
 
 
 import clamp from 'lodash/clamp';
@@ -172,4 +176,4 @@ export const createVectorFromPoints = (point1: GeometricalPoint, point2: Geometr
     x2: point2.x,
     y2: point2.y,
   };
-}
+};
