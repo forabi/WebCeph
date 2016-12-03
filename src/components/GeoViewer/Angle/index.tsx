@@ -11,15 +11,14 @@ import {
   Rect,
   isPointInSegment,
   getIntersectionPoint,
-  isPointCloserTo,
   isPointWithinRect,
   getSlope,
-  getYInterceptEquation,
-  createVectorFromPoints,
   getVectorPoints,
 } from 'utils/math';
 
-const getParallelForVector = (vector1: GeometricalVector, origin: GeometricalPoint, tailX: number) => {
+const getParallelForVector = (
+  vector1: GeometricalVector, origin: GeometricalPoint, tailX: number
+): GeometricalVector => {
   const slope = getSlope(vector1);
   const intercept = origin.y - (slope * origin.x);
   const getY = (x: number) => (slope * x) + intercept;
