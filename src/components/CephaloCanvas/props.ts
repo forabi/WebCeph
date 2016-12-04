@@ -10,8 +10,8 @@ export interface StateProps {
   imageHeight: number;
   imageWidth: number;
   scale: number;
-  scaleOriginX: number | null;
-  scaleOriginY: number | null;
+  scaleOriginX: number;
+  scaleOriginY: number;
   landmarks: ReadonlyArray<{
     label: string;
     symbol: string;

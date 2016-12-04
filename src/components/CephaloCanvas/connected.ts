@@ -50,7 +50,7 @@ import compact from 'lodash/compact';
 import memoize from 'lodash/memoize';
 import randomColor from 'randomcolor';
 
-const getColorForSymbol = memoize((_: string) => randomColor({ seed: 1 }));
+const getColorForSymbol = memoize((symbol: string) => randomColor({ seed: symbol, luminosity: 'dark' }));
 const getStrokeColorForSymbol = getColorForSymbol;
 
 type OwnProps = { };

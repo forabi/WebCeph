@@ -101,7 +101,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
                     onTouchMove={this.handleCanvasMouseMove}
                     transform={this.getTransformAttribute()}
                     filter={this.getFilterAttribute()}
-                    style={{ opacity: isHighlightMode ? 0.5 : 1 }}
+                    opacity={isHighlightMode ? 0.5 : 1 }
                   />
                 </g>
               </g>
