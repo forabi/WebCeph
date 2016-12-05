@@ -11,7 +11,8 @@ import fileExport, { getExportError, hasExportError } from './export';
 
 import assign from 'lodash/assign';
 import isEmpty from 'lodash/isEmpty';
-import keyBy from 'lodash/keyBy';
+import map from 'lodash/map';
+import sortBy from 'lodash/sortBy';
 import mapValues from 'lodash/mapValues';
 
 export default assign(
@@ -51,6 +52,33 @@ export const getHighlightedLandmarks = createSelector(
     return assign({ }, unhighlighted, highlighted);
   },
 );
+
+export const isHighlightMode = createSelector(
+  getHighlightedLandmarks,
+  (highlightedLandmarks) => !isEmpty(highlightedLandmarks),
+);
+
+export const getSortedLandmarksToDisplay = createSelector(
+  getManualLandmarks,
+  getHighlightedLandmarks,
+  getLandmarksToDisplay,
+  ({ present: manualLandmarks }, highlightedLandmarks, landmarksToDisplay) => {
+    return sortBy(
+      map(
+        landmarksToDisplay,
+        (value: GeometricalObject, symbol: string) => ({
+          symbol,
+          label: symbol,
+          value,
+        }),
+      ),
+      ({ symbol }) => (
+        manualLandmarks[symbol] !== undefined ||
+        highlightedLandmarks[symbol] === true
+      ),
+    );
+  }
+)
 
 export const hasUnsavedWork = createSelector(
   getManualLandmarks,

@@ -1,5 +1,4 @@
 import { handleActions } from 'redux-actions';
-import { wrapWithDefaultState } from 'store/helpers';
 import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 

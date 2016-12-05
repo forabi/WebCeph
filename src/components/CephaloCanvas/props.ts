@@ -10,30 +10,24 @@ export interface StateProps {
   imageHeight: number;
   imageWidth: number;
   scale: number;
-  scaleOriginX: number;
-  scaleOriginY: number;
   landmarks: ReadonlyArray<{
     label: string;
     symbol: string;
     value: GeometricalObject;
   }>;
-  getPropsForPoint: (symbol: string) => any;
-  getPropsForVector: (symbol: string) => any;
-  getPropsForAngle: (symbol: string) => any;
+  getPropsForLandmark: (symbol: string) => { [prop: string]: any };
   isHighlightMode: boolean;
   highlightedLandmarks: {
     [symbol: string]: boolean
   };
-  activeTool: (dispatch: DispatchFunction) => EditorTool;
+  activeTool: EditorTool;
 };
 
 export interface DispatchProps {
   dispatch: DispatchFunction;
 };
 
-export type AdditionalPropsToMerge = EditorTool;
-
-export type ConnectableProps = StateProps & DispatchProps & AdditionalPropsToMerge;
+export type ConnectableProps = StateProps & DispatchProps;
 
 export interface UnconnectableProps {
   className?: string;

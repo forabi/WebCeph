@@ -5,7 +5,7 @@ import scale, { getScale, getScaleOrigin } from './scale';
 import canvasSize, { getCanvasSize } from './canvasSize';
 import canvasPosition, { getCanvasPosition } from './canvasPosition';
 import mousePosition, { getMousePosition } from './mousePosition';
-import activeTool, { getActiveToolId, getActiveToolCreator } from './activeTool';
+import activeTool, { getActiveToolId, getActiveTool } from './activeTool';
 import highlightedStep, { getHighlightedStep } from './highlightedStep';
 
 export default assign(
@@ -25,7 +25,7 @@ export {
   getScale,
   getScaleOrigin,
   getActiveToolId,
-  getActiveToolCreator,
+  getActiveTool,
   getHighlightedStep,
 };
 

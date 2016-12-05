@@ -16,20 +16,19 @@ import {
 
 export const createAddPoint: EditorToolCreator = (
   state: GenericState,
-  dispatch: DispatchFunction,
 ) => (
   assign(
-    createZoomWithWheel(state, dispatch),
+    createZoomWithWheel(state),
     {
-      onCanvasMouseEnter() {
+      onCanvasMouseEnter(_) {
         if (!isAnalysisComplete(state)) {
           // @TODO
         }
       },
-      onCanvasMouseLeave() {
+      onCanvasMouseLeave(_) {
         // @TODO
       },
-      onCanvasLeftClick(x, y) {
+      onCanvasLeftClick(dispatch, x, y) {
         const landmark = getExpectedNextManualLandmark(state);
         if (landmark !== null) {
           dispatch(addManualLandmark(landmark.symbol, { x, y }));
@@ -37,10 +36,10 @@ export const createAddPoint: EditorToolCreator = (
           dispatch(addUnnamedManualLandmark({ x, y }));
         }
       },
-      // onLandmarkMouseEnter(symbol) {
+      // onLandmarkMouseEnter(dispatch, symbol) {
       //   // dispatch(temporarilyHideLandmark(symbol));
       // },
-      // onLandmarkMouseLeave(symbol) {
+      // onLandmarkMouseLeave(dispatch, symbol) {
       //   // dispatch(showTemporarilyHiddenLandmark(symbol));
       // },
       getCursorForCanvas() {

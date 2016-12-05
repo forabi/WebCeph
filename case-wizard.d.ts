@@ -442,49 +442,49 @@ interface EditorTool {
   /**
    * Triggered when mouse enters the canvas.
    */
-  onCanvasMouseEnter?(): void;
+  onCanvasMouseEnter?(dispatch: DispatchFunction): void;
   /**
    * Triggered when mouse leaves the canvas.
    */
-  onCanvasMouseLeave?(): void;
+  onCanvasMouseLeave?(dispatch: DispatchFunction): void;
 
   /**
    * Triggered when the left mouse button is clicked.
    */
-  onCanvasLeftClick?(x: number, y: number): void;
+  onCanvasLeftClick?(dispatch: DispatchFunction, x: number, y: number): void;
 
   /**
    * Triggered when the right mouse button is clicked.
    */
-  onCanvasRightClick?(x: number, y: number): void;
+  onCanvasRightClick?(dispatch: DispatchFunction, x: number, y: number): void;
   
   /**
    * Triggered when the mouse scrolls over the canvas.
    * Useful for implementing zoom functionality.
    */
-  onCanvasMouseWheel?(x: number, y: number, delta: number);
+  onCanvasMouseWheel?(dispatch: DispatchFunction, x: number, y: number, delta: number);
 
   /**
    * Triggered when the mouse moves over the canvas.
    * Useful for implementing lens functionality.
    */
-  onCanvasMouseMove?(x: number, y: number);
+  onCanvasMouseMove?(dispatch: DispatchFunction, x: number, y: number);
 
   /**
    * Triggered when the mouse enters a landmark.
    */
-  onLandmarkMouseEnter?(symbol: string): void;
+  onLandmarkMouseEnter?(dispatch: DispatchFunction, symbol: string): void;
 
   /**
    * Triggered when the mouse enters a landmark.
    */
-  onLandmarkMouseLeave?(symbol: string): void;
+  onLandmarkMouseLeave?(dispatch: DispatchFunction, symbol: string): void;
 
   /**
    * Triggered when a landmark is clicked.
    * Useful for manipulating previously added landmarks.
    */
-  onLandmarkClick?(symbol: string, e: MouseEvent): void;
+  onLandmarkClick?(dispatch: DispatchFunction, symbol: string, e: MouseEvent): void;
 
   /**
    * Called every time the mouse enters a landmark.
@@ -505,7 +505,7 @@ interface EditorTool {
 /** An EditorToolCreate is a function that is used to create editor tools.
  * It recieves the dispatch function as first argument and the state as the second arguemtn.
  */
-type EditorToolCreator = (state: GenericState, dispatch: DispatchFunction) => EditorTool;
+type EditorToolCreator = (state: GenericState) => EditorTool;
 
 type ValidationError = GenericError & {
   type: number,

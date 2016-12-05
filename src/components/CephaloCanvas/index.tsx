@@ -50,9 +50,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, 
       getCursorForCanvas = noop,
       getCursorForLandmark,
       isHighlightMode,
-      getPropsForPoint,
-      getPropsForVector,
-      getPropsForAngle,
+      getPropsForLandmark,
       landmarks,
     } = this.props;
     const minHeight = Math.max(canvasHeight, imageHeight);
@@ -64,8 +62,8 @@ export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, 
           className={cx(classes.canvas, className)}
           viewBox={`0 0 ${minWidth} ${minHeight}`}
           onContextMenu={this.handleContextMenu}
-          onMouseEnter={this.props.onCanvasMouseEnter}
-          onMouseLeave={this.props.onCanvasMouseLeave}
+          onMouseEnter={this.handleCanvasMouseEnter}
+          onMouseLeave={this.handleCanvasMouseLeave}
           style={{ cursor: mapCursor(getCursorForCanvas()) }}
         >
           <defs>
@@ -94,54 +92,6 @@ export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, 
                   filter={this.getFilterAttribute()}
                   opacity={isHighlightMode ? 0.5 : 1 }
                 />
-                {!__DEBUG__ ? null : (
-                  <g style={{ pointerEvents: 'none' }} transform={this.getTransformAttribute()}>
-                    <line
-                      x1={this.props.scaleOriginX}
-                      x2={this.props.scaleOriginX}
-                      y1={0}
-                      y2={imageHeight}
-                      stroke="green"
-                      strokeWidth={3 / this.props.scale}
-                    />
-                    <line
-                      x1={0}
-                      x2={imageWidth}
-                      y1={this.props.scaleOriginY}
-                      y2={this.props.scaleOriginY}
-                      stroke="green"
-                      strokeWidth={3 / this.props.scale}
-                    />
-                    <text
-                      x={this.props.scaleOriginX} y={this.props.scaleOriginY}
-                      color="green"
-                    >
-                        {this.props.scaleOriginX},{this.props.scaleOriginY}
-                    </text>
-                    <line
-                      x1={this.state.mouseX}
-                      x2={this.state.mouseX}
-                      y1={0}
-                      y2={imageHeight}
-                      stroke="red"
-                      strokeWidth={3 / this.props.scale}
-                    />
-                    <line
-                      x1={0}
-                      x2={imageWidth}
-                      y1={this.state.mouseY}
-                      y2={this.state.mouseY}
-                      stroke="red"
-                      strokeWidth={3 / this.props.scale}
-                    />
-                    <text
-                      x={this.state.mouseX} y={this.state.mouseY}
-                      color="white"
-                    >
-                        {this.state.mouseX},{this.state.mouseY}
-                    </text>
-                  </g>
-                )}
               </g>
             </g>
             <g transform={this.getTransformAttribute()}>
@@ -151,9 +101,9 @@ export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, 
                 width={imageWidth}
                 height={imageHeight}
                 objects={landmarks}
-                getPropsForPoint={getPropsForPoint}
-                getPropsForVector={getPropsForVector}
-                getPropsForAngle={getPropsForAngle}
+                getPropsForPoint={getPropsForLandmark}
+                getPropsForVector={getPropsForLandmark}
+                getPropsForAngle={getPropsForLandmark}
               />
             </g>
           </g>
@@ -195,10 +145,10 @@ export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, 
   }
 
   private getTransformAttribute = () => {
-    const { scaleOriginX, scaleOriginY, scale } = this.props;
+    const { scale } = this.props;
     let transform = '';
-    const translateX = (scaleOriginX * scale) - scaleOriginX;
-    const translateY = (scaleOriginY * scale) - scaleOriginY;
+    const translateX = 0; // (imageWidth * scale) - scaleOriginX;
+    const translateY = 0; //(scaleOriginY * scale) - scaleOriginY;
     transform += ` translate(${-1 * translateX}, ${-1 * translateY}) `;
     transform += ` scale(${scale}, ${scale})`;
     if (this.props.isFlippedX) {
@@ -207,34 +157,55 @@ export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, 
     if (this.props.isFlippedY) {
       transform += ` scale(1, -1) translate(0, -${this.props.imageHeight})`;
     }
+    return transform;
   }
 
+  private handleCanvasMouseEnter = (e: React.MouseEvent<SVGElement>) => {
+    const { onCanvasMouseEnter } = this.props.activeTool;
+    if (typeof onCanvasMouseEnter === 'function') {
+      e.preventDefault();
+      const { dispatch } = this.props;
+      onCanvasMouseEnter(dispatch);
+    }
+  };
+
+  private handleCanvasMouseLeave = (e: React.MouseEvent<SVGElement>) => {
+    const { onCanvasMouseLeave } = this.props.activeTool;
+    if (typeof onCanvasMouseLeave === 'function') {
+      e.preventDefault();
+      const { dispatch } = this.props;
+      onCanvasMouseLeave(dispatch);
+    }
+  };
+
   private handleMouseWheel = (e: React.WheelEvent<SVGElement>) => {
-    if (typeof this.props.onCanvasMouseWheel === 'function') {
+    const { onCanvasMouseWheel } = this.props.activeTool;
+    if (typeof onCanvasMouseWheel === 'function') {
       e.preventDefault();
       const { x, y } = this.convertMousePositionRelativeToOriginalImage(e);
-      this.props.onCanvasMouseWheel(x, y, e.deltaY);
+      onCanvasMouseWheel(this.props.dispatch, x, y, e.deltaY);
     }
   }
 
   private handleCanvasMouseMove = (e: React.MouseEvent<SVGElement> | React.TouchEvent<SVGElement>) => {
-    if (typeof this.props.onCanvasMouseMove === 'function') {
+    const { onCanvasMouseMove } = this.props.activeTool;
+    if (typeof onCanvasMouseMove === 'function') {
       const { x, y } = this.convertMousePositionRelativeToOriginalImage(e);
-      if (__DEBUG__) {
-        this.setState({ mouseX: x, mouseY: y });
-      }
-      this.props.onCanvasMouseMove(x, y);
+      const { dispatch } = this.props;
+      onCanvasMouseMove(dispatch, x, y);
     }
   }
 
   private handleClick = (e: React.MouseEvent<SVGElement>) => {
-    if (this.props.onCanvasLeftClick !== undefined || this.props.onCanvasRightClick !== undefined) {
+    const { onCanvasLeftClick, onCanvasRightClick } = this.props.activeTool;
+    if (onCanvasLeftClick !== undefined || onCanvasRightClick !== undefined) {
       const { x, y } = this.convertMousePositionRelativeToOriginalImage(e);
+      const { dispatch } = this.props;
       const which = e.button;
-      if (which === 0 && typeof this.props.onCanvasLeftClick === 'function') {
-        this.props.onCanvasLeftClick(x, y);
-      } else if (which === 2 && typeof this.props.onCanvasRightClick === 'function') {
-        this.props.onCanvasRightClick(x, y);
+      if (which === 0 && typeof onCanvasLeftClick === 'function') {
+        onCanvasLeftClick(dispatch, x, y);
+      } else if (which === 2 && typeof onCanvasRightClick === 'function') {
+        onCanvasRightClick(dispatch, x, y);
       }
     }
   }
@@ -244,20 +215,26 @@ export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, 
   }
 
   private handleLandmarkMouseEnter = (symbol: string) => (_: React.MouseEvent<SVGElement>) => {
-    if (typeof this.props.onLandmarkMouseEnter === 'function') {
-      this.props.onLandmarkMouseEnter(symbol);
+    const { onLandmarkMouseEnter } = this.props.activeTool;
+    if (typeof onLandmarkMouseEnter === 'function') {
+      const { dispatch } = this.props;
+      onLandmarkMouseEnter(dispatch, symbol);
     }
   }
 
   private handleLandmarkMouseLeave = (symbol: string) => (_: React.MouseEvent<SVGElement>) => {
-    if (typeof this.props.onLandmarkMouseLeave === 'function') {
-      this.props.onLandmarkMouseLeave(symbol);
+    const { onLandmarkMouseLeave } = this.props.activeTool;
+    const { dispatch } = this.props;
+    if (typeof onLandmarkMouseLeave === 'function') {
+      onLandmarkMouseLeave(dispatch, symbol);
     }
   }
 
   private handleLandmarkClick = (symbol: string) => (e: React.MouseEvent<SVGElement>) => {
-    if (typeof this.props.onLandmarkClick === 'function') {
-      this.props.onLandmarkClick(symbol, e.nativeEvent as MouseEvent);
+    const { onLandmarkClick } = this.props.activeTool;
+    const { dispatch } = this.props;
+    if (typeof onLandmarkClick === 'function') {
+      onLandmarkClick(dispatch, symbol, e.nativeEvent as MouseEvent);
     }
   };
 }

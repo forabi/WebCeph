@@ -10,9 +10,8 @@ const zoomIntensity = 0.2;
 
 const createZoomWithWheel: EditorToolCreator = (
   state: GenericState,
-  dispatch: DispatchFunction,
 ) => assign(
-  createTrackCursor(state, dispatch),
+  createTrackCursor(state),
   {
     onCanvasMouseEnter() {
       // @TODO
@@ -21,7 +20,7 @@ const createZoomWithWheel: EditorToolCreator = (
       // @TODO
     },
     
-    onCanvasMouseWheel: (x: number, y: number, delta: number) => {
+    onCanvasMouseWheel: (dispatch, x, y, delta) => {
       console.log('triggering zoom at', x, y);
       const wheel = delta / 120;
       const zoom = Math.exp(-wheel * zoomIntensity);

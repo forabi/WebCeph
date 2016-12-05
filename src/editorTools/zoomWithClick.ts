@@ -9,14 +9,13 @@ import assign from 'lodash/assign';
 
 export const createZoomWithClick: EditorToolCreator = (
   state: GenericState,
-  dispatch: DispatchFunction,
 ) => (assign(
-  createZoomWithWheel(state, dispatch),
+  createZoomWithWheel(state),
   {
-    onCanvasLeftClick(x, y) {
+    onCanvasLeftClick(dispatch, x, y) {
       dispatch(setScale(getScale(state) * 1.2, x, y));
     },
-    onCanvasRightClick(x, y) {
+    onCanvasRightClick(dispatch, x, y) {
       dispatch(setScale(getScale(state) * 0.8, x, y));
     },
     getCursorForCanvas() {

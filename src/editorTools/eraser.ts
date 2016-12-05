@@ -14,20 +14,19 @@ import {
 
 export const createEraser: EditorToolCreator = (
   state: GenericState,
-  dispatch: DispatchFunction,
 ) => {
   const isRemovable = isLandmarkRemovable(state);
   return assign(
-    createZoomWithWheel(state, dispatch),
-    createTrackCursor(state, dispatch),
+    createZoomWithWheel(state),
+    createTrackCursor(state),
     {
-      onLandmarkClick(symbol) {
+      onLandmarkClick(dispatch, symbol) {
         if (isRemovable(symbol)) {
           dispatch(removeManualLandmark(symbol));
         }
       },
 
-      onLandmarkMouseEnter(symbol) {
+      onLandmarkMouseEnter(_, symbol) {
         if (isRemovable(symbol)) {
           // @TODO: set tooltip: 'Click to remove'
         } else {
@@ -39,11 +38,11 @@ export const createEraser: EditorToolCreator = (
         // @TODO
       },
 
-      onCanvasMouseEnter() {
+      onCanvasMouseEnter(_) {
         // @TODO
       },
 
-      onCanvasMouseLeave() {
+      onCanvasMouseLeave(_) {
         // @TODO
       },
 

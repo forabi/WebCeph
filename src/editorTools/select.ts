@@ -6,19 +6,18 @@ import assign from 'lodash/assign';
 
 export const createSelect: EditorToolCreator = (
   state: GenericState,
-  dispatch: DispatchFunction,
 ) => {
   return assign(
-    createZoomWithWheel(state, dispatch),
+    createZoomWithWheel(state),
     {
       getCursorForLandmark() {
         return Cursor.SELECT;
       },
-      onLandmarkMouseEnter(symbol) {
+      onLandmarkMouseEnter(dispatch, symbol) {
         dispatch(highlightStep(symbol));
         // @TODO: show tooltip?
       },
-      onLandmarkMouseLeave(_) {
+      onLandmarkMouseLeave(dispatch) {
         dispatch(unhighlightStep());
         // @TODO: hide tooltip
       },

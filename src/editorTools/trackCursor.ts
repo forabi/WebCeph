@@ -4,10 +4,9 @@ import {
 
 export const createTrackCursor: EditorToolCreator = (
   _: GenericState,
-  dispatch: DispatchFunction,
 ) => (
   {
-    onCanvasMouseMove(x, y) {
+    onCanvasMouseMove(dispatch, x, y) {
       dispatch(setMousePosition({ x, y }));
     },
     shouldShowLens: true,
