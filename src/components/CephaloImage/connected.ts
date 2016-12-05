@@ -14,28 +14,21 @@ import {
 
 import {
   getImageData,
-  getImageSize,
+  getImageWidth,
+  getImageHeight,
 } from 'store/reducers/workspace/image';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: FinalState) => {
-    const { width, height } = getImageSize(state);
     return {
       src: getImageData(state),
-      height, width,
+      height: getImageHeight(state),
+      width: getImageWidth(state),
     };
   };
 
-const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
-  (_) => (
-    {
-      onMouseDown: () => void 0,
-      onMouseMove: () => void 0,
-    }
-  );
-
 const connected = connect<StateProps, DispatchProps, OwnProps>(
-  mapStateToProps, mapDispatchToProps
+  mapStateToProps,
 )(CephaloLens);
 
 
