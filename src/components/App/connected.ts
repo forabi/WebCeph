@@ -10,6 +10,7 @@ import {
   StateProps,
   DispatchProps,
   OwnProps,
+  ConnectableProps,
 } from './props';
 
 import {
@@ -64,7 +65,7 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
   );
 
 const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> =
-  (stateProps, dispatchProps, ownProps) => {
+  (stateProps, dispatchProps, ownProps): ConnectableProps => {
     const { dispatch } = dispatchProps;
     const { isReady, shouldCheckCompatibility } = stateProps;
     return {
