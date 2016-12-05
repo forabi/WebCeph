@@ -31,11 +31,13 @@ function isTouchEvent<T>(e: any): e is React.TouchEvent<T> {
  * Provides a declarative API for viewing landmarks on a cephalomertic image
  * and performing common edits like brightness and contrast.
  */
-export class CephaloCanvas extends React.PureComponent<Props, { }> {
+export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, mouseY: number }> {
   public refs: {
     canvas: React.ReactInstance,
     image: React.ReactInstance,
   };
+
+  state = { mouseX: 0, mouseY: 0 };
 
   render() {
     const {
@@ -44,6 +46,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
       canvasWidth, canvasHeight,
       imageHeight, imageWidth,
       contrast = 50, brightness = 50,
+      scale,
       getCursorForCanvas = noop,
       getCursorForLandmark,
       isHighlightMode,
@@ -59,9 +62,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
         <svg
           ref="canvas"
           className={cx(classes.canvas, className)}
-          width={minWidth}
-          height={minHeight}
-          onWheel={this.handleMouseWheel}
+          viewBox={`0 0 ${minWidth} ${minHeight}`}
           onContextMenu={this.handleContextMenu}
           onMouseEnter={this.props.onCanvasMouseEnter}
           onMouseLeave={this.props.onCanvasMouseLeave}
@@ -75,25 +76,72 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
             <GlowFilter id="glow" />
           </defs>
           <g>
-            <g filter="url(#shadow)">
-              <g filter="url(#brightness)">
-                <g>
-                  <image
-                    ref="image"
-                    className={classes.image}
-                    xlinkHref={src}
-                    x={0}
-                    y={0}
-                    width={imageWidth}
-                    height={imageHeight}
-                    onMouseDown={this.handleClick}
-                    onMouseMove={this.handleCanvasMouseMove}
-                    onTouchMove={this.handleCanvasMouseMove}
-                    transform={this.getTransformAttribute()}
-                    filter={this.getFilterAttribute()}
-                    opacity={isHighlightMode ? 0.5 : 1 }
-                  />
-                </g>
+            <g filter="">
+              <g filter="">
+                <image
+                  ref="image"
+                  className={classes.image}
+                  xlinkHref={src}
+                  x={0}
+                  y={0}
+                  width={imageWidth}
+                  height={imageHeight}
+                  onWheelCapture={this.handleMouseWheel}
+                  onMouseDown={this.handleClick}
+                  onMouseMove={this.handleCanvasMouseMove}
+                  onTouchMove={this.handleCanvasMouseMove}
+                  transform={this.getTransformAttribute()}
+                  filter={this.getFilterAttribute()}
+                  opacity={isHighlightMode ? 0.5 : 1 }
+                />
+                {!__DEBUG__ ? null : (
+                  <g style={{ pointerEvents: 'none' }} transform={this.getTransformAttribute()}>
+                    <line
+                      x1={this.props.scaleOriginX}
+                      x2={this.props.scaleOriginX}
+                      y1={0}
+                      y2={imageHeight}
+                      stroke="green"
+                      strokeWidth={3 / this.props.scale}
+                    />
+                    <line
+                      x1={0}
+                      x2={imageWidth}
+                      y1={this.props.scaleOriginY}
+                      y2={this.props.scaleOriginY}
+                      stroke="green"
+                      strokeWidth={3 / this.props.scale}
+                    />
+                    <text
+                      x={this.props.scaleOriginX} y={this.props.scaleOriginY}
+                      color="green"
+                    >
+                        {this.props.scaleOriginX},{this.props.scaleOriginY}
+                    </text>
+                    <line
+                      x1={this.state.mouseX}
+                      x2={this.state.mouseX}
+                      y1={0}
+                      y2={imageHeight}
+                      stroke="red"
+                      strokeWidth={3 / this.props.scale}
+                    />
+                    <line
+                      x1={0}
+                      x2={imageWidth}
+                      y1={this.state.mouseY}
+                      y2={this.state.mouseY}
+                      stroke="red"
+                      strokeWidth={3 / this.props.scale}
+                    />
+                    <text
+                      x={this.state.mouseX} y={this.state.mouseY}
+                      color="white"
+                    >
+                        {this.state.mouseX},{this.state.mouseY}
+                    </text>
+                  </g>
+                )}
               </g>
             </g>
             <g transform={this.getTransformAttribute()}>
@@ -135,7 +183,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
     if (this.props.isFlippedY) {
       y = imageHeight - y;
     }
-    return { x, y };
+    return { x: Math.round(x), y: Math.round(y) };
   }
 
   private getFilterAttribute = () => {
@@ -147,17 +195,18 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
   }
 
   private getTransformAttribute = () => {
+    const { scaleOriginX, scaleOriginY, scale } = this.props;
     let transform = '';
+    const translateX = (scaleOriginX * scale) - scaleOriginX;
+    const translateY = (scaleOriginY * scale) - scaleOriginY;
+    transform += ` translate(${-1 * translateX}, ${-1 * translateY}) `;
+    transform += ` scale(${scale}, ${scale})`;
     if (this.props.isFlippedX) {
       transform += ` scale(-1, 1) translate(-${this.props.imageWidth}, 0)`;
     }
     if (this.props.isFlippedY) {
       transform += ` scale(1, -1) translate(0, -${this.props.imageHeight})`;
     }
-    const translateX = (this.props.scaleOriginX * this.props.scale) - (this.props.scaleOriginX);
-    const translateY = (this.props.scaleOriginY * this.props.scale) - (this.props.scaleOriginY);
-    transform += ` translate(${-1 * translateX}, ${-1 * translateY}) `;
-    transform += ` scale(${this.props.scale}, ${this.props.scale})`;
     return transform;
   }
 
@@ -172,6 +221,9 @@ export class CephaloCanvas extends React.PureComponent<Props, { }> {
   private handleCanvasMouseMove = (e: React.MouseEvent<SVGElement> | React.TouchEvent<SVGElement>) => {
     if (typeof this.props.onCanvasMouseMove === 'function') {
       const { x, y } = this.convertMousePositionRelativeToOriginalImage(e);
+      if (__DEBUG__) {
+        this.setState({ mouseX: x, mouseY: y });
+      }
       this.props.onCanvasMouseMove(x, y);
     }
   }

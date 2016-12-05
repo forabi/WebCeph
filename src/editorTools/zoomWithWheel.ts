@@ -22,6 +22,7 @@ const createZoomWithWheel: EditorToolCreator = (
     },
     
     onCanvasMouseWheel: (x: number, y: number, delta: number) => {
+      console.log('triggering zoom at', x, y);
       const wheel = delta / 120;
       const zoom = Math.exp(-wheel * zoomIntensity);
       const scale = getScale(state);
@@ -32,7 +33,7 @@ const createZoomWithWheel: EditorToolCreator = (
     },
 
     shouldShowLens: false,
-  },
+  } as EditorTool,
 );
 
 export default createZoomWithWheel;
