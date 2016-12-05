@@ -20,7 +20,7 @@ const setY = wrapWithDefaultState(
         printUnexpectedPayloadWarning(type, state);
         return state;
       }
-      return payload.y;
+      return Math.round(payload.y);
     },
   ),
   defaultMouseY,
@@ -34,7 +34,7 @@ const setX = wrapWithDefaultState(
         printUnexpectedPayloadWarning(type, state);
         return state;
       }
-      return payload.x;
+      return Math.round(payload.x);
     },
   ),
   defaultMouseX,

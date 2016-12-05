@@ -44,7 +44,7 @@ const scaleOriginReducer = handleActions<ScaleOrigin, Payloads.setScale>(
       if (payload.x < 0 || payload.y < 0) {
         return state;
       }
-      return { x: payload.x, y: payload.y };
+      return { x: Math.round(payload.x), y: Math.round(payload.y) };
     },
     [Event.RESET_WORKSPACE_REQUESTED]: () => defaultOrigin,
   },
