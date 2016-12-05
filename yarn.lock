@@ -6231,13 +6231,13 @@ typedarray@~0.0.5:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
+typescript@2.2.0-dev.20161205:
+  version "2.2.0-dev.20161205"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.2.0-dev.20161205.tgz#5d03250ff4acbfddd641129eb97098156f11f1a9"
+
 typescript@^2.0.3:
   version "2.0.10"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.0.10.tgz#ccdd4ed86fd5550a407101a0814012e1b3fac3dd"
-
-typescript@next:
-  version "2.2.0-dev.20161127"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.2.0-dev.20161127.tgz#3da590d1a0f15da9c39d2ebeab2006fb6b4d8949"
 
 typings-core@^2.0.0:
   version "2.0.0"
