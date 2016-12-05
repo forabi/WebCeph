@@ -207,7 +207,6 @@ export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, 
     if (this.props.isFlippedY) {
       transform += ` scale(1, -1) translate(0, -${this.props.imageHeight})`;
     }
-    return transform;
   }
 
   private handleMouseWheel = (e: React.WheelEvent<SVGElement>) => {

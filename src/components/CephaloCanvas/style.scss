@@ -7,7 +7,7 @@
 }
 
 .image {
-  will-change: opacity;
+  will-change: opacity transform;
   transition-property: transform opacity;
   transition-duration: 0.1s;
   /*pointer-events: none;*/
