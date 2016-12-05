@@ -16,17 +16,19 @@ import {
   isAnalysisLoading,
 } from 'store/reducers/workspace/analysis';
 
+const analyses = [
+  'downs',
+  'basic',
+  'common',
+  'dental',
+  'bjork',
+  'softTissues',
+];
+
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: FinalState): StateProps => {
     return {
-      analyses: [
-        'downs',
-        'basic',
-        'common',
-        'dental',
-        'bjork',
-        'softTissues',
-      ],
+      analyses,
       currentAnalysisId: getActiveAnalysisId(state),
       isLoading: isAnalysisLoading(state),
     };
