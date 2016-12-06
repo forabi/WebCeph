@@ -26,18 +26,20 @@ function isTouchEvent<T>(e: any): e is React.TouchEvent<T> {
   return e.touches !== undefined;
 };
 
+import memoize from 'lodash/memoize';
+
+const createStyle = memoize((height: number, width: number) => ({ height, width }));
+
 /**
  * A wrapper around a canvas element.
  * Provides a declarative API for viewing landmarks on a cephalomertic image
  * and performing common edits like brightness and contrast.
  */
-export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, mouseY: number }> {
+export class CephaloCanvas extends React.PureComponent<Props, { }> {
   public refs: {
     canvas: React.ReactInstance,
     image: React.ReactInstance,
   };
-
-  state = { mouseX: 0, mouseY: 0 };
 
   render() {
     const {
@@ -46,9 +48,6 @@ export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, 
       canvasWidth, canvasHeight,
       imageHeight, imageWidth,
       contrast = 50, brightness = 50,
-      scale,
-      getCursorForCanvas = noop,
-      getCursorForLandmark,
       isHighlightMode,
       getPropsForLandmark,
       landmarks,
@@ -56,7 +55,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, 
     const minHeight = Math.max(canvasHeight, imageHeight);
     const minWidth = Math.max(canvasWidth, imageWidth);
     return (
-      <div style={{ height: minHeight, width: minWidth }}>
+      <div style={createStyle(minHeight, minWidth)}>
         <svg
           ref="canvas"
           className={cx(classes.canvas, className)}
@@ -132,7 +131,10 @@ export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, 
     if (this.props.isFlippedY) {
       y = imageHeight - y;
     }
-    return { x: Math.round(x), y: Math.round(y) };
+    return {
+      x: Math.round(x),
+      y: Math.round(y),
+    };
   }
 
   private getFilterAttribute = () => {
