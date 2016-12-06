@@ -52,20 +52,32 @@ import {
   isGeometricalVector,
 } from 'utils/math';
 
-const getPropsForLandmark = createSelector(
+import { PointProps, AngleProps, VectorProps } from 'components/GeoViewer';
+
+const EMPTY_ARRAY = [];
+
+const getHighlightClassNames = createSelector(
   isHighlightMode,
   getHighlightedLandmarks,
+  (isHighlight, highlighted) => memoize((symbol: string): string[] => {
+    if (isHighlight) {
+      if (highlighted[symbol]) {
+        return [classes.highlighted];
+      } else {
+        return [classes.landmark_unhighlighted];
+      }
+    }
+    return EMPTY_ARRAY;
+  }),
+);
+
+import memoize from 'lodash/memoize';
+
+const getPropsForLandmark = createSelector(
+  getHighlightClassNames,
   getLandmarksToDisplay,
-  (isHighlightMode, highlighted, toDisplay) => (symbol: string) => {
-    type Props = {
-      className: string | undefined;
-      segmentProps?: any;
-      parallelProps?: any;
-      extendedProps?: any;
-      rest?: any;
-      r?: string | number;
-      [prop: string]: any;
-    };
+  (getHighlightClassNames, toDisplay) => memoize((symbol: string) => {
+    type Props = AngleProps | VectorProps | PointProps;
 
     const props: Props = {
       className: undefined,
@@ -82,27 +94,24 @@ const getPropsForLandmark = createSelector(
     } else if (isGeometricalAngle(l)) {
       classNames.push(classes.angle);
       props.segmentProps = {
-        className: classes.vector,
+        className: cx(classes.vector, ...getHighlightClassNames(symbol)),
       };
       props.parallelProps = {
-        className: classes.vector_parallel,
+        className: cx(classes.vector_parallel, ...getHighlightClassNames(symbol)),
       };
       props.extendedProps = {
-        className: classes.vector_extended,
+        className: cx(classes.vector_extended, ...getHighlightClassNames(symbol)),
       };
-    }
-
-    if (isHighlightMode) {
-      if (highlighted[symbol]) {
-        classNames.push(classes.landmark_highlighted);
-      } else {
-        classNames.push(classes.landmark_unhighlighted);
+      props.angleIndicatorProps = {
+        className: cx(classes.angle_indicator, ...getHighlightClassNames(symbol)),
+        r: '2.5cm',
       }
     }
-    props.className = cx(...classNames);
+    
+    props.className = cx(...classNames, ...getHighlightClassNames(symbol));
 
     return props;
-  },
+  }),
 );
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =

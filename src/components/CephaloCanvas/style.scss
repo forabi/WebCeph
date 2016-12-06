@@ -7,30 +7,18 @@
 }
 
 .image {
-  will-change: opacity transform;
-  transition-property: transform opacity;
+  will-change: opacity, transform;
+  transition-property: transform, opacity;
   transition-duration: 0.1s;
 }
 
 .landmark {
-  stroke-width: 0.7mm;
+  stroke-width: 1.3mm;
   pointer-events: none;
-  will-change: transform opacity;
-  transition-property: transform opacity fill stroke;
+  will-change: transform, opacity;
+  transition-property: transform, opacity, fill, stroke;
   transition-duration: 0.5s;
   transform-origin: 50% 50%;
-
-  &_highlighted {
-    stroke: orange;
-    fill: orange;
-    fill-opacity: 1;
-    stroke-opacity: 1;
-  }
-
-  &_unhighlighted {
-    fill-opacity: 0;
-    stroke-opacity: 0;
-  }
 }
 
 .point {
@@ -46,12 +34,33 @@
   &_extended {
     @extend .vector;
     stroke-dasharray: 15 10;
-    fill-opacity: 0;
-    stroke-opacity: 0;
+    opacity: 0;
     stroke: greenyellow;
   }
 
   &_parallel {
     @extend .vector_extended;
+  }
+}
+
+.highlighted {
+  stroke: orange;
+  fill: orange;
+  opacity: 1;
+}
+
+.unhighlighted {
+  opacity: 0;
+}
+
+.angle_indicator {
+  @extend .vector_extended;
+  fill: none !important;
+  opacity: 0;
+  &.highlighted {
+    opacity: 1;
+  }
+  &.unhighlighted {
+    opacity: 0;
   }
 }

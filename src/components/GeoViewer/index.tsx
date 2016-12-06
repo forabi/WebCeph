@@ -6,13 +6,28 @@ import {
   isGeometricalAngle,
 } from 'utils/math';
 
-import Angle from './Angle';
+import Angle, { AngleProps } from './Angle';
 
 import { pure } from 'recompose';
 
 import map from 'lodash/map';
 
 import Props from './props';
+
+export { AngleProps };
+export type PointProps = React.SVGAttributes<SVGCircleElement>;
+export type VectorProps = React.SVGAttributes<SVGLineElement>;
+
+import memoize from 'lodash/memoize';
+
+import { Rect } from 'utils/math';
+
+const createBoundingRect = memoize((top: number, left: number, width: number, height: number): Rect => ({
+  top, left,
+  right: width,
+  bottom: height,
+}));
+
 
 const GeoViewer = pure((props: Props) => {
   const {
@@ -57,7 +72,7 @@ const GeoViewer = pure((props: Props) => {
                 key={symbol}
                 symbol={symbol}
                 {...value}
-                boundingRect={{ top, left, right: width, bottom: height }}
+                boundingRect={createBoundingRect(top, left, width, height)}
                 {...rest}
               />
             );

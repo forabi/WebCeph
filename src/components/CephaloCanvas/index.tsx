@@ -64,7 +64,6 @@ export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, 
           onContextMenu={this.handleContextMenu}
           onMouseEnter={this.handleCanvasMouseEnter}
           onMouseLeave={this.handleCanvasMouseLeave}
-          style={{ cursor: mapCursor(getCursorForCanvas()) }}
         >
           <defs>
             <BrightnessFilter id="brightness" value={brightness} />

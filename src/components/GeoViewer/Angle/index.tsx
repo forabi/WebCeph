@@ -38,13 +38,14 @@ export interface AngleProps {
   extendedProps: React.SVGAttributes<SVGLineElement>;
   segmentProps: React.SVGAttributes<SVGLineElement>;
   parallelProps: React.SVGAttributes<SVGLineElement>;
+  angleIndicatorProps: React.SVGAttributes<SVGCircleElement>
   rest?: React.SVGAttributes<SVGLineElement>;
 }
 
 interface ArcProps {
   vector1: GeometricalVector;
   vector2: GeometricalVector;
-  props: any;
+  props: React.SVGAttributes<SVGCircleElement>
 }
 
   const Arc = ({ vector1, vector2, props }: ArcProps) => {
@@ -64,7 +65,7 @@ interface ArcProps {
           <clipPath id={uid}>
             <polygon {...triangle}/>
           </clipPath>
-          <circle {...props} fill="none" clipPath={`url(#${uid})`} cx={x} cy={y} r={45} />
+          <circle fill="none" clipPath={`url(#${uid})`} cx={x} cy={y} r={45} {...props} />
         </g>
       );
     }
@@ -79,6 +80,7 @@ const Angle = pure((props: AngleProps): JSX.Element => {
     segmentProps,
     parallelProps,
     extendedProps,
+    angleIndicatorProps,
     rest,
   } = props;
   const [vector1, vector2] = vectors;
@@ -140,7 +142,7 @@ const Angle = pure((props: AngleProps): JSX.Element => {
       <line {...segmentProps} {...rest} {...vector1} />
       <line {...segmentProps} {...rest} {...vector2} />
       {additionalElements}
-      <Arc vector1={finalVectors[0]} vector2={finalVectors[1]} props={extendedProps} />
+      <Arc vector1={finalVectors[0]} vector2={finalVectors[1]} props={angleIndicatorProps} />
     </g>
   );
 });
