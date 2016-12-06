@@ -10,6 +10,7 @@ declare var module: __WebpackModuleApi.Module;
 declare var window: Window & {
   ResizeObserver?: ResizeObserver;
   __STORE__: Store<any>;
+  Perf: any;
 };
 
 if (!__DEBUG__ && location.protocol !== 'https:') {
@@ -44,13 +45,13 @@ if (!__DEBUG__ && 'serviceWorker' in navigator) {
   });
 }
 
-
 import { hasUnsavedWork } from 'store/reducers/workspace';
 
 import { connectionStatusChanged } from 'actions/env';
 
 if (__DEBUG__) {
   window.__STORE__ = store;
+  window.Perf = require('react-addons-perf');
 }
 
 window.addEventListener('beforeunload', e => {
