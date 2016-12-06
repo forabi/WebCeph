@@ -61,21 +61,9 @@ const manualLandmarksReducer = handleActions<
 );
 
 export default {
-  [KEY_MANUAL_LANDMARKS]: undoable(
-    manualLandmarksReducer,
-    assign(
-      { },
-      undoableConfig,
-      {
-        filter: includeAction([
-          Event.ADD_MANUAL_LANDMARK_REQUESTED,
-          Event.REMOVE_MANUAL_LANDMARK_REQUESTED,
-        ]),
-      },
-    ),
-  ),
+  [KEY_MANUAL_LANDMARKS]: manualLandmarksReducer,
 };
 
 export const getManualLandmarks = (state: GenericState) => {
-  return state[KEY_MANUAL_LANDMARKS] as UndoableState<ManualLandmarks>;
+  return state[KEY_MANUAL_LANDMARKS] as ManualLandmarks;
 };

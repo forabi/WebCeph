@@ -62,7 +62,7 @@ export const getSortedLandmarksToDisplay = createSelector(
   getManualLandmarks,
   getHighlightedLandmarks,
   getLandmarksToDisplay,
-  ({ present: manualLandmarks }, highlightedLandmarks, landmarksToDisplay) => {
+  (manualLandmarks, highlightedLandmarks, landmarksToDisplay) => {
     return sortBy(
       map(
         landmarksToDisplay,

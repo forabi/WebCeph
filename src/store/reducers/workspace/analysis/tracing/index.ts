@@ -94,7 +94,7 @@ export default assign({
 
 export const isLandmarkRemovable = createSelector(
   getManualLandmarks,
-  ({ present: manualLandmarks }) => (symbol: string) => manualLandmarks[symbol] !== undefined,
+  (manualLandmarks) => (symbol: string) => manualLandmarks[symbol] !== undefined,
 );
 
 export const getScaleFactor = (state: GenericState): ScaleFactor => state[KEY_SCALE_FACTOR];
@@ -103,7 +103,7 @@ export const getCephaloMapper = createSelector(
   getManualLandmarks,
   getScaleFactor,
   isImageFlippedX,
-  ({ present: manual }, scaleFactor, isFlippedX): CephaloMapper => {
+  (manual, scaleFactor, isFlippedX): CephaloMapper => {
     const toPoint = (cephaloPoint: CephaloPoint) => {
       const { symbol } = cephaloPoint;
       if (!isCephaloPoint(cephaloPoint)) {
