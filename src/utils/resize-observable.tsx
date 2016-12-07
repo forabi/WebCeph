@@ -1,6 +1,5 @@
 import * as React from 'react';
 import each from 'lodash/each';
-import assign from 'lodash/assign';
 
 interface Props {
   className?: string;
@@ -19,11 +18,11 @@ export default class ResizeObservableComponent extends React.PureComponent<Props
   private handleResize: ResizeObserverCallback = (entries, _) => {
     each(entries, this.props.onResize);
   };
-  
+
   componentDidMount() {
     const observer = new ResizeObserver(this.handleResize);
     observer.observe(this.refs.target);
-    this.setState(state => assign({ }, state, { observer }));
+    this.setState(state => ({ ...state, observer }));
   }
 
   componentWillUnmount() {

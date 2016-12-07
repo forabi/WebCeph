@@ -9,20 +9,18 @@ import image, { hasImage } from './image';
 import workers from './workers';
 import fileExport, { getExportError, hasExportError } from './export';
 
-import assign from 'lodash/assign';
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
 import mapValues from 'lodash/mapValues';
 
-export default assign(
-  { },
-  image,
-  canvas,
-  workers,
-  analysis,
-  fileExport,
-);
+export default {
+  ...image,
+  ...canvas,
+  ...workers,
+  ...analysis,
+  ...fileExport,
+};
 
 export const canEdit = hasImage;
 
@@ -49,7 +47,7 @@ export const getHighlightedLandmarks = createSelector(
     }
     const unhighlighted = mapValues(all, () => false);
     const highlighted = mapValues(getGeo(step), () => true);
-    return assign({ }, unhighlighted, highlighted);
+    return { ...unhighlighted, ...highlighted };
   },
 );
 

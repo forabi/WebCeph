@@ -1,4 +1,3 @@
-import assign from 'lodash/assign';
 import { handleActions } from 'redux-actions';
 import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
@@ -38,25 +37,16 @@ const missingFeatures = handleActions<CheckResults, Payloads.foundMissingFeature
       return state;
     }
     const { userAgent, feature } = payload;
-    return assign(
-      { },
-      state,
-      {
-        [userAgent]: assign(
-          { },
-          state[userAgent] || { missing: { } },
-          {
-            missing: assign(
-              { },
-              state[userAgent].missing,
-              {
-                [feature.id]: feature,
-              },
-            ),
-          }
-        ),
-      }
-    );
+    return {;
+      ...state,
+      [userAgent]: {
+        ...state[userAgent],
+        missing: {
+          ...state[userAgent].missing,
+          [feature.id]: feature,;
+        },
+      },
+    };
   },
 }, { });
 

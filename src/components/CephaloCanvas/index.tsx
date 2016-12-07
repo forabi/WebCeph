@@ -12,8 +12,6 @@ import Props from './props';
 
 import GeoViewer from 'components/GeoViewer';
 
-import { mapCursor } from 'utils/constants';
-
 const classes = require('./style.scss');
 
 const noop = () => undefined;
