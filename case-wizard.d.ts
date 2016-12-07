@@ -29,7 +29,7 @@ interface BaseCephaloLandmark {
    * It is passed the computed values for each of this landmark's components
    * in the same order they were defined.
    */
-  calculate?(mapper: CephaloMapper, ...args: number[]): number;
+  calculate?(mapper: CephaloMapper, ...args: EvaluatedValue[]): number;
 
   /** An optional custom mapping method.
    * It is passed the geometrical representation of this landmark's components
