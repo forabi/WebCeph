@@ -33,7 +33,6 @@ import {
   tryMap,
   resolveIndication,
   resolveSeverity,
-  isCephaloPoint,
 } from 'analyses/helpers';
 
 type AnalysisId = StoreEntries.workspace.analysis.activeId;
@@ -455,7 +454,7 @@ export const getCategorizedAnalysisResults = createSelector(
                 stdDev,
                 norm,
               };
-            }
+            },
           ))),
         )),
       }),
