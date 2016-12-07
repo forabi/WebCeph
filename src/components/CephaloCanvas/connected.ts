@@ -39,7 +39,11 @@ import {
   isHighlightMode,
 } from 'store/reducers/workspace';
 
+<<<<<<< HEAD
 import * as cx from 'classnames';
+=======
+import curry from 'lodash/curry';
+>>>>>>> e55703a7b5e85acb2b6d469221e808953a3dd397
 
 type OwnProps = { };
 

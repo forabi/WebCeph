@@ -31,18 +31,6 @@ export const createEraser: EditorToolCreator = (
       }
     },
 
-    onLandmarkMouseLeave(_) {
-      // @TODO
-    },
-
-    onCanvasMouseEnter(_) {
-      // @TODO
-    },
-
-    onCanvasMouseLeave(_) {
-      // @TODO
-    },
-
     getCursorForLandmark(symbol) {
       if (isRemovable(symbol)) {
         return Cursor.REMOVE_LANDMARK;

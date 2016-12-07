@@ -1,4 +1,5 @@
 import createZoomWithWheel from './zoomWithWheel';
+import createTrackCursor from './trackCursor';
 import { Cursor } from 'utils/constants';
 
 import {
@@ -13,8 +14,9 @@ import {
 
 export const createAddPoint: EditorToolCreator = (
   state: GenericState,
-) => ({
+): EditorTool => ({
   ...createZoomWithWheel(state),
+  ...createTrackCursor(state),
   onCanvasMouseEnter(_) {
     if (!isAnalysisComplete(state)) {
       // @TODO
@@ -34,6 +36,7 @@ export const createAddPoint: EditorToolCreator = (
   getCursorForCanvas() {
     return Cursor.ADD_LANDMARK;
   },
+
   shouldShowLens: true,
 });
 
