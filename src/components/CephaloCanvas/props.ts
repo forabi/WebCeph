@@ -18,7 +18,7 @@ export interface StateProps {
   getPropsForLandmark: (symbol: string) => { [prop: string]: any };
   isHighlightMode: boolean;
   highlightedLandmarks: {
-    [symbol: string]: boolean
+    [symbol: string]: boolean;
   };
   activeTool: EditorTool;
 };

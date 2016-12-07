@@ -24,14 +24,13 @@ export default {
 
 export const canEdit = hasImage;
 
-
 export const getLandmarksToDisplay = createSelector(
   getHighlightedStep,
   getGeometricalRepresentationBySymbol,
   getAllLandmarks,
   (highlighted, getGeo, all) => {
     if (highlighted !== null) {
-      return assign({ }, getGeo(highlighted), all);
+      return { ...getGeo(highlighted), ...all };
     }
     return all;
   }
