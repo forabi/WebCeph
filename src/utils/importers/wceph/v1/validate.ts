@@ -10,6 +10,7 @@ import map from 'lodash/map';
 import negate from 'lodash/negate';
 import isUndefined from 'lodash/isUndefined';
 import isPlainObject from 'lodash/isPlainObject';
+import each from 'lodash/each';
 import every from 'lodash/every';
 import has from 'lodash/has';
 import keys from 'lodash/keys';
@@ -18,7 +19,21 @@ import isBoolean from 'lodash/isBoolean';
 import isNumber from 'lodash/isNumber';
 import isString from 'lodash/isString';
 
-import { isGeometricalObject } from 'utils/math';
+function isV1GeometricalPoint(object: any) {
+  return has(object, 'x') && has(object, 'y');
+};
+
+function isV1GeometricalVector(object: any) {
+  return has(object, 'x2') && has(object, 'y1') && has(object, 'x2') && has(object, 'y2');
+};
+
+function isV1GeometricalAngle(object: any) {
+  return has(object, 'vectors') && object.vectors.length === 2 && each(object.vectors, isV1GeometricalVector);
+};
+
+function isV1GeometricalObject(object: any) {
+  return isV1GeometricalPoint(object) || isV1GeometricalVector(object) || isV1GeometricalAngle(object);
+};
 
 const isTrue = (value: any) => value === true;
 const isDefined = negate(isUndefined);
@@ -165,7 +180,7 @@ const rules: [
       return every(values(data), ({ tracing: { manualLandmarks } }) => {
         return (
           isPlainObject(manualLandmarks) &&
-          every(values(manualLandmarks), isGeometricalObject)
+          every(values(manualLandmarks), isV1GeometricalObject)
         );
       });
     },

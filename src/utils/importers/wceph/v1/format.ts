@@ -57,7 +57,7 @@ export type WCephJSON = {
       analysis: {
         /** Last used analysis for this image */
         activeId: string | null;
-      }
+      };
     }
   };
 
