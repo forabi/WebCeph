@@ -434,26 +434,26 @@ interface Events {
 type GenericDispatch = (action: GenericAction) => any;
 
 type ActionType = keyof Events;
-type StoreEntry = keyof StoreState;
+type StoreKey = keyof StoreState;
 
 type GenericAction = {
   type: ActionType;
   payload?: any;
 };
 
-type Action<K extends ActionType> = {
-  type: K;
-  payload: Events[K];
+type Action<T extends ActionType> = {
+  type: T;
+  payload: Events[T];
 };
 
-type Reducer<S extends StoreEntry, A extends ActionType> = (state: StoreState[S], action: Action<A>) => StoreState[S];
+type Reducer<S, A extends ActionType> = (state: S, action: Action<A>) => S;
 
 type ReducerMap = {
-  [S in keyof StoreState]: Reducer<S, ActionType>;
+  [Key in StoreKey]: Reducer<StoreState[Key], ActionType>;
 };
 
-type ActionToReducerMap<S extends StoreEntry> = Partial<{
-  [A in ActionType]: Reducer<S, A>;
+type ActionToReducerMap<Key extends StoreKey> = Partial<{
+  [A in ActionType]: Reducer<StoreState[Key], A>;
 }>;
 
 /* Tools */

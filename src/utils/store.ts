@@ -1,18 +1,20 @@
-export function createAction(type: keyof Events, payload: Events[typeof type]): Action<typeof type> {
+export function createAction<T extends ActionType>(type: T, payload: Events[T]): Action<T> {
   return {
     type,
     payload,
   };
 };
 
-export function createActionCreator<K extends keyof Events>(type: K) {
-  return (payload: Events[K]) => createAction(type, payload);
+export function createActionCreator<T extends ActionType>(type: T) {
+  return (payload: Events[T]) => createAction<T>(type, payload);
 };
 
-export function handleActions<S extends StoreEntry>(map: ActionToReducerMap<S>, defaultState: StoreState[S]): Reducer<S, any> {
-  return (state: StoreState[S], action: Action<ActionType>) => {
-    const reducer: Reducer<S, typeof action['type']> | undefined = map[action.type];
-    if (reducer !== undefined) {
+export function handleActions<Key extends StoreKey>(
+  map: ActionToReducerMap<Key>, defaultState: StoreState[Key]
+): Reducer<StoreState[Key], ActionType> {
+  return (state: StoreState[Key], action: Action<ActionType>) => {
+    const reducer: Reducer<StoreState[Key], typeof action['type']> | undefined = map[action.type];
+    if (typeof reducer !== 'undefined') {
       return reducer(state, action);
     }
     if (typeof state !== 'undefined') {

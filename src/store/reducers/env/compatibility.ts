@@ -5,18 +5,22 @@ import { createSelector } from 'reselect';
 import values from 'lodash/values';
 import memoize from 'lodash/memoize';
 
-const isIgnored = handleActions<'env.compat.isIgnored'>({
+const KEY_IS_IGNORED: StoreKey = 'env.compat.isIgnored';
+const KEY_IS_BEING_CHECKED: StoreKey = 'env.compat.isBeingChecked';
+const KEY_RESULTS: StoreKey = 'env.compat.results';
+
+const isIgnored = handleActions<typeof KEY_IS_IGNORED>({
   IGNORE_BROWSER_COMPATIBLITY_REQUESTED: (_, __) => true,
   ENFORCE_BROWSER_COMPATIBLITY_REQUESTED: (_, __) => false,
 }, false);
 
-const isBeingChecked = handleActions<'env.compat.isBeingChecked'>({
+const isBeingChecked = handleActions<typeof KEY_IS_BEING_CHECKED>({
   BROWSER_COMPATIBLITY_CHECK_REQUESTED: (_, __) => true,
   BROWSER_COMPATIBLITY_CHECK_SUCCEEDED: (_, __) => false,
   BROWSER_COMPATIBLITY_CHECK_FAILED: (_, __) => false,
 }, false);
 
-const missingFeatures = handleActions<'env.compat.results'>({
+const missingFeatures = handleActions<typeof KEY_RESULTS>({
   MISSING_BROWSER_FEATURE_DETECTED: (state, { type, payload }) => {
     if (payload === undefined) {
       printUnexpectedPayloadWarning(type, state);
@@ -36,13 +40,21 @@ const missingFeatures = handleActions<'env.compat.results'>({
   },
 }, { });
 
-export const isCheckingCompatiblity = (state: StoreState) => state['env.compat.isBeingChecked'];
+const reducers: Partial<ReducerMap> = {
+  [KEY_IS_IGNORED]: isIgnored,
+  [KEY_IS_BEING_CHECKED]: isBeingChecked,
+  [KEY_RESULTS]: missingFeatures,
+};
 
-export const isCompatibilityIgnored = (state: StoreState) => state['env.compat.isIgnored'];
+export default reducers;
+
+export const isCheckingCompatiblity = (state: StoreState) => state[KEY_IS_BEING_CHECKED];
+
+export const isCompatibilityIgnored = (state: StoreState) => state[KEY_IS_IGNORED];
 
 export const getCheckResults = (state: StoreState) =>
   (userAgent: string) => {
-    return state['env.compat.results'][userAgent];
+    return state[KEY_RESULTS][userAgent];
   };
 
 export const getMissingFeatures = createSelector(
@@ -70,11 +82,3 @@ export const isBrowserCompatible = createSelector(
     return !isChecking && getMissing(userAgent).length === 0;
   },
 );
-
-const reducers: Partial<ReducerMap> = {
-  'env.compat.isIgnored': isIgnored,
-  'env.compat.isBeingChecked': isBeingChecked,
-  'env.compat.results': missingFeatures,
-};
-
-export default reducers;
