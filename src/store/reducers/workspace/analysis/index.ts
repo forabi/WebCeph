@@ -102,16 +102,16 @@ export default {
   [KEY_ARE_RESULTS_SHOWN]: areResultsShownReducer,
 };
 
-export const areResultsShown = (state: GenericState): AreResultsShown => state[KEY_ARE_RESULTS_SHOWN];
+export const areResultsShown = (state: StoreState): AreResultsShown => state[KEY_ARE_RESULTS_SHOWN];
 
-export const getActiveAnalysisId = (state: GenericState): AnalysisId => state[KEY_ACTIVE_ANALYSIS_ID];
+export const getActiveAnalysisId = (state: StoreState): AnalysisId => state[KEY_ACTIVE_ANALYSIS_ID];
 
 export const isAnalysisSet = createSelector(
   getActiveAnalysisId,
   (id) => id !== null,
 );
 
-export const isAnalysisLoading = (state: GenericState): IsAnalysisLoading => state[KEY_IS_ANALYSIS_LOADING];
+export const isAnalysisLoading = (state: StoreState): IsAnalysisLoading => state[KEY_IS_ANALYSIS_LOADING];
 
 // @FIXME: dynamically require analysis
 import downs from 'analyses/downs';

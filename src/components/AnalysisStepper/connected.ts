@@ -28,7 +28,7 @@ import {
   unhighlightStep,
 } from 'actions/workspace';
 
-const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalState) => {
+const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: StoreState) => {
   return {
     steps: getActiveAnalysisSteps(state),
     getStepState: getStepStateBySymbol(state),
@@ -42,8 +42,8 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = 
   {
     onRemoveLandmarkClick: (symbol: string) => dispatch(removeManualLandmark(symbol)),
     onEditLandmarkClick: noop, // @TODO
-    onStepMouseEnter: (symbol) => dispatch(highlightStep(symbol)),
-    onStepMouseLeave: (_) => dispatch(unhighlightStep()),
+    onStepMouseEnter: (symbol) => dispatch(highlightStep({ symbol })),
+    onStepMouseLeave: (_) => dispatch(unhighlightStep(void 0)),
   }
 );
 

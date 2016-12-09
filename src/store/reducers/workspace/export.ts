@@ -34,8 +34,8 @@ export default {
   [KEY_EXPORT_ERROR]: exportErrorReducer,
 };
 
-export const isExporting = (state: GenericState): IsExporting => state[KEY_IS_EXPORTING];
-export const getExportError = (state: GenericState): ExportError => state[KEY_EXPORT_ERROR];
+export const isExporting = (state: StoreState): IsExporting => state[KEY_IS_EXPORTING];
+export const getExportError = (state: StoreState): ExportError => state[KEY_EXPORT_ERROR];
 export const hasExportError = createSelector(
   getExportError,
   (error) => error !== null,

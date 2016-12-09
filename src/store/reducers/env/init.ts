@@ -17,4 +17,4 @@ export default {
   [KEY_IS_INITIALIZED]: isInitializedReducer,
 };
 
-export const isAppInitialized = (state: GenericState): IsInitialized => state[KEY_IS_INITIALIZED];
+export const isAppInitialized = (state: StoreState): IsInitialized => state[KEY_IS_INITIALIZED];

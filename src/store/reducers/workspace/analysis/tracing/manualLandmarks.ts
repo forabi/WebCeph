@@ -69,6 +69,6 @@ export default {
   ),
 };
 
-export const getManualLandmarks = (state: GenericState) => {
+export const getManualLandmarks = (state: StoreState) => {
   return state[KEY_MANUAL_LANDMARKS] as UndoableState<ManualLandmarks>;
 };

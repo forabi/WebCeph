@@ -97,11 +97,11 @@ export default {
   [KEY_WORKERS]: workersReducer,
 };
 
-export const getWorkers = (state: GenericState): Workers => {
+export const getWorkers = (state: StoreState): Workers => {
   return state[KEY_WORKERS];
 };
 
-export const isPerformingBackgroundWork = (state: GenericState): boolean => {
+export const isPerformingBackgroundWork = (state: StoreState): boolean => {
   return !isEmpty(state[KEY_WORKERS]);
 };
 

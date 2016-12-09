@@ -23,4 +23,4 @@ export default {
   [KEY_IS_OFFLINE]: isOfflineReducer,
 };
 
-export const isAppOffline = (state: GenericState): IsOffline => state[KEY_IS_OFFLINE];
+export const isAppOffline = (state: StoreState): IsOffline => state[KEY_IS_OFFLINE];

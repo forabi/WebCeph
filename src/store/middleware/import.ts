@@ -29,7 +29,7 @@ const importers = [
 ];
 
 const middleware: Middleware = ({ dispatch }: Store<any>) =>
-  (next: DispatchFunction) => async (action: Action<any>) => {
+  (next: GenericDispatch) => async (action: Action<any>) => {
     const { type } = action;
     try {
       if (type === Event.LOAD_IMAGE_FROM_URL_REQUESTED) {

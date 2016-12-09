@@ -11,7 +11,7 @@ import {
 } from 'store/reducers/workspace/analysis';
 
 export const createEraser: EditorToolCreator = (
-  state: GenericState,
+  state: StoreState,
 ) => {
   const isRemovable = isLandmarkRemovable(state);
   return {

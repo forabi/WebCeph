@@ -56,5 +56,5 @@ export default {
   [KEY_SCALE_ORIGIN]: scaleOriginReducer,
 };
 
-export const getScale = (state: GenericState) => state[KEY_SCALE] as ScaleValue;
-export const getScaleOrigin = (state: GenericState) => state[KEY_SCALE_ORIGIN] as ScaleOrigin;
+export const getScale = (state: StoreState) => state[KEY_SCALE] as ScaleValue;
+export const getScaleOrigin = (state: StoreState) => state[KEY_SCALE_ORIGIN] as ScaleOrigin;

@@ -40,7 +40,7 @@ declare var window: Window & { requestIdleCallback?: RequestIdleCallback };
 // @TODO: replace with a polyfill?
 const rIC = window.requestIdleCallback || ((fn: Function) => fn());
 
-const saveStateMiddleware: Middleware = ({ getState }: Store<any>) => (next: DispatchFunction) =>
+const saveStateMiddleware: Middleware = ({ getState }: Store<any>) => (next: GenericDispatch) =>
   async (action: Action<any>) => {
     if (isPersistenceNeededForAction(action)) {
       next(action);
@@ -78,7 +78,7 @@ const saveStateMiddleware: Middleware = ({ getState }: Store<any>) => (next: Dis
 
 type RestoredState = { [id: string]: any };
 
-const loadStateMiddleware: Middleware = (_: Store<any>) => (next: DispatchFunction) =>
+const loadStateMiddleware: Middleware = (_: Store<any>) => (next: GenericDispatch) =>
   async (action: Action<any>) => {
     const { type } = action;
     if (type === Event.LOAD_PERSISTED_STATE_REQUESTED) {
@@ -119,7 +119,7 @@ const loadStateMiddleware: Middleware = (_: Store<any>) => (next: DispatchFuncti
     }
   };
 
-const clearStateMiddleware: Middleware = (_: Store<any>) => (next: DispatchFunction) =>
+const clearStateMiddleware: Middleware = (_: Store<any>) => (next: GenericDispatch) =>
   async (action: Action<any>) => {
     if (action.type === Event.CLEAR_PRESISTED_STATE_SUCCEEDED) {
       try {

@@ -14,10 +14,10 @@ import {
 } from 'store/reducers/workspace/analysis';
 
 import {
-  hideAnalysisResults,
+  toggleAnalysisResults,
 } from 'actions/workspace';
 
-const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalState) => {
+const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: StoreState) => {
   return {
     results: getCategorizedAnalysisResults(state),
   };
@@ -25,7 +25,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalStat
 
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = (dispatch) => (
   {
-    onRequestClose: () => dispatch(hideAnalysisResults()),
+    onRequestClose: () => dispatch(toggleAnalysisResults(void 0)),
   }
 );
 

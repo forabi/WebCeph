@@ -26,7 +26,7 @@ const analyses = [
 ];
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
-  (state: FinalState): StateProps => {
+  (state: StoreState): StateProps => {
     return {
       analyses,
       currentAnalysisId: getActiveAnalysisId(state),
@@ -35,7 +35,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   };
 
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
-  (dispatch: DispatchFunction): DispatchProps => {
+  (dispatch: GenericDispatch): DispatchProps => {
     return {
       onChange: (id) => dispatch(setAnalysis(id)),
     };

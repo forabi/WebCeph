@@ -10,7 +10,7 @@ import {
   OwnProps,
 } from './props';
 
-const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalState) => {
+const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: StoreState) => {
   return {
 
   };

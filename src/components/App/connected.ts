@@ -44,7 +44,7 @@ import {
 import { connectionStatusChanged } from 'actions/env';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
-  (state: FinalState, { userAgent }: OwnProps) => {
+  (state: StoreState, { userAgent }: OwnProps) => {
     return {
       isSummaryShown: areResultsShown(state) && canShowResults(state),
       shouldShowStepper: hasImage(state) || isImageLoading(state),
@@ -74,10 +74,10 @@ const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> =
       ...ownProps,
       onComponentMount: async () => {
         if (!isReady) {
-          dispatch(restorePersistedState());
+          dispatch(restorePersistedState(void 0));
         }
         if (shouldCheckCompatibility) {
-          dispatch(checkBrowserCompatibility());
+          dispatch(checkBrowserCompatibility(void 0));
         }
         dispatch(connectionStatusChanged({ isOffline: !navigator.onLine }));
       },

@@ -187,23 +187,23 @@ export default {
   [KEY_IMAGE_LOAD_ERROR]: setLoadError,
 };
 
-export const isImageLoading = (state: GenericState): boolean => {
+export const isImageLoading = (state: StoreState): boolean => {
   return state[KEY_IMAGE_IS_LOADING];
 };
 
-export const getImageWidth = (state: GenericState) => {
+export const getImageWidth = (state: StoreState) => {
   return state[KEY_IMAGE_WIDTH] as Width;
 };
 
-export const getImageHeight = (state: GenericState) => {
+export const getImageHeight = (state: StoreState) => {
   return state[KEY_IMAGE_HEIGHT] as Height;
 };
 
-export const getImageData = (state: GenericState) => {
+export const getImageData = (state: StoreState) => {
   return state[KEY_IMAGE_DATA] as Data;
 };
 
-export const getImageName = (state: GenericState) => {
+export const getImageName = (state: StoreState) => {
   return state[KEY_IMAGE_NAME] as Name;
 };
 
@@ -218,8 +218,8 @@ export const getImageSize = createSelector(
   (width, height) => ({ width, height }),
 );
 
-export const getImageBrightness = (state: GenericState) => state[KEY_IMAGE_BRIGHTNESS] as number;
-export const getImageContrast = (state: GenericState) => state[KEY_IMAGE_CONTRAST] as number;
-export const isImageFlippedX = (state: GenericState) => state[KEY_IMAGE_FLIP_X] as boolean;
-export const isImageFlippedY = (state: GenericState) => state[KEY_IMAGE_FLIP_Y] as boolean;
-export const isImageInverted = (state: GenericState) => state[KEY_IMAGE_INVERT] as boolean;
+export const getImageBrightness = (state: StoreState) => state[KEY_IMAGE_BRIGHTNESS] as number;
+export const getImageContrast = (state: StoreState) => state[KEY_IMAGE_CONTRAST] as number;
+export const isImageFlippedX = (state: StoreState) => state[KEY_IMAGE_FLIP_X] as boolean;
+export const isImageFlippedY = (state: StoreState) => state[KEY_IMAGE_FLIP_Y] as boolean;
+export const isImageInverted = (state: StoreState) => state[KEY_IMAGE_INVERT] as boolean;

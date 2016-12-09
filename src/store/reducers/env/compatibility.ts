@@ -50,11 +50,11 @@ const missingFeatures = handleActions<CheckResults, Payloads.foundMissingFeature
   },
 }, { });
 
-export const isCheckingCompatiblity = (state: GenericState): IsBeingChecked => state[KEY_IS_BEING_CHEKED];
+export const isCheckingCompatiblity = (state: StoreState): IsBeingChecked => state[KEY_IS_BEING_CHEKED];
 
-export const isCompatibilityIgnored = (state: GenericState): IsIgnored => state[KEY_IS_IGNORED];
+export const isCompatibilityIgnored = (state: StoreState): IsIgnored => state[KEY_IS_IGNORED];
 
-export const getCheckResults = (state: GenericState) =>
+export const getCheckResults = (state: StoreState) =>
   (userAgent: string): { missing: { [id: string]: MissingBrowserFeature } } | undefined => {
     return state[KEY_MISSING_FEATURES][userAgent];
   };

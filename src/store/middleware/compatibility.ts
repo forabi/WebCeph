@@ -14,7 +14,7 @@ import { foundMissingFeature } from 'actions/initialization';
 import featureDetails from 'utils/features';
 
 const middleware: Middleware = (_: Store<any>) =>
-  (next: DispatchFunction) => async (action: Action<any>) => {
+  (next: GenericDispatch) => async (action: Action<any>) => {
     const { type } = action;
     if (type !== Event.BROWSER_COMPATIBLITY_CHECK_REQUESTED) {
       return next(action);

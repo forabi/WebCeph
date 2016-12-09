@@ -3,7 +3,7 @@ import {
 } from 'actions/workspace';
 
 export const createTrackCursor: EditorToolCreator = (
-  _: GenericState,
+  _: StoreState,
 ) => (
   {
     onCanvasMouseMove(dispatch, x, y) {

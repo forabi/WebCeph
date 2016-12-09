@@ -13,7 +13,7 @@ import {
 } from 'store/reducers/workspace/analysis';
 
 export const createAddPoint: EditorToolCreator = (
-  state: GenericState,
+  state: StoreState,
 ): EditorTool => ({
   ...createZoomWithWheel(state),
   ...createTrackCursor(state),

@@ -12,7 +12,7 @@ export interface StateProps {
 
 
 export interface DispatchProps {
-  dispatch: DispatchFunction;
+  dispatch: GenericDispatch;
 }
 
 export interface MergeProps {

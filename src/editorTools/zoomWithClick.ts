@@ -6,7 +6,7 @@ import { getScale } from 'store/reducers/workspace/canvas/scale';
 import { setScale } from 'actions/workspace';
 
 export const createZoomWithClick: EditorToolCreator = (
-  state: GenericState,
+  state: StoreState,
 ) => ({
   ...createZoomWithWheel(state),
   onCanvasLeftClick(dispatch, x, y) {

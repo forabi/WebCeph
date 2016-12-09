@@ -24,7 +24,7 @@ export interface StateProps {
 };
 
 export interface DispatchProps {
-  dispatch: DispatchFunction;
+  dispatch: GenericDispatch;
 };
 
 export type ConnectableProps = StateProps & DispatchProps;

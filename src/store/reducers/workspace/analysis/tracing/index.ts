@@ -97,7 +97,7 @@ export const isLandmarkRemovable = createSelector(
   ({ present: manualLandmarks }) => (symbol: string) => manualLandmarks[symbol] !== undefined,
 );
 
-export const getScaleFactor = (state: GenericState): ScaleFactor => state[KEY_SCALE_FACTOR];
+export const getScaleFactor = (state: StoreState): ScaleFactor => state[KEY_SCALE_FACTOR];
 
 export const getCephaloMapper = createSelector(
   getManualLandmarks,

@@ -17,7 +17,7 @@ import {
   getMissingFeatures,
 } from 'store/reducers/env/compatibility';
 
-const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalState, { userAgent }: OwnProps) => {
+const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: StoreState, { userAgent }: OwnProps) => {
   const isCompatible = isBrowserCompatible(state)(userAgent);
   const isChecking = isCheckingCompatiblity(state);
   return {
