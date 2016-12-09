@@ -12,7 +12,7 @@ const defaultOrigin: ScaleOrigin = null;
 
 const sacleValueReducer = handleActions<ScaleValue, Payloads.setScale>(
   {
-    [Event.SET_SCALE_REQUESTED]: (state, { type, payload }) => {
+    SET_SCALE_REQUESTED: (state, { type, payload }) => {
       if (payload === undefined) {
         printUnexpectedPayloadWarning(type, state);
         return state;
@@ -25,14 +25,14 @@ const sacleValueReducer = handleActions<ScaleValue, Payloads.setScale>(
       }
       return payload.scale;
     },
-    [Event.RESET_WORKSPACE_REQUESTED]: () => defaultScale,
+    RESET_WORKSPACE_REQUESTED: () => defaultScale,
   },
   defaultScale,
 );
 
 const scaleOriginReducer = handleActions<ScaleOrigin, Payloads.setScale>(
   {
-    [Event.SET_SCALE_REQUESTED]: (state, { type, payload }) => {
+    SET_SCALE_REQUESTED: (state, { type, payload }) => {
       if (payload === undefined) {
         printUnexpectedPayloadWarning(type, state);
         return state;
@@ -45,7 +45,7 @@ const scaleOriginReducer = handleActions<ScaleOrigin, Payloads.setScale>(
       }
       return { x: Math.round(payload.x), y: Math.round(payload.y) };
     },
-    [Event.RESET_WORKSPACE_REQUESTED]: () => defaultOrigin,
+    RESET_WORKSPACE_REQUESTED: () => defaultOrigin,
   },
   defaultOrigin,
 );

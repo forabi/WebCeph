@@ -26,7 +26,7 @@ const KEY_SCALE_FACTOR = StoreKeys.scaleFactor;
 
 const tracingMode = handleActions<TracingMode, Payloads.setTracingMode>(
   {
-    [Event.SET_TRACING_MODE_REQUESTED]: (state, { payload: mode, type }) => {
+    SET_TRACING_MODE_REQUESTED: (state, { payload: mode, type }) => {
       if (mode === undefined) {
         printUnexpectedPayloadWarning(type, state);
         return state;
@@ -42,21 +42,21 @@ const skippedSteps = handleActions<
   Payloads.skipStep | Payloads.unskipStep
 >(
   {
-    [Event.SKIP_MANUAL_STEP_REQUESTED]: (state, { payload: step, type }) => {
+    SKIP_MANUAL_STEP_REQUESTED: (state, { payload: step, type }) => {
       if (step === undefined) {
         printUnexpectedPayloadWarning(type, state);
         return state;
       }
       return { ...state, [step]: true };
     },
-    [Event.UNSKIP_MANUAL_STEP_REQUESTED]: (state, { payload: step, type }) => {
+    UNSKIP_MANUAL_STEP_REQUESTED: (state, { payload: step, type }) => {
       if (step === undefined) {
         printUnexpectedPayloadWarning(type, state);
         return state;
       }
       return omit(state, step) as SkippedSteps;
     },
-    [Event.RESET_WORKSPACE_REQUESTED]: () => defaultSkippedSteps,
+    RESET_WORKSPACE_REQUESTED: () => defaultSkippedSteps,
   },
   defaultSkippedSteps,
 );
@@ -66,21 +66,21 @@ const scaleFactorReducer = handleActions<
   Payloads.setScaleFactor | Payloads.unsetScaleFactor
 >(
   {
-    [Event.SET_SCALE_FACTOR_REQUESTED]: (state, { payload: scaleFactor, type }) => {
+    SET_SCALE_FACTOR_REQUESTED: (state, { payload: scaleFactor, type }) => {
       if (scaleFactor === undefined) {
         printUnexpectedPayloadWarning(type, state);
         return state;
       }
       return scaleFactor;
     },
-    [Event.UNSET_SCALE_FACTOR_REQUESTED]: (state, { payload, type }) => {
+    UNSET_SCALE_FACTOR_REQUESTED: (state, { payload, type }) => {
       if (payload !== undefined) {
         printUnexpectedPayloadWarning(type, state);
         return state;
       }
       return null;
     },
-    [Event.RESET_WORKSPACE_REQUESTED]: () => defaultScaleFactor,
+    RESET_WORKSPACE_REQUESTED: () => defaultScaleFactor,
   },
   defaultScaleFactor,
 );

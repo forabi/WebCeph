@@ -9,8 +9,8 @@ const isInitializedReducer = handleActions<
   IsInitialized,
   any
 >({
-  [Event.LOAD_PERSISTED_STATE_SUCCEEDED]: (_, __) => true,
-  [Event.LOAD_PERSISTED_STATE_FAILED]: (_, __) => true,
+  LOAD_PERSISTED_STATE_SUCCEEDED: (_, __) => true,
+  LOAD_PERSISTED_STATE_FAILED: (_, __) => true,
 }, false);
 
 export default {

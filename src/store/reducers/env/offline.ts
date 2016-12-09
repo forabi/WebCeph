@@ -10,7 +10,7 @@ const isOfflineReducer = handleActions<
   IsOffline,
   Payloads.connectionStatusChanged
 >({
-  [Event.CONNECTION_STATUS_CHANGED]: (state, { type, payload }) => {
+  CONNECTION_STATUS_CHANGED: (state, { type, payload }) => {
     if (payload === undefined) {
       printUnexpectedPayloadWarning(type, state);
       return state;

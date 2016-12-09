@@ -44,7 +44,7 @@ const defaultAnalysisId: AnalysisId = 'common';
 
 const activeAnalysisIdReducer = handleActions<AnalysisId, any>(
   {
-    [Event.SET_ANALYSIS_SUCCEEDED]: (state, action) => {
+    SET_ANALYSIS_SUCCEEDED: (state, action) => {
       const { payload: analysisId } = action;
       if (analysisId === undefined) {
         printUnexpectedPayloadWarning(action.type, state);
@@ -58,33 +58,33 @@ const activeAnalysisIdReducer = handleActions<AnalysisId, any>(
 
 const isAnalysisLoadingReducer = handleActions<IsAnalysisLoading, any>(
   {
-    [Event.SET_ANALYSIS_REQUESTED]: () => true,
-    [Event.SET_ANALYSIS_SUCCEEDED]: () => false,
-    [Event.SET_ANALYSIS_FAILED]: () => false,
+    SET_ANALYSIS_REQUESTED: () => true,
+    SET_ANALYSIS_SUCCEEDED: () => false,
+    SET_ANALYSIS_FAILED: () => false,
   },
   false,
 );
 
 const loadErrorReducer = handleActions<LoadError, any>(
   {
-    [Event.SET_ANALYSIS_SUCCEEDED]: () => null,
-    [Event.SET_ANALYSIS_FAILED]: (state, { type, payload: error }) => {
+    SET_ANALYSIS_SUCCEEDED: () => null,
+    SET_ANALYSIS_FAILED: (state, { type, payload: error }) => {
       if (error === undefined) {
         printUnexpectedPayloadWarning(type, state);
         return state;
       }
       return error as Payloads.analysisLoadFailed;
     },
-    [Event.SET_ANALYSIS_REQUESTED]: () => null,
+    SET_ANALYSIS_REQUESTED: () => null,
   },
   null,
 );
 
 const areResultsShownReducer = handleActions<AreResultsShown, any>(
   {
-    [Event.SHOW_ANALYSIS_RESULTS_REQUESTED]: () => true,
-    [Event.CLOSE_ANALYSIS_RESULTS_REQUESTED]: () => false,
-    [Event.RESET_WORKSPACE_REQUESTED]: () => false,
+    SHOW_ANALYSIS_RESULTS_REQUESTED: () => true,
+    CLOSE_ANALYSIS_RESULTS_REQUESTED: () => false,
+    RESET_WORKSPACE_REQUESTED: () => false,
   },
   false,
 );

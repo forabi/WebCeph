@@ -35,7 +35,7 @@ const setHeight = handleActions<
   Payloads.imageLoadSucceeded | Payloads.imageLoadFailed | Payloads.imageLoadRequested
 >(
   {
-    [Event.LOAD_IMAGE_SUCCEEDED]: (state, action) => {
+    LOAD_IMAGE_SUCCEEDED: (state, action) => {
       const payload = action.payload as Payloads.imageLoadSucceeded | undefined;
       if (payload === undefined) {
         printUnexpectedPayloadWarning(action.type, state);
@@ -43,7 +43,7 @@ const setHeight = handleActions<
       }
       return payload.height;
     },
-    [Event.LOAD_IMAGE_REQUESTED]: (_, __) => {
+    LOAD_IMAGE_REQUESTED: (_, __) => {
       return null;
     },
   },
@@ -55,7 +55,7 @@ const setWidth = handleActions<
   Payloads.imageLoadSucceeded | Payloads.imageLoadFailed | Payloads.imageLoadRequested
 >(
   {
-    [Event.LOAD_IMAGE_SUCCEEDED]: (state, action) => {
+    LOAD_IMAGE_SUCCEEDED: (state, action) => {
       const payload = action.payload as Payloads.imageLoadSucceeded | undefined;
       if (payload === undefined) {
         printUnexpectedPayloadWarning(action.type, state);
@@ -63,7 +63,7 @@ const setWidth = handleActions<
       }
       return payload.width;
     },
-    [Event.LOAD_IMAGE_REQUESTED]: (_, __) => {
+    LOAD_IMAGE_REQUESTED: (_, __) => {
       return null;
     },
   },
@@ -75,7 +75,7 @@ const setData = handleActions<
   Payloads.imageLoadSucceeded | Payloads.imageLoadFailed | Payloads.imageLoadRequested
 >(
   {
-    [Event.LOAD_IMAGE_SUCCEEDED]: (state, action) => {
+    LOAD_IMAGE_SUCCEEDED: (state, action) => {
       const payload = action.payload as Payloads.imageLoadSucceeded | undefined;
       if (payload === undefined) {
         printUnexpectedPayloadWarning(action.type, state);
@@ -83,7 +83,7 @@ const setData = handleActions<
       }
       return payload.data;
     },
-    [Event.LOAD_IMAGE_REQUESTED]: (_, __) => {
+    LOAD_IMAGE_REQUESTED: (_, __) => {
       return null;
     },
   },
@@ -95,7 +95,7 @@ const setName = handleActions<
   Payloads.imageLoadSucceeded | Payloads.imageLoadFailed | Payloads.imageLoadRequested
 >(
   {
-    [Event.LOAD_IMAGE_SUCCEEDED]: (state, action) => {
+    LOAD_IMAGE_SUCCEEDED: (state, action) => {
       const payload = action.payload as Payloads.imageLoadSucceeded | undefined;
       if (payload === undefined) {
         printUnexpectedPayloadWarning(action.type, state);
@@ -103,7 +103,7 @@ const setName = handleActions<
       }
       return payload.name;
     },
-    [Event.LOAD_IMAGE_REQUESTED]: (_, __) => {
+    LOAD_IMAGE_REQUESTED: (_, __) => {
       return null;
     },
   },
@@ -111,66 +111,66 @@ const setName = handleActions<
 );
 
 const setLoadError = handleActions<LoadError, Payloads.imageLoadFailed>({
-  [Event.IGNORE_WORKSPACE_ERROR_REQUESTED]: (_, __) => null,
-  [Event.LOAD_IMAGE_FAILED]: (state, { type, payload: error }) => {
+  IGNORE_WORKSPACE_ERROR_REQUESTED: (_, __) => null,
+  LOAD_IMAGE_FAILED: (state, { type, payload: error }) => {
     if (error === undefined) {
       printUnexpectedPayloadWarning(type, state);
       return state;
     }
     return error;
   },
-  [Event.LOAD_IMAGE_REQUESTED]: () => null,
-  [Event.RESET_WORKSPACE_REQUESTED]: () => null,
+  LOAD_IMAGE_REQUESTED: () => null,
+  RESET_WORKSPACE_REQUESTED: () => null,
 }, null);
 
 const setLoadStatus = handleActions<boolean, boolean>({
-  [Event.IMPORT_FILE_REQUESTED]: () => true,
-  [Event.IMPORT_FILE_FAILED]: () => false,
-  [Event.IMPORT_FILE_SUCCEEDED]: () => false,
-  [Event.LOAD_IMAGE_FROM_URL_REQUESTED]: () => true,
-  [Event.RESET_WORKSPACE_REQUESTED]: () => false,
+  IMPORT_FILE_REQUESTED: () => true,
+  IMPORT_FILE_FAILED: () => false,
+  IMPORT_FILE_SUCCEEDED: () => false,
+  LOAD_IMAGE_FROM_URL_REQUESTED: () => true,
+  RESET_WORKSPACE_REQUESTED: () => false,
 }, false);
 
 const flipX = handleActions<boolean, boolean>({
-  [Event.FLIP_IMAGE_X_REQUESTED]: (state: boolean) => !state,
-  [Event.LOAD_IMAGE_REQUESTED]: () => false,
-  [Event.RESET_WORKSPACE_REQUESTED]: () => false,
+  FLIP_IMAGE_X_REQUESTED: (state: boolean) => !state,
+  LOAD_IMAGE_REQUESTED: () => false,
+  RESET_WORKSPACE_REQUESTED: () => false,
 }, false);
 
 const flipY = handleActions<boolean, boolean>({
-  [Event.FLIP_IMAGE_Y_REQUESTED]: (state: boolean) => !state,
-  [Event.LOAD_IMAGE_REQUESTED]: () => false,
-  [Event.RESET_WORKSPACE_REQUESTED]: () => false,
+  FLIP_IMAGE_Y_REQUESTED: (state: boolean) => !state,
+  LOAD_IMAGE_REQUESTED: () => false,
+  RESET_WORKSPACE_REQUESTED: () => false,
 }, false);
 
 // @TODO: normalize to [-1, 1] instead of 0-100
 const setBrightness = handleActions<number, number>({
-  [Event.SET_IMAGE_BRIGHTNESS_REQUESTED]: (state, { type, payload: value }) => {
+  SET_IMAGE_BRIGHTNESS_REQUESTED: (state, { type, payload: value }) => {
     if (value === undefined) {
       printUnexpectedPayloadWarning(type, state);
       return state;
     }
     return value;
   },
-  [Event.LOAD_IMAGE_REQUESTED]: () => defaultBrightness,
-  [Event.RESET_WORKSPACE_REQUESTED]: () => defaultBrightness,
+  LOAD_IMAGE_REQUESTED: () => defaultBrightness,
+  RESET_WORKSPACE_REQUESTED: () => defaultBrightness,
 }, defaultBrightness);
 
 const setContrast = handleActions<number, number>({
-  [Event.SET_IMAGE_CONTRAST_REQUESTED]: (state, { type, payload: value }) => {
+  SET_IMAGE_CONTRAST_REQUESTED: (state, { type, payload: value }) => {
     if (value === undefined) {
       printUnexpectedPayloadWarning(type, state);
       return state;
     }
     return value;
   },
-  [Event.LOAD_IMAGE_REQUESTED]: () => defaultContrast,
-  [Event.RESET_WORKSPACE_REQUESTED]: () => defaultContrast,
+  LOAD_IMAGE_REQUESTED: () => defaultContrast,
+  RESET_WORKSPACE_REQUESTED: () => defaultContrast,
 }, defaultContrast);
 
 const setInvert = handleActions<boolean, boolean>({
-  [Event.INVERT_IMAGE_REQUESTED]: (state) => !state,
-  [Event.RESET_WORKSPACE_REQUESTED]: () => false,
+  INVERT_IMAGE_REQUESTED: (state) => !state,
+  RESET_WORKSPACE_REQUESTED: () => false,
 }, false);
 
 export default {

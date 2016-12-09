@@ -164,18 +164,6 @@ type TracingMode = 'auto' | 'manual' | 'assisted';
 type ExportFileFormat = 'wceph_v1' | 'jpeg';
 type ExportFileOptions = any; // @TODO
 
-type GenericAction = {
-  type: keyof Events;
-  payload?: any;
-};
-
-type Action<K extends keyof Events> = {
-  type: K;
-  payload: Events[K];
-};
-
-type GenericDispatch = (action: GenericAction) => any;
-
 interface UndoableState<T> {
   past: T[];
   present: T,
@@ -428,7 +416,10 @@ interface Events {
   BROWSER_COMPATIBLITY_CHECK_FAILED: GenericError;
   IGNORE_BROWSER_COMPATIBLITY_REQUESTED: void;
   ENFORCE_BROWSER_COMPATIBLITY_REQUESTED: void;
-  MISSING_BROWSER_FEATURE_DETECTED: MissingBrowserFeature;
+  MISSING_BROWSER_FEATURE_DETECTED: {
+    userAgent: string;
+    feature: MissingBrowserFeature;
+  };
   LOAD_PERSISTED_STATE_REQUESTED: void;
   LOAD_PERSISTED_STATE_SUCCEEDED: void;
   LOAD_PERSISTED_STATE_FAILED: GenericError;
@@ -439,6 +430,31 @@ interface Events {
   CLEAR_PRESISTED_STATE_SUCCEEDED: void,
   CLEAR_PERSISTED_STATE_FAILED: GenericError,
 };
+
+type GenericDispatch = (action: GenericAction) => any;
+
+type ActionType = keyof Events;
+type StoreEntry = keyof StoreState;
+
+type GenericAction = {
+  type: ActionType;
+  payload?: any;
+};
+
+type Action<K extends ActionType> = {
+  type: K;
+  payload: Events[K];
+};
+
+type Reducer<S extends StoreEntry, A extends ActionType> = (state: StoreState[S], action: Action<A>) => StoreState[S];
+
+type ReducerMap = {
+  [S in keyof StoreState]: Reducer<S, ActionType>;
+};
+
+type ActionToReducerMap<S extends StoreEntry> = Partial<{
+  [A in ActionType]: Reducer<S, A>;
+}>;
 
 /* Tools */
 /** An Editor Tool is just a collection of functions that consume state and dispatch actions.

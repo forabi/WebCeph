@@ -1,37 +1,23 @@
-import { handleActions } from 'redux-actions';
-import { Event, StoreKeys } from 'utils/constants';
+import { handleActions } from 'utils/store';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 import { createSelector } from 'reselect';
 
 import values from 'lodash/values';
 import memoize from 'lodash/memoize';
 
-const KEY_IS_IGNORED =  StoreKeys.compatibilityIsIgnored;
-const KEY_IS_BEING_CHEKED = StoreKeys.compatiblityIsBeingChcecked;
-const KEY_MISSING_FEATURES = StoreKeys.missingFeatures;
-
-type CheckResults = StoreEntries.env.compatibility.checkResults;
-type IsBeingChecked = StoreEntries.env.compatibility.isBeingChecked;
-type IsIgnored = StoreEntries.env.compatibility.isIgnored;
-
-
-const isIgnored = handleActions<
-  IsIgnored,
-  Payloads.ignoreCompatiblityCheck | Payloads.enforceCompatibilityCheck
->({
-  [Event.IGNORE_BROWSER_COMPATIBLITY_REQUESTED]: (_, __) => true,
-  [Event.ENFORCE_BROWSER_COMPATIBLITY_REQUESTED]: (_, __) => false,
+const isIgnored = handleActions<'env.compat.isIgnored'>({
+  IGNORE_BROWSER_COMPATIBLITY_REQUESTED: (_, __) => true,
+  ENFORCE_BROWSER_COMPATIBLITY_REQUESTED: (_, __) => false,
 }, false);
 
-
-const isBeingChecked = handleActions<IsBeingChecked, Payloads.isCheckingCompatiblity>({
-  [Event.BROWSER_COMPATIBLITY_CHECK_REQUESTED]: (_, __) => true,
-  [Event.BROWSER_COMPATIBLITY_CHECK_SUCCEEDED]: (_, __) => false,
-  [Event.BROWSER_COMPATIBLITY_CHECK_FAILED]: (_, __) => false,
+const isBeingChecked = handleActions<'env.compat.isBeingChecked'>({
+  BROWSER_COMPATIBLITY_CHECK_REQUESTED: (_, __) => true,
+  BROWSER_COMPATIBLITY_CHECK_SUCCEEDED: (_, __) => false,
+  BROWSER_COMPATIBLITY_CHECK_FAILED: (_, __) => false,
 }, false);
 
-const missingFeatures = handleActions<CheckResults, Payloads.foundMissingFeature>({
-  [Event.BROWSER_COMPATIBLITY_CHECK_MISSING_FEATURE_DETECTED]: (state, { type, payload }) => {
+const missingFeatures = handleActions<'env.compat.results'>({
+  MISSING_BROWSER_FEATURE_DETECTED: (state, { type, payload }) => {
     if (payload === undefined) {
       printUnexpectedPayloadWarning(type, state);
       return state;
@@ -41,8 +27,8 @@ const missingFeatures = handleActions<CheckResults, Payloads.foundMissingFeature
       ...state,
       [userAgent]: {
         ...state[userAgent],
-        missing: {
-          ...state[userAgent].missing,
+        missingFeatures: {
+          ...state[userAgent].missingFeatures,
           [feature.id]: feature,
         },
       },
@@ -50,13 +36,13 @@ const missingFeatures = handleActions<CheckResults, Payloads.foundMissingFeature
   },
 }, { });
 
-export const isCheckingCompatiblity = (state: StoreState): IsBeingChecked => state[KEY_IS_BEING_CHEKED];
+export const isCheckingCompatiblity = (state: StoreState) => state['env.compat.isBeingChecked'];
 
-export const isCompatibilityIgnored = (state: StoreState): IsIgnored => state[KEY_IS_IGNORED];
+export const isCompatibilityIgnored = (state: StoreState) => state['env.compat.isIgnored'];
 
 export const getCheckResults = (state: StoreState) =>
-  (userAgent: string): { missing: { [id: string]: MissingBrowserFeature } } | undefined => {
-    return state[KEY_MISSING_FEATURES][userAgent];
+  (userAgent: string) => {
+    return state['env.compat.results'][userAgent];
   };
 
 export const getMissingFeatures = createSelector(
@@ -64,7 +50,7 @@ export const getMissingFeatures = createSelector(
   (getResults) => memoize((userAgent: string): MissingBrowserFeature[] => {
     const results = getResults(userAgent);
     if (results !== undefined) {
-      return values(results.missing);
+      return values(results.missingFeatures);
     }
     return [];
   })
@@ -85,8 +71,10 @@ export const isBrowserCompatible = createSelector(
   },
 );
 
-export default {
-  [KEY_IS_IGNORED]: isIgnored,
-  [KEY_IS_BEING_CHEKED]: isBeingChecked,
-  [KEY_MISSING_FEATURES]: missingFeatures,
+const reducers: Partial<ReducerMap> = {
+  'env.compat.isIgnored': isIgnored,
+  'env.compat.isBeingChecked': isBeingChecked,
+  'env.compat.results': missingFeatures,
 };
+
+export default reducers;

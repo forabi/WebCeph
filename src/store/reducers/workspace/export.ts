@@ -10,9 +10,9 @@ const isInitializedReducer = handleActions<
   IsExporting,
   any
 >({
-  [Event.EXPORT_FILE_REQUESTED]: (_, __) => true,
-  [Event.EXPORT_FILE_FAILED]: (_, __) => false,
-  [Event.EXPORT_FILE_SUCEEDED]: (_, __) => false,
+  EXPORT_FILE_REQUESTED: (_, __) => true,
+  EXPORT_FILE_FAILED: (_, __) => false,
+  EXPORT_FILE_SUCEEDED: (_, __) => false,
 }, false);
 
 
@@ -24,9 +24,9 @@ const exportErrorReducer = handleActions<
   ExportError,
   any
 >({
-  [Event.EXPORT_FILE_REQUESTED]: (_, __) => null,
-  [Event.EXPORT_FILE_FAILED]: (_, { payload }) => payload,
-  [Event.IGNORE_WORKSPACE_ERROR_REQUESTED]: (_, __) => null,
+  EXPORT_FILE_REQUESTED: (_, __) => null,
+  EXPORT_FILE_FAILED: (_, { payload }) => payload,
+  IGNORE_WORKSPACE_ERROR_REQUESTED: (_, __) => null,
 }, null);
 
 export default {
