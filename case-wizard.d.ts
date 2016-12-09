@@ -1,7 +1,7 @@
 declare const __DEBUG__: boolean;
 declare const __VERSION__: string;
 
-declare type AngularUnit = 'degree' | 'radian';
+type AngularUnit = 'degree' | 'radian';
 type LinearUnit = 'mm' | 'cm' | 'in';
 type LandmarkType = 'angle' | 'point' | 'line' | 'distance' | 'sum';
 
@@ -10,7 +10,7 @@ type LandmarkType = 'angle' | 'point' | 'line' | 'distance' | 'sum';
  * angles, lines and points.
  * Landmarks may also have names and units.
  */
-interface BaseCephaloLandmark {
+interface CephaloLandmark {
   name?: string;
   /**
    * Each landmark must have a symbol which acts as the unique identifier for that landmark.
@@ -38,43 +38,33 @@ interface BaseCephaloLandmark {
   map?(mapper: CephaloMapper, ...args: (GeometricalObject | undefined)[]): GeometricalObject;
 }
 
-interface CephaloPoint extends BaseCephaloLandmark {
+interface CephaloPoint extends CephaloLandmark {
   type: 'point';
 }
 
- interface CephaloLine extends BaseCephaloLandmark {
+ interface CephaloLine extends CephaloLandmark {
   type: 'line';
   unit: LinearUnit;
   components: CephaloPoint[];
 }
 
-interface CephaloDistance extends BaseCephaloLandmark {
+interface CephaloDistance extends CephaloLandmark {
   type: 'distance';
   unit: LinearUnit;
   components: CephaloPoint[];
 }
 
-interface CephaloAngle extends BaseCephaloLandmark {
+interface CephaloAngle extends CephaloLandmark {
   type: 'angle';
   unit: AngularUnit;
   components: CephaloPoint[] | CephaloLine[] | CephaloAngle[];
 }
 
-interface CephaloAngularSum extends BaseCephaloLandmark {
+interface CephaloAngularSum extends CephaloLandmark {
   type: 'sum';
   unit: AngularUnit ;
   components: CephaloAngle[];
 }
-
-// interface CephaloLinearSum extends BaseCephaloLandmark {
-//   type: 'sum';
-//   unit: LinearUnit;
-//   components: CephaloLine[];
-// }
-
-type CephaloSum = CephaloAngularSum; // CephaloLinearSum |;
-
-type CephaloLandmark = CephaloPoint | CephaloLine | CephaloAngle | CephaloDistance | CephaloSum;
 
 /**
  * Describes a geometrical point in a 2D-plane
@@ -128,13 +118,7 @@ type CategorizedAnalysisResults = ReadonlyArray<{
     norm?: number;
     stdDev?: number;
   }>;
-}>
-
-interface BaseViewableAnalysisResult {
-  name: string;
-  indicates: string;
-  severity: string;
-}
+}>;
 
 interface Analysis {
   id: string;
@@ -166,235 +150,31 @@ interface CephaloMapper {
 type StepState = 'done' | 'current' | 'pending' | 'evaluating';
 type Step = CephaloLandmark & { title: string, state: StepState };
 
-type GenericState = { [id: string]: any };
 type GenericError = { message: string, code?: number };
-type WorkerType = 'image_worker' | 'tracing_worker';
 
-interface WorkerIntrinsicDetails {
+type WorkerDetails = {
   id: string;
-  type: WorkerType;
-}
-
-type WorkerDetails = WorkerIntrinsicDetails & {
+  type: 'image_worker' | 'tracing_worker';
   isBusy: boolean;
   error: null | GenericError; 
 };
-
-type WorkerUpdate = {
-  isBusy?: boolean;
-  error?: null | GenericError;
-}
 
 type TracingMode = 'auto' | 'manual' | 'assisted';
 
 type ExportFileFormat = 'wceph_v1' | 'jpeg';
 type ExportFileOptions = any; // @TODO
 
-declare namespace StoreEntries {
-  namespace env {
-    namespace connection {
-      type isOffline = boolean;
-    }
-    namespace init {
-      type isInitialized = boolean;
-    }
-    namespace app {
-      type isUpdating = boolean;
-      type isCaching = boolean;
-      type isAvailableOffline = boolean;
-    }
-    namespace persistence {
-      type isSupported = boolean;
-      type isSaving = boolean;
-      type isLoading = boolean;
-      type isUpgrading = boolean;
-      type saveError = GenericError | null;
-      type loadError = GenericError | null;
-    }
-    namespace compatibility {
-      type isIgnored = boolean;
-      type isBeingChecked = boolean;
-      interface checkResults {
-        [userAgent: string]: {
-          missing: {
-            [id: string]: MissingBrowserFeature;
-          },
-        }
-      }
-    }
-  }
+type GenericAction = {
+  type: keyof Events;
+  payload?: any;
+};
 
-  namespace workspace {
-    namespace fileExport {
-      type isExporting = boolean;
-      type error = GenericError | null;
-    }
-    namespace analysis {
-      type activeId = string | null;
-      type isLoading = boolean;
-      type loadError = GenericError | null;
-      namespace results {
-        type areShown = boolean;
-      }
-      namespace tracing {
-        type mode = TracingMode;
-        type scaleFactor = number | null;
-        namespace landmarks {
-          type manual = {
-            [symbol: string]: GeometricalObject;
-          };
-        }
-        namespace steps {
-          type skipped = {
-            [symbol: string]: boolean;
-          };
-        }
-      }
-    }
-    namespace canvas {
-      type width = number;
-      type height = number;
-      type top = number | null;
-      type left = number | null;
-      type mouseX = number | null;
-      type mouseY = number | null;
-      type highlightedStep = string | null; 
-      type activeTool = string;
-      /** 1 indicates the original image size */
-      type scaleValue = number;
-      /** A null value indicates that the scale origin is 50% 50% */
-      type scaleOrigin = null | { x: number, y: number };
-    }
-    namespace image {
-      type name = string | null;
-      type type = 'ceph_lateral' | 'ceph_pa' | 'panoramic' | null;
-      type data = string | null;
-      type width = number | null;
-      type height = number | null;
-      type loadError = GenericError | null;
-      namespace suggestions {
-        type shouldFlipX = boolean;
-        type shouldFlipY = boolean;
-        type probablyOfType = workspace.image.type;
-      }
-    }
-    type workers = { [workerId: string]: WorkerDetails };
-  }
-}
+type Action<K extends keyof Events> = {
+  type: K;
+  payload: Events[K];
+};
 
-declare namespace Payloads {
-  type loadPersistedState = void;
-  // @TODO: use partial mapped types in TS >= 2.1
-  type loadPersistedStateSucceeded = { [key: string]: any };
-  type loadPersistedStateFailed = GenericError;
-
-  type persistStateRequested = void;
-  type persistStateSucceeded = void;
-  type persistStateFailed = GenericError;
-
-
-  type clearPersistedStateRequested = void;
-  type clearPersistedStateSucceeded = void;
-  type clearPersistedStateFailed = GenericError;
-
-  type connectionStatusChanged = {
-    isOffline: boolean;
-    isSlow?: boolean;
-    isMetered?: boolean;
-  };
-
-  type setAppUpdateStatus = {
-    /**
-     * A null value indicates unknown progress,
-     * undefined indicates no change in value
-     * */
-    progress?: number | null;
-    complete: boolean;
-    error?: GenericError;
-  };
-
-  type setAppCachingStatus = {
-    /**
-     * A null value indicates unknown progress,
-     * undefined indicates no change in value
-     * */
-    progress?: number | null;
-    complete: boolean;
-    error?: GenericError;
-  };
-
-  type exportFile = {
-    format: ExportFileFormat;
-    options?: ExportFileOptions;
-  };
-
-  type importFileRequested = File;
-  type importFileFailed = GenericError;
-  type importFileSucceeded = void;
-
-  type exportProgress = {
-    value: number,
-    data?: any; // @TODO;
-  }
-
-  type exportFileFailed = GenericError;
-  type exportFileSucceeded = void;
-
-  interface addManualLandmark {
-    symbol: string;
-    value: GeometricalObject;
-  }
-  type undo = void;
-  type redo = void;
-  type flipImageX = void;
-  type flipImageY = void;
-  type invertColors = void;
-  type setContrast = number;
-  type setBrightness = number;
-  type resetWorkspace = void;
-  type ignoreWorkspaceError = void;
-  type showAnalysisResults = void;
-  type hideAnalysisResults = void;
-
-  type removeManualLandmark = string;
-  type ignoreCompatiblityCheck = void;
-  type enforceCompatibilityCheck = void;
-  type isCheckingCompatiblity = void;
-  type setTracingMode = TracingMode;
-  type setScaleFactor = number;
-  type unsetScaleFactor = void;
-  type skipStep = string;
-  type unskipStep = skipStep;
-  type foundMissingFeature = {
-    userAgent: string;
-    feature: MissingBrowserFeature;
-  };
-  type highlightStep = string;
-  type unhighlightStep = void;
-  type setCursor = string;
-  type removeCursors = string[];
-  type setScale = { scale: number, x?: number, y?: number };
-  type setActiveTool = string;
-  type disableActiveTool = setActiveTool;
-  type enableTools = setActiveTool;
-  type removeActiveTool = string;
-  type updateCanvasSize = { top: number, left: number, width: number, height: number };
-  type updateMousePosition = { x: number, y: number };
-  type imageLoadSucceeded = { data: string, name: string, height: number, width: number };
-  type imageLoadFailed = { message: string; };
-  type imageLoadRequested = File;
-  type imageLoadFromURLRequested = { url: string; };
-  type analysisLoadFailed = GenericError;
-  type analysisLoadRequested = string;
-  type analysisLoadSucceeded = string;
-  type addWorker = WorkerDetails;
-  type removeWorker = string;
-  type updateWorkerStatus = { id: string; } & WorkerUpdate;
-}
-
-type GenericAction = { type: string, payload?: any };
-type Action<T> = GenericAction & { payload?: T };
-type DispatchFunction = (action: GenericAction) => any;
+type GenericDispatch = (action: GenericAction) => any;
 
 interface UndoableState<T> {
   past: T[];
@@ -402,37 +182,263 @@ interface UndoableState<T> {
   future: T[];
 }
 
-type FinalState = GenericState;
+type ImageType = (
+  'ceph_lateral' | 'ceph_pa' |
+  'photo_lateral' | 'photo_frontal' |
+  'panoramic'
+);
 
 interface StoreState {
-  'env.compatiblity.isIgnored': boolean;
-  'env.compatiblity.missingFeatures': MissingBrowserFeature[];
-  'env.compatiblity.isBeingChecked': boolean;
-  'cephalo.workspace.image.data': string | null;
-  'cephalo.workspace.error': { message: string } | null;
-  'cephalo.workspace.canvas.height': number;
-  'cephalo.workspace.canvas.width': number;
-  'cephalo.workspace.image.isLoading': boolean;
-  'cephalo.workspace.image.isCephalo': boolean;
-  'cephalo.workspace.image.isFrontal': boolean;
-  'cephalo.workspace.workers': {
-    [id: string]: {
-      isBusy: boolean,
-      error?: { message: string },
-    },
+  'env.connection.isOffline': boolean;
+  'app.init.isInitialized': boolean;
+  'app.status.isUpdating': boolean;
+  'app.status.isCaching': boolean;
+  'app.status.isCached': boolean;
+  'app.persistence.isSupported': boolean;
+  'app.persistence.isSaving': boolean;
+  'app.persistence.isLoading': boolean;
+  'app.persistence.isUpgrading': boolean;
+  'app.persistence.save.error': GenericError | null;
+  'app.persistence.load.error': GenericError | null;
+  'env.compat.isIgnored': boolean;
+  'env.compat.isBeingChecked': boolean;
+  'env.compat.results': {
+    [userAgent: string]: {
+      missingFeatures: {
+        [featureId: string]: MissingBrowserFeature;
+      };
+    };
   };
-  'cephalo.workspace.image.shouldFlipX': boolean;
-  'cephalo.workspace.image.shouldFlipY': boolean;
-  'cephalo.workspace.image.flipX': boolean;
-  'cephalo.workspace.image.flipY': boolean;
-  'cephalo.workspace.image.brightness': number;
-  'cephalo.workspace.image.invert': boolean;
-  'cephalo.workspace.image.contrast': number;
-  'cephalo.workspace.analysis.activeAnalysis': Analysis | null;
-  'cephalo.workspace.analysis.stepsBeingEvaluated': { [symbol: string]: true; };
-  'cephalo.workspace.analysis.isLoading': boolean;
-  'cephalo.workspace.analysis.results.areShown': boolean;
-}
+  'workspace.export.isExporting': boolean;
+  'workspace.export.error': GenericError | null;
+  'workspace.import.isImporting': boolean;
+  'workspace.import.error': boolean;
+  'workspace.mode': 'tracing' | 'superimposition';
+  'workspace.canvas.dimensions': {
+    width: number;
+    height: number;
+  };
+  'workspace.canvas.mouse.position': null | {
+    x: number;
+    y: number;
+  };
+  'workspace.canvas.tools.activeToolId': string;
+  'workspace.canvas.scale.value': number;
+  'workspace.canvas.scale.offset': {
+    top: number;
+    left: number;
+  };
+  /** Data indexed by image ID */
+  'workspace.images': {
+    [imageId: string]: {
+      name: string | null;
+      data: string;
+      /** A null value indicates that the image type is not set or is unknown */
+      type: ImageType | null;
+      width: number;
+      height: number;
+      scaleFactor: number | null;
+      flipX: boolean;
+      flipY: boolean;
+      /** A value between 0 and 1, defaults to 0.5 */
+      brightness: number;
+      /** A value between 0 and 1, defaults to 0.5 */
+      contrast: number;
+      /** Wether the image colors should be inverted */
+      invertColors: boolean;
+      tracing: {
+        mode: 'auto' | 'assisted' | 'manual';
+        scaleFactor: number | null;
+        manualLandmarks: {
+          [symbol: string]: GeometricalObject;
+        };
+        /** Steps to skip in non-manual tracing modes */
+        skippedSteps: {
+          [symbol: string]: true;
+        };
+      };
+      analysis: {
+        /** Last used analysis for this image */
+        activeId: string | null;
+      };
+    };
+  };
+  'workspace.images.activeImageId': string | null;
+  'workspace.superimposition': {
+    mode: 'auto' | 'manual' | 'assisted';
+    /** An order list of superimposed images. */
+    imageIds: string[];
+  };
+  'workspace.treatment.stages': {
+    /** User-specified order of treatment stages */
+    order: string[];
+    data: {
+      [stageId: string]: {
+        /** An ordered list of images assigned to this treatment stage */
+        imageIds: string[];
+      };
+    }
+  };
+  'workspace.workers': {
+    [workerId: string]: WorkerDetails;
+  };
+  'workspace.analysis.lastUsedId': {
+    activeId: string | null;
+  };
+};
+
+type ToolId = (
+  'ADD_POINT' |
+  'REMOVE_LANDMARK' |
+  'ZOOM_WITH_CURSOR'
+);
+
+interface Events {
+  CONNECTION_STATUS_CHANGED: Partial<{
+    isOffline: boolean;
+    isSlow: boolean;
+    isMetered: boolean;
+  }>;
+  APP_CACHING_STATUS_CHANGED: Partial<{
+    /**
+     * A null value indicates unknown progress,
+     * undefined indicates no change in value
+     * */
+    progress: number | null;
+    complete: boolean;
+    error: GenericError;
+  }>;
+  WORKER_CREATED: WorkerDetails;
+  WORKER_TERMINATED: string;
+  WORKER_STATUS_CHANGED: Pick<WorkerDetails, 'isBusy' | 'error'>;
+  APP_IS_READY: void;
+  LOAD_IMAGE_FROM_URL_REQUESTED: {
+    url: string;
+  };
+  EXPORT_FILE_REQUESTED: {
+    format: ExportFileFormat;
+    options?: ExportFileOptions;
+  };
+  EXPORT_FILE_SUCEEDED: void,
+  EXPORT_FILE_FAILED: GenericError,
+  EXPORT_PROGRESS_CHANGED: {
+    value: number;
+    data?: any; // @TODO;
+  };
+  IMPORT_FILE_REQUESTED: File;
+  IMPORT_FILE_SUCCEEDED: void;
+  IMPORT_FILE_FAILED: GenericError;
+  IMPORT_PROGRESS_CHANGED: {
+    value: number;
+    data?: any; // @TODO;
+  },
+  LOAD_IMAGE_REQUESTED: {
+    id: string;
+    file: File;
+  };
+  LOAD_IMAGE_SUCCEEDED: {
+    id: string;
+    name: string;
+    height: number;
+    width: number;
+  };
+  LOAD_IMAGE_FAILED: GenericError;
+  CANVAS_RESIZED: {
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  };
+  ADD_MANUAL_LANDMARK_REQUESTED: {
+    imageId: string;
+    symbol: string;
+    value: GeometricalObject;
+  };
+  ADD_UNKOWN_MANUAL_LANDMARK_REQUESTED: {
+    imageId: string;
+    value: GeometricalObject;
+  }
+  REMOVE_MANUAL_LANDMARK_REQUESTED: {
+    imageId: string;
+    symbol: string;
+  };
+  FLIP_IMAGE_X_REQUESTED: {
+    imageId: string;
+  };
+  FLIP_IMAGE_Y_REQUESTED: {
+    imageId: string;
+  };
+  SET_IMAGE_BRIGHTNESS_REQUESTED: {
+    imageId: string;
+    /** A value between 0 and 1 */
+    value: number;
+  };
+  SET_IMAGE_CONTRAST_REQUESTED: {
+    imageId: string;
+    /** A value between 0 and 1 */
+    value: number;
+  };
+  INVERT_IMAGE_REQUESTED: {
+    imageId: string;
+  },
+  RESET_WORKSPACE_REQUESTED: void;
+  IGNORE_WORKSPACE_ERROR_REQUESTED: void;
+  MOUSE_POSITION_CHANGED: {
+    x: number;
+    y: number;
+  };
+  REDO_REQUESTED: void;
+  UNDO_REQUESTED: void;
+  SET_SCALE_REQUESTED: {
+    imageId: string;
+    scale: number;
+  };
+  HIGHLIGHT_STEP_ON_CANVAS_REQUESTED: {
+    symbol: string;
+  };
+  UNHIGHLIGHT_STEP_ON_CANVAS_REQUESTED: void;
+  SET_ACTIVE_TOOL_REQUESTED: ToolId;
+  SET_ANALYSIS_REQUESTED: string,
+  SET_ANALYSIS_SUCCEEDED: void,
+  SET_ANALYSIS_FAILED: GenericError & {
+    analysisId: string
+  };
+  SET_TRACING_MODE_REQUESTED: {
+    imageId: string;
+    mode: TracingMode;
+  };
+  SKIP_MANUAL_STEP_REQUESTED: {
+    imageId: string;
+    step: string;
+  };
+  UNSKIP_MANUAL_STEP_REQUESTED: {
+    imageId: string;
+    step: string;
+  };
+  SET_SCALE_FACTOR_REQUESTED: {
+    imageId: string;
+    value: number;
+  };
+  UNSET_SCALE_FACTOR_REQUESTED: {
+    imageId: string;
+  };
+  TOGGLE_ANALYSIS_RESULTS_REQUESTED: void;
+  BROWSER_COMPATIBLITY_CHECK_REQUESTED: void;
+  BROWSER_COMPATIBLITY_CHECK_SUCCEEDED: void;
+  BROWSER_COMPATIBLITY_CHECK_FAILED: GenericError;
+  IGNORE_BROWSER_COMPATIBLITY_REQUESTED: void;
+  ENFORCE_BROWSER_COMPATIBLITY_REQUESTED: void;
+  MISSING_BROWSER_FEATURE_DETECTED: MissingBrowserFeature;
+  LOAD_PERSISTED_STATE_REQUESTED: void;
+  LOAD_PERSISTED_STATE_SUCCEEDED: void;
+  LOAD_PERSISTED_STATE_FAILED: GenericError;
+  PERSIST_STATE_STARTED: void,
+  PERSIST_STATE_SUCCEEDED: void,
+  PERSIST_STATE_FAILED: GenericError,
+  CLEAR_PRESISTED_STATE_REQUESTED: void,
+  CLEAR_PRESISTED_STATE_SUCCEEDED: void,
+  CLEAR_PERSISTED_STATE_FAILED: GenericError,
+};
 
 /* Tools */
 /** An Editor Tool is just a collection of functions that consume state and dispatch actions.
@@ -442,49 +448,49 @@ interface EditorTool {
   /**
    * Triggered when mouse enters the canvas.
    */
-  onCanvasMouseEnter?(dispatch: DispatchFunction): void;
+  onCanvasMouseEnter?(dispatch: GenericDispatch): void;
   /**
    * Triggered when mouse leaves the canvas.
    */
-  onCanvasMouseLeave?(dispatch: DispatchFunction): void;
+  onCanvasMouseLeave?(dispatch: GenericDispatch): void;
 
   /**
    * Triggered when the left mouse button is clicked.
    */
-  onCanvasLeftClick?(dispatch: DispatchFunction, x: number, y: number): void;
+  onCanvasLeftClick?(dispatch: GenericDispatch, x: number, y: number): void;
 
   /**
    * Triggered when the right mouse button is clicked.
    */
-  onCanvasRightClick?(dispatch: DispatchFunction, x: number, y: number): void;
+  onCanvasRightClick?(dispatch: GenericDispatch, x: number, y: number): void;
   
   /**
    * Triggered when the mouse scrolls over the canvas.
    * Useful for implementing zoom functionality.
    */
-  onCanvasMouseWheel?(dispatch: DispatchFunction, x: number, y: number, delta: number);
+  onCanvasMouseWheel?(dispatch: GenericDispatch, x: number, y: number, delta: number);
 
   /**
    * Triggered when the mouse moves over the canvas.
    * Useful for implementing lens functionality.
    */
-  onCanvasMouseMove?(dispatch: DispatchFunction, x: number, y: number);
+  onCanvasMouseMove?(dispatch: GenericDispatch, x: number, y: number);
 
   /**
    * Triggered when the mouse enters a landmark.
    */
-  onLandmarkMouseEnter?(dispatch: DispatchFunction, symbol: string): void;
+  onLandmarkMouseEnter?(dispatch: GenericDispatch, symbol: string): void;
 
   /**
    * Triggered when the mouse enters a landmark.
    */
-  onLandmarkMouseLeave?(dispatch: DispatchFunction, symbol: string): void;
+  onLandmarkMouseLeave?(dispatch: GenericDispatch, symbol: string): void;
 
   /**
    * Triggered when a landmark is clicked.
    * Useful for manipulating previously added landmarks.
    */
-  onLandmarkClick?(dispatch: DispatchFunction, symbol: string, e: MouseEvent): void;
+  onLandmarkClick?(dispatch: GenericDispatch, symbol: string, e: MouseEvent): void;
 
   /**
    * Called every time the mouse enters a landmark.
@@ -502,14 +508,14 @@ interface EditorTool {
   getPropsForLandmark?(symbol: string): { [id: string]: any } | undefined;
 }
 
-/** An EditorToolCreate is a function that is used to create editor tools.
- * It recieves the dispatch function as first argument and the state as the second arguemtn.
+/** An EditorToolCreator is a function that is used to create editor tools.
+ * It recieves the store state as the first argument.
  */
-type EditorToolCreator = (state: GenericState) => EditorTool;
+type EditorToolCreator = (state: StoreState) => EditorTool;
 
 type ValidationError = GenericError & {
-  type: number,
-  data?: any,
+  type: number;
+  data?: any;
 };
 
 type ExportProgressCallback = (
@@ -556,7 +562,7 @@ namespace WCeph {
    * returns an File blob to be saved.
    */
   type Exporter = (
-    state: GenericState,
+    state: StoreState,
     options: ExportOptions,
     progressCallback?: ExportProgressCallback,
   ) => Promise<File>;

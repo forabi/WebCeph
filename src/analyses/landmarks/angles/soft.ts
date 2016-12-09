@@ -10,7 +10,7 @@ import { flipVector } from 'analyses/helpers';
  * The angle formed by the intersection of FH and this
  * profile line is called the Z-angle.
  */
-export const Z: BaseCephaloLandmark = {
+export const Z: CephaloLandmark = {
   symbol: 'Z',
   type: 'angle',
   name: 'Merrifield\'s Z Angle',
