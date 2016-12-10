@@ -39,7 +39,7 @@ const importFile: WCeph.Importer = async (fileToImport, options) => {
         '[BUG] Failed to import file. ' +
         'Trying to import an invalid WCeph format. ' + (
           json.debug ? (
-            'Looks like the file have been exported ' +
+            'Looks like the file has been exported ' +
             'while in development.'
           ) : (
             'This might be a bug in validation or import. '
@@ -63,7 +63,7 @@ const importFile: WCeph.Importer = async (fileToImport, options) => {
     async (path: string, id: string) => {
       const blob = await zip.file(path).async('blob');
       const name = json.data[id].name;
-      const imageFile = new File([blob], name || id, { type: 'image/bmp' });
+      const imageFile = new File([blob], name || id);
       return importFileRequested(imageFile);
     }
   ));
