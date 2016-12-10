@@ -17,7 +17,7 @@ export const Z: CephaloLandmark = {
   unit: 'degree',
   components: [flipVector(FH_PLANE), Li, Ls, softPog],
   map: (
-    mapper: CephaloMapper,
+    { isBehind }: CephaloMapper,
     FH: GeometricalVector,
     Li: GeometricalPoint,
     Ls: GeometricalPoint,
@@ -29,7 +29,7 @@ export const Z: CephaloLandmark = {
       x2: softPog.x,
       y2: softPog.y, 
     };
-    if (mapper.isBehind(Li, LsSoftPog)) {
+    if (isBehind(Li, LsSoftPog)) {
       return {
         vectors: [FH, LsSoftPog],
       };
