@@ -1,4 +1,3 @@
-import { Event } from 'utils/constants';
 import { Store, Dispatch, Middleware } from 'redux';
 import { saveAs } from 'file-saver';
 
@@ -6,13 +5,14 @@ import { exportFileSucceeded, exportFileFailed } from 'actions/workspace';
 
 import createExport from 'utils/importers/wceph/v1/export';
 
-const middleware: Middleware = ({ getState }: Store<any>) => (next: Dispatch<any>) => async (action: Action<any>) => {
-  const { type } = action;
-  if (type === Event.EXPORT_FILE_REQUESTED) {
+import { isActionOfType } from 'utils/store';
+
+const middleware: Middleware = ({ getState }: Store<StoreState>) => (next: Dispatch<any>) => async (action: Action<any>) => {
+  if (isActionOfType(action, 'EXPORT_FILE_REQUESTED')) {
     next(action);
     console.info('Exporting file...');
     try {
-      const payload: Payloads.exportFile = action.payload;
+      const payload = action.payload;
       if (payload.format === 'wceph_v1') {
         const options: WCeph.ExportOptions = { };
         const state = getState();
@@ -25,7 +25,7 @@ const middleware: Middleware = ({ getState }: Store<any>) => (next: Dispatch<any
         );
         throw new Error('Incompatible file type');
       }
-      return next(exportFileSucceeded());
+      return next(exportFileSucceeded(void 0));
     } catch (e) {
       console.error(
         `Failed to export file.`,

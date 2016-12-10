@@ -212,7 +212,7 @@ interface StoreState {
   };
   'workspace.canvas.tools.activeToolId': string;
   'workspace.canvas.scale.value': number;
-  'workspace.canvas.scale.offset': {
+  'workspace.canvas.scale.offset': null | {
     top: number;
     left: number;
   };
@@ -298,7 +298,7 @@ interface Events {
   }>;
   WORKER_CREATED: WorkerDetails;
   WORKER_TERMINATED: string;
-  WORKER_STATUS_CHANGED: Pick<WorkerDetails, 'isBusy' | 'error'>;
+  WORKER_STATUS_CHANGED: Pick<WorkerDetails, 'id'> & Pick<WorkerDetails, 'isBusy' | 'error'>;
   APP_IS_READY: void;
   LOAD_IMAGE_FROM_URL_REQUESTED: {
     url: string;
@@ -381,6 +381,11 @@ interface Events {
     imageId: string;
     scale: number;
   };
+  SET_SCALE_OFFSET_REQUESTED: {
+    imageId: string;
+    top: number;
+    left: number;
+  };
   HIGHLIGHT_STEP_ON_CANVAS_REQUESTED: {
     symbol: string;
   };
@@ -421,7 +426,7 @@ interface Events {
     feature: MissingBrowserFeature;
   };
   LOAD_PERSISTED_STATE_REQUESTED: void;
-  LOAD_PERSISTED_STATE_SUCCEEDED: void;
+  LOAD_PERSISTED_STATE_SUCCEEDED: Partial<StoreState>;
   LOAD_PERSISTED_STATE_FAILED: GenericError;
   PERSIST_STATE_STARTED: void,
   PERSIST_STATE_SUCCEEDED: void,

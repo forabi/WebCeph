@@ -1,32 +1,23 @@
-import { handleActions } from 'redux-actions';
-import { Event, StoreKeys } from 'utils/constants';
+import { handleActions } from 'utils/store';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 import { createSelector } from 'reselect';
 import omit from 'lodash/omit';
 import has from 'lodash/has';
 import isEmpty from 'lodash/isEmpty';
 
-const KEY_WORKERS = StoreKeys.workers;
+const KEY_WORKERS: StoreKey = 'workspace.workers';
 
-type Workers = StoreEntries.workspace.workers;
-
-const defaultWorkers: Workers = { };
-
-const workersReducer = handleActions<
-  Workers,
-  Payloads.addWorker | Payloads.removeWorker | Payloads.updateWorkerStatus
->(
+const workersReducer = handleActions<typeof KEY_WORKERS>(
   {
-    WORKER_CREATED: (state, action) => {
-      const payload = action.payload as Payloads.addWorker | undefined;
+    WORKER_CREATED: (state, { payload, type }) => {
       if (payload === undefined) {
-        printUnexpectedPayloadWarning(action.type, state);
+        printUnexpectedPayloadWarning(type, state);
         return state;
       }
       const workerId = payload.id;
       if (workerId === undefined) {
         console.error(
-          `Did not expect ${action.type} to be dispatched ` +
+          `Did not expect ${type} to be dispatched ` +
           `with payload that does not have an 'id' property. ` +
           `We do not know how to add this worker. ` +
           `Returning current state.`,
@@ -35,7 +26,7 @@ const workersReducer = handleActions<
       }
       if (has(state, workerId)) {
         console.error(
-          `Did not expect ${action.type} to be dispatched ` +
+          `Did not expect ${type} to be dispatched ` +
           `with a worker that is already registered. ` +
           `Returning current state.`,
         );
@@ -43,32 +34,30 @@ const workersReducer = handleActions<
       }
       return { ...state, [workerId]: payload };
     },
-    WORKER_TERMINATED: (state, action) => {
-      const workerId = action.payload as Payloads.removeWorker | undefined;
+    WORKER_TERMINATED: (state, { payload: workerId, type }) => {
       if (workerId === undefined) {
-        printUnexpectedPayloadWarning(action.type, state);
+        printUnexpectedPayloadWarning(type, state);
         return state;
       }
       if (!has(state, workerId)) {
         console.error(
-          `Did not expect ${action.type} to be dispatched ` +
+          `Did not expect ${type} to be dispatched ` +
           `with a worker that has not been registered previously. ` +
           `Returning current state.`,
         );
         return state;
       }
-      return omit(state, workerId) as Workers;
+      return omit(state, workerId) as typeof state;
     },
-    WORKER_STATUS_CHANGED: (state, action) => {
-      const patch = action.payload as Payloads.updateWorkerStatus | undefined;
+    WORKER_STATUS_CHANGED: (state, { payload: patch, type }) => {
       if (patch === undefined) {
-        printUnexpectedPayloadWarning(action.type, state);
+        printUnexpectedPayloadWarning(type, state);
         return state;
       }
       const workerId = patch.id;
       if (workerId === undefined) {
         console.error(
-          `Did not expect ${action.type} to be dispatched ` +
+          `Did not expect ${type} to be dispatched ` +
           `with payload that does not have an 'id' property. ` +
           `We do not know which worker to update. ` +
           `Returning current state.`,
@@ -77,7 +66,7 @@ const workersReducer = handleActions<
       }
       if (workerId === undefined) {
         console.error(
-          `Did not expect ${action.type} to be dispatched ` +
+          `Did not expect ${type} to be dispatched ` +
           `with a worker that has not been registered previously. ` +
           `Returning current state.`,
         );
@@ -90,16 +79,16 @@ const workersReducer = handleActions<
       };
     },
   },
-  defaultWorkers,
+  { },
 );
 
-export default {
+const reducers: Partial<ReducerMap> = {
   [KEY_WORKERS]: workersReducer,
 };
 
-export const getWorkers = (state: StoreState): Workers => {
-  return state[KEY_WORKERS];
-};
+export default reducers;
+
+export const getWorkers = (state: StoreState) => state[KEY_WORKERS];
 
 export const isPerformingBackgroundWork = (state: StoreState): boolean => {
   return !isEmpty(state[KEY_WORKERS]);

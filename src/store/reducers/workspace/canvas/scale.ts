@@ -1,16 +1,13 @@
-import { handleActions } from 'redux-actions';
-import { Event, StoreKeys } from 'utils/constants';
+import { handleActions } from 'utils/store';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 
-type ScaleValue = StoreEntries.workspace.canvas.scaleValue;
-type ScaleOrigin = StoreEntries.workspace.canvas.scaleOrigin;
+const KEY_SCALE: StoreKey = 'workspace.canvas.scale.value';
+const KEY_SCALE_ORIGIN: StoreKey = 'workspace.canvas.scale.offset';
 
-const KEY_SCALE = StoreKeys.scaleValue;
-const KEY_SCALE_ORIGIN = StoreKeys.scaleOrigin;
-const defaultScale: ScaleValue = 1;
-const defaultOrigin: ScaleOrigin = null;
+const defaultScale = 1;
+const defaultOrigin = null;
 
-const sacleValueReducer = handleActions<ScaleValue, Payloads.setScale>(
+const sacleValueReducer = handleActions<typeof KEY_SCALE>(
   {
     SET_SCALE_REQUESTED: (state, { type, payload }) => {
       if (payload === undefined) {
@@ -30,31 +27,33 @@ const sacleValueReducer = handleActions<ScaleValue, Payloads.setScale>(
   defaultScale,
 );
 
-const scaleOriginReducer = handleActions<ScaleOrigin, Payloads.setScale>(
+const scaleOriginReducer = handleActions<typeof KEY_SCALE_ORIGIN>(
   {
-    SET_SCALE_REQUESTED: (state, { type, payload }) => {
+    SET_SCALE_OFFSET_REQUESTED: (state, { type, payload }) => {
       if (payload === undefined) {
         printUnexpectedPayloadWarning(type, state);
         return state;
       }
-      if (payload.x === undefined || payload.y === undefined) {
+      if (payload.left === undefined || payload.top === undefined) {
         return null;
       }
-      if (payload.x < 0 || payload.y < 0) {
+      if (payload.left < 0 || payload.top < 0) {
         return state;
       }
-      return { x: Math.round(payload.x), y: Math.round(payload.y) };
+      return {
+        top: Math.round(payload.top),
+        left: Math.round(payload.left),
+      };
     },
     RESET_WORKSPACE_REQUESTED: () => defaultOrigin,
   },
   defaultOrigin,
 );
 
-
 export default {
   [KEY_SCALE]: sacleValueReducer,
   [KEY_SCALE_ORIGIN]: scaleOriginReducer,
 };
 
-export const getScale = (state: StoreState) => state[KEY_SCALE] as ScaleValue;
-export const getScaleOrigin = (state: StoreState) => state[KEY_SCALE_ORIGIN] as ScaleOrigin;
+export const getScale = (state: StoreState) => state[KEY_SCALE];
+export const getScaleOrigin = (state: StoreState) => state[KEY_SCALE_ORIGIN];

@@ -1,4 +1,3 @@
-import { Event } from 'utils/constants';
 import { Store, Middleware } from 'redux';
 
 import find from 'lodash/find';
@@ -9,6 +8,8 @@ import {
   importFileSucceeded,
   importFileFailed,
 } from 'actions/workspace';
+
+import { isActionOfType } from 'utils/store';
 
 import importWCeph from 'utils/importers/wceph/v1/import';
 import importImage from 'utils/importers/image/import';
@@ -30,23 +31,22 @@ const importers = [
 
 const middleware: Middleware = ({ dispatch }: Store<any>) =>
   (next: GenericDispatch) => async (action: Action<any>) => {
-    const { type } = action;
     try {
-      if (type === Event.LOAD_IMAGE_FROM_URL_REQUESTED) {
+      if (isActionOfType(action, 'LOAD_IMAGE_FROM_URL_REQUESTED')) {
         next(action);
-        const { url }: Payloads.imageLoadFromURLRequested = action.payload;
+        const { url } = action.payload;
         const blob = await (await fetch(url)).blob();
         const file = new File([blob], 'demo_image');
         return dispatch(importFileRequested(file));
-      } else if (type === Event.IMPORT_FILE_REQUESTED) {
+      } else if (isActionOfType(action, 'IMPORT_FILE_REQUESTED')) {
         next(action);
-        const file: Payloads.importFileRequested = action.payload;
+        const file = action.payload;
         console.info('Importing file...', file.name);
         const importer = find(importers, ({ doesMatch }) => doesMatch(file));
         if (importer) {
           const actions = await importer.importFn(file, { });
           console.log('actions', actions);
-          next(importFileSucceeded());
+          next(importFileSucceeded(void 0));
           each(actions, dispatch);
         } else {
           console.warn(

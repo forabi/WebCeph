@@ -23,3 +23,7 @@ export function handleActions<Key extends StoreKey>(
     return defaultState;
   };
 }
+
+export function isActionOfType<T extends ActionType>(action: GenericAction, type: T): action is Action<T> {
+  return type === action.type;
+}

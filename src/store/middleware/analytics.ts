@@ -1,11 +1,10 @@
-import { Event } from 'utils/constants';
 import find from 'lodash/find';
 import { Store, Dispatch, Middleware } from 'redux';
 
-const loggable = [
-  Event.ADD_MANUAL_LANDMARK_REQUESTED,
-  Event.REMOVE_MANUAL_LANDMARK_REQUESTED,
-  Event.SHOW_ANALYSIS_RESULTS_REQUESTED,
+const loggable: ActionType[] = [
+  'ADD_MANUAL_LANDMARK_REQUESTED',
+  'REMOVE_MANUAL_LANDMARK_REQUESTED',
+  'TOGGLE_ANALYSIS_RESULTS_REQUESTED',
 ];
 
 const isLoggable = (type: string) => {

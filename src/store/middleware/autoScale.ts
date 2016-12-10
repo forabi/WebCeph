@@ -1,4 +1,3 @@
-import { Event } from 'utils/constants';
 import { Store, Middleware } from 'redux';
 
 import {
@@ -9,13 +8,14 @@ import {
   getCanvasSize,
 } from 'store/reducers/workspace/canvas';
 
+import { isActionOfType } from 'utils/store';
+
 const middleware: Middleware = ({ getState, dispatch }: Store<any>) =>
-  (next: GenericDispatch) => async (action: Action<any>) => {
-    const { type } = action;
-    if (type !== Event.LOAD_IMAGE_SUCCEEDED) {
+  (next: GenericDispatch) => async (action: GenericAction) => {
+    if (!isActionOfType(action, 'LOAD_IMAGE_SUCCEEDED')) {
       return next(action);
     } else {
-      const { height, width }: Payloads.imageLoadSucceeded = action.payload;
+      const { height, width } = action.payload;
       try {
         const {
           width: canvasWidth,

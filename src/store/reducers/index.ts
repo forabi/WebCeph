@@ -1,7 +1,7 @@
 import env from './env';
 import workspace from './workspace';
 
-const reducers = {
+const reducers: ReducerMap = {
   ...workspace,
   ...env,
 };

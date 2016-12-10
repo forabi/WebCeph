@@ -1,51 +1,31 @@
-import { handleAction } from 'redux-actions';
-import { wrapWithDefaultState, reduceReducers } from 'store/helpers';
-import { Event, StoreKeys } from 'utils/constants';
+import { handleActions } from 'utils/store';
 import Tools, { ToolsIds } from 'editorTools';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 import { createSelector } from 'reselect';
 
-type ToolId = StoreEntries.workspace.canvas.activeTool;
+const KEY_ACTIVE_TOOL: StoreKey = 'workspace.canvas.tools.activeToolId';
+const defaultTool = ToolsIds.ADD_POINT;
 
-const KEY_ACTIVE_TOOL = StoreKeys.activeTool;
-const defaultTool: ToolId = ToolsIds.ADD_POINT;
-
-const setActiveTool = handleAction<ToolId, Payloads.setActiveTool>(
-  Event.TOGGLE_TOOL_REQUESTED,
-  (state, { type, payload: symbol }) => {
-    if (symbol === undefined) {
-      printUnexpectedPayloadWarning(type, state);
-      return state;
-    }
-    return symbol;
-  },
-);
-
-const disableActiveTool = handleAction<ToolId, Payloads.disableActiveTool>(
-  Event.DISABLE_TOOL_REQUESTED,
-  (state, { type, payload }) => {
-    if (payload !== undefined) {
-      printUnexpectedPayloadWarning(type, state);
-      return state;
-    }
-    return defaultTool;
-  },
-);
-
-const activeToolReducer = wrapWithDefaultState(
-  reduceReducers<ToolId, GenericAction>(setActiveTool, disableActiveTool),
-  defaultTool,
-);
-
-export default {
-  [KEY_ACTIVE_TOOL]: activeToolReducer,
+const reducers = {
+  [KEY_ACTIVE_TOOL]: handleActions<typeof KEY_ACTIVE_TOOL>(
+    {
+      SET_ACTIVE_TOOL_REQUESTED: (state, { type, payload: id }) => {
+        if (id === undefined) {
+          printUnexpectedPayloadWarning(type, state);
+          return state;
+        }
+        return id;
+      },
+    },
+    defaultTool,
+  ),
 };
+
+export default reducers;
 
 export const getState = (state: StoreState) => state;
 
-export const getActiveToolId = (state: StoreState): ToolId => {
-  return state[KEY_ACTIVE_TOOL];
-};
+export const getActiveToolId = (state: StoreState) => state[KEY_ACTIVE_TOOL];
 
 export const getActiveTool = createSelector(
   getState,

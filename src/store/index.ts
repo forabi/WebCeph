@@ -1,6 +1,4 @@
 import { createStore, applyMiddleware, combineReducers, compose, Middleware, Reducer } from 'redux';
-import createSagaMiddleware from 'redux-saga';
-import rootSaga from './sagas';
 import reducers from './reducers';
 import analyticsMiddleware from './middleware/analytics';
 import fetchAnalysis from './middleware/fetchAnalysis';
@@ -13,8 +11,6 @@ import {
   loadStateMiddleware,
   clearStateMiddleware,
 } from './middleware/persistence';
-
-import { Event } from 'utils/constants';
 
 declare const window: Window & { devToolsExtension?: () => any };
 
@@ -35,9 +31,9 @@ if (__DEBUG__) {
   middlewares.push(analyticsMiddleware);
 }
 
-const enableLoadingPersistedState = (r: Reducer<any>): Reducer<any> => {
-  return (state: StoreState, action: Action<any>) => {
-    if (action.type === Event.LOAD_PERSISTED_STATE_SUCCEEDED) {
+const enableLoadingPersistedState = (r: Reducer<StoreState>): Reducer<StoreState> => {
+  return (state: StoreState, action: GenericAction) => {
+    if (action.type == 'LOAD_PERSISTED_STATE_SUCCEEDED') {
       return {
         ...r(state, action),
         ...action.payload,
@@ -55,7 +51,7 @@ function addDevTools() {
 }
 
 const createConfiguredStore = () => {
-  const store = createStore(
+  const store = createStore<StoreState>(
     enableLoadingPersistedState(reducer),
     compose(
       applyMiddleware(...middlewares),

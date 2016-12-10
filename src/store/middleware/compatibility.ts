@@ -1,4 +1,3 @@
-import { Event } from 'utils/constants';
 import { Store, Middleware } from 'redux';
 
 import {
@@ -13,10 +12,11 @@ import { foundMissingFeature } from 'actions/initialization';
 
 import featureDetails from 'utils/features';
 
-const middleware: Middleware = (_: Store<any>) =>
-  (next: GenericDispatch) => async (action: Action<any>) => {
-    const { type } = action;
-    if (type !== Event.BROWSER_COMPATIBLITY_CHECK_REQUESTED) {
+import { isActionOfType } from 'utils/store';
+
+const middleware: Middleware = (_: Store<StoreState>) =>
+  (next: GenericDispatch) => async (action: GenericAction) => {
+    if (!isActionOfType(action, 'BROWSER_COMPATIBLITY_CHECK_REQUESTED')) {
       return next(action);
     } else {
       try {
@@ -41,7 +41,7 @@ const middleware: Middleware = (_: Store<any>) =>
             }));
           }
           if (j === total) {
-            next(compatiblityCheckSucceeded());
+            next(compatiblityCheckSucceeded(void 0));
           }
         };
         // Listen for feature test events

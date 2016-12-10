@@ -1,4 +1,3 @@
-import { Event, StoreKeys } from 'utils/constants';
 import { Store, Middleware } from 'redux';
 import idb from 'idb-keyval';
 
@@ -15,20 +14,22 @@ import {
 import pickBy from 'lodash/pickBy';
 import indexOf from 'lodash/indexOf';
 
-const PERSISTABLE_EVENTS = [
-  Event.BROWSER_COMPATIBLITY_CHECK_SUCCEEDED,
-  Event.SET_ANALYSIS_SUCCEEDED,
+import { isActionOfType } from 'utils/store';
+
+const PERSISTABLE_EVENTS: ActionType[] = [
+  'BROWSER_COMPATIBLITY_CHECK_SUCCEEDED',
+  'SET_ANALYSIS_SUCCEEDED',
 ];
 
-const isPersistenceNeededForAction = ({ type }: Action<any>): boolean => {
+const isPersistenceNeededForAction = ({ type }: GenericAction): boolean => {
   return indexOf(PERSISTABLE_EVENTS, type) > -1;
 };
 
-const PERSISTABLE_KEYS = [
-  StoreKeys.appCachingComplete,
-  StoreKeys.compatibilityIsIgnored,
-  StoreKeys.missingFeatures,
-  StoreKeys.activeAnalysisId,
+const PERSISTABLE_KEYS: StoreKey[] = [
+  'app.status.isCached',
+  'env.compat.isIgnored',
+  'env.compat.results',
+  'workspace.analysis.lastUsedId',
 ];
 
 const isStoreEntryPersistable = (key: string): boolean => {
@@ -40,8 +41,8 @@ declare var window: Window & { requestIdleCallback?: RequestIdleCallback };
 // @TODO: replace with a polyfill?
 const rIC = window.requestIdleCallback || ((fn: Function) => fn());
 
-const saveStateMiddleware: Middleware = ({ getState }: Store<any>) => (next: GenericDispatch) =>
-  async (action: Action<any>) => {
+const saveStateMiddleware: Middleware = ({ getState }: Store<StoreState>) => (next: GenericDispatch) =>
+  async (action: GenericAction) => {
     if (isPersistenceNeededForAction(action)) {
       next(action);
       console.info(
@@ -49,7 +50,7 @@ const saveStateMiddleware: Middleware = ({ getState }: Store<any>) => (next: Gen
       );
       rIC(async () => {
         try {
-          next(persistStateStarted());
+          next(persistStateStarted(void 0));
           console.info('Persisting state...');
           const stateToPersist = pickBy(
             getState(),
@@ -58,7 +59,7 @@ const saveStateMiddleware: Middleware = ({ getState }: Store<any>) => (next: Gen
           // @TODO: persist state along with app version
           await idb.set(__VERSION__, stateToPersist);
           console.info('State persisted successfully.');
-          return next(persistStateSucceeded());
+          return next(persistStateSucceeded(void 0));
         } catch (e) {
           console.error(
             `Failed to persist state.`,
@@ -78,10 +79,9 @@ const saveStateMiddleware: Middleware = ({ getState }: Store<any>) => (next: Gen
 
 type RestoredState = { [id: string]: any };
 
-const loadStateMiddleware: Middleware = (_: Store<any>) => (next: GenericDispatch) =>
-  async (action: Action<any>) => {
-    const { type } = action;
-    if (type === Event.LOAD_PERSISTED_STATE_REQUESTED) {
+const loadStateMiddleware: Middleware = (_: Store<StoreState>) => (next: GenericDispatch) =>
+  async (action: GenericAction) => {
+    if (isActionOfType(action, 'LOAD_PERSISTED_STATE_REQUESTED')) {
       console.info('Requested loading persisted state');
       next(action);
       try {
@@ -121,10 +121,10 @@ const loadStateMiddleware: Middleware = (_: Store<any>) => (next: GenericDispatc
 
 const clearStateMiddleware: Middleware = (_: Store<any>) => (next: GenericDispatch) =>
   async (action: Action<any>) => {
-    if (action.type === Event.CLEAR_PRESISTED_STATE_SUCCEEDED) {
+    if (isActionOfType(action, 'CLEAR_PRESISTED_STATE_SUCCEEDED')) {
       try {
         await idb.clear();
-        return next(clearPersistedStateSucceeded());
+        return next(clearPersistedStateSucceeded(void 0));
       } catch (e) {
         console.error(
           `Failed to clean persisted state.`,
