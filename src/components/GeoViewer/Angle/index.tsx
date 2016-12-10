@@ -31,57 +31,58 @@ const getParallelForVector = (
   };
 }
 
-export interface AngleProps {
+export interface AngleProps extends React.SVGAttributes<SVGLineElement> {
   symbol: string;
   boundingRect: Rect;
   vectors: [GeometricalVector, GeometricalVector];
-  extendedProps: React.SVGAttributes<SVGLineElement>;
-  segmentProps: React.SVGAttributes<SVGLineElement>;
-  parallelProps: React.SVGAttributes<SVGLineElement>;
-  angleIndicatorProps: React.SVGAttributes<SVGCircleElement>
-  rest?: React.SVGAttributes<SVGLineElement>;
+  extendedProps?: React.SVGAttributes<SVGLineElement>;
+  segmentProps?: React.SVGAttributes<SVGLineElement>;
+  parallelProps?: React.SVGAttributes<SVGLineElement>;
+  angleIndicatorProps?: React.SVGAttributes<SVGCircleElement>;
 }
 
-interface ArcProps {
+interface ArcProps extends React.SVGAttributes<SVGCircleElement> {
   vector1: GeometricalVector;
   vector2: GeometricalVector;
-  props: React.SVGAttributes<SVGCircleElement>
 }
 
-  const Arc = ({ vector1, vector2, props }: ArcProps) => {
-    const i = getIntersectionPoint(vector1, vector2);
-    if (i !== undefined) {
-      const { x, y } = i;
-      const [point1, point2] = getVectorPoints(vector1);
-      const [point3, point4] = getVectorPoints(vector2);
-      const p1 = last(reject([point1, point2], p => isEqual(p, i)));
-      const p2 = last(reject([point3, point4], p => isEqual(p, i)));
-      const uid = uniqueId(`clip-path-`);
-      const triangle = {
-        points: [p1, i, p2].map(({ x, y }) => `${x},${y}`).join(' '),
-      };
-      return (
-        <g>
-          <clipPath id={uid}>
-            <polygon {...triangle}/>
-          </clipPath>
-          <circle fill="none" clipPath={`url(#${uid})`} cx={x} cy={y} r={45} {...props} />
-        </g>
-      );
-    }
-    return <g/>;
-  };
+const Arc = ({ vector1, vector2, ...rest }: ArcProps) => {
+  const i = getIntersectionPoint(vector1, vector2);
+  if (i !== undefined) {
+    const { x, y } = i;
+    const [point1, point2] = getVectorPoints(vector1);
+    const [point3, point4] = getVectorPoints(vector2);
+    const p1 = last(reject([point1, point2], p => isEqual(p, i)));
+    const p2 = last(reject([point3, point4], p => isEqual(p, i)));
+    const uid = uniqueId(`clip-path-`);
+    const triangle = {
+      points: [p1, i, p2].map(({ x, y }) => `${x},${y}`).join(' '),
+    };
+    return (
+      <g>
+        <clipPath id={uid}>
+          <polygon {...triangle}/>
+        </clipPath>
+        <circle fill="none" clipPath={`url(#${uid})`} cx={x} cy={y} r={45} {...rest} />
+      </g>
+    );
+  }
+  return <g/>;
+};
+
+const defaultAngleIndicatorProps = { }; // @TODO
+const defaultLineProps = { }; // @TODO
 
 const Angle = pure((props: AngleProps): JSX.Element => {
   const {
     symbol,
     boundingRect,
     vectors,
-    segmentProps,
-    parallelProps,
-    extendedProps,
-    angleIndicatorProps,
-    rest,
+    segmentProps = defaultLineProps,
+    parallelProps = defaultLineProps,
+    extendedProps = defaultLineProps,
+    angleIndicatorProps = defaultAngleIndicatorProps,
+    ...rest,
   } = props;
   const [vector1, vector2] = vectors;
   const intersection = getIntersectionPoint(vector1, vector2);
@@ -142,7 +143,7 @@ const Angle = pure((props: AngleProps): JSX.Element => {
       <line {...segmentProps} {...rest} {...vector1} />
       <line {...segmentProps} {...rest} {...vector2} />
       {additionalElements}
-      <Arc vector1={finalVectors[0]} vector2={finalVectors[1]} props={angleIndicatorProps} />
+      <Arc vector1={finalVectors[0]} vector2={finalVectors[1]} {...angleIndicatorProps} />
     </g>
   );
 });

@@ -1,3 +1,5 @@
+import { AngleProps, VectorProps, PointProps } from './index';
+
 export interface StateProps extends React.SVGAttributes<SVGElement> {
   objects: ReadonlyArray<{
     label: string;
@@ -8,9 +10,11 @@ export interface StateProps extends React.SVGAttributes<SVGElement> {
   left: number;
   width: number;
   height: number;
-  getPropsForPoint: (symbol: string) => any; // @TODO: use partial
-  getPropsForVector: (symbol: string) => any; // @TODO: use partial
-  getPropsForAngle: (symbol: string) => any; // @TODO: use partial
+  getPropsForPoint: (symbol: string) => Partial<PointProps>; // @TODO: use partial
+  getPropsForVector: (symbol: string) => Partial<VectorProps>; // @TODO: use partial
+  getPropsForAngle: (symbol: string) => (
+    Pick<AngleProps, 'boundingRect' | 'vectors' | 'symbol'> & Partial<AngleProps>
+  ); // @TODO: use partial
 }
 
 export interface DispatchProps {
