@@ -20,7 +20,7 @@ import {
   ignoreWorkspaceError,
 } from 'actions/workspace';
 
-const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalState) => {
+const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: StoreState) => {
   return {
     hasImage: hasImage(state),
     isLoading: isImageLoading(state),
@@ -33,7 +33,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: FinalStat
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = (dispatch) => (
   {
     onResize: (rect) => dispatch(canvasResized(rect)),
-    onRequestDismissError: () => dispatch(ignoreWorkspaceError()),
+    onRequestDismissError: () => dispatch(ignoreWorkspaceError(void 0)),
   }
 );
 

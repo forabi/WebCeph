@@ -44,7 +44,7 @@ const defaultAnalysisId: AnalysisId = 'common';
 
 const activeAnalysisIdReducer = handleActions<AnalysisId, any>(
   {
-    [Event.SET_ANALYSIS_SUCCEEDED]: (state, action) => {
+    SET_ANALYSIS_SUCCEEDED: (state, action) => {
       const { payload: analysisId } = action;
       if (analysisId === undefined) {
         printUnexpectedPayloadWarning(action.type, state);
@@ -58,33 +58,33 @@ const activeAnalysisIdReducer = handleActions<AnalysisId, any>(
 
 const isAnalysisLoadingReducer = handleActions<IsAnalysisLoading, any>(
   {
-    [Event.SET_ANALYSIS_REQUESTED]: () => true,
-    [Event.SET_ANALYSIS_SUCCEEDED]: () => false,
-    [Event.SET_ANALYSIS_FAILED]: () => false,
+    SET_ANALYSIS_REQUESTED: () => true,
+    SET_ANALYSIS_SUCCEEDED: () => false,
+    SET_ANALYSIS_FAILED: () => false,
   },
   false,
 );
 
 const loadErrorReducer = handleActions<LoadError, any>(
   {
-    [Event.SET_ANALYSIS_SUCCEEDED]: () => null,
-    [Event.SET_ANALYSIS_FAILED]: (state, { type, payload: error }) => {
+    SET_ANALYSIS_SUCCEEDED: () => null,
+    SET_ANALYSIS_FAILED: (state, { type, payload: error }) => {
       if (error === undefined) {
         printUnexpectedPayloadWarning(type, state);
         return state;
       }
       return error as Payloads.analysisLoadFailed;
     },
-    [Event.SET_ANALYSIS_REQUESTED]: () => null,
+    SET_ANALYSIS_REQUESTED: () => null,
   },
   null,
 );
 
 const areResultsShownReducer = handleActions<AreResultsShown, any>(
   {
-    [Event.SHOW_ANALYSIS_RESULTS_REQUESTED]: () => true,
-    [Event.CLOSE_ANALYSIS_RESULTS_REQUESTED]: () => false,
-    [Event.RESET_WORKSPACE_REQUESTED]: () => false,
+    SHOW_ANALYSIS_RESULTS_REQUESTED: () => true,
+    CLOSE_ANALYSIS_RESULTS_REQUESTED: () => false,
+    RESET_WORKSPACE_REQUESTED: () => false,
   },
   false,
 );
@@ -102,16 +102,16 @@ export default {
   [KEY_ARE_RESULTS_SHOWN]: areResultsShownReducer,
 };
 
-export const areResultsShown = (state: GenericState): AreResultsShown => state[KEY_ARE_RESULTS_SHOWN];
+export const areResultsShown = (state: StoreState): AreResultsShown => state[KEY_ARE_RESULTS_SHOWN];
 
-export const getActiveAnalysisId = (state: GenericState): AnalysisId => state[KEY_ACTIVE_ANALYSIS_ID];
+export const getActiveAnalysisId = (state: StoreState): AnalysisId => state[KEY_ACTIVE_ANALYSIS_ID];
 
 export const isAnalysisSet = createSelector(
   getActiveAnalysisId,
   (id) => id !== null,
 );
 
-export const isAnalysisLoading = (state: GenericState): IsAnalysisLoading => state[KEY_IS_ANALYSIS_LOADING];
+export const isAnalysisLoading = (state: StoreState): IsAnalysisLoading => state[KEY_IS_ANALYSIS_LOADING];
 
 // @FIXME: dynamically require analysis
 import downs from 'analyses/downs';

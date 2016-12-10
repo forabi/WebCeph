@@ -115,7 +115,7 @@ const getPropsForLandmark = createSelector(
 );
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
-  (state: FinalState) => {
+  (state: StoreState) => {
     return {
       canvasHeight: getCanvasHeight(state) as number,
       canvasWidth: getCanvasWidth(state) as number,

@@ -39,4 +39,4 @@ export default {
   [KEY_HIGHLIGHTED_STEP]: highlightedStep,
 };
 
-export const getHighlightedStep = (state: GenericState) => state[KEY_HIGHLIGHTED_STEP] as State;
+export const getHighlightedStep = (state: StoreState) => state[KEY_HIGHLIGHTED_STEP] as State;

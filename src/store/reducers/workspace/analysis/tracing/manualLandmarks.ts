@@ -17,7 +17,7 @@ const manualLandmarksReducer = handleActions<
   Payloads.addManualLandmark | Payloads.removeManualLandmark
 >(
   {
-    [Event.ADD_MANUAL_LANDMARK_REQUESTED]: (
+    ADD_MANUAL_LANDMARK_REQUESTED: (
       state: ManualLandmarks, { type, payload }: Action<Payloads.addManualLandmark>
     ) => {
       if (payload === undefined) {
@@ -35,7 +35,7 @@ const manualLandmarksReducer = handleActions<
         [payload.symbol]: mapValues(payload.value, Math.round),
       };
     },
-    [Event.REMOVE_MANUAL_LANDMARK_REQUESTED]: (
+    REMOVE_MANUAL_LANDMARK_REQUESTED: (
       state: ManualLandmarks,
       { type, payload: symbol }: Action<Payloads.removeManualLandmark>
     ) => {
@@ -51,7 +51,7 @@ const manualLandmarksReducer = handleActions<
       }
       return omit(state, symbol) as ManualLandmarks;
     },
-    [Event.RESET_WORKSPACE_REQUESTED]: () => defaultState,
+    RESET_WORKSPACE_REQUESTED: () => defaultState,
   },
   defaultState,
 );
@@ -69,6 +69,6 @@ export default {
   ),
 };
 
-export const getManualLandmarks = (state: GenericState) => {
+export const getManualLandmarks = (state: StoreState) => {
   return state[KEY_MANUAL_LANDMARKS] as UndoableState<ManualLandmarks>;
 };

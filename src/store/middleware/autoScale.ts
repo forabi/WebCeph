@@ -10,7 +10,7 @@ import {
 } from 'store/reducers/workspace/canvas';
 
 const middleware: Middleware = ({ getState, dispatch }: Store<any>) =>
-  (next: DispatchFunction) => async (action: Action<any>) => {
+  (next: GenericDispatch) => async (action: Action<any>) => {
     const { type } = action;
     if (type !== Event.LOAD_IMAGE_SUCCEEDED) {
       return next(action);

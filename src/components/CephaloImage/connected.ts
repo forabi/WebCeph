@@ -19,7 +19,7 @@ import {
 } from 'store/reducers/workspace/image';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
-  (state: FinalState) => {
+  (state: StoreState) => {
     return {
       src: getImageData(state),
       height: getImageHeight(state),

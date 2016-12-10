@@ -9,7 +9,7 @@ import assign from 'lodash/assign';
 const zoomIntensity = 0.2;
 
 const createZoomWithWheel: EditorToolCreator = (
-  state: GenericState,
+  state: StoreState,
 ) => assign(
   createTrackCursor(state),
   {

@@ -1,41 +1,31 @@
-import { handleActions } from 'redux-actions';
+import { handleActions } from 'utils/store';
 import { createSelector } from 'reselect';
-import { Event, StoreKeys } from 'utils/constants';
 
-const KEY_IS_EXPORTING =  StoreKeys.isExporting;
+const KEY_IS_EXPORTING: StoreKey = 'workspace.export.isExporting';
+const KEY_EXPORT_ERROR: StoreKey = 'workspace.export.error';
 
-type IsExporting = StoreEntries.workspace.fileExport.isExporting;
-
-const isInitializedReducer = handleActions<
-  IsExporting,
-  any
->({
-  [Event.EXPORT_FILE_REQUESTED]: (_, __) => true,
-  [Event.EXPORT_FILE_FAILED]: (_, __) => false,
-  [Event.EXPORT_FILE_SUCEEDED]: (_, __) => false,
+const isExportingReducer = handleActions<typeof KEY_IS_EXPORTING>({
+  EXPORT_FILE_REQUESTED: (_, __) => true,
+  EXPORT_FILE_FAILED: (_, __) => false,
+  EXPORT_FILE_SUCEEDED: (_, __) => false,
 }, false);
 
 
-const KEY_EXPORT_ERROR =  StoreKeys.exportError;
-
-type ExportError = StoreEntries.workspace.fileExport.error;
-
-const exportErrorReducer = handleActions<
-  ExportError,
-  any
->({
-  [Event.EXPORT_FILE_REQUESTED]: (_, __) => null,
-  [Event.EXPORT_FILE_FAILED]: (_, { payload }) => payload,
-  [Event.IGNORE_WORKSPACE_ERROR_REQUESTED]: (_, __) => null,
+const exportErrorReducer = handleActions<typeof KEY_EXPORT_ERROR>({
+  EXPORT_FILE_REQUESTED: (_, __) => null,
+  EXPORT_FILE_FAILED: (_, { payload }) => payload,
+  IGNORE_WORKSPACE_ERROR_REQUESTED: (_, __) => null,
 }, null);
 
-export default {
-  [KEY_IS_EXPORTING]: isInitializedReducer,
+const reducers: Partial<ReducerMap> = {
+  [KEY_IS_EXPORTING]: isExportingReducer,
   [KEY_EXPORT_ERROR]: exportErrorReducer,
 };
 
-export const isExporting = (state: GenericState): IsExporting => state[KEY_IS_EXPORTING];
-export const getExportError = (state: GenericState): ExportError => state[KEY_EXPORT_ERROR];
+export default reducers;
+
+export const isExporting = (state: StoreState) => state[KEY_IS_EXPORTING];
+export const getExportError = (state: StoreState) => state[KEY_EXPORT_ERROR];
 export const hasExportError = createSelector(
   getExportError,
   (error) => error !== null,

@@ -1,37 +1,27 @@
-import { handleActions } from 'redux-actions';
-import { Event, StoreKeys } from 'utils/constants';
+import { handleActions } from 'utils/store';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 import { createSelector } from 'reselect';
 
 import values from 'lodash/values';
 import memoize from 'lodash/memoize';
 
-const KEY_IS_IGNORED =  StoreKeys.compatibilityIsIgnored;
-const KEY_IS_BEING_CHEKED = StoreKeys.compatiblityIsBeingChcecked;
-const KEY_MISSING_FEATURES = StoreKeys.missingFeatures;
+const KEY_IS_IGNORED: StoreKey = 'env.compat.isIgnored';
+const KEY_IS_BEING_CHECKED: StoreKey = 'env.compat.isBeingChecked';
+const KEY_RESULTS: StoreKey = 'env.compat.results';
 
-type CheckResults = StoreEntries.env.compatibility.checkResults;
-type IsBeingChecked = StoreEntries.env.compatibility.isBeingChecked;
-type IsIgnored = StoreEntries.env.compatibility.isIgnored;
-
-
-const isIgnored = handleActions<
-  IsIgnored,
-  Payloads.ignoreCompatiblityCheck | Payloads.enforceCompatibilityCheck
->({
-  [Event.IGNORE_BROWSER_COMPATIBLITY_REQUESTED]: (_, __) => true,
-  [Event.ENFORCE_BROWSER_COMPATIBLITY_REQUESTED]: (_, __) => false,
+const isIgnored = handleActions<typeof KEY_IS_IGNORED>({
+  IGNORE_BROWSER_COMPATIBLITY_REQUESTED: (_, __) => true,
+  ENFORCE_BROWSER_COMPATIBLITY_REQUESTED: (_, __) => false,
 }, false);
 
-
-const isBeingChecked = handleActions<IsBeingChecked, Payloads.isCheckingCompatiblity>({
-  [Event.BROWSER_COMPATIBLITY_CHECK_REQUESTED]: (_, __) => true,
-  [Event.BROWSER_COMPATIBLITY_CHECK_SUCCEEDED]: (_, __) => false,
-  [Event.BROWSER_COMPATIBLITY_CHECK_FAILED]: (_, __) => false,
+const isBeingChecked = handleActions<typeof KEY_IS_BEING_CHECKED>({
+  BROWSER_COMPATIBLITY_CHECK_REQUESTED: (_, __) => true,
+  BROWSER_COMPATIBLITY_CHECK_SUCCEEDED: (_, __) => false,
+  BROWSER_COMPATIBLITY_CHECK_FAILED: (_, __) => false,
 }, false);
 
-const missingFeatures = handleActions<CheckResults, Payloads.foundMissingFeature>({
-  [Event.BROWSER_COMPATIBLITY_CHECK_MISSING_FEATURE_DETECTED]: (state, { type, payload }) => {
+const missingFeatures = handleActions<typeof KEY_RESULTS>({
+  MISSING_BROWSER_FEATURE_DETECTED: (state, { type, payload }) => {
     if (payload === undefined) {
       printUnexpectedPayloadWarning(type, state);
       return state;
@@ -41,8 +31,8 @@ const missingFeatures = handleActions<CheckResults, Payloads.foundMissingFeature
       ...state,
       [userAgent]: {
         ...state[userAgent],
-        missing: {
-          ...state[userAgent].missing,
+        missingFeatures: {
+          ...state[userAgent].missingFeatures,
           [feature.id]: feature,
         },
       },
@@ -50,13 +40,21 @@ const missingFeatures = handleActions<CheckResults, Payloads.foundMissingFeature
   },
 }, { });
 
-export const isCheckingCompatiblity = (state: GenericState): IsBeingChecked => state[KEY_IS_BEING_CHEKED];
+const reducers: Partial<ReducerMap> = {
+  [KEY_IS_IGNORED]: isIgnored,
+  [KEY_IS_BEING_CHECKED]: isBeingChecked,
+  [KEY_RESULTS]: missingFeatures,
+};
 
-export const isCompatibilityIgnored = (state: GenericState): IsIgnored => state[KEY_IS_IGNORED];
+export default reducers;
 
-export const getCheckResults = (state: GenericState) =>
-  (userAgent: string): { missing: { [id: string]: MissingBrowserFeature } } | undefined => {
-    return state[KEY_MISSING_FEATURES][userAgent];
+export const isCheckingCompatiblity = (state: StoreState) => state[KEY_IS_BEING_CHECKED];
+
+export const isCompatibilityIgnored = (state: StoreState) => state[KEY_IS_IGNORED];
+
+export const getCheckResults = (state: StoreState) =>
+  (userAgent: string) => {
+    return state[KEY_RESULTS][userAgent];
   };
 
 export const getMissingFeatures = createSelector(
@@ -64,7 +62,7 @@ export const getMissingFeatures = createSelector(
   (getResults) => memoize((userAgent: string): MissingBrowserFeature[] => {
     const results = getResults(userAgent);
     if (results !== undefined) {
-      return values(results.missing);
+      return values(results.missingFeatures);
     }
     return [];
   })
@@ -84,9 +82,3 @@ export const isBrowserCompatible = createSelector(
     return !isChecking && getMissing(userAgent).length === 0;
   },
 );
-
-export default {
-  [KEY_IS_IGNORED]: isIgnored,
-  [KEY_IS_BEING_CHEKED]: isBeingChecked,
-  [KEY_MISSING_FEATURES]: missingFeatures,
-};

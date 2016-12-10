@@ -41,9 +41,9 @@ export default {
   [KEY_ACTIVE_TOOL]: activeToolReducer,
 };
 
-export const getState = (state: GenericState) => state;
+export const getState = (state: StoreState) => state;
 
-export const getActiveToolId = (state: GenericState): ToolId => {
+export const getActiveToolId = (state: StoreState): ToolId => {
   return state[KEY_ACTIVE_TOOL];
 };
 

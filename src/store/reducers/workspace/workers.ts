@@ -17,7 +17,7 @@ const workersReducer = handleActions<
   Payloads.addWorker | Payloads.removeWorker | Payloads.updateWorkerStatus
 >(
   {
-    [Event.WORKER_CREATED]: (state, action) => {
+    WORKER_CREATED: (state, action) => {
       const payload = action.payload as Payloads.addWorker | undefined;
       if (payload === undefined) {
         printUnexpectedPayloadWarning(action.type, state);
@@ -43,7 +43,7 @@ const workersReducer = handleActions<
       }
       return { ...state, [workerId]: payload };
     },
-    [Event.WORKER_TERMINATED]: (state, action) => {
+    WORKER_TERMINATED: (state, action) => {
       const workerId = action.payload as Payloads.removeWorker | undefined;
       if (workerId === undefined) {
         printUnexpectedPayloadWarning(action.type, state);
@@ -59,7 +59,7 @@ const workersReducer = handleActions<
       }
       return omit(state, workerId) as Workers;
     },
-    [Event.WORKER_STATUS_CHANGED]: (state, action) => {
+    WORKER_STATUS_CHANGED: (state, action) => {
       const patch = action.payload as Payloads.updateWorkerStatus | undefined;
       if (patch === undefined) {
         printUnexpectedPayloadWarning(action.type, state);
@@ -97,11 +97,11 @@ export default {
   [KEY_WORKERS]: workersReducer,
 };
 
-export const getWorkers = (state: GenericState): Workers => {
+export const getWorkers = (state: StoreState): Workers => {
   return state[KEY_WORKERS];
 };
 
-export const isPerformingBackgroundWork = (state: GenericState): boolean => {
+export const isPerformingBackgroundWork = (state: StoreState): boolean => {
   return !isEmpty(state[KEY_WORKERS]);
 };
 

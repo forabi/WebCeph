@@ -46,11 +46,11 @@ export default {
 };
 
 
-export const getCanvasTop = (state: GenericState) => {
+export const getCanvasTop = (state: StoreState) => {
   return state[KEY_CANVAS_LEFT] as Top;
 };
 
-export const getCanvasLeft = (state: GenericState) => {
+export const getCanvasLeft = (state: StoreState) => {
   return state[KEY_CANVAS_TOP] as Left;
 };
 

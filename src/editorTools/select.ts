@@ -3,7 +3,7 @@ import { highlightStep, unhighlightStep } from 'actions/workspace';
 import { Cursor } from 'utils/constants';
 
 export const createSelect: EditorToolCreator = (
-  state: GenericState,
+  state: StoreState,
 ) => ({
   ...createZoomWithWheel(state),
   getCursorForLandmark() {

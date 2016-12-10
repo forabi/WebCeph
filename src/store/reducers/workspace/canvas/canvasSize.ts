@@ -46,11 +46,11 @@ export default {
 };
 
 
-export const getCanvasWidth = (state: GenericState) => {
+export const getCanvasWidth = (state: StoreState) => {
   return state[KEY_CANVAS_WIDTH] as Width;
 };
 
-export const getCanvasHeight = (state: GenericState) => {
+export const getCanvasHeight = (state: StoreState) => {
   return state[KEY_CANVAS_HEIGHT] as Height;
 };
 

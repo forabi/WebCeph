@@ -36,7 +36,7 @@ if (__DEBUG__) {
 }
 
 const enableLoadingPersistedState = (r: Reducer<any>): Reducer<any> => {
-  return (state: FinalState, action: Action<any>) => {
+  return (state: StoreState, action: Action<any>) => {
     if (action.type === Event.LOAD_PERSISTED_STATE_SUCCEEDED) {
       return {
         ...r(state, action),

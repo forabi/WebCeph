@@ -46,11 +46,11 @@ export default {
 };
 
 
-export const getMouseX = (state: GenericState) => {
+export const getMouseX = (state: StoreState) => {
   return state[KEY_MOUSE_Y] as MouseX;
 };
 
-export const getMouseY = (state: GenericState) => {
+export const getMouseY = (state: StoreState) => {
   return state[KEY_MOUSE_X] as MouseY;
 };
 

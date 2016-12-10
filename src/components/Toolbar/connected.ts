@@ -12,7 +12,7 @@ import {
   flipX, flipY,
   invertColors,
   redo, undo,
-  showAnalysisResults,
+  toggleAnalysisResults,
   exportFile,
 } from 'actions/workspace';
 import {
@@ -40,7 +40,7 @@ import {
 } from 'store/reducers/workspace/analysis';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
-  (state: FinalState): StateProps => {
+  (state: StoreState): StateProps => {
     const _isExporting = isExporting(state);
     return {
       activeToolId: getActiveToolId(state),
@@ -57,7 +57,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   };
 
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
-  (dispatch: DispatchFunction): DispatchProps => {
+  (dispatch: GenericDispatch): DispatchProps => {
     return {
       onBrightnessChange: (value) => dispatch(setBrightness(value)),
       onContrastChange: (value) => dispatch(setContrast(value)),
@@ -67,7 +67,7 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
       onRedoClick: () => dispatch(redo()),
       onUndoClick: () => dispatch(undo()),
       onToolButtonClick: (id) => dispatch(setActiveTool(id)),
-      onShowSummaryClick: () => dispatch(showAnalysisResults()),
+      onShowSummaryClick: () => dispatch(toggleAnalysisResults()),
       onExportClick: () => dispatch(
         exportFile({
           format: 'wceph_v1',
