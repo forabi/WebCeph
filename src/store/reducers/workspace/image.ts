@@ -1,225 +1,191 @@
-import { handleActions } from 'redux-actions';
-import { Event, StoreKeys } from 'utils/constants';
-import { printUnexpectedPayloadWarning } from 'utils/debug';
+import { handleActions } from 'utils/store';
+import some from 'lodash/some';
+import omit from 'lodash/omit';
 
 import { createSelector } from 'reselect';
 
-type Height = StoreEntries.workspace.image.height;
-type Width = StoreEntries.workspace.image.width;
-type Data = StoreEntries.workspace.image.data;
-type Name = StoreEntries.workspace.image.name;
-type LoadError = StoreEntries.workspace.image.loadError;
+const KEY_IMAGES: StoreKey = 'workspace.images.props';
+const KEY_IMAGES_LOAD_STATUS: StoreKey = 'workspace.images.status';
+const KEY_TRACING: StoreKey = 'workspace.images.tracing';
 
-// @TODO: normalize to [0, 1] instead of 0-100
-const defaultBrightness = 50;
-const defaultContrast = 0.5;
-
-const KEY_IMAGE_HEIGHT = StoreKeys.imageHeight;
-const KEY_IMAGE_WIDTH = StoreKeys.imageWidth;
-const KEY_IMAGE_DATA = StoreKeys.imageData;
-const KEY_IMAGE_NAME = StoreKeys.imageName;
-const KEY_IMAGE_INVERT = StoreKeys.imageInvert;
-const KEY_IMAGE_CONTRAST = StoreKeys.imageContrast;
-const KEY_IMAGE_BRIGHTNESS = StoreKeys.imageBrightness;
-const KEY_IMAGE_FLIP_X = StoreKeys.imageFlipX;
-const KEY_IMAGE_FLIP_Y = StoreKeys.imageFlipY;
-const KEY_IMAGE_IS_LOADING = StoreKeys.imageIsLoading;
-const KEY_IMAGE_LOAD_ERROR = StoreKeys.imageLoadError;
-const defaultWidth: Height = null;
-const defaultHeight: Width = null;
-const defaultData: Data = null;
-const defaultName: Name = null;
-
-const setHeight = handleActions<
-  Height,
-  Payloads.imageLoadSucceeded | Payloads.imageLoadFailed | Payloads.imageLoadRequested
->(
+const imagesReducer = handleActions<typeof KEY_IMAGES>(
   {
-    LOAD_IMAGE_SUCCEEDED: (state, action) => {
-      const payload = action.payload as Payloads.imageLoadSucceeded | undefined;
-      if (payload === undefined) {
-        printUnexpectedPayloadWarning(action.type, state);
-        return state;
-      }
-      return payload.height;
+    LOAD_IMAGE_SUCCEEDED: (state, { payload }) => {
+      return {
+        ...state,
+        [payload.id]: {
+          name: null,
+          type: 'ceph_lateral',
+          scaleFactor: null,
+          flipX: false,
+          flipY: false,
+          brightness: 0.5,
+          contrast: 0.5,
+          invertColors: false,
+          tracing: {
+            mode: 'assisted',
+            manualLandmarks: {
+
+            },
+            skippedSteps: {
+
+            },
+          },
+          analysis: {
+            activeId: null,
+          },
+          ...payload,
+        },
+      };
     },
-    LOAD_IMAGE_REQUESTED: (_, __) => {
-      return null;
+    CLOSE_IMAGE_REQUESTED: (state, { payload: { id } }) => {
+      return omit(state, id) as typeof state;
     },
   },
-  defaultHeight,
+  { },
 );
 
-const setWidth = handleActions<
-  Height,
-  Payloads.imageLoadSucceeded | Payloads.imageLoadFailed | Payloads.imageLoadRequested
->(
-  {
-    LOAD_IMAGE_SUCCEEDED: (state, action) => {
-      const payload = action.payload as Payloads.imageLoadSucceeded | undefined;
-      if (payload === undefined) {
-        printUnexpectedPayloadWarning(action.type, state);
-        return state;
-      }
-      return payload.width;
-    },
-    LOAD_IMAGE_REQUESTED: (_, __) => {
-      return null;
-    },
+const loadStatusReducer = handleActions<typeof KEY_IMAGES_LOAD_STATUS>({
+  LOAD_IMAGE_FAILED: (state, { payload: { id, error } }) => {
+    return {
+      ...state,
+      [id]: {
+        isLoading: false,
+        error,
+      },
+    };
   },
-  defaultWidth,
+  LOAD_IMAGE_REQUESTED: (state, { payload: { id } }) => {
+    return {
+      ...state,
+      [id]: {
+        isLoading: true,
+        error: null,
+      },
+    };
+  },
+  LOAD_IMAGE_SUCCEEDED: (state, { payload: { id } }) => {
+    return {
+      ...state,
+      [id]: {
+        isLoading: false,
+        error: null,
+      },
+    };
+  },
+  CLOSE_IMAGE_REQUESTED: (state, { payload: id }) => {
+    return omit(state, id) as typeof state;
+  },
+}, { });
+
+const tracingReducer = handleActions<typeof KEY_TRACING>({
+  ADD_MANUAL_LANDMARK_REQUESTED: (state, { payload }) => {
+    const { imageId, symbol, value } = payload;
+    return {
+      ...state,
+      [imageId]: {
+        ...state[imageId],
+        manualLandmarks: {
+          ...state[imageId].manualLandmarks,
+          [symbol]: value,
+        },
+      },
+    };
+  },
+  REMOVE_MANUAL_LANDMARK_REQUESTED: (state, { payload }) => {
+    const { imageId, symbol } = payload;
+    return {
+      ...state,
+      [imageId]: {
+        ...state[imageId],
+        manualLandmarks: {
+          ...omit(state[imageId].manualLandmarks, symbol),
+        },
+      },
+    };
+  },
+  SKIP_MANUAL_STEP_REQUESTED: (state, { payload: { imageId, step } }) => {
+    return {
+      ...state,
+      [imageId]: {
+        ...state[imageId],
+        skippedSteps: {
+          ...state[imageId].skippedSteps,
+          [step]: true,
+        },
+      },
+    };
+  },
+  UNSKIP_MANUAL_STEP_REQUESTED: (state, { payload: { imageId, step } }) => {
+    return {
+      ...state,
+      [imageId]: {
+        ...state[imageId],
+        skippedSteps: {
+          ...omit(state[imageId].skippedSteps, step),
+        },
+      },
+    };
+  },
+}, { });
+
+const reducers: Partial<ReducerMap> = {
+  [KEY_IMAGES]: imagesReducer,
+  [KEY_IMAGES_LOAD_STATUS]: loadStatusReducer,
+  [KEY_TRACING]: tracingReducer,
+};
+
+export default reducers;
+
+export const getAllImages = (state: StoreState) => state[KEY_IMAGES];
+export const getAllImagesStatus = (state: StoreState) => state[KEY_IMAGES_LOAD_STATUS];
+
+export const getImageProps = createSelector(
+  getAllImages,
+  (all) => (imageId: string) => all[imageId],
 );
 
-const setData = handleActions<
-  Data,
-  Payloads.imageLoadSucceeded | Payloads.imageLoadFailed | Payloads.imageLoadRequested
->(
-  {
-    LOAD_IMAGE_SUCCEEDED: (state, action) => {
-      const payload = action.payload as Payloads.imageLoadSucceeded | undefined;
-      if (payload === undefined) {
-        printUnexpectedPayloadWarning(action.type, state);
-        return state;
-      }
-      return payload.data;
-    },
-    LOAD_IMAGE_REQUESTED: (_, __) => {
-      return null;
-    },
-  },
-  defaultData,
+export const getImageStatus = createSelector(
+  getAllImagesStatus,
+  (all) => (imageId: string) => all[imageId],
 );
 
-const setName = handleActions<
-  Name,
-  Payloads.imageLoadSucceeded | Payloads.imageLoadFailed | Payloads.imageLoadRequested
->(
-  {
-    LOAD_IMAGE_SUCCEEDED: (state, action) => {
-      const payload = action.payload as Payloads.imageLoadSucceeded | undefined;
-      if (payload === undefined) {
-        printUnexpectedPayloadWarning(action.type, state);
-        return state;
-      }
-      return payload.name;
-    },
-    LOAD_IMAGE_REQUESTED: (_, __) => {
-      return null;
-    },
-  },
-  defaultName,
+export const isImageLoading = createSelector(
+  getImageStatus,
+  (getStatus) => (id: string) => getStatus(id).isLoading,
 );
 
-const setLoadError = handleActions<LoadError, Payloads.imageLoadFailed>({
-  IGNORE_WORKSPACE_ERROR_REQUESTED: (_, __) => null,
-  LOAD_IMAGE_FAILED: (state, { type, payload: error }) => {
-    if (error === undefined) {
-      printUnexpectedPayloadWarning(type, state);
-      return state;
-    }
-    return error;
+export const hasImageLoadFailed = createSelector(
+  getImageStatus,
+  (getStatus) => (id: string) => {
+    const props = getStatus(id);
+    return props.isLoading === false && props.error === null;
   },
-  LOAD_IMAGE_REQUESTED: () => null,
-  RESET_WORKSPACE_REQUESTED: () => null,
-}, null);
+);
 
-const setLoadStatus = handleActions<boolean, boolean>({
-  IMPORT_FILE_REQUESTED: () => true,
-  IMPORT_FILE_FAILED: () => false,
-  IMPORT_FILE_SUCCEEDED: () => false,
-  LOAD_IMAGE_FROM_URL_REQUESTED: () => true,
-  RESET_WORKSPACE_REQUESTED: () => false,
-}, false);
-
-const flipX = handleActions<boolean, boolean>({
-  FLIP_IMAGE_X_REQUESTED: (state: boolean) => !state,
-  LOAD_IMAGE_REQUESTED: () => false,
-  RESET_WORKSPACE_REQUESTED: () => false,
-}, false);
-
-const flipY = handleActions<boolean, boolean>({
-  FLIP_IMAGE_Y_REQUESTED: (state: boolean) => !state,
-  LOAD_IMAGE_REQUESTED: () => false,
-  RESET_WORKSPACE_REQUESTED: () => false,
-}, false);
-
-// @TODO: normalize to [-1, 1] instead of 0-100
-const setBrightness = handleActions<number, number>({
-  SET_IMAGE_BRIGHTNESS_REQUESTED: (state, { type, payload: value }) => {
-    if (value === undefined) {
-      printUnexpectedPayloadWarning(type, state);
-      return state;
-    }
-    return value;
+export const isImageLoaded = createSelector(
+  getImageStatus,
+  (getStatus) => (id: string) => {
+    const props = getStatus(id);
+    return props.isLoading === false && props.error !== null;
   },
-  LOAD_IMAGE_REQUESTED: () => defaultBrightness,
-  RESET_WORKSPACE_REQUESTED: () => defaultBrightness,
-}, defaultBrightness);
-
-const setContrast = handleActions<number, number>({
-  SET_IMAGE_CONTRAST_REQUESTED: (state, { type, payload: value }) => {
-    if (value === undefined) {
-      printUnexpectedPayloadWarning(type, state);
-      return state;
-    }
-    return value;
-  },
-  LOAD_IMAGE_REQUESTED: () => defaultContrast,
-  RESET_WORKSPACE_REQUESTED: () => defaultContrast,
-}, defaultContrast);
-
-const setInvert = handleActions<boolean, boolean>({
-  INVERT_IMAGE_REQUESTED: (state) => !state,
-  RESET_WORKSPACE_REQUESTED: () => false,
-}, false);
-
-export default {
-  [KEY_IMAGE_HEIGHT]: setHeight,
-  [KEY_IMAGE_WIDTH]: setWidth,
-  [KEY_IMAGE_DATA]: setData,
-  [KEY_IMAGE_NAME]: setName,
-  [KEY_IMAGE_INVERT]: setInvert,
-  [KEY_IMAGE_CONTRAST]: setContrast,
-  [KEY_IMAGE_BRIGHTNESS]: setBrightness,
-  [KEY_IMAGE_FLIP_X]: flipX,
-  [KEY_IMAGE_FLIP_Y]: flipY,
-  [KEY_IMAGE_IS_LOADING]: setLoadStatus,
-  [KEY_IMAGE_LOAD_ERROR]: setLoadError,
-};
-
-export const isImageLoading = (state: StoreState): boolean => {
-  return state[KEY_IMAGE_IS_LOADING];
-};
-
-export const getImageWidth = (state: StoreState) => {
-  return state[KEY_IMAGE_WIDTH] as Width;
-};
-
-export const getImageHeight = (state: StoreState) => {
-  return state[KEY_IMAGE_HEIGHT] as Height;
-};
-
-export const getImageData = (state: StoreState) => {
-  return state[KEY_IMAGE_DATA] as Data;
-};
-
-export const getImageName = (state: StoreState) => {
-  return state[KEY_IMAGE_NAME] as Name;
-};
+);
 
 export const hasImage = createSelector(
-  getImageData,
-  (data) => data !== null,
+  getAllImages,
+  isImageLoaded,
+  (all, isLoaded) => (
+    some(all, (_, k: string) => isLoaded(k))
+  ),
 );
 
-export const getImageSize = createSelector(
-  getImageWidth,
-  getImageHeight,
-  (width, height) => ({ width, height }),
+export const getAllTracingData = (state: StoreState) => state[KEY_TRACING];
+export const getTracingDataByImageId = createSelector(
+  getAllTracingData,
+  (all) => (id: string) => all[id],
 );
 
-export const getImageBrightness = (state: StoreState) => state[KEY_IMAGE_BRIGHTNESS] as number;
-export const getImageContrast = (state: StoreState) => state[KEY_IMAGE_CONTRAST] as number;
-export const isImageFlippedX = (state: StoreState) => state[KEY_IMAGE_FLIP_X] as boolean;
-export const isImageFlippedY = (state: StoreState) => state[KEY_IMAGE_FLIP_Y] as boolean;
-export const isImageInverted = (state: StoreState) => state[KEY_IMAGE_INVERT] as boolean;
+export const getManualLandmarks = createSelector(
+  getTracingDataByImageId,
+  (getTracing) => (id: string) => getTracing(id).manualLandmarks,
+);

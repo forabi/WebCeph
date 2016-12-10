@@ -5,16 +5,16 @@ const KEY_IS_EXPORTING: StoreKey = 'workspace.export.isExporting';
 const KEY_EXPORT_ERROR: StoreKey = 'workspace.export.error';
 
 const isExportingReducer = handleActions<typeof KEY_IS_EXPORTING>({
-  EXPORT_FILE_REQUESTED: (_, __) => true,
-  EXPORT_FILE_FAILED: (_, __) => false,
-  EXPORT_FILE_SUCEEDED: (_, __) => false,
+  EXPORT_FILE_REQUESTED: () => true,
+  EXPORT_FILE_FAILED: () => false,
+  EXPORT_FILE_SUCEEDED: () => false,
 }, false);
 
 
 const exportErrorReducer = handleActions<typeof KEY_EXPORT_ERROR>({
-  EXPORT_FILE_REQUESTED: (_, __) => null,
+  EXPORT_FILE_REQUESTED: () => null,
   EXPORT_FILE_FAILED: (_, { payload }) => payload,
-  IGNORE_WORKSPACE_ERROR_REQUESTED: (_, __) => null,
+  IGNORE_WORKSPACE_ERROR_REQUESTED: () => null,
 }, null);
 
 const reducers: Partial<ReducerMap> = {

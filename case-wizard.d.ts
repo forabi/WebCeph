@@ -217,38 +217,22 @@ interface StoreState {
     left: number;
   };
   /** Data indexed by image ID */
-  'workspace.images': {
+  'workspace.images.props': {
+    [imageId: string]: ImageBlobData & CephImageData;
+  };
+  'workspace.images.tracing': {
+    [imageId: string]: CephImageTracingData;
+  };
+  'workspace.images.status': {
     [imageId: string]: {
-      name: string | null;
-      data: string;
-      /** A null value indicates that the image type is not set or is unknown */
-      type: ImageType | null;
-      width: number;
-      height: number;
-      scaleFactor: number | null;
-      flipX: boolean;
-      flipY: boolean;
-      /** A value between 0 and 1, defaults to 0.5 */
-      brightness: number;
-      /** A value between 0 and 1, defaults to 0.5 */
-      contrast: number;
-      /** Wether the image colors should be inverted */
-      invertColors: boolean;
-      tracing: {
-        mode: 'auto' | 'assisted' | 'manual';
-        scaleFactor: number | null;
-        manualLandmarks: {
-          [symbol: string]: GeometricalObject;
-        };
-        /** Steps to skip in non-manual tracing modes */
-        skippedSteps: {
-          [symbol: string]: true;
-        };
-      };
-      analysis: {
-        /** Last used analysis for this image */
-        activeId: string | null;
-      };
+      isLoading: true;
+      error: null;
+    } | {
+      isLoading: false;
+      error: GenericError;
+    } | {
+      isLoading: false;
+      error: null;
     };
   };
   'workspace.images.activeImageId': string | null;
@@ -280,6 +264,42 @@ type ToolId = (
   'REMOVE_LANDMARK' |
   'ZOOM_WITH_CURSOR'
 );
+
+type ImageBlobData = {
+  name: string | null;
+  data: string;
+  width: number;
+  height: number;
+};
+
+type CephImageData = {
+  /** A null value indicates that the image type is not set or is unknown */
+  type: ImageType | null;
+  scaleFactor: number | null;
+  flipX: boolean;
+  flipY: boolean;
+  /** A value between 0 and 1, defaults to 0.5 */
+  brightness: number;
+  /** A value between 0 and 1, defaults to 0.5 */
+  contrast: number;
+  /** Wether the image colors should be inverted */
+  invertColors: boolean;
+  analysis: {
+    /** Last used analysis for this image */
+    activeId: string | null;
+  };
+};
+
+type CephImageTracingData = {
+  mode: 'auto' | 'assisted' | 'manual';
+  manualLandmarks: {
+    [symbol: string]: GeometricalObject;
+  };
+  /** Steps to skip in non-manual tracing modes */
+  skippedSteps: {
+    [symbol: string]: true;
+  };
+};
 
 interface Events {
   CONNECTION_STATUS_CHANGED: Partial<{
@@ -324,13 +344,21 @@ interface Events {
     id: string;
     file: File;
   };
-  LOAD_IMAGE_SUCCEEDED: {
+  LOAD_IMAGE_SUCCEEDED: (
+    ImageBlobData & 
+    Partial<CephImageData> &
+    {
+      id: string;
+      tracing?: CephImageTracingData;
+    }
+  );
+  LOAD_IMAGE_FAILED: {
     id: string;
-    name: string;
-    height: number;
-    width: number;
+    error: GenericError;
   };
-  LOAD_IMAGE_FAILED: GenericError;
+  CLOSE_IMAGE_REQUESTED: {
+    id: string;
+  }
   CANVAS_RESIZED: {
     top: number;
     left: number;
