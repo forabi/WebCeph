@@ -123,8 +123,8 @@ const config = {
           {
             loader: 'ts-loader',
             query: {
-              transpileOnly: true,
-              silent: true,
+              transpileOnly: env.isDev,
+              silent: env.isDev,
               compilerOptions: Object.assign(
                 {
                   module: 'es2015',
