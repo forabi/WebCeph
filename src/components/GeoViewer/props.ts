@@ -10,11 +10,11 @@ export interface StateProps extends React.SVGAttributes<SVGElement> {
   left: number;
   width: number;
   height: number;
-  getPropsForPoint: (symbol: string) => Partial<PointProps>; // @TODO: use partial
-  getPropsForVector: (symbol: string) => Partial<VectorProps>; // @TODO: use partial
+  getPropsForPoint: (symbol: string) => Partial<PointProps>;
+  getPropsForVector: (symbol: string) => Partial<VectorProps>;
   getPropsForAngle: (symbol: string) => (
     Pick<AngleProps, 'boundingRect' | 'vectors' | 'symbol'> & Partial<AngleProps>
-  ); // @TODO: use partial
+  );
 }
 
 export interface DispatchProps {

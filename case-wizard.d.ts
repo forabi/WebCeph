@@ -545,13 +545,13 @@ type ExportProgressCallback = (
 ) => void;
 
 namespace WCeph {
-  type ImportOptions = {
-    imagesToLoad?: string[];
-    loadTracingData?: boolean;
-    loadWorkspaceSettings?: boolean;
-    loadSuperimpositionState?: boolean;
-    treatmentStagesToLoad?: string[];
-  }
+  type ImportOptions = Partial<{
+    imagesToLoad: string[];
+    loadTracingData: boolean;
+    loadWorkspaceSettings: boolean;
+    loadSuperimpositionState: boolean;
+    treatmentStagesToLoad: string[];
+  }>;
 
   /**
    * A WCeph File importer recieves the file to be imported along with any import options and
@@ -559,20 +559,19 @@ namespace WCeph {
    */
   type Importer = (file: File, options: ImportOptions) => Promise<Action<any>[]>;
 
-
-  type ExportOptions = {
-    imagesToSave?: string[];
-    saveTracingData?: boolean;
-    saveWorkspaceSettings?: boolean;
-    saveSuperimpositionState?: boolean;
-    treatmentStagesToSave?: string[];
-    thumbs?: {
-      '64x64'?: boolean;
-      '128x128'?: boolean;
-      '256x256'?: boolean;
-      '512x512'?: boolean;
-    };
-  }
+  type ExportOptions = Partial<{
+    imagesToSave: string[];
+    saveTracingData: boolean;
+    saveWorkspaceSettings: boolean;
+    saveSuperimpositionState: boolean;
+    treatmentStagesToSave: string[];
+    thumbs: Partial<{
+      '64x64': boolean;
+      '128x128': boolean;
+      '256x256': boolean;
+      '512x512': boolean;
+    }>;
+  }>;
 
   type ValidateOptions = {
 

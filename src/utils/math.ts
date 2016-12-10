@@ -108,14 +108,6 @@ export const getYInterceptEquation = (vector: GeometricalVector) => {
   return (x: number) => getSlope(vector) * (x - x1) + y1;
 };
 
-export const isPointCloserTo = (
-  _: GeometricalPoint,
-  __: GeometricalVector,
-  ___: GeometricalVector,
-) => {
-  return false; // @TODO
-};
-
 export const isPointInLine = (
   { x, y }: GeometricalPoint,
   vector: GeometricalVector,
