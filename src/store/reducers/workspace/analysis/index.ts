@@ -352,13 +352,12 @@ export const getAllPossibleNestedComponents = createSelector(
     const fn = memoize((landmark: CephaloLandmark): CephaloLandmark[] => {
       let additional: CephaloLandmark[] = [];
       for (const subcomponent of landmark.components) {
-        additional = [
-          ...additional,
+        additional = additional.concat([
           subcomponent,
           ...subcomponent.components,
           ...findEqual(subcomponent),
           ...flatten(map(subcomponent.components, fn)),
-        ];
+        ]);
       }
       return additional;
     });
