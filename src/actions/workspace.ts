@@ -1,9 +1,8 @@
 import { createActionCreator } from 'utils/store';
 
-/* Tracing actions */
 export const setActiveTool = createActionCreator('SET_ACTIVE_TOOL_REQUESTED');
 
-export const ignoreWorkspaceError= createActionCreator('IGNORE_WORKSPACE_ERROR_REQUESTED');
+export const ignoreWorkspaceError = createActionCreator('IGNORE_WORKSPACE_ERROR_REQUESTED');
 
 export const addManualLandmark = createActionCreator('ADD_MANUAL_LANDMARK_REQUESTED');
 export const addUnnamedManualLandmark = createActionCreator('ADD_UNKOWN_MANUAL_LANDMARK_REQUESTED');
