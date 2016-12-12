@@ -1,6 +1,7 @@
 import { Ls, Li, softPog } from 'analyses/landmarks/points/soft';
 import { FH_PLANE } from 'analyses/landmarks/lines/skeletal';
 import { flipVector } from 'analyses/helpers';
+import { createVectorFromPoints } from 'utils/math';
 
 /**
  * A profile line is established by drawing a line tangent
@@ -10,36 +11,26 @@ import { flipVector } from 'analyses/helpers';
  * The angle formed by the intersection of FH and this
  * profile line is called the Z-angle.
  */
-export const Z: CephaloLandmark = {
+export const Z: CephLandmark = {
   symbol: 'Z',
   type: 'angle',
   name: 'Merrifield\'s Z Angle',
   unit: 'degree',
   components: [flipVector(FH_PLANE), Li, Ls, softPog],
   map: (
-    { isBehind }: CephaloMapper,
+    { isBehind }: CephMapper,
     FH: GeometricalVector,
     Li: GeometricalPoint,
     Ls: GeometricalPoint,
     softPog: GeometricalPoint,
   ): GeometricalAngle => {
-    const LsSoftPog: GeometricalVector = {
-      x1: Ls.x,
-      y1: Ls.y,
-      x2: softPog.x,
-      y2: softPog.y, 
-    };
+    const LsSoftPog = createVectorFromPoints(Ls, softPog);
     if (isBehind(Li, LsSoftPog)) {
       return {
         vectors: [FH, LsSoftPog],
       };
     } else {
-      const LiSoftPog: GeometricalVector = {
-        x1: Li.x,
-        y1: Li.y,
-        x2: softPog.x,
-        y2: softPog.y, 
-      };
+      const LiSoftPog = createVectorFromPoints(Li, softPog);
       return {
         vectors: [FH, LiSoftPog],
       };

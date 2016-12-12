@@ -5,12 +5,41 @@ type AngularUnit = 'degree' | 'radian';
 type LinearUnit = 'mm' | 'cm' | 'in';
 type LandmarkType = 'angle' | 'point' | 'line' | 'distance' | 'sum';
 
+type Categories = {
+  skeletalPattern: 'class1' | 'class2' | 'tendency_for_class3' | 'class3',
+  maxilla: 'normal' | 'prognathic' | 'retrognathic',
+  mandible: 'normal' | 'prognathic' | 'retrognathic',
+  skeletalProfile: 'normal' | 'concave' | 'convex',
+  mandibularRotation: 'normal' | 'clockwise' | 'counterclockwise',
+  growthPattern: 'normal' | 'horizontal' | 'vertical',
+  upperIncisorInclination: 'normal' | 'buccal' | 'palatal',
+  lowerIncisorInclination: 'normal' | 'buccal' | 'lingual',
+  skeletalBite: 'normal' | 'open' | 'closed',
+  chin: 'normal' | 'recessive' | 'prominent',
+};
+
+type Category = keyof Categories;
+type Indication<T extends Category> = Categories[T];
+type Severity = null | 'low' | 'medium' | 'high';
+
+
+interface LandmarkInterpretation<T extends Category> {
+  category: T;
+  indication: Indication<T>;
+  severity?: Severity;
+}
+
+interface AnalysisInterpretation extends LandmarkInterpretation {
+  /** A list of symbol that were used to calculate this result */
+  relevantComponents: string[];
+}
+
 /**
  * A generic interface that represents any cephalometric landmark, including
  * angles, lines and points.
  * Landmarks may also have names and units.
  */
-interface CephaloLandmark {
+interface CephLandmark {
   name?: string;
   /**
    * Each landmark must have a symbol which acts as the unique identifier for that landmark.
@@ -23,47 +52,101 @@ interface CephaloLandmark {
    * Some landmarks are composed of more basic components; for example, a line is
    * composed of two points.
    */
-  components: CephaloLandmark[];
+  components: CephLandmark[];
   /**
    * An optional custom calculation method.
    * It is passed the computed values for each of this landmark's components
    * in the same order they were defined.
    */
-  calculate?(mapper: CephaloMapper, ...args: EvaluatedValue[]): number;
+  calculate?(mapper: CephMapper, ...args: EvaluatedValue[]): number;
 
   /** An optional custom mapping method.
    * It is passed the geometrical representation of this landmark's components
    * in the same order they were defined.
    */
-  map?(mapper: CephaloMapper, ...args: (GeometricalObject | undefined)[]): GeometricalObject;
+  map?(mapper: CephMapper, ...args: (GeometricalObject | undefined)[]): GeometricalObject;
+
+  /** An optional interpretation method.
+   * It is passed the calculated value of this landmark.
+   * If a custom calculation method is provied, it is called before
+   * this method and the calculated value is passed as the first argument.
+   */
+  interpret?(value: number, min?: number, max?: number, mean?: number): LandmarkInterpretation[];
 }
 
-interface CephaloPoint extends CephaloLandmark {
+interface CephPoint extends CephLandmark {
   type: 'point';
 }
 
- interface CephaloLine extends CephaloLandmark {
+ interface CephLine extends CephLandmark {
   type: 'line';
   unit: LinearUnit;
-  components: CephaloPoint[];
+  components: CephPoint[];
 }
 
-interface CephaloDistance extends CephaloLandmark {
+interface CephDistance extends CephLandmark {
   type: 'distance';
   unit: LinearUnit;
-  components: CephaloPoint[];
+  components: CephPoint[];
 }
 
-interface CephaloAngle extends CephaloLandmark {
+interface CephAngle extends CephLandmark {
   type: 'angle';
   unit: AngularUnit;
-  components: CephaloPoint[] | CephaloLine[] | CephaloAngle[];
+  components: CephPoint[] | CephLine[] | CephAngle[];
 }
 
-interface CephaloAngularSum extends CephaloLandmark {
+interface CephAngularSum extends CephLandmark {
   type: 'sum';
   unit: AngularUnit ;
-  components: CephaloAngle[];
+  components: CephAngle[];
+}
+
+type AnalysisComponent = {
+  landmark: CephLandmark;
+  norm: number;
+  stdDev?: number;
+};
+
+type CategorizedAnalysisResult<T extends Category> = {
+  category: T;
+  indication?: Indication<T>;
+  severity?: Severity;
+  relevantComponents: ReadonlyArray<{
+    symbol: string;
+    value: number;
+    norm?: number;
+    stdDev?: number;
+  }>;
+};
+
+interface Analysis {
+  id: string;
+  components: AnalysisComponent[];
+
+  /**
+   * Given a map of the evaluated values of this analysis components,
+   * this function should return an array of interpreted results.
+   * For example, given a computed value of 7 for angle ANB,
+   * the returned value should have a result of type SkeletalPattern.classII
+   */
+  interpret?(values: { [id: string]: EvaluatedValue }): AnalysisInterpretation[];
+}
+
+/**
+ * A Mapper object maps cephalometric landmarks to geometrical objects
+ */
+interface CephMapper {
+  toVector(landmark: CephLine): GeometricalVector;
+  toPoint(landmark: CephPoint): GeometricalPoint;
+  toAngle(landmark: CephAngle): GeometricalAngle;
+  /**
+   * The scale factor is required to calculate linear measurements
+   * It is expected to map pixels on the screen to millimeters.
+   */
+  scaleFactor: number | null;
+  isBehind(point: GeometricalPoint, line: GeometricalVector): boolean;
+  measureHorizontalDistance(point1: GeometricalPoint, point2: GeometricalPoint): number;
 }
 
 /**
@@ -95,60 +178,8 @@ type GeometricalObject = GeometricalVector | GeometricalPoint | GeometricalAngle
 
 type EvaluatedValue = GeometricalObject | number;
 
-type AnalysisComponent = {
-  landmark: CephaloLandmark;
-  norm: number;
-  stdDev?: number;
-};
-
-interface AnalysisInterpretation {
-  indication: number;
-  severity: number;
-  /** A list of symbol that were used to calculate this result */
-  relevantComponents: string[];
-}
-
-type CategorizedAnalysisResults = ReadonlyArray<{
-  category: number;
-  indication?: number;
-  severity?: number;
-  relevantComponents: ReadonlyArray<{
-    symbol: string;
-    value: number;
-    norm?: number;
-    stdDev?: number;
-  }>;
-}>;
-
-interface Analysis {
-  id: string;
-  components: AnalysisComponent[];
-
-  /** Given a map of the evaluated values of this analysis components,
-   * this function should return an array of interpreted results.
-   * For example, given a computed value of 7 for angle ANB,
-   * the returned value should have a result of type CLASS_II_SKELETAL_PATTERN
-   */
-  interpret(values: { [id: string]: EvaluatedValue }): AnalysisInterpretation[];
-}
-
-/**
- * A Mapper object maps cephalometric landmarks to geometrical objects
- */
-interface CephaloMapper {
-  toVector(landmark: CephaloLine): GeometricalVector;
-  toPoint(landmark: CephaloPoint): GeometricalPoint;
-  toAngle(landmark: CephaloAngle): GeometricalAngle;
-  /**
-   * The scale factor is required to calculate linear measurements
-   * It is expected to map pixels on the screen to millimeters.
-   */
-  scaleFactor: number | null;
-  isBehind(point: GeometricalPoint, line: GeometricalVector): boolean;
-}
-
 type StepState = 'done' | 'current' | 'pending' | 'evaluating';
-type Step = CephaloLandmark & { title: string, state: StepState };
+type Step = CephLandmark & { title: string, state: StepState };
 
 type GenericError = { message: string, code?: number };
 

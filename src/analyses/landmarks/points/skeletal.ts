@@ -1,4 +1,11 @@
-import { point } from 'analyses/helpers';
+import { FH_PLANE, PtV } from 'analyses/landmarks/lines/skeletal';
+import { getIntersectionPoint, createPerpendicular, createVectorFromPoints } from 'utils/math';
+import { point, line } from 'analyses/helpers';
+
+/**
+ * Most anterior point on foramen magnum
+ */
+export const Ba = point('Ba', 'Basion');
 
 /**
  * Most superior point of outline of external auditory meatus
@@ -107,3 +114,112 @@ export const L1_INCISAL_EDGE = point(
   undefined,
   'Incisal Edge of Lower Incisor',
 );
+
+/**
+ * The intersection of the inferior border of the foramen rotundum with
+ * the posterior wall of the pterygomaxillary fissure.
+ */
+export const Pt = point(
+  'Pt',
+  'Pterygomaxillary',
+);
+
+/**
+ * Protuberance menti or supragonion
+ */
+export const PM = point(
+  'PM',
+  'Protuberance menti',
+  'Protuberance menti or supragonion',
+);
+
+/**
+ * Cephalometric landmark formed by the intersection of FH and
+ * the perpendicular through Pt point.
+ */
+export const CF: CephLandmark = {
+  ...point(
+    'CF',
+    'Center of face',
+  ),
+  components: [FH_PLANE, Pt],
+  map(_, geoFH: GeometricalVector, geoPt: GeometricalPoint) {
+    return getIntersectionPoint(geoFH, createPerpendicular(geoFH, geoPt)) as GeometricalPoint;
+  },
+};
+
+/**
+ * Cephalometric landmark formed by the intersection of the two lines Ba-N and Pt-Gn.
+ */
+export const CC: CephLandmark = {
+  ...point(
+    'CC',
+    'Center of cranium',
+  ),
+  components: [line(Ba, N), line(Pt, Gn)],
+  map(_, BaN: GeometricalVector, PtGn: GeometricalVector) {
+    return getIntersectionPoint(BaN, PtGn) as GeometricalPoint;
+  },
+};
+
+/**
+ * The deepest point on the curve of the anterior border of the ramus,
+ * one half the distance between the inferior and superior curves.
+ */
+export const R1 = point('R1-mandible');
+
+/**
+ * A point located on the posterior border of the ramus of the mandible.
+ */
+export const R2 = point('R2-mandible');
+
+/**
+ * A point located at the center and most inferior aspect of the sigmoid
+ * notch of the ramus of the mandible.
+ */
+export const R3 = point('R3-mandible');
+
+/**
+ * A point on the lower border of the mandible, directly inferior
+ * to the center of the sigmoid notch of the ramus.
+ */
+export const R4 = point('R4-mandible');
+
+/**
+ * A point located at the geometric center of the ramus.
+ */
+export const Xi: CephLandmark = {
+  ...point(
+    'Xi',
+    'Center of ramus',
+  ),
+  components: [R1, R2, R3, R4, FH_PLANE, PtV],
+  /**
+   * Location of Xi is keyed geometrically to Po-Or (FH) and perpendicular through Pt
+   * (pterygoid vertical [PtV]; a line perpendicular to FH at the posterior margin of
+   * the pterygopalatine fossa).
+   */
+  map(
+    _,
+    geoR1: GeometricalPoint, geoR2: GeometricalPoint,
+    geoR3: GeometricalPoint, geoR4: GeometricalPoint,
+    geoFH: GeometricalVector, geoPtV: GeometricalVector,
+  ) {
+    // Planes perpendicular to FH and PtV are constructed.
+    const i1 = createPerpendicular(geoFH, geoR1);
+    const i2 = createPerpendicular(geoFH, geoR2);
+    const i3 = createPerpendicular(geoPtV, geoR3);
+    const i4 = createPerpendicular(geoPtV, geoR4);
+
+    // Xi is located in the center of the rectangle at the intersection of the diagonals.
+    const diag1 = createVectorFromPoints(
+      getIntersectionPoint(i3, i1) as GeometricalPoint,
+      getIntersectionPoint(i4, i2) as GeometricalPoint,
+    );
+    const diag2 = createVectorFromPoints(
+      getIntersectionPoint(i3, i2) as GeometricalPoint,
+      getIntersectionPoint(i4, i1) as GeometricalPoint,
+    );
+    return getIntersectionPoint(diag1, diag2) as GeometricalPoint;
+  },
+};

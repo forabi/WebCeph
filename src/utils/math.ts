@@ -78,11 +78,31 @@ export function calculateAngleBetweenTwoVectors(line1: GeometricalVector, line2:
   const dx2 = x4 - x3;
   const dy2 = y4 - y3;
 
-  const d = dx1 * dx2 + dy1 * dy2;   // dot product of the 2 vectors
-  const l2 = (dx1 ** 2 + dy1 ** 2) * (dx2 ** 2 + dy2 ** 2); // product of the squared lengths
+  const d = dx1 * dx2 + dy1 * dy2; // Dot product of the 2 vectors
+  const l2 = (dx1 ** 2 + dy1 ** 2) * (dx2 ** 2 + dy2 ** 2); // Product of the squared lengths
 
   return Math.acos(d / Math.sqrt(l2));
 };
+
+export function calculateAngle({ vectors: [v1, v2] }: GeometricalAngle) {
+  return calculateAngleBetweenTwoVectors(v1, v2);
+}
+
+/** Rotate a point in a 2-D plane given an origin and an angle */
+export function rotatePointAroundOrigin(
+  /**
+   * The central point (the origin around which the second point will be rotated)
+   */
+  { x: cx, y: cy }: GeometricalPoint,
+  { x, y }: GeometricalPoint,
+  angleInRadians: number,
+): GeometricalPoint {
+  const cos = Math.cos(angleInRadians);
+  const sin = Math.sin(angleInRadians);
+  const nx = (cos * (x - cx)) + (sin * (y - cy)) + cx;
+  const ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
+  return { x: nx, y: ny };
+}
 
 
 import clamp from 'lodash/clamp';
@@ -152,6 +172,20 @@ export const getIntersectionPoint = (
     const y = (A1 * C2 - A2 * C1) / det;
     return { x, y };
   }
+};
+
+export const createPerpendicular = (
+  { x1, y1, x2, y2 }: GeometricalVector,
+  point: GeometricalPoint,
+): GeometricalVector => {
+  const k = (
+    (y2 - y1) * (point.x - x1) - (x2 - x1) * (point.y - y1)
+  ) / (
+    (y2 - y1) ** 2 + (x2 - x1) ** 2
+  );
+  const x = point.x - k * (y2 - y1);
+  const y = point.y + k * (x2 - x1);
+  return createVectorFromPoints(point, { x, y });
 };
 
 export const getVectorPoints = ({ x1, y1, x2, y2 }: GeometricalVector): [GeometricalPoint, GeometricalPoint] => {

@@ -9,7 +9,7 @@ import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 import manualLandmarks, { getManualLandmarks } from './manualLandmarks';
 import { isImageFlippedX } from 'store/reducers/workspace/image';
-import { line, isCephaloPoint, isCephaloLine, isCephaloAngle } from 'analyses/helpers';
+import { line, isCephPoint, isCephLine, isCephaloAngle } from 'analyses/helpers';
 import { isGeometricalPoint, isBehind } from 'utils/math';
 
 type SkippedSteps = StoreEntries.workspace.analysis.tracing.steps.skipped;
@@ -103,10 +103,10 @@ export const getCephaloMapper = createSelector(
   getManualLandmarks,
   getScaleFactor,
   isImageFlippedX,
-  ({ present: manual }, scaleFactor, isFlippedX): CephaloMapper => {
-    const toPoint = (cephaloPoint: CephaloPoint) => {
-      const { symbol } = cephaloPoint;
-      if (!isCephaloPoint(cephaloPoint)) {
+  ({ present: manual }, scaleFactor, isFlippedX): CephMapper => {
+    const toPoint = (cephPoint: CephPoint) => {
+      const { symbol } = cephPoint;
+      if (!isCephPoint(cephPoint)) {
         console.warn(
           `CephaloMapper.toPoint was called with ${symbol}, ` +
           `but ${symbol} does not conform to the CephaloPoint interface.`,
@@ -119,22 +119,22 @@ export const getCephaloMapper = createSelector(
           `which is a CephaloPoint, to a geometrical representation that ` +
           `does not conform the the GeometricalPoint interface.`,
           geoLandmark,
-          cephaloPoint,
+          cephPoint,
           manualLandmarks,
         );
       }
       return geoLandmark as GeometricalPoint;
     };
 
-    const toVector = (cephaloLine: CephaloLine) => {
-      const { symbol } = cephaloLine;
-      if (!isCephaloLine(cephaloLine)) {
+    const toVector = (cephLine: CephLine) => {
+      const { symbol } = cephLine;
+      if (!isCephLine(cephLine)) {
         console.warn(
           `CephaloMapper.toVector was called with ${symbol}, ` +
           `but ${symbol} does not conform to the CephaloLine interface.`,
         );
       }
-      const [A, B] = map(cephaloLine.components, toPoint);
+      const [A, B] = map(cephLine.components, toPoint);
       return {
         x1: A.x,
         y1: A.y,
@@ -143,50 +143,50 @@ export const getCephaloMapper = createSelector(
       };
     };
 
-    const toAngle = (cephaloAngle: CephaloAngle): GeometricalAngle => {
-      let vectors: CephaloLine[];
-      if (every(cephaloAngle.components, isCephaloPoint)) {
-        const [A, B, C] = cephaloAngle.components as CephaloPoint[];
+    const toAngle = (cephAngle: CephAngle): GeometricalAngle => {
+      let vectors: CephLine[];
+      if (every(cephAngle.components, isCephPoint)) {
+        const [A, B, C] = cephAngle.components as CephPoint[];
         vectors = [line(A, B), line(B, C)];
-      } else if (every(cephaloAngle.components, isCephaloAngle)) {
-        let A: CephaloPoint, B: CephaloPoint, C: CephaloPoint;
-        const [angle1, angle2] = cephaloAngle.components;
+      } else if (every(cephAngle.components, isCephaloAngle)) {
+        let A: CephPoint, B: CephPoint, C: CephPoint;
+        const [angle1, angle2] = cephAngle.components;
         const components = [...angle1.components, ...angle2.components];
-        if (every(components, isCephaloPoint)) {
+        if (every(components, isCephPoint)) {
           [A, B, C] = uniqBy(
-            components as CephaloPoint[],
+            components as CephPoint[],
             c => c.symbol
           );
           vectors = [line(A, B), line(B, C)];
-        } else if (every(components, isCephaloLine)) {
+        } else if (every(components, isCephLine)) {
           [A, B, C] = uniqBy(
             [
               ...angle1.components[1].components,
               ...angle2.components[1].components,
-            ] as CephaloPoint[],
+            ] as CephPoint[],
             c => c.symbol,
           );
           vectors = [line(A, B), line(B, C)];
         } else {
           console.warn(
-            `CephaloMapper.toAngle was called with ${cephaloAngle.symbol}, ` +
-            `but ${cephaloAngle.symbol} components did not match any of the ` +
+            `CephaloMapper.toAngle was called with ${cephAngle.symbol}, ` +
+            `but ${cephAngle.symbol} components did not match any of the ` +
             `CephaloAngle components interfaces.`,
           );
           vectors = [];
         }
-      } else if (every(cephaloAngle.components, isCephaloLine)) {
-        vectors = cephaloAngle.components as CephaloLine[];
+      } else if (every(cephAngle.components, isCephLine)) {
+        vectors = cephAngle.components as CephLine[];
       } else {
         console.warn(
-          `CephaloMapper.toAngle was called with ${cephaloAngle.symbol}, ` +
-          `but ${cephaloAngle.symbol} components did not match any of the ` +
+          `CephaloMapper.toAngle was called with ${cephAngle.symbol}, ` +
+          `but ${cephAngle.symbol} components did not match any of the ` +
           `CephaloAngle components interfaces.`,
         );
         vectors = [];
       }
       return {
-        vectors: map(vectors, toVector),
+        vectors: [map(vectors, toVector)],
       };
     };
 

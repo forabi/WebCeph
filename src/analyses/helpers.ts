@@ -3,7 +3,6 @@ import map from 'lodash/map';
 import xorWith from 'lodash/xorWith';
 import uniqWith from 'lodash/uniqWith';
 import uniqBy from 'lodash/uniqBy';
-import has from 'lodash/has';
 import every from 'lodash/every';
 import join from 'lodash/join';
 import reduce from 'lodash/reduce';
@@ -11,7 +10,7 @@ import isPlainObject from 'lodash/isPlainObject';
 
 import { isGeometricalAngle } from 'utils/math';
 
-export function getSymbolForAngle(line1: CephaloLine, line2: CephaloLine): string {
+export function getSymbolForAngle(line1: CephLine, line2: CephLine): string {
   const A = line1.components[0]; // N
   const B = line1.components[1]; // S
   const C = line2.components[0]; // N
@@ -28,10 +27,10 @@ export function getSymbolForAngle(line1: CephaloLine, line2: CephaloLine): strin
  * Creates an object conforming to the Angle interface based on 2 lines
  */
 export function angleBetweenLines(
-  lineA: CephaloLine, lineB: CephaloLine,
+  lineA: CephLine, lineB: CephLine,
   name?: string, symbol?: string,
-  unit: AngularUnit = 'degree'
-): CephaloAngle {
+  unit: AngularUnit = 'degree',
+): CephAngle {
   return {
     type: 'angle',
     symbol: symbol || getSymbolForAngle(lineA, lineB),
@@ -45,14 +44,14 @@ export function angleBetweenLines(
  * Creates an object conforming to the Angle interface based on 3 points
  */
 export function angleBetweenPoints(
-  A: CephaloPoint, B: CephaloPoint, C: CephaloPoint,
+  A: CephPoint, B: CephPoint, C: CephPoint,
   name?: string,
   unit: AngularUnit = 'degree'
-): CephaloAngle {
+): CephAngle {
   return angleBetweenLines(line(B, A), line(B, C), name, undefined, unit);
 }
 
-export function point(symbol: string, name?: string, description?: string): CephaloPoint {
+export function point(symbol: string, name?: string, description?: string): CephPoint {
   return {
     type: 'point',
     name,
@@ -66,10 +65,10 @@ export function point(symbol: string, name?: string, description?: string): Ceph
  * Creates an object conforming to the Line interface connecting two points
  */
 export function line(
-  A: CephaloPoint, B: CephaloPoint,
+  A: CephPoint, B: CephPoint,
   name?: string, symbol?: string,
   unit: LinearUnit = 'mm',
-): CephaloLine {
+): CephLine {
   return {
     type: 'line',
     name,
@@ -79,7 +78,7 @@ export function line(
   };
 }
 
-export function distance(A: CephaloPoint, B: CephaloPoint, name?: string, unit: LinearUnit = 'mm'): CephaloDistance {
+export function distance(A: CephPoint, B: CephPoint, name?: string, unit: LinearUnit = 'mm'): CephDistance {
   return {
     type: 'distance',
     name,
@@ -89,7 +88,7 @@ export function distance(A: CephaloPoint, B: CephaloPoint, name?: string, unit: 
   };
 }
 
-export function angularSum(components: CephaloAngle[], name: string, symbol?: string): CephaloAngularSum {
+export function angularSum(components: CephAngle[], name: string, symbol?: string): CephAngularSum {
   return {
     type: 'sum',
     name,
@@ -99,7 +98,7 @@ export function angularSum(components: CephaloAngle[], name: string, symbol?: st
   };
 }
 
-export function areEqualSteps(l1: CephaloLandmark, l2: CephaloLandmark): boolean {
+export function areEqualSteps(l1: CephLandmark, l2: CephLandmark): boolean {
   if (l1.symbol === l2.symbol) {
     return true;
   }
@@ -117,17 +116,17 @@ export function areEqualSteps(l1: CephaloLandmark, l2: CephaloLandmark): boolean
   );
 };
 
-export function areEqualSymbols(l1: CephaloLandmark, l2: CephaloLandmark) {
+export function areEqualSymbols(l1: CephLandmark, l2: CephLandmark) {
   return l1.symbol === l2.symbol;
 };
 
 export function getStepsForLandmarks(
-  landmarks: CephaloLandmark[], removeEqualSteps = true
-): CephaloLandmark[] {
+  landmarks: CephLandmark[], removeEqualSteps = true
+): CephLandmark[] {
   return uniqWith(
     flatten(map(
       landmarks,
-      (landmark: CephaloLandmark) => {
+      (landmark: CephLandmark) => {
         if (!landmark) {
           console.warn(
             'Got unexpected value in getStepsForLandmarks. ' +
@@ -148,23 +147,23 @@ export function getStepsForLandmarks(
 export function getStepsForAnalysis(
   analysis: Analysis,
   deduplicateVectors = true
-): CephaloLandmark[] {
+): CephLandmark[] {
   return getStepsForLandmarks(analysis.components.map(c => c.landmark), deduplicateVectors);
 };
 
-export function flipVector(vector: CephaloLine) {
+export function flipVector(vector: CephLine) {
   return line(vector.components[1], vector.components[0]);
 };
 
-export function isCephaloPoint(object: any): object is CephaloPoint {
+export function isCephPoint(object: any): object is CephPoint {
   return isPlainObject(object) && object.type === 'point';
 };
 
-export function isCephaloLine(object: any): object is CephaloLine {
+export function isCephLine(object: any): object is CephLine {
   return isPlainObject(object) && object.type === 'line';
 };
 
-export function isCephaloAngle(object: any): object is CephaloAngle {
+export function isCephaloAngle(object: any): object is CephAngle {
   return isPlainObject(object) && object.type === 'angle';
 };
 
@@ -174,7 +173,7 @@ import {
   radiansToDegrees,
 } from '../utils/math';
 
-export function computeOrMap(landmark: CephaloLandmark, mapper: CephaloMapper): number | GeometricalObject | undefined {
+export function computeOrMap(landmark: CephLandmark, mapper: CephMapper): number | GeometricalObject | undefined {
   if (landmark.type === 'line') {
     return mapper.toVector(landmark);
   } else if (landmark.type === 'point') {
@@ -189,14 +188,14 @@ export function computeOrMap(landmark: CephaloLandmark, mapper: CephaloMapper): 
  * Returns the GeometricalObject the landmark maps to.
  * Returns undefined if the landmark type is not mappable.
  */
-export function tryMap(landmark: CephaloLandmark, mapper: CephaloMapper): GeometricalObject | undefined {
+export function tryMap(landmark: CephLandmark, mapper: CephMapper): GeometricalObject | undefined {
   if (typeof landmark.map === 'function') {
     return landmark.map(mapper, ...map(landmark.components, c => tryMap(c, mapper)));
   } else if (isCephaloAngle(landmark)) {
     return mapper.toAngle(landmark);
-  } else if (isCephaloLine(landmark)) {
+  } else if (isCephLine(landmark)) {
     return mapper.toVector(landmark);
-  } else if (isCephaloPoint(landmark)) {
+  } else if (isCephPoint(landmark)) {
     return mapper.toPoint(landmark);
   }
   return undefined;
@@ -205,7 +204,7 @@ export function tryMap(landmark: CephaloLandmark, mapper: CephaloMapper): Geomet
 /**
  * Calculates the value of a landmark on a cephalometric radiograph
  */
-export function compute(landmark: CephaloLandmark, mapper: CephaloMapper): number | undefined {
+export function compute(landmark: CephLandmark, mapper: CephMapper): number | undefined {
   if (landmark.calculate) {
     return landmark.calculate.apply(
       landmark,
@@ -300,86 +299,31 @@ export enum SkeletalBite {
   closed,
 };
 
-export enum ProblemSeverity {
-  NONE = 0,
-  UNKNOWN = NONE,
-  LOW = 1,
-  SLIGHT = LOW,
-  MEDIUM = 2,
-  HIGH = 3,
-  SEVERE = HIGH,
+
+const categoryMap: Record<Category, string> = {
+  growthPattern: 'Growth Pattern',
+  lowerIncisorInclination: 'Lower incisor inclination',
+  upperIncisorInclination: 'Upper incisor inclination',
+  mandible: 'Mandible',
+  maxilla: 'Maxilla',
+  mandibularRotation: 'Mandibular rotation',
+  skeletalBite: 'Skeletal bite',
+  skeletalPattern: 'Skeletal pattern',
+  skeletalProfile: 'Skeletal profile',
 };
 
-export function isSkeletalPattern(value: number | string): value is SkeletalPattern {
-  return has(SkeletalPattern, value);
-};
-
-export function isMaxilla(value: number | string): value is Maxilla {
-  return has(Maxilla, value);
-};
-
-export function isMandible(value: number | string): value is Mandible {
-  return has(Mandible, value);
-};
-
-export function isSkeletalProfile(value: number | string): value is SkeletalProfile {
-  return has(SkeletalProfile, value);
-};
-
-export function isMandiblularRotation(value: number | string): value is MandibularRotation {
-  return has(MandibularRotation, value);
-};
-
-export function isGrowthPattern(value: number | string): value is GrowthPattern {
-  return has(GrowthPattern, value);
-};
-
-export function isLowerIncisorInclination(value: number | string): value is LowerIncisorInclination {
-  return has(LowerIncisorInclination, value);
-};
-
-export function isUpperIncisorInclination(value: number | string): value is UpperIncisorInclination {
-  return has(UpperIncisorInclination, value);
-};
-
-export function isSkeletalBite(value: number | string): value is SkeletalBite {
-  return has(SkeletalBite, value);
-};
-
-export function getDisplayNameForResult({ indication }: AnalysisInterpretation) {
-  if (isSkeletalPattern(indication)) {
-    return 'Skeletal Pattern';
-  } else if (isSkeletalProfile(indication)) {
-    return 'Skeletal Profile';
-  } else if (isMaxilla(indication)) {
-    return 'Maxilla';
-  } else if (isMandible(indication)) {
-    return 'Mandible';
-  } else if (isMandiblularRotation(indication)) {
-    return 'Mandiblular Rotation';
-  } else if (isGrowthPattern(indication)) {
-    return 'Growth Pattern';
-  } else if (isLowerIncisorInclination(indication)) {
-    return 'Lower Insicor Inclination';
-  } else if (isUpperIncisorInclination(indication)) {
-    return 'Upper Insicor Inclination';
-  } else if (isSkeletalBite(indication)) {
-    return 'Skeletal Bite';
-  }
-  console.warn(
-    `Cannot find name for analysis result of type ${indication}`,
-  );
-  return null;
-};
+export const getDisplayNameForResult = <T extends Category>(
+  { category }: LandmarkInterpretation<T>
+) => categoryMap[category];
 
 /**
  * Determines whether a step in a cephalometric analysis can be mapped
  * to a geometrical object or computed as a numerical value
  */
-export const isStepAutomatic = (step: CephaloLandmark): boolean => {
+export const isStepAutomatic = (step: CephLandmark): boolean => {
   if (typeof step.map === 'function') {
     return true;
-  } if (step.type === 'point') {
+  } else if (step.type === 'point') {
     return false;
   } else if (step.type === 'line') {
     return every(step.components, s => s.type === 'point');
@@ -394,10 +338,10 @@ export const isStepAutomatic = (step: CephaloLandmark): boolean => {
 };
 
 /** Determines whether a step in a cephalometric analysis needs to be performed by the user  */
-export const isStepManual = (step: CephaloLandmark) => !isStepAutomatic(step);
+export const isStepManual = (step: CephLandmark) => !isStepAutomatic(step);
 
 /** Determines whether a step in a cephalometric analysis returns a numerical value when evaluated */
-export const isStepComputable = (step: CephaloLandmark) => {
+export const isStepComputable = (step: CephLandmark) => {
   return (
     step.type === 'sum' ||
     step.type === 'angle' ||
@@ -406,12 +350,58 @@ export const isStepComputable = (step: CephaloLandmark) => {
   );
 };
 
+export function defaultInterpetAnalysis(analysis: Analysis) {
+  return (values: Record<string, EvaluatedValue>): AnalysisInterpretation[] => {
+    return flatten(
+      map(analysis.components, ({ landmark, stdDev, norm }) => {
+        const interpret = landmark.interpret;
+        const value = values[landmark.symbol];
+        if (typeof value !== 'undefined' && typeof interpret === 'function' && typeof value === 'number') {
+          return map(
+            interpret(value, norm - stdDev, norm + stdDev),
+            r => ({ ...r, relevantComponents: [landmark.symbol] }),
+          );
+        } else {
+          return [];
+        }
+      }),
+    );
+  };
+};
+
+export const defaultInterpetLandmark = <T extends Category>(
+  category: T, ranges: [Indication<T>, Indication<T>, Indication<T>],
+) => {
+  return (value: number, max: number, min: number): Array<LandmarkInterpretation<T>> => {
+    let indication = ranges[1];
+    let severity: Severity = 'none';
+    if (value > max) {
+      indication = ranges[2];
+    } else if (value < min) {
+      indication = ranges[0];
+    }
+    return [{ category, indication, severity }];
+  };
+};
+
+interface InterpretationFunction<T extends Category> {
+  (value: number, max: number, min: number): Array<LandmarkInterpretation<T>>;
+}
+
+export const composeInterpretation = <T extends Category>(
+  ...args: Array<InterpretationFunction<T>>
+) => {
+  return (value: number, max: number, min: number) => {
+    return flatten(map(args, fn => fn(value, max, min)));
+  };
+};
+
 /**
  * Tries to return the most reasonable severity value given contradicting
  * interpretations of the evaluated values of an analysis
  */
-export function resolveSeverity(results: AnalysisInterpretation[]) {
-  return reduce<AnalysisInterpretation, ProblemSeverity>(
+export function resolveSeverity(results: LandmarkInterpretation[]) {
+  return reduce<LandmarkInterpretation, ProblemSeverity>(
     results,
     (previousValue, result) => {
       // @TODO: improve the logic
@@ -426,7 +416,7 @@ export function resolveSeverity(results: AnalysisInterpretation[]) {
  * interpretations of the evaluated values of an analysis
  */
 export function resolveIndication(
-  results: AnalysisInterpretation[],
+  results: LandmarkInterpretation[],
   values: { [symbol: string]: EvaluatedValue }
 ) {
   // @TODO: improve the logic

@@ -167,10 +167,10 @@ export const getAllPossibleActiveAnalysisSteps = createSelector(
 export const findStepBySymbol = createSelector(
   getAllPossibleActiveAnalysisSteps,
   getActiveAnalysisSteps,
-  (steps, deduplicatedSteps) => (symbol: string, includeDuplicates = true): CephaloLandmark | null => {
+  (steps, deduplicatedSteps) => (symbol: string, includeDuplicates = true): CephLandmark | null => {
     return find(
       includeDuplicates ? steps : deduplicatedSteps,
-      (step: CephaloLandmark) => step.symbol === symbol
+      (step: CephLandmark) => step.symbol === symbol
     ) || null;
   }
 );
@@ -184,7 +184,7 @@ export const getManualSteps = createSelector(
 export const getExpectedNextManualLandmark = createSelector(
   getManualSteps,
   getManualLandmarks,
-  (manualSteps, { present: manualLandmarks }): CephaloLandmark | null => (find(
+  (manualSteps, { present: manualLandmarks }): CephLandmark | null => (find(
     manualSteps,
     step => manualLandmarks[step.symbol] === undefined,
   ) || null),
@@ -214,7 +214,7 @@ export const getPendingSteps = createSelector(
 
 export const findEqualComponents = createSelector(
   getAllPossibleActiveAnalysisSteps,
-  (steps) => memoize(((step: CephaloLandmark): CephaloLandmark[] => {
+  (steps) => memoize(((step: CephLandmark): CephLandmark[] => {
     const cs = filter(steps, s => !areEqualSymbols(step, s) && areEqualSteps(step, s)) || [];
     return cs;
   })),
@@ -223,7 +223,7 @@ export const findEqualComponents = createSelector(
 export const isStepEligibleForAutomaticMapping = createSelector(
   getManualStepState,
   (getState) => {
-    const fn = (s: CephaloLandmark): boolean => {
+    const fn = (s: CephLandmark): boolean => {
       if (isStepManual(s)) {
         return false;
       }
@@ -275,10 +275,10 @@ export const getAllLandmarks = createSelector(
 export const isStepEligibleForComputation = createSelector(
   getAllLandmarks,
   findEqualComponents,
-  (allLandmarks, findEqual) => (step: CephaloLandmark) => {
+  (allLandmarks, findEqual) => (step: CephLandmark) => {
     return (
       isStepComputable(step) &&
-      every(step.components, (c: CephaloLandmark) => some(
+      every(step.components, (c: CephLandmark) => some(
         [c, ...findEqual(c)],
         eq => allLandmarks[eq.symbol] !== undefined
       ))
@@ -349,8 +349,8 @@ export const isAnalysisComplete = createSelector(
 export const getAllPossibleNestedComponents = createSelector(
   findEqualComponents,
   (findEqual) => {
-    const fn = memoize((landmark: CephaloLandmark): CephaloLandmark[] => {
-      let additional: CephaloLandmark[] = [];
+    const fn = memoize((landmark: CephLandmark): CephLandmark[] => {
+      let additional: CephLandmark[] = [];
       for (const subcomponent of landmark.components) {
         additional = additional.concat([
           subcomponent,
@@ -368,7 +368,7 @@ export const getAllPossibleNestedComponents = createSelector(
 export const getComponentWithAllPossibleNestedComponents = createSelector(
   findStepBySymbol,
   getAllPossibleNestedComponents,
-  (findBySymbol, getAllNested) => memoize((symbol: string): CephaloLandmark[] => {
+  (findBySymbol, getAllNested) => memoize((symbol: string): CephLandmark[] => {
     const landmark = findBySymbol(symbol);
     if (landmark !== null) {
       return [landmark, ...getAllNested(landmark)];
@@ -437,7 +437,7 @@ export const getCategorizedAnalysisResults = createSelector(
   (results, findStep, getValue, findComponent, evaluatedValues): CategorizedAnalysisResults => {
     return map(
       groupBy(results, result => result.indication),
-      (resultsInCategory: AnalysisInterpretation[], indication: number) => ({
+      (resultsInCategory: LandmarkInterpretation[], indication: number) => ({
         category: indication,
         indication: resolveIndication(resultsInCategory, evaluatedValues),
         severity: resolveSeverity(resultsInCategory),
@@ -445,7 +445,7 @@ export const getCategorizedAnalysisResults = createSelector(
           resultsInCategory,
           ({ relevantComponents }) => (flatten(map(
             map(relevantComponents, findStep),
-            ({ symbol }: CephaloLandmark) => {
+            ({ symbol }: CephLandmark) => {
               const { stdDev, norm } = findComponent(symbol) as AnalysisComponent;
               return {
                 symbol: symbol,

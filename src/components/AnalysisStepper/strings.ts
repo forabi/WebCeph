@@ -16,11 +16,11 @@ export const descriptions: { [id: string]: string } = {
 };
 
 
-export const getDescriptionForStep = (landmark: CephaloLandmark) => {
+export const getDescriptionForStep = (landmark: CephLandmark) => {
   return descriptions[landmark.symbol] || landmark.description || null;
 };
 
-export const getTitleForStep = (landmark: CephaloLandmark) => {
+export const getTitleForStep = (landmark: CephLandmark) => {
   if (landmark.type === 'point') {
     return `Set point ${landmark.symbol}${ landmark.name ? ` (${landmark.name})` : '' }`;
   } else if (landmark.type === 'line') {

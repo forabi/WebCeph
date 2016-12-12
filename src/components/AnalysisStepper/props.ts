@@ -3,7 +3,7 @@ export interface OwnProps {
 }
 
 export interface StateProps {
-  steps: CephaloLandmark[];
+  steps: CephLandmark[];
   highlightedStep: string | null;
   getStepState(symbol: string): StepState;
   getStepValue(symbol: string): number | undefined;
@@ -12,7 +12,7 @@ export interface StateProps {
 
 export interface DispatchProps {
   onRemoveLandmarkClick(symbol: string): void;
-  onEditLandmarkClick(landmark: CephaloLandmark): void;
+  onEditLandmarkClick(landmark: CephLandmark): void;
   onStepMouseEnter(symbol: string): any;
   onStepMouseLeave(symbol: string): any;
 }

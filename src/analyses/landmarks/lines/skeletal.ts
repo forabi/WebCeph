@@ -1,10 +1,12 @@
 import { line } from 'analyses/helpers';
 
 import {
-  N, S, Po, Or, Go, Me, ANS, PNS,
+  N, S, Po, Or, Go, Me, ANS, PNS, Pt,
   U1_APEX, U1_INCISAL_EDGE,
   L1_APEX, L1_INCISAL_EDGE,
 } from 'analyses/landmarks/points/skeletal';
+
+import { createPerpendicular } from 'utils/math';
 
 /**
  * Frankfort Horizontal Plane
@@ -35,3 +37,18 @@ export const L1_AXIS = line(L1_APEX, L1_INCISAL_EDGE, 'Lower Incisor Axis', 'L1'
  * 
  */
 export const SPP = line(PNS, ANS, undefined, 'SPP');
+
+/**
+ * Pterygoid vertical (PtV), a line perpendicular to
+ * FH at the posterior margin of the pterygopalatine fossa.
+ */
+export const PtV: CephLandmark = {
+  type: 'line',
+  name: 'Pterygoid Vertical',
+  symbol: 'PtV',
+  unit: 'mm',
+  components: [Pt, FH_PLANE],
+  map(_, Pt: GeometricalPoint, FH: GeometricalVector) {
+    return createPerpendicular(FH, Pt);
+  },
+};
