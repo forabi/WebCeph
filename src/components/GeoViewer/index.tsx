@@ -1,9 +1,9 @@
 import * as React from 'react';
 
 import {
-  isGeometricalPoint,
-  isGeometricalVector,
-  isGeometricalAngle,
+  isGeoPoint,
+  isGeoVector,
+  isGeoAngle,
 } from 'utils/math';
 
 import Angle, { AngleProps } from './Angle';
@@ -45,7 +45,7 @@ const GeoViewer = pure((props: Props) => {
       {children}
       {
         map(objects, ({ value, symbol }) => {
-          if (isGeometricalPoint(value)) {
+          if (isGeoPoint(value)) {
             const rest = getPropsForPoint(symbol);
             return (
               <circle
@@ -56,7 +56,7 @@ const GeoViewer = pure((props: Props) => {
                 {...rest}
               />
             );
-          } else if (isGeometricalVector(value)) {
+          } else if (isGeoVector(value)) {
             const rest = getPropsForVector(symbol);
             return (
               <line
@@ -65,7 +65,7 @@ const GeoViewer = pure((props: Props) => {
                 {...rest}
               />
             );
-          } else if (isGeometricalAngle(value)) {
+          } else if (isGeoAngle(value)) {
             const rest = getPropsForAngle(symbol);
             return (
               <Angle

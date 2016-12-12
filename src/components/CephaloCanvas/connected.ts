@@ -47,9 +47,9 @@ const classes = require('./style.scss');
 import { createSelector } from 'reselect';
 
 import {
-  isGeometricalAngle,
-  isGeometricalPoint,
-  isGeometricalVector,
+  isGeoAngle,
+  isGeoPoint,
+  isGeoVector,
 } from 'utils/math';
 
 import { PointProps, AngleProps, VectorProps } from 'components/GeoViewer';
@@ -86,12 +86,12 @@ const getPropsForLandmark = createSelector(
     const classNames: string[] = [];
 
     const l = toDisplay[symbol];
-    if (isGeometricalPoint(l)) {
+    if (isGeoPoint(l)) {
       classNames.push(classes.point);
       props.r = '0.5rem';
-    } else if (isGeometricalVector(l)) {
+    } else if (isGeoVector(l)) {
       classNames.push(classes.vector);
-    } else if (isGeometricalAngle(l)) {
+    } else if (isGeoAngle(l)) {
       classNames.push(classes.angle);
       props.segmentProps = {
         className: cx(classes.vector, ...getHighlightClassNames(symbol)),

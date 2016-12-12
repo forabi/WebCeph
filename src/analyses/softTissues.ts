@@ -5,8 +5,9 @@ const analysis: Analysis = {
   components: [
     {
       landmark: Z,
-      norm: 80,
-      stdDev: 9,
+      mean: 80,
+      max: 89,
+      min: 71,
     },
   ],
 };

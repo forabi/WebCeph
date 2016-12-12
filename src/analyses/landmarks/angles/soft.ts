@@ -1,7 +1,7 @@
 import { Ls, Li, softPog } from 'analyses/landmarks/points/soft';
 import { FH_PLANE } from 'analyses/landmarks/lines/skeletal';
 import { flipVector } from 'analyses/helpers';
-import { createVectorFromPoints } from 'utils/math';
+import { isBehind, createVectorFromPoints } from 'utils/math';
 
 /**
  * A profile line is established by drawing a line tangent
@@ -18,12 +18,11 @@ export const Z: CephLandmark = {
   unit: 'degree',
   components: [flipVector(FH_PLANE), Li, Ls, softPog],
   map: (
-    { isBehind }: CephMapper,
-    FH: GeometricalVector,
-    Li: GeometricalPoint,
-    Ls: GeometricalPoint,
-    softPog: GeometricalPoint,
-  ): GeometricalAngle => {
+    FH: GeoVector,
+    Li: GeoPoint,
+    Ls: GeoPoint,
+    softPog: GeoPoint,
+  ): GeoAngle => {
     const LsSoftPog = createVectorFromPoints(Ls, softPog);
     if (isBehind(Li, LsSoftPog)) {
       return {

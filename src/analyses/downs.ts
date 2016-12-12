@@ -7,33 +7,35 @@ import {
   facialAngle,
 } from 'analyses/landmarks/angles/skeletal';
 
-const components: AnalysisComponent[] = [
-  ...common.components,
-  {
-    landmark: downsAngleOfConvexity,
-    norm: 0,
-    stdDev: 5.1,
-  },
-  {
-    landmark: yAxis,
-    norm: 59.4,
-    stdDev: 3.8,
-  },
-  {
-    landmark: downsABPlaneAngle,
-    norm: -4.6,
-    stdDev: 4.6,
-  },
-  {
-    landmark: facialAngle,
-    norm: 87.8,
-    stdDev: 3.6,
-  },
-];
-
 const analysis: Analysis = {
   id: 'downs',
-  components,
+  components: [
+    ...common.components,
+    {
+      landmark: downsAngleOfConvexity,
+      mean: 0,
+      max: 5.1,
+      min: -5.1,
+    },
+    {
+      landmark: yAxis,
+      mean: 59.4,
+      max: 63.2,
+      min: 55.6,
+    },
+    {
+      landmark: downsABPlaneAngle,
+      mean: -4.6,
+      max: 4.6,
+      min: -9.2,
+    },
+    {
+      landmark: facialAngle,
+      mean: 87.8,
+      max: 91.4,
+      min: 84.2,
+    },
+  ],
 };
 
 export default analysis;

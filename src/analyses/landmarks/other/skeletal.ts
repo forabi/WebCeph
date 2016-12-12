@@ -29,14 +29,14 @@ export const cephCorrection: CephLandmark = {
   type: 'distance',
   components: [FMIA, L1_AXIS],
   unit: 'mm',
-  map(_, geoFMIA: GeometricalAngle, axis: GeometricalVector) {
+  map(geoFMIA: GeoAngle, axis: GeoVector) {
     const actualAngle = calculateAngle(geoFMIA);
     const rotation = actualAngle - degreesToRadians(65);
     const [apex, edge] = getVectorPoints(axis);
     const newEdge = rotatePointAroundOrigin(apex, edge, rotation);
     return createVectorFromPoints(apex, newEdge);
   },
-  calculate(_, geoFMIA: GeometricalAngle) {
+  calculate: () => (geoFMIA: GeoAngle) => {
     const actualAngle = calculateAngle(geoFMIA);
     const rotation = actualAngle - degreesToRadians(65);
     // @TODO: measure on the occlusion plane

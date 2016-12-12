@@ -6,18 +6,21 @@ const analysis: Analysis = {
   components: [
     {
       landmark: FMIA,
-      norm: 66,
-      stdDev: 4,
+      mean: 66,
+      max: 70,
+      min: 62,
     },
     {
       landmark: FMPA,
-      norm: 25,
-      stdDev: 0,
+      mean: 25,
+      max: 30,
+      min: 20,
     },
     {
       landmark: IMPA,
-      norm: 87,
-      stdDev: 0,
+      mean: 90,
+      max: 93,
+      min: 87,
     },
   ],
   interpret(values) {

@@ -9,8 +9,8 @@ import { Event, StoreKeys } from 'utils/constants';
 import { printUnexpectedPayloadWarning } from 'utils/debug';
 import manualLandmarks, { getManualLandmarks } from './manualLandmarks';
 import { isImageFlippedX } from 'store/reducers/workspace/image';
-import { line, isCephPoint, isCephLine, isCephaloAngle } from 'analyses/helpers';
-import { isGeometricalPoint, isBehind } from 'utils/math';
+import { line, isCephPoint, isCephLine, isCephAngle } from 'analyses/helpers';
+import { isGeoPoint, isBehind } from 'utils/math';
 
 type SkippedSteps = StoreEntries.workspace.analysis.tracing.steps.skipped;
 type TracingMode = StoreEntries.workspace.analysis.tracing.mode;
@@ -113,7 +113,7 @@ export const getCephaloMapper = createSelector(
         );
       }
       const geoLandmark = manual[symbol];
-      if (!isGeometricalPoint(geoLandmark)) {
+      if (!isGeoPoint(geoLandmark)) {
         console.warn(
           `CephaloMapper.toPoint tried to map ${symbol}, ` +
           `which is a CephaloPoint, to a geometrical representation that ` +
@@ -123,7 +123,7 @@ export const getCephaloMapper = createSelector(
           manualLandmarks,
         );
       }
-      return geoLandmark as GeometricalPoint;
+      return geoLandmark as GeoPoint;
     };
 
     const toVector = (cephLine: CephLine) => {
@@ -143,12 +143,12 @@ export const getCephaloMapper = createSelector(
       };
     };
 
-    const toAngle = (cephAngle: CephAngle): GeometricalAngle => {
+    const toAngle = (cephAngle: CephAngle): GeoAngle => {
       let vectors: CephLine[];
       if (every(cephAngle.components, isCephPoint)) {
         const [A, B, C] = cephAngle.components as CephPoint[];
         vectors = [line(A, B), line(B, C)];
-      } else if (every(cephAngle.components, isCephaloAngle)) {
+      } else if (every(cephAngle.components, isCephAngle)) {
         let A: CephPoint, B: CephPoint, C: CephPoint;
         const [angle1, angle2] = cephAngle.components;
         const components = [...angle1.components, ...angle2.components];

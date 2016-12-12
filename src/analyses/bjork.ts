@@ -5,8 +5,9 @@ const analysis: Analysis = {
   components: [
     {
       landmark: bjorkSum,
-      norm: 396,
-      stdDev: 6,
+      mean: 396,
+      max: 412,
+      min: 390,
     },
   ],
 };

@@ -13,6 +13,7 @@ import {
   createVectorFromPoints,
   radiansToDegrees,
   calculateAngleBetweenTwoVectors,
+  isBehind,
 } from 'utils/math';
 
 /**
@@ -44,7 +45,7 @@ export const SNB: CephAngle = {
  */
 export const ANB: CephAngle = {
   ...angleBetweenLines(line(N, A), line(N, B)),
-  calculate({ isBehind }: CephMapper, lineNA: GeometricalVector, lineNB: GeometricalVector) {
+  calculate: () => (lineNA: GeoVector, lineNB: GeoVector) => {
     const [, A] = getVectorPoints(lineNA);
     const positiveValue = Math.abs(radiansToDegrees(calculateAngleBetweenTwoVectors(lineNA, lineNB)));
     if (isBehind(A, lineNB)) {
@@ -210,7 +211,7 @@ export const downsAngleOfConvexity: CephAngle = {
    * If the line Pog–point A is extended and located anterior to the N-A
    * line, the angle is read as positive.
    */
-  calculate: ({ isBehind }: CephMapper, AN: GeometricalVector, PogA: GeometricalVector) => {
+  calculate: () => (AN: GeoVector, PogA: GeoVector) => {
     const [Pog, A] = getVectorPoints(PogA);
     const [   , N] = getVectorPoints(AN);
     const NPog = createVectorFromPoints(N, Pog);
@@ -240,7 +241,7 @@ export const downsAngleOfConvexity: CephAngle = {
  */
 export const downsABPlaneAngle: CephAngle = {
   ...angleBetweenLines(line(B, A), line(Pog, N), 'A-B Plane Angle'),
-  calculate({ isBehind }: CephMapper, lineBA: GeometricalVector, linePogN: GeometricalVector) {
+  calculate: () => (lineBA: GeoVector, linePogN: GeoVector) => {
     const A = { x: lineBA.x2, y: lineBA.y2 };
     const positiveValue = Math.abs(radiansToDegrees(calculateAngleBetweenTwoVectors(lineBA, linePogN)));
     if (!isBehind(A, linePogN)) {

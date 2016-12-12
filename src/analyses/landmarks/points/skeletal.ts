@@ -143,8 +143,8 @@ export const CF: CephLandmark = {
     'Center of face',
   ),
   components: [FH_PLANE, Pt],
-  map(_, geoFH: GeometricalVector, geoPt: GeometricalPoint) {
-    return getIntersectionPoint(geoFH, createPerpendicular(geoFH, geoPt)) as GeometricalPoint;
+  map(geoFH: GeoVector, geoPt: GeoPoint) {
+    return getIntersectionPoint(geoFH, createPerpendicular(geoFH, geoPt)) as GeoPoint;
   },
 };
 
@@ -157,8 +157,8 @@ export const CC: CephLandmark = {
     'Center of cranium',
   ),
   components: [line(Ba, N), line(Pt, Gn)],
-  map(_, BaN: GeometricalVector, PtGn: GeometricalVector) {
-    return getIntersectionPoint(BaN, PtGn) as GeometricalPoint;
+  map(BaN: GeoVector, PtGn: GeoVector) {
+    return getIntersectionPoint(BaN, PtGn) as GeoPoint;
   },
 };
 
@@ -200,10 +200,9 @@ export const Xi: CephLandmark = {
    * the pterygopalatine fossa).
    */
   map(
-    _,
-    geoR1: GeometricalPoint, geoR2: GeometricalPoint,
-    geoR3: GeometricalPoint, geoR4: GeometricalPoint,
-    geoFH: GeometricalVector, geoPtV: GeometricalVector,
+    geoR1: GeoPoint, geoR2: GeoPoint,
+    geoR3: GeoPoint, geoR4: GeoPoint,
+    geoFH: GeoVector, geoPtV: GeoVector,
   ) {
     // Planes perpendicular to FH and PtV are constructed.
     const i1 = createPerpendicular(geoFH, geoR1);
@@ -213,13 +212,13 @@ export const Xi: CephLandmark = {
 
     // Xi is located in the center of the rectangle at the intersection of the diagonals.
     const diag1 = createVectorFromPoints(
-      getIntersectionPoint(i3, i1) as GeometricalPoint,
-      getIntersectionPoint(i4, i2) as GeometricalPoint,
+      getIntersectionPoint(i3, i1) as GeoPoint,
+      getIntersectionPoint(i4, i2) as GeoPoint,
     );
     const diag2 = createVectorFromPoints(
-      getIntersectionPoint(i3, i2) as GeometricalPoint,
-      getIntersectionPoint(i4, i1) as GeometricalPoint,
+      getIntersectionPoint(i3, i2) as GeoPoint,
+      getIntersectionPoint(i4, i1) as GeoPoint,
     );
-    return getIntersectionPoint(diag1, diag2) as GeometricalPoint;
+    return getIntersectionPoint(diag1, diag2) as GeoPoint;
   },
 };

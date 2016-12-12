@@ -91,7 +91,7 @@ const importFile: WCeph.Importer = async (fileToImport, options) => {
     if (invertColors) {
       actions.push(invertImageColors());
     }
-    each(manualLandmarks, (value: GeometricalObject, symbol: string) => {
+    each(manualLandmarks, (value: GeoObject, symbol: string) => {
       actions.push(addManualLandmark(symbol, value));
     });
     if (analysisId !== null) {

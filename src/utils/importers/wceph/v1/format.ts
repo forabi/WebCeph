@@ -47,7 +47,7 @@ export type WCephJSON = {
         mode: 'auto' | 'assisted' | 'manual';
         scaleFactor: number | null;
         manualLandmarks: {
-          [symbol: string]: GeometricalObject;
+          [symbol: string]: GeoObject;
         };
         /** Steps to skip in non-manual tracing modes */
         skippedSteps: {

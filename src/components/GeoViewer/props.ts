@@ -4,7 +4,7 @@ export interface StateProps extends React.SVGAttributes<SVGElement> {
   objects: ReadonlyArray<{
     label: string;
     symbol: string;
-    value: GeometricalObject;
+    value: GeoObject;
   }>;
   top: number;
   left: number;

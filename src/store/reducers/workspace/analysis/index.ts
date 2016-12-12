@@ -29,7 +29,7 @@ import {
   areEqualSymbols,
   isStepManual,
   isStepComputable,
-  compute,
+  tryCalculate,
   tryMap,
   resolveIndication,
   resolveSeverity,
@@ -245,7 +245,7 @@ export const getAutomaticLandmarks = createSelector(
   isStepEligibleForAutomaticMapping,
   findEqualComponents,
   (pending, mapper, isEligible, findEqual) => {
-    const result: { [symbol: string]: GeometricalObject } = { };
+    const result: { [symbol: string]: GeoObject } = { };
     for (const step of pending) {
       if (isEligible(step)) {
         const r = tryMap(step, mapper);
@@ -294,7 +294,7 @@ export const getComputedValues = createSelector(
     const result: { [symbol: string]: number } = { };
     for (const step of steps) {
       if (isEligible(step)) {
-        const value = compute(step, mapper);
+        const value = tryCalculate(step, mapper);
         if (value !== undefined) {
           result[step.symbol] = value;
         } else {
@@ -388,7 +388,7 @@ export const getGeometricalRepresentationBySymbol = createSelector(
   getComponentWithAllPossibleNestedComponents,
   getCephaloMapper,
   (findStep, getWithNested, mapper) => memoize((symbol: string) => {
-    type TResult = { [symbol: string]: GeometricalObject };
+    type TResult = { [symbol: string]: GeoObject };
     return reduce<TResult, TResult>(
       map(
         getWithNested(symbol),

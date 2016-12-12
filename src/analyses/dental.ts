@@ -5,18 +5,21 @@ const analysis: Analysis = {
   components: [
     {
       landmark: interincisalAngle,
-      norm: 130,
-      stdDev: 5,
+      mean: 130,
+      max: 135,
+      min: 125,
     },
     {
       landmark: U1_SN,
-      norm: 102,
-      stdDev: 5,
+      mean: 102,
+      max: 107,
+      min: 97,
     },
     {
       landmark: L1_MP,
-      norm: 90,
-      stdDev: 3,
+      mean: 90,
+      min: 87,
+      max: 93,
     },
   ],
 };

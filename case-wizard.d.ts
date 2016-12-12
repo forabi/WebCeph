@@ -3,6 +3,7 @@ declare const __VERSION__: string;
 
 type AngularUnit = 'degree' | 'radian';
 type LinearUnit = 'mm' | 'cm' | 'in';
+
 type LandmarkType = 'angle' | 'point' | 'line' | 'distance' | 'sum';
 
 type Categories = {
@@ -20,19 +21,51 @@ type Categories = {
 
 type Category = keyof Categories;
 type Indication<T extends Category> = Categories[T];
-type Severity = null | 'low' | 'medium' | 'high';
+type Severity = 'none' | 'low' | 'medium' | 'high';
 
 
 interface LandmarkInterpretation<T extends Category> {
   category: T;
   indication: Indication<T>;
   severity?: Severity;
+  value: number;
+  max: number;
+  min: number;
+  mean: number;
 }
 
-interface AnalysisInterpretation extends LandmarkInterpretation {
+interface AnalysisInterpretation<T extends Category> extends LandmarkInterpretation<T> {
   /** A list of symbol that were used to calculate this result */
   relevantComponents: string[];
 }
+
+type CalculateLandmark<Calculated extends (number | undefined), Mapped> = (
+  /** The calculated values of this landmark's components
+   * in the same order they were defined
+   */
+  ...calculated: Array<Calculated | undefined>
+) => (
+  /** The geometrical representation of this landmark's components
+   * in the same order they were defined
+   */
+  ...mapped: Array<Mapped | undefined>
+) => number;
+
+type MapLandmark<Mapped, Result> = (
+  /** The geometrical representation of this landmark's components
+   * in the same order they were defined
+   */
+  ...mapped: Array<Mapped | undefined>
+) => Result;
+
+type InterpretLandmark<C extends Category> = (
+  value: number, min?: number, max?: number, mean?: number
+) => LandmarkInterpretation<C>[];
+
+type InterpretAnalysis<C extends Category> = (
+  values: Record<string, number | undefined>,
+  objects: Record<string, GeoObject | undefined>
+) => CategorizedAnalysisResult<C>[];
 
 /**
  * A generic interface that represents any cephalometric landmark, including
@@ -48,30 +81,33 @@ interface CephLandmark {
   description?: string;
   type: LandmarkType;
   unit?: AngularUnit | LinearUnit;
+
   /**
    * Some landmarks are composed of more basic components; for example, a line is
    * composed of two points.
    */
   components: CephLandmark[];
-  /**
-   * An optional custom calculation method.
-   * It is passed the computed values for each of this landmark's components
-   * in the same order they were defined.
+
+  /** An optional custom calculation method.
+   * It is a curried function that is first passed the calculated values of this
+   * landmark's components (if applicable) and then geometrical representation of
+   * those components in the same order they were defined.
    */
-  calculate?(mapper: CephMapper, ...args: EvaluatedValue[]): number;
+  calculate?: CalculateLandmark<number, GeoObject>;
 
   /** An optional custom mapping method.
-   * It is passed the geometrical representation of this landmark's components
-   * in the same order they were defined.
+   * It is a curried function that is first passed the calculated values of this
+   * landmark's components (if applicable) and then geometrical representation of
+   * those components in the same order they were defined.
    */
-  map?(mapper: CephMapper, ...args: (GeometricalObject | undefined)[]): GeometricalObject;
+  map?: MapLandmark<GeoObject, GeoObject>;
 
   /** An optional interpretation method.
    * It is passed the calculated value of this landmark.
    * If a custom calculation method is provied, it is called before
    * this method and the calculated value is passed as the first argument.
    */
-  interpret?(value: number, min?: number, max?: number, mean?: number): LandmarkInterpretation[];
+  interpret?: InterpretLandmark<Category>;
 }
 
 interface CephPoint extends CephLandmark {
@@ -104,8 +140,9 @@ interface CephAngularSum extends CephLandmark {
 
 type AnalysisComponent = {
   landmark: CephLandmark;
-  norm: number;
-  stdDev?: number;
+  mean: number;
+  max: number;
+  min: number;
 };
 
 type CategorizedAnalysisResult<T extends Category> = {
@@ -130,53 +167,58 @@ interface Analysis {
    * For example, given a computed value of 7 for angle ANB,
    * the returned value should have a result of type SkeletalPattern.classII
    */
-  interpret?(values: { [id: string]: EvaluatedValue }): AnalysisInterpretation[];
+  interpret?: InterpretAnalysis;
 }
 
-/**
- * A Mapper object maps cephalometric landmarks to geometrical objects
- */
-interface CephMapper {
-  toVector(landmark: CephLine): GeometricalVector;
-  toPoint(landmark: CephPoint): GeometricalPoint;
-  toAngle(landmark: CephAngle): GeometricalAngle;
-  /**
-   * The scale factor is required to calculate linear measurements
-   * It is expected to map pixels on the screen to millimeters.
-   */
-  scaleFactor: number | null;
-  isBehind(point: GeometricalPoint, line: GeometricalVector): boolean;
-  measureHorizontalDistance(point1: GeometricalPoint, point2: GeometricalPoint): number;
-}
+type Rotation = {
+  type: 'rotation';
+  value: number;
+  axis: 'x' | 'y' | 'z';
+};
+
+type Scale = {
+  type: 'scale';
+  value: number;
+};
+
+type FlipX = Rotation & {
+  value: 180;
+  axis: 'y';
+};
+
+type FlipY = Rotation & {
+  value: 180;
+  axis: 'x';
+};
+
+type Transformation = Rotation | Scale;
 
 /**
  * Describes a geometrical point in a 2D-plane
  */
-interface GeometricalPoint {
-  x: number,
-  y: number,
-}
+interface GeoPoint {
+  x: number;
+  y: number;
+};
+
+/**
+ * Describes a geometrical angle in a 2D-plane
+ */
+interface GeoAngle {
+  vectors: [GeoVector, GeoVector];
+};
 
 /**
  * Describes a geometrical line in a 2D-plane
  */
-interface GeometricalVector {
-  readonly x1: number,
-  readonly x2: number,
-  readonly y1: number,
-  readonly y2: number,
-}
+interface GeoVector {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+};
 
-/**
- * Describes an angle by its vectors
- */
-interface GeometricalAngle {
-  readonly vectors: [GeometricalVector, GeometricalVector];
-}
-
-type GeometricalObject = GeometricalVector | GeometricalPoint | GeometricalAngle;
-
-type EvaluatedValue = GeometricalObject | number;
+type GeoObject = GeoPoint | GeoVector | GeoAngle;
 
 type StepState = 'done' | 'current' | 'pending' | 'evaluating';
 type Step = CephLandmark & { title: string, state: StepState };
@@ -324,7 +366,7 @@ type CephImageData = {
 type CephImageTracingData = {
   mode: 'auto' | 'assisted' | 'manual';
   manualLandmarks: {
-    [symbol: string]: GeometricalObject;
+    [symbol: string]: GeoObject;
   };
   /** Steps to skip in non-manual tracing modes */
   skippedSteps: {
@@ -399,11 +441,11 @@ interface Events {
   ADD_MANUAL_LANDMARK_REQUESTED: {
     imageId: string;
     symbol: string;
-    value: GeometricalObject;
+    value: GeoObject;
   };
   ADD_UNKOWN_MANUAL_LANDMARK_REQUESTED: {
     imageId: string;
-    value: GeometricalObject;
+    value: GeoObject;
   }
   REMOVE_MANUAL_LANDMARK_REQUESTED: {
     imageId: string;

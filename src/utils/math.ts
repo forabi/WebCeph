@@ -10,29 +10,29 @@ export function degreesToRadians(value: number): number {
 };
 
 /** Checks whether an object conforms to the GeometricalPoint interface */
-export function isGeometricalPoint(object: any): object is GeometricalPoint {
+export function isGeoPoint(object: any): object is GeoPoint {
   return has(object, 'x') && has(object, 'y');
 };
 
 /** Checks whether an object conforms to the GeometricalVector interface */
-export function isGeometricalVector(object: any): object is GeometricalVector {
+export function isGeoVector(object: any): object is GeoVector {
   return has(object, 'x2') && has(object, 'y1') && has(object, 'x2') && has(object, 'y2');
 };
 
 /** Checks whether an object conforms to the GeometricalVector interface */
-export function isGeometricalAngle(object: any): object is GeometricalAngle {
-  return has(object, 'vectors') && object.vectors.length === 2 && each(object.vectors, isGeometricalVector);
+export function isGeoAngle(object: any): object is GeoAngle {
+  return has(object, 'vectors') && object.vectors.length === 2 && each(object.vectors, isGeoVector);
 };
 
-export function isGeometricalObject(object: any): object is GeometricalObject {
-  return isGeometricalPoint(object) || isGeometricalVector(object) || isGeometricalAngle(object);
+export function isGeoObject(object: any): object is GeoObject {
+  return isGeoPoint(object) || isGeoVector(object) || isGeoAngle(object);
 };
 
-export function isBehind(point: GeometricalPoint, line: GeometricalVector) {
+export function isBehind(point: GeoPoint, line: GeoVector) {
   return ((line.x2 - line.x1) * (point.y - line.y1) - (line.y2 - line.y1) * (point.x - line.x1)) > 0;
 };
 
-export function getSegmentLength({ x1, x2, y1, y2 }: GeometricalVector) {
+export function getSegmentLength({ x1, x2, y1, y2 }: GeoVector) {
   return (x2 - x1) ** 2 + (y2 - y1) ** 2;
 };
 
@@ -41,7 +41,7 @@ export function getSegmentLength({ x1, x2, y1, y2 }: GeometricalVector) {
  * @return {number} distance in pixels
  * @see https://en.wikipedia.org/wiki/Pythagorean_theorem
  */
-export function calculateDistanceBetweenTwoPoints(A: GeometricalPoint, B: GeometricalPoint): number {
+export function calculateDistanceBetweenTwoPoints(A: GeoPoint, B: GeoPoint): number {
     return Math.sqrt(Math.pow(B.x - A.x, 2) + Math.pow(B.y - A.y, 2));
 };
 
@@ -51,7 +51,7 @@ export function calculateDistanceBetweenTwoPoints(A: GeometricalPoint, B: Geomet
  * @see https://en.wikipedia.org/wiki/Inverse_trigonometric_functions
  * @see https://en.wikipedia.org/wiki/Law_of_cosines
  */
-export function calculateAngleBetweenPoints(A: GeometricalPoint, B: GeometricalPoint, C: GeometricalPoint): number {
+export function calculateAngleBetweenPoints(A: GeoPoint, B: GeoPoint, C: GeoPoint): number {
   // Calculate length of each line in the triangle formed by A, B, C.
   const AB = calculateDistanceBetweenTwoPoints(A, B);
   const BC = calculateDistanceBetweenTwoPoints(B, C);
@@ -70,7 +70,7 @@ export function calculateAngleBetweenPoints(A: GeometricalPoint, B: GeometricalP
  * @see https://en.wikipedia.org/wiki/Inverse_trigonometric_functions
  * @see http://stackoverflow.com/a/3366577/1582641
  */
-export function calculateAngleBetweenTwoVectors(line1: GeometricalVector, line2: GeometricalVector): number {
+export function calculateAngleBetweenTwoVectors(line1: GeoVector, line2: GeoVector): number {
   const { x1, x2, y1, y2 } = line1;
   const { x1: x3, x2: x4, y1: y3, y2: y4 } = line2;
   const dx1 = x2 - x1;
@@ -84,7 +84,7 @@ export function calculateAngleBetweenTwoVectors(line1: GeometricalVector, line2:
   return Math.acos(d / Math.sqrt(l2));
 };
 
-export function calculateAngle({ vectors: [v1, v2] }: GeometricalAngle) {
+export function calculateAngle({ vectors: [v1, v2] }: GeoAngle) {
   return calculateAngleBetweenTwoVectors(v1, v2);
 }
 
@@ -93,10 +93,10 @@ export function rotatePointAroundOrigin(
   /**
    * The central point (the origin around which the second point will be rotated)
    */
-  { x: cx, y: cy }: GeometricalPoint,
-  { x, y }: GeometricalPoint,
+  { x: cx, y: cy }: GeoPoint,
+  { x, y }: GeoPoint,
   angleInRadians: number,
-): GeometricalPoint {
+): GeoPoint {
   const cos = Math.cos(angleInRadians);
   const sin = Math.sin(angleInRadians);
   const nx = (cos * (x - cx)) + (sin * (y - cy)) + cx;
@@ -114,31 +114,31 @@ export interface Rect {
   right: number;
 }
 
-export const isPointWithinRect = ({ x, y }: GeometricalPoint, { top, left, bottom, right }: Rect) => {
+export const isPointWithinRect = ({ x, y }: GeoPoint, { top, left, bottom, right }: Rect) => {
   return (
     clamp(x, left, right) === x &&
     clamp(y, top, bottom) === y
   );
 };
 
-export const getSlope = ({ x1, y1, x2, y2 }: GeometricalVector) => (y2 - y1) / (x2 - x1);
+export const getSlope = ({ x1, y1, x2, y2 }: GeoVector) => (y2 - y1) / (x2 - x1);
 
-export const getYInterceptEquation = (vector: GeometricalVector) => {
+export const getYInterceptEquation = (vector: GeoVector) => {
   const { x1, y1 } = vector;
   return (x: number) => getSlope(vector) * (x - x1) + y1;
 };
 
 export const isPointInLine = (
-  { x, y }: GeometricalPoint,
-  vector: GeometricalVector,
+  { x, y }: GeoPoint,
+  vector: GeoVector,
 ) => {
   const getY = getYInterceptEquation(vector);
   return getY(x) === y;
 };
 
 export const isPointInSegment = (
-  point: GeometricalPoint,
-  vector: GeometricalVector,
+  point: GeoPoint,
+  vector: GeoVector,
 ) => {
   const { x1, y1, x2, y2 } = vector;
   const maxY = Math.max(y1, y2);
@@ -151,7 +151,7 @@ export const isPointInSegment = (
   ) && isPointInLine(point, vector);
 };
 
-export const getABCForLine = ({ x1, y1, x2, y2 }: GeometricalVector) => {
+export const getABCForLine = ({ x1, y1, x2, y2 }: GeoVector) => {
   const A = y2 - y1;
   const B = x1 - x2;
   const C = (A * x1) + (B * y1);
@@ -159,8 +159,8 @@ export const getABCForLine = ({ x1, y1, x2, y2 }: GeometricalVector) => {
 };
 
 export const getIntersectionPoint = (
-  vector1: GeometricalVector,
-  vector2: GeometricalVector,
+  vector1: GeoVector,
+  vector2: GeoVector,
 ) => {
   const { A: A1, B: B1, C: C1 } = getABCForLine(vector1);
   const { A: A2, B: B2, C: C2 } = getABCForLine(vector2);
@@ -175,9 +175,9 @@ export const getIntersectionPoint = (
 };
 
 export const createPerpendicular = (
-  { x1, y1, x2, y2 }: GeometricalVector,
-  point: GeometricalPoint,
-): GeometricalVector => {
+  { x1, y1, x2, y2 }: GeoVector,
+  point: GeoPoint,
+): GeoVector => {
   const k = (
     (y2 - y1) * (point.x - x1) - (x2 - x1) * (point.y - y1)
   ) / (
@@ -188,18 +188,24 @@ export const createPerpendicular = (
   return createVectorFromPoints(point, { x, y });
 };
 
-export const getVectorPoints = ({ x1, y1, x2, y2 }: GeometricalVector): [GeometricalPoint, GeometricalPoint] => {
+export const getVectorPoints = ({ x1, y1, x2, y2 }: GeoVector): [GeoPoint, GeoPoint] => {
   return [
     { x: x1, y: y1 },
     { x: x2, y: y2 },
   ];
 };
 
-export const createVectorFromPoints = (point1: GeometricalPoint, point2: GeometricalPoint): GeometricalVector => {
+export const createVectorFromPoints = (point1: GeoPoint, point2: GeoPoint): GeoVector => {
   return {
     x1: point1.x,
     y1: point1.y,
     x2: point2.x,
     y2: point2.y,
   };
+};
+
+export const createAngleFromVectors = (vector1: GeoVector, vector2: GeoVector): GeoAngle => {
+  return {
+    vectors: [vector1, vector2],
+  }
 };

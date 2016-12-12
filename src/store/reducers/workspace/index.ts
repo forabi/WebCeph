@@ -63,7 +63,7 @@ export const getSortedLandmarksToDisplay = createSelector(
     return sortBy(
       map(
         landmarksToDisplay,
-        (value: GeometricalObject, symbol: string) => ({
+        (value: GeoObject, symbol: string) => ({
           symbol,
           label: symbol,
           value,

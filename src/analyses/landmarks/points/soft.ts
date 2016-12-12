@@ -77,7 +77,6 @@ export const Sts = point('Sts', 'Stomion superius');
  * Lowest point on the contour of the soft tissue chin.
  * Found by dropping a perpendicular from horizontal
  * plane through skeletal menton.
-
  */
 export const softMe = point(
   'Me\'',

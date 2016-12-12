@@ -13,7 +13,7 @@ export interface StateProps {
   landmarks: ReadonlyArray<{
     label: string;
     symbol: string;
-    value: GeometricalObject;
+    value: GeoObject;
   }>;
   getPropsForLandmark: (symbol: string) => { [prop: string]: any };
   isHighlightMode: boolean;

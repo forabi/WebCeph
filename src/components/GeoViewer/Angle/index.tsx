@@ -17,8 +17,8 @@ import {
 } from 'utils/math';
 
 const getParallelForVector = (
-  vector1: GeometricalVector, origin: GeometricalPoint, tailX: number
-): GeometricalVector => {
+  vector1: GeoVector, origin: GeoPoint, tailX: number
+): GeoVector => {
   const slope = getSlope(vector1);
   const intercept = origin.y - (slope * origin.x);
   const getY = (x: number) => (slope * x) + intercept;
@@ -34,7 +34,7 @@ const getParallelForVector = (
 export interface AngleProps extends React.SVGAttributes<SVGLineElement> {
   symbol: string;
   boundingRect: Rect;
-  vectors: [GeometricalVector, GeometricalVector];
+  vectors: [GeoVector, GeoVector];
   extendedProps?: React.SVGAttributes<SVGLineElement>;
   segmentProps?: React.SVGAttributes<SVGLineElement>;
   parallelProps?: React.SVGAttributes<SVGLineElement>;
@@ -42,8 +42,8 @@ export interface AngleProps extends React.SVGAttributes<SVGLineElement> {
 }
 
 interface ArcProps extends React.SVGAttributes<SVGCircleElement> {
-  vector1: GeometricalVector;
-  vector2: GeometricalVector;
+  vector1: GeoVector;
+  vector2: GeoVector;
 }
 
 const Arc = ({ vector1, vector2, ...rest }: ArcProps) => {
@@ -97,7 +97,7 @@ const Angle = pure((props: AngleProps): JSX.Element => {
   const [head2, tail2] = getVectorPoints(vector2);
   console.log('Drawing angle %s...', symbol);
   let additionalElements: any[] = [];
-  let finalVectors: [GeometricalVector, GeometricalVector];
+  let finalVectors: [GeoVector, GeoVector];
   if (inSegment1 && inSegment2) { 
     if (isEqual(head1, head2) && isEqual(head1, intersection)) {
       console.info('Vectors are head to head, no need for extension.');

@@ -48,7 +48,7 @@ export const PtV: CephLandmark = {
   symbol: 'PtV',
   unit: 'mm',
   components: [Pt, FH_PLANE],
-  map(_, Pt: GeometricalPoint, FH: GeometricalVector) {
+  map(Pt: GeoPoint, FH: GeoVector) {
     return createPerpendicular(FH, Pt);
   },
 };
