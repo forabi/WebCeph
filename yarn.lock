@@ -6211,9 +6211,9 @@ tsconfig@^5.0.2:
     strip-bom "^2.0.0"
     strip-json-comments "^2.0.0"
 
-tslint-react@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/tslint-react/-/tslint-react-1.1.0.tgz#a068d0624a99829098059f76c19d62babb82da5a"
+tslint-react@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/tslint-react/-/tslint-react-2.0.0.tgz#ebbd4165ee9978dd0f60e5a73635c4b3eb3a2f5a"
 
 tslint@^4.0.2:
   version "4.0.2"
