@@ -53,17 +53,18 @@ export const ANB: CephAngle = {
     }
     return positiveValue;
   },
-  interpret(value, min, max): Array<LandmarkInterpretation<'skeletalPattern'>> {
+  interpret(value, min, max, mean): Array<LandmarkInterpretation<'skeletalPattern'>> {
     if (value > 0 && value < 2) {
       return [{
         category: 'skeletalPattern',
         indication: 'tendency_for_class3',
+        value, min, max, mean: mean || 2,
       }];
     }
     return defaultInterpetLandmark(
       'skeletalPattern',
-      ['class2', 'class1', 'class3'],
-    )(value, min || 2, max || 4);
+      ['class3', 'class1', 'class2'],
+    )(value, min || 2, max || 4, 2);
   },
 };
 
@@ -258,7 +259,7 @@ export const downsABPlaneAngle: CephAngle = {
    */
   interpret: defaultInterpetLandmark(
     'skeletalPattern',
-    ['class2', 'class1', 'class3'],
+    ['class3', 'class1', 'class2'],
   ),
 };
 
