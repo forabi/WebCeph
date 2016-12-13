@@ -1,5 +1,5 @@
 import { Ls, Li, softPog } from 'analyses/landmarks/points/soft';
-import { FH_PLANE } from 'analyses/landmarks/lines/skeletal';
+import { FH } from 'analyses/landmarks/lines/skeletal';
 import { flipVector } from 'analyses/helpers';
 import { isBehind, createVectorFromPoints } from 'utils/math';
 
@@ -16,7 +16,7 @@ export const Z: CephLandmark = {
   type: 'angle',
   name: 'Merrifield\'s Z Angle',
   unit: 'degree',
-  components: [flipVector(FH_PLANE), Li, Ls, softPog],
+  components: [flipVector(FH), Li, Ls, softPog],
   map: (
     FH: GeoVector,
     Li: GeoPoint,

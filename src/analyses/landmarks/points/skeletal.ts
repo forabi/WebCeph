@@ -1,4 +1,4 @@
-import { FH_PLANE, PtV } from 'analyses/landmarks/lines/skeletal';
+import { FH, PtV } from 'analyses/landmarks/lines/skeletal';
 import { getIntersectionPoint, createPerpendicular, createVectorFromPoints } from 'utils/math';
 import { point, line } from 'analyses/helpers';
 
@@ -142,7 +142,7 @@ export const CF: CephLandmark = {
     'CF',
     'Center of face',
   ),
-  components: [FH_PLANE, Pt],
+  components: [FH, Pt],
   map(geoFH: GeoVector, geoPt: GeoPoint) {
     return getIntersectionPoint(geoFH, createPerpendicular(geoFH, geoPt)) as GeoPoint;
   },
@@ -193,7 +193,7 @@ export const Xi: CephLandmark = {
     'Xi',
     'Center of ramus',
   ),
-  components: [R1, R2, R3, R4, FH_PLANE, PtV],
+  components: [R1, R2, R3, R4, FH, PtV],
   /**
    * Location of Xi is keyed geometrically to Po-Or (FH) and perpendicular through Pt
    * (pterygoid vertical [PtV]; a line perpendicular to FH at the posterior margin of

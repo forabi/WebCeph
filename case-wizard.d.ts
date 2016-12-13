@@ -116,14 +116,13 @@ interface CephPoint extends CephLandmark {
 
  interface CephLine extends CephLandmark {
   type: 'line';
-  unit: LinearUnit;
   components: CephPoint[];
 }
 
 interface CephDistance extends CephLandmark {
   type: 'distance';
   unit: LinearUnit;
-  components: CephPoint[];
+  components: [CephPoint, CephLine];
 }
 
 interface CephAngle extends CephLandmark {

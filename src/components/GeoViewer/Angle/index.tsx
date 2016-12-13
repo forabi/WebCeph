@@ -12,24 +12,9 @@ import {
   isPointInSegment,
   getIntersectionPoint,
   isPointWithinRect,
-  getSlope,
   getVectorPoints,
+  createParallel,
 } from 'utils/math';
-
-const getParallelForVector = (
-  vector1: GeoVector, origin: GeoPoint, tailX: number
-): GeoVector => {
-  const slope = getSlope(vector1);
-  const intercept = origin.y - (slope * origin.x);
-  const getY = (x: number) => (slope * x) + intercept;
-  const x2 = tailX;
-  return {
-    x1: origin.x,
-    y1: origin.y,
-    x2,
-    y2: getY(x2),
-  };
-}
 
 export interface AngleProps extends React.SVGAttributes<SVGLineElement> {
   symbol: string;
@@ -104,15 +89,15 @@ const Angle = pure((props: AngleProps): JSX.Element => {
       finalVectors = vectors;
     } else if (isEqual(head1, tail2) || isEqual(head2, tail1)) {
       console.info('Vectors are head to tail');
-      const extended2 = getParallelForVector(vector2, head1, head1.x + (head1.x - tail1.x));
+      const extended2 = createParallel(vector2, head1, head1.x + (head1.x - tail1.x));
       additionalElements = [
         <line key="extended2" {...extendedProps} {...rest} {...extended2} />,
       ];
       finalVectors = [vector1, extended2];
     } else if (inSegment1) {
       console.info('Extending vector2...');
-      const extended1 = getParallelForVector(vector1, intersection, tail1.x);
-      const extended2 = getParallelForVector(vector2, intersection, tail2.x);
+      const extended1 = createParallel(vector1, intersection, tail1.x);
+      const extended2 = createParallel(vector2, intersection, tail2.x);
       additionalElements = [
         <line key="extended2" {...extendedProps} {...rest} {...extended2} />,
       ];
@@ -122,8 +107,8 @@ const Angle = pure((props: AngleProps): JSX.Element => {
     }
   } else if (isPointWithinRect(intersection, boundingRect)) {
     console.info('Extending both vectors...');
-    const extended1 = getParallelForVector(vector1, intersection, tail1.x);
-    const extended2 = getParallelForVector(vector2, intersection, tail2.x);
+    const extended1 = createParallel(vector1, intersection, tail1.x);
+    const extended2 = createParallel(vector2, intersection, tail2.x);
     additionalElements = [
       <line key="extended1" {...extendedProps} {...rest} {...extended1} />,
       <line key="extended2" {...extendedProps} {...rest} {...extended2} />,
@@ -132,7 +117,7 @@ const Angle = pure((props: AngleProps): JSX.Element => {
   } else {
     // Intersection point is outside the canvas boundaries, create parallel
     console.log('Intersection point is outside the canvas boundaries, creating parallel...');
-    const parallel = getParallelForVector(vector1, head2, tail1.x);
+    const parallel = createParallel(vector1, head2, tail1.x);
     additionalElements = [
       <line key="parallel1" {...parallelProps} {...rest} {...parallel} />,
     ];

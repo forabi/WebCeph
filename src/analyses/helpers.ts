@@ -8,8 +8,19 @@ import join from 'lodash/join';
 import isPlainObject from 'lodash/isPlainObject';
 import countBy from 'lodash/countBy';
 import maxBy from 'lodash/maxBy';
+import groupBy from 'lodash/groupBy';
+import filter from 'lodash/filter';
 
-import { createVectorFromPoints, createAngleFromVectors } from 'utils/math';
+import {
+  createVectorFromPoints,
+  createAngleFromVectors,
+  createPerpendicular,
+  getSegmentLength,
+  getVectorPoints,
+  isBehind,
+  calculateAngleBetweenTwoVectors,
+  radiansToDegrees,
+} from 'utils/math';
 
 export function getSymbolForAngle(line1: CephLine, line2: CephLine): string {
   const A = line1.components[0]; // N
@@ -33,6 +44,19 @@ const defaultCalculateAngle: CalculateLandmark<undefined, GeoVector> =
 
 const defaultMapLine: MapLandmark<GeoPoint, GeoVector> =
   (A: GeoPoint, B: GeoPoint) => createVectorFromPoints(A, B);
+
+const defaultMapDistance: MapLandmark<GeoObject, GeoVector> =
+  (A: GeoPoint, line: GeoVector) => createPerpendicular(line, A);
+
+const defaultCalculateLine: CalculateLandmark<undefined, GeoVector> =
+  () => (segment: GeoVector) => {
+    const length = getSegmentLength(segment);
+    const [point, ] = getVectorPoints(segment);
+    if (isBehind(point, segment)) {
+      return -length;
+    }
+    return length;
+  };
 
 const defaultCalculateSum: CalculateLandmark<number, GeoObject> =
   (...values) => () => sum(values);
@@ -83,17 +107,31 @@ export function point(symbol: string, name?: string, description?: string): Ceph
 export function line(
   A: CephPoint, B: CephPoint,
   name?: string, symbol?: string,
-  unit: LinearUnit = 'mm',
 ): CephLine {
   return {
     type: 'line',
     name,
-    unit,
     symbol: symbol || `${A.symbol}-${B.symbol}`,
     components: [A, B],
     map: defaultMapLine,
   };
-}
+};
+
+export function distance(
+  A: CephPoint, line: CephLine,
+  name?: string, symbol?: string,
+  unit: LinearUnit = 'mm',
+): CephDistance {
+  return {
+    type: 'distance',
+    name,
+    unit,
+    symbol: symbol || `${A.symbol}-${line.symbol}`,
+    components: [A, line],
+    map: defaultMapDistance,
+    calculate: defaultCalculateLine,
+  };
+};
 
 export function angularSum(components: CephAngle[], name: string, symbol?: string): CephAngularSum {
   return {
@@ -175,11 +213,6 @@ export function isCephAngle(object: any): object is CephAngle {
   return isPlainObject(object) && object.type === 'angle';
 };
 
-import {
-  calculateAngleBetweenTwoVectors,
-  radiansToDegrees,
-} from '../utils/math';
-
 /**
  * Tries mapping a CephaloLandmark.
  * Returns the GeoObject the landmark maps to.
@@ -240,9 +273,6 @@ export const isStepManual = (step: CephLandmark) => !isStepAutomatic(step);
 export const isStepComputable = (step: CephLandmark) => {
   return typeof step.calculate === 'function';
 };
-
-import groupBy from 'lodash/groupBy';
-import filter from 'lodash/filter';
 
 export function defaultInterpetAnalysis(analysis: Analysis): InterpretAnalysis<Category> {
   return (values, _) => {

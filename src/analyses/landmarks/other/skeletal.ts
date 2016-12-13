@@ -4,7 +4,7 @@ import {
 } from 'analyses/helpers';
 
 import { NSAr, SArGo, ArGoMe, FMIA } from 'analyses/landmarks/angles/skeletal';
-import { L1_AXIS } from 'analyses/landmarks/lines/skeletal';
+import { L1Axis } from 'analyses/landmarks/lines/skeletal';
 
 import {
   calculateAngle,
@@ -27,7 +27,7 @@ export const cephCorrection: CephLandmark = {
   name: 'Cephalometric correction',
   symbol: 'ceph-correction',
   type: 'distance',
-  components: [FMIA, L1_AXIS],
+  components: [FMIA, L1Axis],
   unit: 'mm',
   map(geoFMIA: GeoAngle, axis: GeoVector) {
     const actualAngle = calculateAngle(geoFMIA);

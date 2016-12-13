@@ -1,7 +1,7 @@
 import { line } from 'analyses/helpers';
 
 import {
-  N, S, Po, Or, Go, Me, ANS, PNS, Pt,
+  N, S, A, Po, Or, Pog, Go, Me, ANS, PNS, Pt,
   U1_APEX, U1_INCISAL_EDGE,
   L1_APEX, L1_INCISAL_EDGE,
 } from 'analyses/landmarks/points/skeletal';
@@ -12,7 +12,35 @@ import { createPerpendicular } from 'utils/math';
  * Frankfort Horizontal Plane
  * Po-Or line projected to form a plane
  */
-export const FH_PLANE = line(Po, Or, 'Frankfort Horizontal Plane', 'FH');
+export const FH = line(Po, Or, 'Frankfort Horizontal Plane', 'FH');
+
+/**
+ * Facial Plane
+ * N-Pog line projected to form a plane
+ */
+export const NPog = line(N, Pog, 'Facial Plane');
+
+/**
+ * Facial Plane
+ * N-Pog line projected to form a plane
+ */
+export const facialPlane = NPog;
+
+/**
+ * Dental Plane (A-Pog line projected to form a plane): the
+ * A-Pog line or plane is referred to as the dental plane and
+ * is a useful reference line from which to measure the position of
+ * the anterior teeth.
+ */
+export const APog = line(A, Pog);
+
+/**
+ * Dental Plane (A-Pog line projected to form a plane): the
+ * A-Pog line or plane is referred to as the dental plane and
+ * is a useful reference line from which to measure the position of
+ * the anterior teeth.
+ */
+export const dentalPlane = APog;
 
 /** Mandiblular Plane (Go-Me) */
 export const MP = line(Go, Me);
@@ -20,18 +48,18 @@ export const MP = line(Go, Me);
 /**
  * A line connecting sella to nasion
  */
-export const SELLA_NASION_LINE = line(S, N);
+export const SN = line(S, N);
 
 /**
  * A line connecting the incisal edge and root apex of the most prominent maxillary incisor
  */
-export const U1_AXIS = line(U1_APEX, U1_INCISAL_EDGE, 'Upper Incisor Axis', 'U1');
+export const U1Axis = line(U1_APEX, U1_INCISAL_EDGE, 'Upper Incisor Axis', 'U1');
 
 /**
  * Axis of lower incisor.
  * A line connecting the apex of the lower incisor with its incisal edge
  */
-export const L1_AXIS = line(L1_APEX, L1_INCISAL_EDGE, 'Lower Incisor Axis', 'L1');
+export const L1Axis = line(L1_APEX, L1_INCISAL_EDGE, 'Lower Incisor Axis', 'L1');
 
 /**
  * 
@@ -47,7 +75,7 @@ export const PtV: CephLandmark = {
   name: 'Pterygoid Vertical',
   symbol: 'PtV',
   unit: 'mm',
-  components: [Pt, FH_PLANE],
+  components: [Pt, FH],
   map(Pt: GeoPoint, FH: GeoVector) {
     return createPerpendicular(FH, Pt);
   },
