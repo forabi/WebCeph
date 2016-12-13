@@ -150,6 +150,23 @@ export function angularSum(
   };
 }
 
+/**
+ * Creates a new landmark that can be set on the specified image type
+ * by copying properties of a landmark defined of a different image type
+ * and replacing its components with ones applicable to the new image type.
+ * The new landmark has the same symbol and name of the reused one.
+ */
+export const reuseLandmarkForImageType =
+  (imageType: ImageType) => 
+    (landmark: CephLandmark): CephLandmark => ({
+      ...landmark,
+      imageType,
+      components: map(
+        landmark.components,
+        reuseLandmarkForImageType(imageType),
+      ),
+    });
+
 export function areEqualSteps(l1: CephLandmark, l2: CephLandmark): boolean {
   if (l1.symbol === l2.symbol) {
     return true;
