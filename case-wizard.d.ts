@@ -104,7 +104,7 @@ interface CephLandmark {
    * landmark's components (if applicable) and then geometrical representation of
    * those components in the same order they were defined.
    */
-  calculate?: CalculateLandmark<number, GeoObject>;
+  calculate?: CalculateLandmark<number, GeoObject, GeoObject>;
 
   /** An optional custom mapping method.
    * It is a curried function that is first passed the calculated values of this
