@@ -19,6 +19,8 @@ type Categories = {
   chin: 'normal' | 'recessive' | 'prominent',
   overbite: 'normal' | 'negative' | 'decreased' | 'increased',
   overjet: 'normal' | 'negative' | 'decreased' | 'increased',
+  lowerLipProminence: 'normal' | 'resessive' | 'prominent',
+  upperLipProminence: 'normal' | 'resessive' | 'prominent',
 };
 
 type Category = keyof Categories;
