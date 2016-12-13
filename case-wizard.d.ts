@@ -17,6 +17,8 @@ type Categories = {
   lowerIncisorInclination: 'normal' | 'buccal' | 'lingual',
   skeletalBite: 'normal' | 'open' | 'closed',
   chin: 'normal' | 'recessive' | 'prominent',
+  overbite: 'normal' | 'negative' | 'decreased' | 'increased',
+  overjet: 'normal' | 'negative' | 'decreased' | 'increased',
 };
 
 type Category = keyof Categories;

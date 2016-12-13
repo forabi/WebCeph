@@ -189,6 +189,13 @@ export const createVectorFromPoints = (point1: GeoPoint, point2: GeoPoint): GeoV
   };
 };
 
+export const getMidpoint = ({ x1, y1, x2, y2 }: GeoVector): GeoPoint => {
+  return {
+    x: (x1 + x2) / 2,
+    y: (y1 + y2) / 2,
+  };
+};
+
 export const createAngleFromVectors = (vector1: GeoVector, vector2: GeoVector): GeoAngle => {
   return {
     vectors: [vector1, vector2],

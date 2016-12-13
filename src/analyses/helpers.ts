@@ -15,8 +15,6 @@ import {
   createAngleFromVectors,
   createPerpendicular,
   getSegmentLength,
-  getVectorPoints,
-  isBehind,
   calculateAngle,
   radiansToDegrees,
 } from 'utils/math';
@@ -48,14 +46,7 @@ const defaultMapDistance: MapLandmark<GeoObject, GeoVector> =
   (A: GeoPoint, line: GeoVector) => createPerpendicular(line, A);
 
 const defaultCalculateLine: CalculateLandmark<undefined, GeoPoint, GeoVector> =
-  () => () => (segment: GeoVector) => {
-    const length = getSegmentLength(segment);
-    const [point, ] = getVectorPoints(segment);
-    if (isBehind(point, segment)) {
-      return -length;
-    }
-    return length;
-  };
+  () => () => (segment: GeoVector) => getSegmentLength(segment);
 
 const defaultCalculateSum: CalculateLandmark<number, GeoObject, GeoObject> =
   (...values) => () => () => sum(values);
@@ -256,6 +247,10 @@ const categoryMap: Record<Category, string> = {
   skeletalPattern: 'Skeletal pattern',
   skeletalProfile: 'Skeletal profile',
   chin: 'Chin prominence',
+  lowerLipProminence: 'Lower lip prominence',
+  upperLipProminence: 'Upper lip prominence',
+  overbite: 'Overbite',
+  overjet: 'Overjet',
 };
 
 const indicationMap: Record<Indication<Category>, string> = {
@@ -279,6 +274,10 @@ const indicationMap: Record<Indication<Category>, string> = {
   recessive: 'Recessive',
   retrognathic: 'Retrognathic',
   tendency_for_class3: 'Class 3 Tendency',
+  decreased: 'Decreased',
+  increased: 'Increased',
+  negative: 'Negative',
+  resessive: 'Recessive',
 };
 
 export const getDisplayNameForCategory =
