@@ -9,7 +9,6 @@ import isPlainObject from 'lodash/isPlainObject';
 import countBy from 'lodash/countBy';
 import maxBy from 'lodash/maxBy';
 import groupBy from 'lodash/groupBy';
-import filter from 'lodash/filter';
 
 import {
   createVectorFromPoints,
@@ -22,7 +21,7 @@ import {
   radiansToDegrees,
 } from 'utils/math';
 
-export function getSymbolForAngle(line1: CephLine, line2: CephLine): string {
+function getSymbolForAngle(line1: CephLine, line2: CephLine): string {
   const A = line1.components[0]; // N
   const B = line1.components[1]; // S
   const C = line2.components[0]; // N
@@ -254,15 +253,40 @@ const categoryMap: Record<Category, string> = {
   chin: 'Chin prominence',
 };
 
-export const getDisplayNameForResult = <T extends Category>(
-  { category }: LandmarkInterpretation<T>
-) => categoryMap[category];
+const indicationMap: Record<Indication<Category>, string> = {
+  buccal: 'Buccal',
+  class1: 'Class 1',
+  class2: 'Class 2',
+  class3: 'Class 3',
+  clockwise: 'Clockwise',
+  closed: 'Closed',
+  concave: 'Concave',
+  convex: 'Convex',
+  counterclockwise: 'Counter-clockwise',
+  horizontal: 'Horizontal',
+  vertical: 'Vertical',
+  lingual: 'Lingual',
+  normal: 'Normal',
+  open: 'Open',
+  palatal: 'Palatal',
+  prognathic: 'Prognathic',
+  prominent: 'Prominent',
+  recessive: 'Recessive',
+  retrognathic: 'Retrognathic',
+  tendency_for_class3: 'Class 3 Tendency',
+};
+
+export const getDisplayNameForCategory =
+  (category: Category) => categoryMap[category];
+
+export const getDisplayNameForIndication = 
+  (indication: Indication<Category>) => indicationMap[indication];
 
 /**
  * Determines whether a step in a cephalometric analysis can be mapped
  * to a geometrical object
  */
-export const isStepAutomatic = (step: CephLandmark): boolean => {
+export function isStepAutomatic(step: CephLandmark): boolean {
   return typeof step.map === 'function';
 };
 
@@ -270,36 +294,43 @@ export const isStepAutomatic = (step: CephLandmark): boolean => {
 export const isStepManual = (step: CephLandmark) => !isStepAutomatic(step);
 
 /** Determines whether a step in a cephalometric analysis can be computed as a numerical value */
-export const isStepComputable = (step: CephLandmark) => {
+export function isStepComputable(step: CephLandmark) {
   return typeof step.calculate === 'function';
 };
 
-export function defaultInterpetAnalysis(analysis: Analysis): InterpretAnalysis<Category> {
+/** 
+ * Default implementation of Analysis.interpret.
+ * Returns the falttened interpretation of each of this analysis components
+ * grouped by category and resolves indication and severity with the default
+ * resolving strategy.
+ */
+export const defaultInterpetAnalysis = (analysis: Analysis): InterpretAnalysis<Category> => {
   return (values, _) => {
     const results = flatten(
       map(analysis.components, ({ landmark: { symbol, interpret }, max, min, mean }) => {
         const value = values[symbol];
-        if (typeof value !== 'undefined' && typeof interpret === 'function' && typeof value === 'number') {
+        if (
+          typeof interpret === 'function' &&
+          typeof value === 'number'
+        ) {
           return map(
-            interpret(value, max, min, mean),
-            r => ({ ...r, symbol, value, max, min, mean }),
+            interpret(value, min, max, mean),
+            r => ({ ...r, symbol }),
           );
         } else {
           return [];
         }
       }),
     );
+
     return map(
       groupBy(results, r => r.category),
       (group, category: Category) => ({
         category,
-        indication: group[0].indication,
-        severity: resolveSeverity(results),
+        indication: resolveIndication(group),
+        severity: resolveSeverity(group),
         relevantComponents: map(
-          filter(
-            group,
-            r => r.category === category,
-          ),
+          group,
           (({ symbol, value, mean, max, min }) => ({
             symbol,
             value,
@@ -313,9 +344,18 @@ export function defaultInterpetAnalysis(analysis: Analysis): InterpretAnalysis<C
   };
 };
 
-export const defaultInterpetLandmark = <T extends Category>(
+/**
+ * Default implementation of CephLandmark.interpret.
+ * Maps a value to one of three possible indications
+ * based on the mean, maximum and minimum values.
+ * For example, given a category of skeletalPattern and the ranges
+ * ['class3', 'class1', 'class2'], the interpretation function should
+ * indicate a Class 3 skeletal pattern given a value of -1 for ANB and
+ * a mean of 2, min of 0 and maximum of 4.
+ */
+export function defaultInterpetLandmark<T extends Category>(
   category: T, ranges: [Indication<T>, Indication<T>, Indication<T>],
-): InterpretLandmark<T> => {
+): InterpretLandmark<T> {
   return (value: number, min: number, max: number, mean?: number) => {
     let indication = ranges[1];
     let severity: Severity = 'none';
@@ -324,28 +364,36 @@ export const defaultInterpetLandmark = <T extends Category>(
     } else if (value < min) {
       indication = ranges[0];
     }
-    return [{ category, indication, severity, value, mean: mean || (min + max) / 2, max, min }];
+    return [{
+      category, indication, severity,
+      value,
+      mean: mean || (min + max) / 2,
+      max, min,
+    }];
   };
 };
 
-interface InterpretationFunction<T extends Category> {
-  (value: number, max: number, min: number): Array<LandmarkInterpretation<T>>;
-}
-
-export const composeInterpretation = <T extends Category>(
-  ...args: Array<InterpretationFunction<T>>
-) => {
+/**
+ * Creates a landmark interpretation function that calls
+ * any number of interpretation functions and returns a array 
+ * of interpretations composed of flattening the results of
+ * each function call. 
+ */
+export function composeInterpretation<T extends Category>(
+  ...args: Array<InterpretLandmark<T>>
+) {
   return (value: number, max: number, min: number) => {
     return flatten(map(args, fn => fn(value, max, min)));
   };
 };
 
 /**
- * Tries to return the most reasonable severity value given contradicting
- * interpretations of the evaluated values of an analysis
+ * Tries to get the most reasonable severity value given contradicting
+ * interpretations of the evaluated value of a landmark by returning the 
+ * most occurring severity value.
  */
-export function resolveSeverity<T extends Category>(
-  results: Array<LandmarkInterpretation<T>>
+export function resolveSeverity<C extends Category>(
+  results: Array<LandmarkInterpretation<C>>
 ): Severity {
   const counts = countBy(results, r => r.severity);
   const pairs = map(counts, (value, severity: Severity) => ({ value, severity }));
@@ -354,12 +402,21 @@ export function resolveSeverity<T extends Category>(
 };
 
 /**
- * Tries to return the most reasonable indication given contradicting
- * interpretations of the evaluated values of an analysis
+ * Tries to get the most reasonable indication given contradicting
+ * interpretations of the evaluated value of a landmark by returning the
+ * most occurring indication.
  */
-export function resolveIndication<T extends Category>(
-  results: Array<LandmarkInterpretation<T>>,
-) {
-  // @TODO: improve the logic
-  return results[0].indication;
+export function resolveIndication<C extends Category>(
+  results: Array<LandmarkInterpretation<C>>,
+): Indication<C> {
+  const counts = countBy(results, r => r.indication);
+  const pairs = map(
+    counts,
+    (value, indication: Indication<C>) => ({
+      value,
+      indication 
+    }),
+  );
+  const max = maxBy(pairs, ({ value }) => value);
+  return max.indication;
 };
