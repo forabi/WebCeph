@@ -17,7 +17,7 @@ import {
   getSegmentLength,
   getVectorPoints,
   isBehind,
-  calculateAngleBetweenTwoVectors,
+  calculateAngle,
   radiansToDegrees,
 } from 'utils/math';
 
@@ -37,9 +37,9 @@ function getSymbolForAngle(line1: CephLine, line2: CephLine): string {
 const defaultMapAngle: MapLandmark<GeoVector, GeoAngle> =
   (line1: GeoVector, line2: GeoVector) => createAngleFromVectors(line1, line2);
 
-const defaultCalculateAngle: CalculateLandmark<undefined, GeoVector> =
-  () => (lineA: GeoVector, lineB: GeoVector) =>
-    radiansToDegrees(calculateAngleBetweenTwoVectors(lineA, lineB));
+const defaultCalculateAngle: CalculateLandmark<undefined, GeoVector, GeoAngle> =
+  () => () => (angle: GeoAngle) =>
+    radiansToDegrees(calculateAngle(angle));
 
 const defaultMapLine: MapLandmark<GeoPoint, GeoVector> =
   (A: GeoPoint, B: GeoPoint) => createVectorFromPoints(A, B);
@@ -47,8 +47,8 @@ const defaultMapLine: MapLandmark<GeoPoint, GeoVector> =
 const defaultMapDistance: MapLandmark<GeoObject, GeoVector> =
   (A: GeoPoint, line: GeoVector) => createPerpendicular(line, A);
 
-const defaultCalculateLine: CalculateLandmark<undefined, GeoVector> =
-  () => (segment: GeoVector) => {
+const defaultCalculateLine: CalculateLandmark<undefined, GeoPoint, GeoVector> =
+  () => () => (segment: GeoVector) => {
     const length = getSegmentLength(segment);
     const [point, ] = getVectorPoints(segment);
     if (isBehind(point, segment)) {
@@ -57,8 +57,8 @@ const defaultCalculateLine: CalculateLandmark<undefined, GeoVector> =
     return length;
   };
 
-const defaultCalculateSum: CalculateLandmark<number, GeoObject> =
-  (...values) => () => sum(values);
+const defaultCalculateSum: CalculateLandmark<number, GeoObject, GeoObject> =
+  (...values) => () => () => sum(values);
 
 /**
  * Creates an object conforming to the Angle interface based on 2 lines
@@ -232,9 +232,14 @@ export function tryMap(landmark: CephLandmark): GeoObject | undefined {
 export function tryCalculate(landmark: CephLandmark): number | undefined {
   if (typeof landmark.calculate === 'function') {
     return landmark.calculate(
+      // The calculated values of this landmark's components
       ...map(landmark.components, tryCalculate),
     )(
+      // The geometrical representation of this landmark's components
       ...map(landmark.components, tryMap),
+    )(
+      // The geometrical representation of this landmark
+      tryMap(landmark)
     );
   }
   return undefined;

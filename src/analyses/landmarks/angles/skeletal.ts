@@ -1,4 +1,4 @@
-import { S, N, A, B, Ar, Pog, Go, Me, Gn } from 'analyses/landmarks/points/skeletal';
+import { S, N, A, B, Ar, Pog, Go, Me, Gn, Xi, ANS } from 'analyses/landmarks/points/skeletal';
 import {
   FH, NPog, dentalPlane,
   SN,
@@ -16,7 +16,7 @@ import {
   getVectorPoints,
   createVectorFromPoints,
   radiansToDegrees,
-  calculateAngleBetweenTwoVectors,
+  calculateAngle,
   isBehind,
 } from 'utils/math';
 
@@ -49,9 +49,9 @@ export const SNB: CephAngle = {
  */
 export const ANB: CephAngle = {
   ...angleBetweenLines(line(N, A), line(N, B)),
-  calculate: () => (lineNA: GeoVector, lineNB: GeoVector) => {
+  calculate: () => (lineNA: GeoVector, lineNB: GeoVector) => (angle: GeoAngle) => {
     const [, A] = getVectorPoints(lineNA);
-    const positiveValue = Math.abs(radiansToDegrees(calculateAngleBetweenTwoVectors(lineNA, lineNB)));
+    const positiveValue = Math.abs(radiansToDegrees(calculateAngle(angle)));
     if (isBehind(A, lineNB)) {
       return -1 * positiveValue;
     }
@@ -62,7 +62,7 @@ export const ANB: CephAngle = {
       return [{
         category: 'skeletalPattern',
         indication: 'tendency_for_class3',
-        value, min, max, mean: mean || 2,
+        value, min, max, mean,
       }];
     }
     return defaultInterpetLandmark(
@@ -216,11 +216,13 @@ export const downsAngleOfConvexity: CephAngle = {
    * If the line Pog–point A is extended and located anterior to the N-A
    * line, the angle is read as positive.
    */
-  calculate: () => (AN: GeoVector, PogA: GeoVector) => {
+  calculate: () => (AN: GeoVector, PogA: GeoVector) => (angle: GeoAngle) => {
     const [Pog, A] = getVectorPoints(PogA);
     const [   , N] = getVectorPoints(AN);
     const NPog = createVectorFromPoints(N, Pog);
-    const positiveValue = Math.abs(radiansToDegrees(calculateAngleBetweenTwoVectors(AN, PogA)));
+    const positiveValue = Math.abs(
+      radiansToDegrees(calculateAngle(angle))
+    );
     if (isBehind(A, NPog)) {
       return -1 * positiveValue;
     }
@@ -246,9 +248,11 @@ export const downsAngleOfConvexity: CephAngle = {
  */
 export const downsABPlaneAngle: CephAngle = {
   ...angleBetweenLines(line(B, A), line(Pog, N), 'A-B Plane Angle'),
-  calculate: () => (lineBA: GeoVector, linePogN: GeoVector) => {
-    const A = { x: lineBA.x2, y: lineBA.y2 };
-    const positiveValue = Math.abs(radiansToDegrees(calculateAngleBetweenTwoVectors(lineBA, linePogN)));
+  calculate: () => (lineBA: GeoVector, linePogN: GeoVector) => (angle: GeoAngle) => {
+    const [, A] = getVectorPoints(lineBA);
+    const positiveValue = Math.abs(
+      radiansToDegrees(calculateAngle(angle))
+    );
     if (!isBehind(A, linePogN)) {
       return -1 * positiveValue;
     }

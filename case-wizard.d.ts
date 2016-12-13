@@ -39,16 +39,23 @@ interface AnalysisInterpretation<T extends Category> extends LandmarkInterpretat
   relevantComponents: string[];
 }
 
-type CalculateLandmark<Calculated extends (number | undefined), Mapped> = (
+type CalculateLandmark<Calculated extends (number | undefined), MappedComponent, Mapped> = (
   /** The calculated values of this landmark's components
    * in the same order they were defined
    */
   ...calculated: Array<Calculated | undefined>
 ) => (
-  /** The geometrical representation of this landmark's components
-   * in the same order they were defined
+  /**
+   * The geometrical representation of this landmark's components
+   * in the same order they were defined.
    */
-  ...mapped: Array<Mapped | undefined>
+  ...mapped: Array<MappedComponent | undefined>
+) => (
+  /**
+   * The geometrical representation of this landmark itself.
+   * Should be the result of calling map on this landmark if it is defined.
+   */
+  mappedComponent: Mapped | undefined,
 ) => number;
 
 type MapLandmark<Mapped, Result> = (

@@ -36,7 +36,7 @@ export const cephCorrection: CephLandmark = {
     const newEdge = rotatePointAroundOrigin(apex, edge, rotation);
     return createVectorFromPoints(apex, newEdge);
   },
-  calculate: () => (geoFMIA: GeoAngle) => {
+  calculate: () => (geoFMIA: GeoAngle) => () => {
     const actualAngle = calculateAngle(geoFMIA);
     const rotation = actualAngle - degreesToRadians(65);
     // @TODO: measure on the occlusion plane
