@@ -7,4 +7,4 @@ import {
 /**
  * The E-line (esthetic line of Ricketts)
  */
-export const FH_PLANE = line(Pn, softPog, undefined, 'E-line');
+export const ELine = line(Pn, softPog, undefined, 'E-line');

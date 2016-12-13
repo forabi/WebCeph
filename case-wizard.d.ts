@@ -59,7 +59,7 @@ type MapLandmark<Mapped, Result> = (
 ) => Result;
 
 type InterpretLandmark<C extends Category> = (
-  value: number, min?: number, max?: number, mean?: number
+  value: number, min: number, max: number, mean?: number
 ) => LandmarkInterpretation<C>[];
 
 type InterpretAnalysis<C extends Category> = (
@@ -116,14 +116,13 @@ interface CephPoint extends CephLandmark {
 
  interface CephLine extends CephLandmark {
   type: 'line';
-  unit: LinearUnit;
   components: CephPoint[];
 }
 
 interface CephDistance extends CephLandmark {
   type: 'distance';
   unit: LinearUnit;
-  components: CephPoint[];
+  components: [CephPoint, CephLine];
 }
 
 interface CephAngle extends CephLandmark {

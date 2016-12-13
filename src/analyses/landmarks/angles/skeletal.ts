@@ -1,5 +1,9 @@
 import { S, N, A, B, Ar, Pog, Go, Me, Gn } from 'analyses/landmarks/points/skeletal';
-import { FH_PLANE, SELLA_NASION_LINE, MP, SPP, U1_AXIS, L1_AXIS } from 'analyses/landmarks/lines/skeletal';
+import {
+  FH, NPog, dentalPlane,
+  SN,
+  MP, SPP, U1Axis, L1Axis,
+} from 'analyses/landmarks/lines/skeletal';
 import {
   line,
   angleBetweenLines,
@@ -53,17 +57,18 @@ export const ANB: CephAngle = {
     }
     return positiveValue;
   },
-  interpret(value, min, max): Array<LandmarkInterpretation<'skeletalPattern'>> {
+  interpret(value, min, max, mean): Array<LandmarkInterpretation<'skeletalPattern'>> {
     if (value > 0 && value < 2) {
       return [{
         category: 'skeletalPattern',
         indication: 'tendency_for_class3',
+        value, min, max, mean: mean || 2,
       }];
     }
     return defaultInterpetLandmark(
       'skeletalPattern',
-      ['class2', 'class1', 'class3'],
-    )(value, min || 2, max || 4);
+      ['class3', 'class1', 'class2'],
+    )(value, min || 2, max || 4, 2);
   },
 };
 
@@ -72,7 +77,7 @@ export const ANB: CephAngle = {
  */
 export const FMPA: CephAngle = {
   ...angleBetweenLines(
-    FH_PLANE, MP,
+    FH, MP,
     'Frankfort Mandibular Plane Angle',
     'FMPA',
   ),
@@ -91,7 +96,7 @@ export const FMA = FMPA;
  * Angle between SN and the mandibular plane
  */
 export const SN_MP: CephAngle = angleBetweenLines(
-  SELLA_NASION_LINE, MP,
+  SN, MP,
   'SN-MP',
   'SN-MP',
 );
@@ -126,7 +131,7 @@ export const MM: CephAngle = {
  * Angle between the upper incisor to S-N line
  */
 export const U1_SN: CephAngle = {
-  ...angleBetweenLines(line(N, S), U1_AXIS, undefined, 'U1-SN'),
+  ...angleBetweenLines(line(N, S), U1Axis, undefined, 'U1-SN'),
   interpret: defaultInterpetLandmark(
     'upperIncisorInclination',
     ['palatal', 'normal', 'buccal'],
@@ -139,7 +144,7 @@ export const U1_SN: CephAngle = {
  */
 export const L1_MP: CephAngle = {
   ...angleBetweenLines(
-    line(Me, Go), L1_AXIS,
+    line(Me, Go), L1Axis,
     'Incisor Mandibular Plane Angle',
     'IMPA',
   ),
@@ -155,8 +160,8 @@ export const L1_MP: CephAngle = {
  */
 export const interincisalAngle: CephAngle = {
   ...angleBetweenLines(
-    flipVector(U1_AXIS),
-    flipVector(L1_AXIS),
+    flipVector(U1Axis),
+    flipVector(L1Axis),
     'Interincisal Angle',
     'U1-L1',
   ),
@@ -174,7 +179,7 @@ export const IMPA = L1_MP;
  * Angle between the lower incisor to the Frankfort plane
  */
 export const FMIA = angleBetweenLines(
-  FH_PLANE, L1_AXIS,
+  FH, L1Axis,
   'Frankfort–mandibular incisor angle',
   'FMIA',
 );
@@ -189,7 +194,7 @@ export const FMIA = angleBetweenLines(
 export const yAxis: CephAngle = {
   ...angleBetweenLines(
     line(S, Gn),
-    FH_PLANE,
+    FH,
     'Y Axis-FH Angle',
     'Y-FH Angle',
   ),
@@ -205,7 +210,7 @@ export const yAxis: CephAngle = {
  * at its anterior limit (point A) relative to the total facial profile (N-Pog).
  */
 export const downsAngleOfConvexity: CephAngle = {
-  ...angleBetweenLines(line(A, N), line(Pog, A), 'Angle of Convexity', 'NAPog'),
+  ...angleBetweenLines(line(A, N), flipVector(dentalPlane), 'Angle of Convexity', 'NAPog'),
   /**
    * This angle is read in positive or negative degrees from zero.
    * If the line Pog–point A is extended and located anterior to the N-A
@@ -258,7 +263,7 @@ export const downsABPlaneAngle: CephAngle = {
    */
   interpret: defaultInterpetLandmark(
     'skeletalPattern',
-    ['class2', 'class1', 'class3'],
+    ['class3', 'class1', 'class2'],
   ),
 };
 
@@ -267,7 +272,7 @@ export const downsABPlaneAngle: CephAngle = {
  * This is the inferior inside angle in which the facial line (nasion-pogonion).
  */
 export const facialAngle: CephAngle = {
-  ...angleBetweenLines(flipVector(FH_PLANE), line(N, Pog), 'Facial Angle'),
+  ...angleBetweenLines(flipVector(FH), NPog, 'Facial Angle'),
   interpret: composeInterpretation(
     defaultInterpetLandmark('skeletalProfile', ['concave', 'normal', 'convex']),
     defaultInterpetLandmark('chin', ['recessive', 'normal', 'prominent']),

@@ -1,5 +1,6 @@
 import has from 'lodash/has';
 import each from 'lodash/each';
+import clamp from 'lodash/clamp';
 
 export function radiansToDegrees(value: number): number {
   return value * 180 / Math.PI;
@@ -104,9 +105,6 @@ export function rotatePointAroundOrigin(
   return { x: nx, y: ny };
 }
 
-
-import clamp from 'lodash/clamp';
-
 export interface Rect {
   top: number;
   left: number;
@@ -174,19 +172,6 @@ export const getIntersectionPoint = (
   }
 };
 
-export const createPerpendicular = (
-  { x1, y1, x2, y2 }: GeoVector,
-  point: GeoPoint,
-): GeoVector => {
-  const k = (
-    (y2 - y1) * (point.x - x1) - (x2 - x1) * (point.y - y1)
-  ) / (
-    (y2 - y1) ** 2 + (x2 - x1) ** 2
-  );
-  const x = point.x - k * (y2 - y1);
-  const y = point.y + k * (x2 - x1);
-  return createVectorFromPoints(point, { x, y });
-};
 
 export const getVectorPoints = ({ x1, y1, x2, y2 }: GeoVector): [GeoPoint, GeoPoint] => {
   return [
@@ -208,4 +193,27 @@ export const createAngleFromVectors = (vector1: GeoVector, vector2: GeoVector): 
   return {
     vectors: [vector1, vector2],
   }
+};
+
+export const createPerpendicular = (
+  { x1, y1, x2, y2 }: GeoVector,
+  point: GeoPoint,
+): GeoVector => {
+  const k = (
+    (y2 - y1) * (point.x - x1) - (x2 - x1) * (point.y - y1)
+  ) / (
+    (y2 - y1) ** 2 + (x2 - x1) ** 2
+  );
+  const x = point.x - k * (y2 - y1);
+  const y = point.y + k * (x2 - x1);
+  return createVectorFromPoints(point, { x, y });
+};
+
+export const createParallel = (
+  vector: GeoVector, origin: GeoPoint, x2: number
+): GeoVector => {
+  const slope = getSlope(vector);
+  const intercept = origin.y - (slope * origin.x);
+  const y2 = (slope * x2) + intercept;
+  return createVectorFromPoints(origin, { x: x2, y: y2 });
 };
