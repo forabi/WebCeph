@@ -9,7 +9,7 @@ declare var System: any;
 declare var module: __WebpackModuleApi.Module;
 declare var window: Window & {
   ResizeObserver?: ResizeObserver;
-  __STORE__: Store<any>;
+  __STORE__: Store<StoreState>;
 };
 
 if (!__DEBUG__ && location.protocol !== 'https:') {
@@ -29,12 +29,12 @@ if (!__DEBUG__ && 'serviceWorker' in navigator) {
         switch (newWorker.state) {
           case 'installing':
             store.dispatch(
-              setAppUpdateStatus({ complete: false })
+              setAppUpdateStatus({ complete: false }),
             );
             break;
           case 'installed':
             store.dispatch(
-              setAppUpdateStatus({ complete: true })
+              setAppUpdateStatus({ complete: true }),
             );
           default:
             break;
@@ -43,7 +43,6 @@ if (!__DEBUG__ && 'serviceWorker' in navigator) {
     };
   });
 }
-
 
 import { hasUnsavedWork } from 'store/reducers/workspace';
 

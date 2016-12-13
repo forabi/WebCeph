@@ -17,7 +17,7 @@ export interface DispatchProps {
   onInvertToggle(): any;
   onBrightnessChange(value: number): any;
   onContrastChange(value: number): any;
-  onToolButtonClick(id: string): any;
+  onToolButtonClick(id: ToolId): any;
   onUndoClick(): any;
   onRedoClick(): any;
   onShowSummaryClick(): any;

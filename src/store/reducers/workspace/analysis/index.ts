@@ -172,9 +172,8 @@ export const findStepBySymbol = createSelector(
       includeDuplicates ? steps : deduplicatedSteps,
       (step: CephLandmark) => step.symbol === symbol
     ) || null;
-  }
+  },
 );
-
 
 export const getManualSteps = createSelector(
   getActiveAnalysisSteps,

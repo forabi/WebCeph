@@ -28,6 +28,7 @@ export const cephCorrection: CephLandmark = {
   symbol: 'ceph-correction',
   type: 'distance',
   components: [FMIA, L1Axis],
+  imageTypes: ['ceph_lateral'],
   unit: 'mm',
   map(geoFMIA: GeoAngle, axis: GeoVector) {
     const actualAngle = calculateAngle(geoFMIA);

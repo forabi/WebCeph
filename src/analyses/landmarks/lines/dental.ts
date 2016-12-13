@@ -9,7 +9,7 @@ import {
  * A line bisecting the cusp of tips of the molars and passing
  * through the cusp tips of the first premolars.
  */
-export const functionalOcclusalPlane: CephLine = line(
+export const functionalOcclusalPlane = line(
   centerOfMolarCusps,
   centerOfPremolarCusps,
   'Functional occlusal plane',

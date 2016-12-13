@@ -89,6 +89,10 @@ interface CephLandmark {
    * Each landmark must have a symbol which acts as the unique identifier for that landmark.
    */
   symbol: string;
+
+  /** The types of radiographs or photographs on which this landmark can be set. */
+  imageTypes: ImageType[];
+
   description?: string;
   type: LandmarkType;
   unit?: AngularUnit | LinearUnit;
@@ -177,7 +181,7 @@ interface Analysis {
    * For example, given a computed value of 7 for angle ANB,
    * the returned value should have a result of type SkeletalPattern.classII
    */
-  interpret?: InterpretAnalysis;
+  interpret?: InterpretAnalysis<Category>;
 }
 
 type Rotation = {

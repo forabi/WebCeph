@@ -64,18 +64,16 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
       onFlipXClick: () => dispatch(flipX()),
       onFlipYClick: () => dispatch(flipY()),
       onInvertToggle: () => dispatch(invertColors()),
-      onRedoClick: () => dispatch(redo()),
-      onUndoClick: () => dispatch(undo()),
+      onRedoClick: () => dispatch(redo(void 0)),
+      onUndoClick: () => dispatch(undo(void 0)),
       onToolButtonClick: (id) => dispatch(setActiveTool(id)),
-      onShowSummaryClick: () => dispatch(toggleAnalysisResults()),
+      onShowSummaryClick: () => dispatch(toggleAnalysisResults(void 0)),
       onExportClick: () => dispatch(
         exportFile({
           format: 'wceph_v1',
-        })
+        }),
       ),
     };
   };
 
-export default connect(
-  mapStateToProps, mapDispatchToProps
-)(CephaloToolbar);
+export default connect(mapStateToProps, mapDispatchToProps)(CephaloToolbar);

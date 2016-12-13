@@ -58,6 +58,7 @@ export function angleBetweenLines(
   lineA: CephLine, lineB: CephLine,
   name?: string, symbol?: string,
   unit: AngularUnit = 'degree',
+  imageTypes: ImageType[] = ['ceph_lateral'],
 ): CephAngle {
   return {
     type: 'angle',
@@ -67,6 +68,7 @@ export function angleBetweenLines(
     components: [lineA, lineB],
     map: defaultMapAngle,
     calculate: defaultCalculateAngle,
+    imageTypes,
   };
 }
 
@@ -81,13 +83,18 @@ export function angleBetweenPoints(
   return angleBetweenLines(line(B, A), line(B, C), name, undefined, unit);
 }
 
-export function point(symbol: string, name?: string, description?: string): CephPoint {
+export function point(
+  symbol: string, name?: string,
+  description?: string,
+  imageTypes: ImageType[] = ['ceph_lateral'],
+): CephPoint {
   return {
     type: 'point',
     name,
     symbol,
     description,
     components: [],
+    imageTypes,
   };
 }
 
@@ -97,6 +104,7 @@ export function point(symbol: string, name?: string, description?: string): Ceph
 export function line(
   A: CephPoint, B: CephPoint,
   name?: string, symbol?: string,
+  imageTypes: ImageType[] = ['ceph_lateral'],
 ): CephLine {
   return {
     type: 'line',
@@ -104,6 +112,7 @@ export function line(
     symbol: symbol || `${A.symbol}-${B.symbol}`,
     components: [A, B],
     map: defaultMapLine,
+    imageTypes,
   };
 };
 
@@ -111,6 +120,7 @@ export function distance(
   A: CephPoint, line: CephLine,
   name?: string, symbol?: string,
   unit: LinearUnit = 'mm',
+  imageTypes: ImageType[] = ['ceph_lateral'],
 ): CephDistance {
   return {
     type: 'distance',
@@ -120,10 +130,15 @@ export function distance(
     components: [A, line],
     map: defaultMapDistance,
     calculate: defaultCalculateLine,
+    imageTypes,
   };
 };
 
-export function angularSum(components: CephAngle[], name: string, symbol?: string): CephAngularSum {
+export function angularSum(
+  components: CephAngle[],
+  name: string, symbol?: string,
+  imageTypes: ImageType[] = ['ceph_lateral'],
+): CephAngularSum {
   return {
     type: 'sum',
     name,
@@ -131,6 +146,7 @@ export function angularSum(components: CephAngle[], name: string, symbol?: strin
     symbol: symbol || join(map(components, c => c.symbol), '+'),
     components,
     calculate: defaultCalculateSum,
+    imageTypes,
   };
 }
 
@@ -157,7 +173,7 @@ export function areEqualSymbols(l1: CephLandmark, l2: CephLandmark) {
 };
 
 export function getStepsForLandmarks(
-  landmarks: CephLandmark[], removeEqualSteps = true
+  landmarks: CephLandmark[], removeEqualSteps = true,
 ): CephLandmark[] {
   return uniqWith(
     flatten(map(
@@ -182,7 +198,7 @@ export function getStepsForLandmarks(
 
 export function getStepsForAnalysis(
   analysis: Analysis,
-  deduplicateVectors = true
+  deduplicateVectors = true,
 ): CephLandmark[] {
   return getStepsForLandmarks(analysis.components.map(c => c.landmark), deduplicateVectors);
 };
@@ -230,7 +246,7 @@ export function tryCalculate(landmark: CephLandmark): number | undefined {
       ...map(landmark.components, tryMap),
     )(
       // The geometrical representation of this landmark
-      tryMap(landmark)
+      tryMap(landmark),
     );
   }
   return undefined;
@@ -283,7 +299,7 @@ const indicationMap: Record<Indication<Category>, string> = {
 export const getDisplayNameForCategory =
   (category: Category) => categoryMap[category];
 
-export const getDisplayNameForIndication = 
+export const getDisplayNameForIndication =
   (indication: Indication<Category>) => indicationMap[indication];
 
 /**
@@ -384,7 +400,7 @@ export function defaultInterpetLandmark<T extends Category>(
  * each function call. 
  */
 export function composeInterpretation<T extends Category>(
-  ...args: Array<InterpretLandmark<T>>
+  ...args: Array<InterpretLandmark<T>>,
 ): InterpretLandmark<T> {
   return (value, max, min, mean) => {
     return flatten(map(args, fn => fn(value, max, min, mean)));
@@ -397,7 +413,7 @@ export function composeInterpretation<T extends Category>(
  * most occurring severity value.
  */
 export function resolveSeverity<C extends Category>(
-  results: Array<LandmarkInterpretation<C>>
+  results: Array<LandmarkInterpretation<C>>,
 ): Severity {
   const counts = countBy(results, r => r.severity);
   const pairs = map(counts, (value, severity: Severity) => ({ value, severity }));
@@ -418,7 +434,7 @@ export function resolveIndication<C extends Category>(
     counts,
     (value, indication: Indication<C>) => ({
       value,
-      indication 
+      indication,
     }),
   );
   const max = maxBy(pairs, ({ value }) => value);

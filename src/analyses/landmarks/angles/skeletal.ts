@@ -221,7 +221,7 @@ export const downsAngleOfConvexity: CephAngle = {
     const [   , N] = getVectorPoints(AN);
     const NPog = createVectorFromPoints(N, Pog);
     const positiveValue = Math.abs(
-      radiansToDegrees(calculateAngle(angle))
+      radiansToDegrees(calculateAngle(angle)),
     );
     if (isBehind(A, NPog)) {
       return -1 * positiveValue;
@@ -251,7 +251,7 @@ export const downsABPlaneAngle: CephAngle = {
   calculate: () => (lineBA: GeoVector, linePogN: GeoVector) => (angle: GeoAngle) => {
     const [, A] = getVectorPoints(lineBA);
     const positiveValue = Math.abs(
-      radiansToDegrees(calculateAngle(angle))
+      radiansToDegrees(calculateAngle(angle)),
     );
     if (!isBehind(A, linePogN)) {
       return -1 * positiveValue;

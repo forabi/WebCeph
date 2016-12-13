@@ -19,6 +19,7 @@ export const overjet: CephLandmark = {
   type: 'distance',
   symbol: 'overjet',
   unit: 'mm',
+  imageTypes: ['ceph_lateral'],
   components: [functionalOcclusalPlane, U1_INCISAL_EDGE, L1_INCISAL_EDGE],
   map: (occlusalPlane: GeoVector, u1Tip: GeoPoint, l1Tip: GeoPoint) => {
     const p1 = createPerpendicular(occlusalPlane, u1Tip);
@@ -42,13 +43,14 @@ export const overjet: CephLandmark = {
       'overjet',
       ['decreased', 'normal', 'increased'],
     )(value, min, max, mean);
-  }
+  },
 };
 
 export const overbite: CephLandmark = {
   type: 'distance',
   symbol: 'overbite',
   unit: 'mm',
+  imageTypes: ['ceph_lateral'],
   components: [
     distance(L1_INCISAL_EDGE, functionalOcclusalPlane),
     distance(U1_INCISAL_EDGE, functionalOcclusalPlane),
@@ -68,5 +70,5 @@ export const overbite: CephLandmark = {
       'overbite',
       ['decreased', 'normal', 'increased'],
     )(value, min, max, mean);
-  }
+  },
 };
