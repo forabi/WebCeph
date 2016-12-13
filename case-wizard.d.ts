@@ -90,8 +90,8 @@ interface CephLandmark {
    */
   symbol: string;
 
-  /** The types of radiographs or photographs on which this landmark can be set. */
-  imageTypes: ImageType[];
+  /** The type of radiograph or photograph on which this landmark can be set. */
+  imageType: ImageType;
 
   description?: string;
   type: LandmarkType;

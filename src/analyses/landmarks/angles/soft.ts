@@ -16,7 +16,7 @@ export const Z: CephLandmark = {
   type: 'angle',
   name: 'Merrifield\'s Z Angle',
   unit: 'degree',
-  imageTypes: ['ceph_lateral'],
+  imageType: 'ceph_lateral',
   components: [flipVector(FH), Li, Ls, softPog],
   map: (
     FH: GeoVector,

@@ -58,7 +58,7 @@ export function angleBetweenLines(
   lineA: CephLine, lineB: CephLine,
   name?: string, symbol?: string,
   unit: AngularUnit = 'degree',
-  imageTypes: ImageType[] = ['ceph_lateral'],
+  imageType: ImageType = 'ceph_lateral',
 ): CephAngle {
   return {
     type: 'angle',
@@ -68,7 +68,7 @@ export function angleBetweenLines(
     components: [lineA, lineB],
     map: defaultMapAngle,
     calculate: defaultCalculateAngle,
-    imageTypes,
+    imageType,
   };
 }
 
@@ -86,7 +86,7 @@ export function angleBetweenPoints(
 export function point(
   symbol: string, name?: string,
   description?: string,
-  imageTypes: ImageType[] = ['ceph_lateral'],
+  imageType: ImageType = 'ceph_lateral',
 ): CephPoint {
   return {
     type: 'point',
@@ -94,7 +94,7 @@ export function point(
     symbol,
     description,
     components: [],
-    imageTypes,
+    imageType,
   };
 }
 
@@ -104,7 +104,7 @@ export function point(
 export function line(
   A: CephPoint, B: CephPoint,
   name?: string, symbol?: string,
-  imageTypes: ImageType[] = ['ceph_lateral'],
+  imageType: ImageType = 'ceph_lateral',
 ): CephLine {
   return {
     type: 'line',
@@ -112,7 +112,7 @@ export function line(
     symbol: symbol || `${A.symbol}-${B.symbol}`,
     components: [A, B],
     map: defaultMapLine,
-    imageTypes,
+    imageType,
   };
 };
 
@@ -120,7 +120,7 @@ export function distance(
   A: CephPoint, line: CephLine,
   name?: string, symbol?: string,
   unit: LinearUnit = 'mm',
-  imageTypes: ImageType[] = ['ceph_lateral'],
+  imageType: ImageType = 'ceph_lateral',
 ): CephDistance {
   return {
     type: 'distance',
@@ -130,14 +130,14 @@ export function distance(
     components: [A, line],
     map: defaultMapDistance,
     calculate: defaultCalculateLine,
-    imageTypes,
+    imageType,
   };
 };
 
 export function angularSum(
   components: CephAngle[],
   name: string, symbol?: string,
-  imageTypes: ImageType[] = ['ceph_lateral'],
+  imageType: ImageType = 'ceph_lateral',
 ): CephAngularSum {
   return {
     type: 'sum',
@@ -146,7 +146,7 @@ export function angularSum(
     symbol: symbol || join(map(components, c => c.symbol), '+'),
     components,
     calculate: defaultCalculateSum,
-    imageTypes,
+    imageType,
   };
 }
 
