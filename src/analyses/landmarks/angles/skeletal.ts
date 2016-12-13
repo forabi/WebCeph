@@ -282,3 +282,28 @@ export const facialAngle: CephAngle = {
     defaultInterpetLandmark('chin', ['recessive', 'normal', 'prominent']),
   ),
 };
+
+/**
+ * Mandibular incisor inclination.
+ * The angle between the long axis of the mandibular incisor
+ * and the A-Pog line (1 to A-Pog) is measured to provide some idea
+ * of mandibular incisor procumbency.
+ */
+export const L1ToDentalPlaneAngle: CephAngle = {
+  ...angleBetweenLines(L1Axis, flipVector(dentalPlane)),
+  interpret: defaultInterpetLandmark(
+    'lowerIncisorInclination',
+    ['lingual', 'normal', 'buccal'],
+  ),
+};
+
+export const lowerFacialHeightAngle: CephAngle = {
+  ...angleBetweenPoints(
+    ANS, Xi, Pog,
+    'Lower facial height angle',
+  ),
+  interpret: defaultInterpetLandmark(
+    'lowerIncisorInclination',
+    ['lingual', 'normal', 'buccal'],
+  ),
+};

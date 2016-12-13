@@ -1,6 +1,6 @@
-import { FH, PtV } from 'analyses/landmarks/lines/skeletal';
+import { FH, PtV, cranialBase, facialAxis } from 'analyses/landmarks/lines/skeletal';
 import { getIntersectionPoint, createPerpendicular, createVectorFromPoints } from 'utils/math';
-import { point, line } from 'analyses/helpers';
+import { point } from 'analyses/helpers';
 
 /**
  * Most anterior point on foramen magnum
@@ -156,9 +156,9 @@ export const CC: CephLandmark = {
     'CC',
     'Center of cranium',
   ),
-  components: [line(Ba, N), line(Pt, Gn)],
-  map(BaN: GeoVector, PtGn: GeoVector) {
-    return getIntersectionPoint(BaN, PtGn) as GeoPoint;
+  components: [cranialBase, facialAxis],
+  map(geoCranialBase: GeoVector, geoFacialAxis: GeoVector) {
+    return getIntersectionPoint(geoCranialBase, geoFacialAxis) as GeoPoint;
   },
 };
 
@@ -188,7 +188,7 @@ export const R4 = point('R4-mandible');
 /**
  * A point located at the geometric center of the ramus.
  */
-export const Xi: CephLandmark = {
+export const Xi: CephPoint = {
   ...point(
     'Xi',
     'Center of ramus',

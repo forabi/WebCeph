@@ -1,4 +1,9 @@
-import { facialAngle, FMPA } from 'analyses/landmarks/angles/skeletal';
+import {
+  facialAngle,
+  FMPA,
+  L1ToDentalPlaneAngle,
+  lowerFacialHeightAngle,
+} from 'analyses/landmarks/angles/skeletal';
 import {
   convexityAtPointA,
   mandibularIncisorToDentalPlane,
@@ -31,7 +36,18 @@ const analysis: Analysis = {
       max: 3,
       min: -1,
     },
-
+    {
+      landmark: L1ToDentalPlaneAngle,
+      mean: 22,
+      max: 24,
+      min: 20,
+    },
+    {
+      landmark: lowerFacialHeightAngle,
+      mean: 45,
+      max: 45,
+      min: 45,
+    },
   ],
 };
 
