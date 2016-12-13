@@ -356,7 +356,7 @@ export const defaultInterpetAnalysis = (analysis: Analysis): InterpretAnalysis<C
 export function defaultInterpetLandmark<T extends Category>(
   category: T, ranges: [Indication<T>, Indication<T>, Indication<T>],
 ): InterpretLandmark<T> {
-  return (value: number, min: number, max: number, mean?: number) => {
+  return (value, min, max, mean) => {
     let indication = ranges[1];
     let severity: Severity = 'none';
     if (value > max) {
@@ -367,7 +367,7 @@ export function defaultInterpetLandmark<T extends Category>(
     return [{
       category, indication, severity,
       value,
-      mean: mean || (min + max) / 2,
+      mean,
       max, min,
     }];
   };
@@ -381,9 +381,9 @@ export function defaultInterpetLandmark<T extends Category>(
  */
 export function composeInterpretation<T extends Category>(
   ...args: Array<InterpretLandmark<T>>
-) {
-  return (value: number, max: number, min: number) => {
-    return flatten(map(args, fn => fn(value, max, min)));
+): InterpretLandmark<T> {
+  return (value, max, min, mean) => {
+    return flatten(map(args, fn => fn(value, max, min, mean)));
   };
 };
 
