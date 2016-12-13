@@ -9,6 +9,8 @@ import {
   mandibularIncisorToDentalPlane,
 } from 'analyses/landmarks/distances/skeletal';
 
+import { upperLipToELine, lowerLipToELine } from 'analyses/landmarks/distances/soft';
+
 const analysis: Analysis = {
   id: 'ricketts',
   components: [
@@ -47,6 +49,18 @@ const analysis: Analysis = {
       mean: 45,
       max: 45,
       min: 45,
+    },
+    {
+      landmark: upperLipToELine,
+      mean: -2,
+      max: 0,
+      min: -3,
+    },
+    {
+      landmark: lowerLipToELine,
+      mean: -2,
+      max: 0,
+      min: -3,
     },
   ],
 };
