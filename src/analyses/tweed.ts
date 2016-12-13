@@ -1,6 +1,5 @@
 import { FMIA, FMPA, IMPA } from 'analyses/landmarks/angles/skeletal';
 
-
 const analysis: Analysis = {
   id: 'tweed',
   components: [
