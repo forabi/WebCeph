@@ -4,7 +4,7 @@ declare const __VERSION__: string;
 type AngularUnit = 'degree' | 'radian';
 type LinearUnit = 'mm' | 'cm' | 'in';
 
-type LandmarkType = 'angle' | 'point' | 'line' | 'distance' | 'sum';
+type LandmarkType = 'angle' | 'point' | 'line' | 'distance' | 'sum' | 'ratio';
 
 type Categories = {
   skeletalPattern: 'class1' | 'class2' | 'tendency_for_class3' | 'class3',
