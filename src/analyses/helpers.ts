@@ -157,7 +157,7 @@ export function angularSum(
  * The new landmark has the same symbol and name of the reused one.
  */
 export const reuseLandmarkForImageType =
-  (imageType: ImageType) => 
+  (imageType: ImageType) =>
     (landmark: CephLandmark): CephLandmark => ({
       ...landmark,
       imageType,
@@ -287,7 +287,7 @@ const categoryMap: Record<Category, string> = {
 };
 
 const indicationMap: Record<Indication<Category>, string> = {
-  buccal: 'Buccal',
+  labial: 'Labial',
   class1: 'Class 1',
   class2: 'Class 2',
   class3: 'Class 3',
@@ -341,7 +341,7 @@ export function isStepComputable(step: CephLandmark) {
  * grouped by category and resolves indication and severity with the default
  * resolving strategy.
  */
-export const defaultInterpetAnalysis = (analysis: Analysis): InterpretAnalysis<Category> => {
+export const defaultInterpretAnalysis = (analysis: Analysis): InterpretAnalysis<Category> => {
   return (values, _) => {
     const results = flatten(
       map(analysis.components, ({ landmark: { symbol, interpret }, max, min, mean }) => {

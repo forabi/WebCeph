@@ -170,15 +170,19 @@ type CategorizedAnalysisResult<T extends Category> = {
   }>;
 };
 
+/**
+ * Describes a cephalometric analysis, composed of a list of
+ * landmarks and their respective mean values and an interpretation
+ * method.
+ */
 interface Analysis {
   id: string;
   components: AnalysisComponent[];
 
   /**
    * Given a map of the evaluated values of this analysis components,
-   * this function should return an array of interpreted results.
-   * For example, given a computed value of 7 for angle ANB,
-   * the returned value should have a result of type SkeletalPattern.classII
+   * this function should return an array of interpreted results grouped
+   * by category.
    */
   interpret?: InterpretAnalysis<Category>;
 }
