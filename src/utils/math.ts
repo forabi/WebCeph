@@ -224,3 +224,8 @@ export const createParallel = (
   const y2 = (slope * x2) + intercept;
   return createVectorFromPoints(origin, { x: x2, y: y2 });
 };
+
+export const createHorizontalLine = (
+  { x, y }: GeoPoint, x2: number,
+): GeoVector => ({ x1: x, y1: y, x2, y2: y });
+
