@@ -1,6 +1,8 @@
 import has from 'lodash/has';
 import each from 'lodash/each';
 import clamp from 'lodash/clamp';
+import isArray from 'lodash/isArray';
+import every from 'lodash/every';
 
 export function radiansToDegrees(value: number): number {
   return value * 180 / Math.PI;
@@ -25,8 +27,16 @@ export function isGeoAngle(object: any): object is GeoAngle {
   return has(object, 'vectors') && object.vectors.length === 2 && each(object.vectors, isGeoVector);
 };
 
-export function isGeoObject(object: any): object is GeoObject {
+export function isSingleGeoObject(object: any): object is SingleGeoObject {
   return isGeoPoint(object) || isGeoVector(object) || isGeoAngle(object);
+};
+
+export function isCompositeGeoObject(object: any): object is CompositeGeoObject {
+  return isArray(object) && every(object, isSingleGeoObject);
+};
+
+export function isGeoObject(object: any): object is GeoObject {
+  return isSingleGeoObject(object) || isCompositeGeoObject(object);
 };
 
 export function isBehind(point: GeoPoint, line: GeoVector) {
@@ -229,3 +239,6 @@ export const createHorizontalLine = (
   { x, y }: GeoPoint, x2: number,
 ): GeoVector => ({ x1: x, y1: y, x2, y2: y });
 
+export const composeGeoObject = (
+  ...objects: GeoObject[],
+): CompositeGeoObject => objects;

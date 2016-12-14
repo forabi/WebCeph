@@ -235,7 +235,9 @@ interface GeoVector {
   y2: number;
 };
 
-type GeoObject = GeoPoint | GeoVector | GeoAngle;
+type SingleGeoObject = GeoPoint | GeoVector | GeoAngle;
+type CompositeGeoObject = Array<SingleGeoObjet>;
+type GeoObject = GeoObject | CompositeGeoObject;
 
 type StepState = 'done' | 'current' | 'pending' | 'evaluating';
 type Step = CephLandmark & { title: string, state: StepState };
