@@ -134,7 +134,7 @@ export const U1_SN: CephAngle = {
   ...angleBetweenLines(line(N, S), U1Axis, undefined, 'U1-SN'),
   interpret: defaultInterpetLandmark(
     'upperIncisorInclination',
-    ['palatal', 'normal', 'buccal'],
+    ['palatal', 'normal', 'labial'],
   ),
 };
 
@@ -150,7 +150,7 @@ export const L1_MP: CephAngle = {
   ),
   interpret: defaultInterpetLandmark(
     'lowerIncisorInclination',
-    ['lingual', 'normal', 'buccal'],
+    ['lingual', 'normal', 'labial'],
   ),
 };
 
@@ -293,7 +293,7 @@ export const L1ToDentalPlaneAngle: CephAngle = {
   ...angleBetweenLines(L1Axis, flipVector(dentalPlane)),
   interpret: defaultInterpetLandmark(
     'lowerIncisorInclination',
-    ['lingual', 'normal', 'buccal'],
+    ['lingual', 'normal', 'labial'],
   ),
 };
 
@@ -304,6 +304,6 @@ export const lowerFacialHeightAngle: CephAngle = {
   ),
   interpret: defaultInterpetLandmark(
     'lowerIncisorInclination',
-    ['lingual', 'normal', 'buccal'],
+    ['lingual', 'normal', 'labial'],
   ),
 };

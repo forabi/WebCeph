@@ -20,6 +20,6 @@ export const mandibularIncisorToDentalPlane: CephDistance = {
   ...distance(L1_APEX, dentalPlane),
   interpret: defaultInterpetLandmark(
     'lowerIncisorInclination',
-    ['lingual', 'normal', 'buccal'],
+    ['lingual', 'normal', 'labial'],
   )
 }

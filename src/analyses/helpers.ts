@@ -425,6 +425,7 @@ export function composeInterpretation<T extends Category>(
 };
 
 /**
+ * Default strategy for resolving conflicting severity values.
  * Tries to get the most reasonable severity value given contradicting
  * interpretations of the evaluated value of a landmark by returning the 
  * most occurring severity value.

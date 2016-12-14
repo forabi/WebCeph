@@ -13,8 +13,8 @@ type Categories = {
   skeletalProfile: 'normal' | 'concave' | 'convex',
   mandibularRotation: 'normal' | 'clockwise' | 'counterclockwise',
   growthPattern: 'normal' | 'horizontal' | 'vertical',
-  upperIncisorInclination: 'normal' | 'buccal' | 'palatal',
-  lowerIncisorInclination: 'normal' | 'buccal' | 'lingual',
+  upperIncisorInclination: 'normal' | 'labial' | 'palatal',
+  lowerIncisorInclination: 'normal' | 'labial' | 'lingual',
   skeletalBite: 'normal' | 'open' | 'closed',
   chin: 'normal' | 'recessive' | 'prominent',
   overbite: 'normal' | 'negative' | 'decreased' | 'increased',
@@ -26,7 +26,6 @@ type Categories = {
 type Category = keyof Categories;
 type Indication<T extends Category> = Categories[T];
 type Severity = 'none' | 'low' | 'medium' | 'high';
-
 
 interface LandmarkInterpretation<T extends Category> {
   category: T;
