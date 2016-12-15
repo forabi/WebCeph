@@ -47,3 +47,6 @@ export const undo = createActionCreator('UNDO_REQUESTED');
 export const addWorker = createActionCreator('WORKER_CREATED');
 export const updateWorker = createActionCreator('WORKER_STATUS_CHANGED');
 export const removeWorker = createActionCreator('WORKER_TERMINATED');
+
+export const fetchAnalysisSucceeded = createActionCreator('SET_ANALYSIS_SUCCEEDED');
+export const fetchAnalysisFailed = createActionCreator('SET_ANALYSIS_FAILED');

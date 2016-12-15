@@ -512,7 +512,7 @@ interface Events {
   UNHIGHLIGHT_STEP_ON_CANVAS_REQUESTED: void;
   SET_ACTIVE_TOOL_REQUESTED: ToolId;
   SET_ANALYSIS_REQUESTED: string,
-  SET_ANALYSIS_SUCCEEDED: void,
+  SET_ANALYSIS_SUCCEEDED: string,
   SET_ANALYSIS_FAILED: GenericError & {
     analysisId: string
   };

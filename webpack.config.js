@@ -5,6 +5,7 @@ const env = require('./env');
 const WebpackHTMLPlugin = require('webpack-html-plugin');
 const { compact } = require('lodash');
 const autoprefixer = require('autoprefixer');
+const AsyncModulePlugin = require('async-module-loader/plugin');
 const BabiliPlugin = require('babili-webpack-plugin');
 const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 
@@ -218,6 +219,7 @@ const config = {
         collapseWhitespace: true,
       } : false,
     }),
+    new AsyncModulePlugin(),
     new webpack.ProvidePlugin({
       Promise: 'bluebird',
     }),
