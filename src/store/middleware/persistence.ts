@@ -46,7 +46,7 @@ const saveStateMiddleware: Middleware = ({ getState }: Store<StoreState>) => (ne
     if (isPersistenceNeededForAction(action)) {
       next(action);
       console.info(
-        `Action ${action.type} has triggered state persistence`
+        `Action ${action.type} has triggered state persistence`,
       );
       rIC(async () => {
         try {
