@@ -177,13 +177,14 @@ interface Analyses {
   ceph_lateral: (
     'downs' | 'ricketts_lateral' |
     'common' | 'basic ' | 'bjork' |
-    'tweed' | 'steiner' | 'basic'
+    'tweed' | 'steiner' | 'basic' |
+    'soft_tissues_lateral'
   );
   ceph_pa: (
     'ricketts_frontal'
   );
   photo_lateral: (
-    'soft_tissue_photo_lateral'
+    'soft_tissues_photo_lateral'
   );
   photo_frontal: (
     'frontal_face_proportions'

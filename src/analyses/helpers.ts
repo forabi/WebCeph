@@ -352,45 +352,46 @@ export function isStepComputable(step: CephLandmark) {
  * grouped by category and resolves indication and severity with the default
  * resolving strategy.
  */
-export const defaultInterpretAnalysis = <T extends ImageType>(analysis: Analysis<T>): InterpretAnalysis<Category> => {
-  return (values, _) => {
-    const results = flatten(
-      map(analysis.components, ({ landmark: { symbol, interpret }, max, min, mean }) => {
-        const value = values[symbol];
-        if (
-          typeof interpret === 'function' &&
-          typeof value === 'number'
-        ) {
-          return map(
-            interpret(value, min, max, mean),
-            r => ({ ...r, symbol }),
-          );
-        } else {
-          return [];
-        }
-      }),
-    );
+export const defaultInterpretAnalysis =
+  (components: AnalysisComponent[]): InterpretAnalysis<Category> => {
+    return (values, _) => {
+      const results = flatten(
+        map(components, ({ landmark: { symbol, interpret }, max, min, mean }) => {
+          const value = values[symbol];
+          if (
+            typeof interpret === 'function' &&
+            typeof value === 'number'
+          ) {
+            return map(
+              interpret(value, min, max, mean),
+              r => ({ ...r, symbol }),
+            );
+          } else {
+            return [];
+          }
+        }),
+      );
 
-    return map(
-      groupBy(results, r => r.category),
-      (group, category: Category) => ({
-        category,
-        indication: resolveIndication(group),
-        severity: resolveSeverity(group),
-        relevantComponents: map(
-          group,
-          (({ symbol, value, mean, max, min }) => ({
-            symbol,
-            value,
-            mean,
-            max,
-            min,
-          })),
-        ),
-      }),
-    );
+      return map(
+        groupBy(results, r => r.category),
+        (group, category: Category) => ({
+          category,
+          indication: resolveIndication(group),
+          severity: resolveSeverity(group),
+          relevantComponents: map(
+            group,
+            (({ symbol, value, mean, max, min }) => ({
+              symbol,
+              value,
+              mean,
+              max,
+              min,
+            })),
+          ),
+        }),
+      );
+    };
   };
-};
 
 /**
  * Default implementation of CephLandmark.interpret.
