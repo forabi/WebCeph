@@ -1,5 +1,5 @@
 export interface StateProps {
-  results: CategorizedAnalysisResults;
+  results: Array<CategorizedAnalysisResult<Category>>;
 };
 
 export interface DispatchProps {

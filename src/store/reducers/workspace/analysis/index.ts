@@ -1,4 +1,3 @@
-import { handleActions } from 'redux-actions';
 import { createSelector } from 'reselect';
 
 import assign from 'lodash/assign';
@@ -7,21 +6,11 @@ import some from 'lodash/some';
 import filter from 'lodash/filter';
 import find from 'lodash/find';
 import flatten from 'lodash/flatten';
-import groupBy from 'lodash/groupBy';
 import isEmpty from 'lodash/isEmpty';
 import reduce from 'lodash/reduce';
 import map from 'lodash/map';
 import memoize from 'lodash/memoize';
 
-import { printUnexpectedPayloadWarning } from 'utils/debug';
-
-import tracing, {
-  isLandmarkRemovable,
-  getManualLandmarks,
-  getCephaloMapper,
-} from './tracing';
-
-import { StoreKeys, Event } from 'utils/constants';
 
 import {
   getStepsForAnalysis,
@@ -31,76 +20,13 @@ import {
   isStepComputable,
   tryCalculate,
   tryMap,
-  resolveIndication,
-  resolveSeverity,
 } from 'analyses/helpers';
 
-type AnalysisId = StoreEntries.workspace.analysis.activeId;
-type LoadError = StoreEntries.workspace.analysis.loadError;
-type AreResultsShown = StoreEntries.workspace.analysis.results.areShown;
-type IsAnalysisLoading = StoreEntries.workspace.analysis.isLoading;
+const defaultAnalysisId: AnalysisId<'ceph_lateral'> = 'common';
 
-const defaultAnalysisId: AnalysisId = 'common';
 
-const activeAnalysisIdReducer = handleActions<AnalysisId, any>(
-  {
-    SET_ANALYSIS_SUCCEEDED: (state, action) => {
-      const { payload: analysisId } = action;
-      if (analysisId === undefined) {
-        printUnexpectedPayloadWarning(action.type, state);
-        return state;
-      }
-      return analysisId as Payloads.analysisLoadSucceeded;
-    },
-  },
-  defaultAnalysisId,
-);
 
-const isAnalysisLoadingReducer = handleActions<IsAnalysisLoading, any>(
-  {
-    SET_ANALYSIS_REQUESTED: () => true,
-    SET_ANALYSIS_SUCCEEDED: () => false,
-    SET_ANALYSIS_FAILED: () => false,
-  },
-  false,
-);
 
-const loadErrorReducer = handleActions<LoadError, any>(
-  {
-    SET_ANALYSIS_SUCCEEDED: () => null,
-    SET_ANALYSIS_FAILED: (state, { type, payload: error }) => {
-      if (error === undefined) {
-        printUnexpectedPayloadWarning(type, state);
-        return state;
-      }
-      return error as Payloads.analysisLoadFailed;
-    },
-    SET_ANALYSIS_REQUESTED: () => null,
-  },
-  null,
-);
-
-const areResultsShownReducer = handleActions<AreResultsShown, any>(
-  {
-    SHOW_ANALYSIS_RESULTS_REQUESTED: () => true,
-    CLOSE_ANALYSIS_RESULTS_REQUESTED: () => false,
-    RESET_WORKSPACE_REQUESTED: () => false,
-  },
-  false,
-);
-
-const KEY_ACTIVE_ANALYSIS_ID = StoreKeys.activeAnalysisId;
-const KEY_ARE_RESULTS_SHOWN = StoreKeys.areResultsShown;
-const KEY_IS_ANALYSIS_LOADING = StoreKeys.isAnalysisLoading;
-const KEY_ANALYSIS_LOAD_ERROR = StoreKeys.analysisLoadError;
-
-export default {
-  ...tracing,
-  [KEY_ACTIVE_ANALYSIS_ID]: activeAnalysisIdReducer,
-  [KEY_IS_ANALYSIS_LOADING]: isAnalysisLoadingReducer,
-  [KEY_ANALYSIS_LOAD_ERROR]: loadErrorReducer,
-  [KEY_ARE_RESULTS_SHOWN]: areResultsShownReducer,
-};
 
 export const areResultsShown = (state: StoreState): AreResultsShown => state[KEY_ARE_RESULTS_SHOWN];
 
@@ -121,7 +47,7 @@ import common from 'analyses/common';
 import dental from 'analyses/dental';
 import softTissues from 'analyses/softTissues';
 
-const analyses: { [id: string]: Analysis } = {
+const analyses: Record<string, Analysis<ImageType>> = {
   downs,
   basic,
   bjork,
@@ -132,9 +58,9 @@ const analyses: { [id: string]: Analysis } = {
 
 export const getActiveAnalysis = createSelector(
   getActiveAnalysisId,
-  (analysisId): Analysis | null => {
+  (analysisId) => {
     if (analysisId !== null) {
-      return analyses[analysisId] as Analysis;
+      return analyses[analysisId] as Analysis<ImageType>;
     }
     return null;
   }
@@ -263,7 +189,7 @@ export const getAutomaticLandmarks = createSelector(
   },
 );
 
-export const getAllLandmarks = createSelector(
+export const getAllGeoObjects = createSelector(
   getManualLandmarks,
   getAutomaticLandmarks,
   ({ present: manual }, automatic) => {
@@ -272,7 +198,7 @@ export const getAllLandmarks = createSelector(
 );
 
 export const isStepEligibleForComputation = createSelector(
-  getAllLandmarks,
+  getAllGeoObjects,
   findEqualComponents,
   (allLandmarks, findEqual) => (step: CephLandmark) => {
     return (
@@ -288,12 +214,11 @@ export const isStepEligibleForComputation = createSelector(
 export const getComputedValues = createSelector(
   getActiveAnalysisSteps,
   isStepEligibleForComputation,
-  getCephaloMapper,
-  (steps, isEligible, mapper) => {
+  (steps, isEligible) => {
     const result: { [symbol: string]: number } = { };
     for (const step of steps) {
       if (isEligible(step)) {
-        const value = tryCalculate(step, mapper);
+        const value = tryCalculate(step);
         if (value !== undefined) {
           result[step.symbol] = value;
         } else {
@@ -313,33 +238,57 @@ export const getComputedValueBySymbol = createSelector(
   (computedValues) => (symbol: string) => computedValues[symbol] || undefined,
 );
 
-export const getStepStateBySymbol = createSelector(
-  getAllLandmarks,
-  getManualStepState,
+/**
+ * Determines whether a landmark that was defined with a `calculate`
+ * method has been calculated. Returns true if the landmark does
+ * not define a `calculate` method.
+ */
+export const isStepCalculationComplete = createSelector(
   getComputedValues,
-  (allLandmarks, getStep, computedValues) => (symbol: string): StepState => {
-    if (allLandmarks[symbol] !== undefined) {
-      return 'done';
-    } else if (computedValues[symbol] !== undefined) {
-      return 'done';
-    } else {
-      return getStep(symbol);
+  (values) => (step: CephLandmark) => {
+    if (isStepComputable(step)) {
+      return typeof values[step.symbol] !== 'undefined';
     }
-  }
+    return true;
+  },
 );
 
+/**
+ * Determines whether a landmark that was defined with a `map`
+ * method has been mapped. Returns true if the landmark does
+ * not define a `map` method.
+ */
+export const isStepMappingComplete = createSelector(
+  getAllGeoObjects,
+  (objects) => (step: CephLandmark) => {
+    if (isStepComputable(step)) {
+      return typeof objects[step.symbol] !== 'undefined';
+    }
+    return true;
+  },
+);
+
+/**
+ * Determines whether a landmark has been mapped and/or calculated.
+ */
+export const isStepComplete = createSelector(
+  isStepMappingComplete,
+  isStepCalculationComplete,
+  (isMapped, isCalculated) => (step: CephLandmark) => {
+    return isMapped(step) && isCalculated(step);
+  },
+);
+
+/**
+ * Determines whether all the components that the active analysis
+ * is composed of were mapped and/or calculated.
+ */
 export const isAnalysisComplete = createSelector(
   getActiveAnalysis,
-  getAllLandmarks,
-  getComputedValues,
-  (analysis, allLandmarks, computedValues): boolean => {
+  isStepComplete,
+  (analysis, isComplete) => {
     if (analysis !== null) {
-      return every(analysis.components, step => {
-        return (
-          allLandmarks[step.landmark.symbol] !== undefined ||
-          computedValues[step.landmark.symbol] !== undefined
-        );
-      });
+      return every(analysis.components, isComplete);
     }
     return false;
   },
@@ -410,53 +359,16 @@ export const getGeometricalRepresentationBySymbol = createSelector(
   }),
 );
 
-export const getAllLandmarksAndValues = createSelector(
-  getAllLandmarks,
-  getComputedValues,
-  (landmarks, values): { [symbol: string]: EvaluatedValue } => ({ ...landmarks, ...values }),
-);
-
-export const getAnalysisResults = createSelector(
-  getActiveAnalysis,
-  getAllLandmarksAndValues,
-  (analysis, evaluatedValues) => {
-    if (analysis !== null) {
-      return analysis.interpret(evaluatedValues);
-    }
-    return [];
-  }
-);
 
 export const getCategorizedAnalysisResults = createSelector(
-  getAnalysisResults,
-  findStepBySymbol,
-  getComputedValueBySymbol,
-  findAnalysisComponentBySymbol,
-  getAllLandmarksAndValues,
-  (results, findStep, getValue, findComponent, evaluatedValues): CategorizedAnalysisResults => {
-    return map(
-      groupBy(results, result => result.indication),
-      (resultsInCategory: LandmarkInterpretation[], indication: number) => ({
-        category: indication,
-        indication: resolveIndication(resultsInCategory, evaluatedValues),
-        severity: resolveSeverity(resultsInCategory),
-        relevantComponents: flatten(map(
-          resultsInCategory,
-          ({ relevantComponents }) => (flatten(map(
-            map(relevantComponents, findStep),
-            ({ symbol }: CephLandmark) => {
-              const { stdDev, norm } = findComponent(symbol) as AnalysisComponent;
-              return {
-                symbol: symbol,
-                value: getValue(symbol) as number,
-                stdDev,
-                norm,
-              };
-            },
-          ))),
-        )),
-      }),
-    );
+  getActiveAnalysis,
+  getComputedValues,
+  getAllGeoObjects,
+  (analysis, values, objects): Array<CategorizedAnalysisResult<Category>> => {
+    if (analysis !== null) {
+      return analysis.interpret(values, objects);
+    }
+    return [];
   },
 );
 
@@ -464,8 +376,3 @@ export const canShowResults = createSelector(
   getCategorizedAnalysisResults,
   (results) => !isEmpty(results),
 );
-
-export {
-  isLandmarkRemovable,
-  getManualLandmarks,
-};

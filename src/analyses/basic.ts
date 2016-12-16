@@ -3,7 +3,7 @@ import common from 'analyses/common';
 import { MM, downsAngleOfConvexity, yAxis } from 'analyses/landmarks/angles/skeletal';
 import dental from 'analyses/dental';
 
-const analysis: Analysis = {
+const analysis: Analysis<'ceph_lateral'> = {
   id: 'basic',
   components: [
     ...common.components,

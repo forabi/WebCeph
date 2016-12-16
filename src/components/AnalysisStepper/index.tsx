@@ -13,12 +13,12 @@ import findLastIndex from 'lodash/findLastIndex';
 import map from 'lodash/map';
 
 import Props from './props';
-import { getDescriptionForStep, getTitleForStep } from './strings';
+import { getDescriptionForLandmark, getCommandForStep } from './strings';
 
 const classes = require('./style.scss');
 
-const ICON_DONE       = <IconDone color='green'/>;
-const ICON_CURRENT    = <IconPlayArrow color='blue' />;
+const ICON_DONE       = <IconDone color="green"/>;
+const ICON_CURRENT    = <IconPlayArrow color="blue" />;
 const ICON_PENDING    = <IconHourglass />;
 const ICON_EVALUATING = <IconHourglass className={classes.icon_pending__evaluating} />;
 
@@ -74,12 +74,12 @@ export class AnalysisStepper extends React.PureComponent<Props, { }> {
               <div key={step.symbol}>
                 <ListItem
                   ref={shouldScrollTo ? this.setScrollTo : undefined}
-                  primaryText={getTitleForStep(step)}
-                  secondaryText={getDescriptionForStep(step) || undefined}
+                  primaryText={getCommandForStep(step)}
+                  secondaryText={getDescriptionForLandmark(step) || undefined}
                   leftIcon={icons[state]}
                   rightIcon={
                     (typeof value === 'number' ?
-                      <span>{value.toFixed(1)}</span> : undefined)
+                      <span>{value.toLocaleString('en-US')}</span> : undefined)
                   }
                   onMouseEnter={isDone ? onStepMouseEnter.bind(null, step.symbol) : undefined}
                   onMouseLeave={isDone ? onStepMouseLeave.bind(null, step.symbol) : undefined}

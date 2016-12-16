@@ -1,6 +1,6 @@
 import { bjorkSum } from 'analyses/landmarks/other/skeletal';
 
-const analysis: Analysis = {
+const analysis: Analysis<'ceph_lateral'> = {
   id: 'bjork',
   components: [
     {

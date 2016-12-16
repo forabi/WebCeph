@@ -8,11 +8,12 @@ export interface StateProps {
   getStepState(symbol: string): StepState;
   getStepValue(symbol: string): number | undefined;
   isStepRemovable(symbol: string): boolean;
+  isStepSkippable(symbol: string): boolean;
 }
 
 export interface DispatchProps {
   onRemoveLandmarkClick(symbol: string): void;
-  onEditLandmarkClick(landmark: CephLandmark): void;
+  onEditLandmarkClick(symbol: string): void;
   onStepMouseEnter(symbol: string): any;
   onStepMouseLeave(symbol: string): any;
 }

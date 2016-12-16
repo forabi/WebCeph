@@ -1,6 +1,6 @@
 import { U1_SN, L1_MP, interincisalAngle } from 'analyses/landmarks/angles/skeletal';
 
-const analysis: Analysis = {
+const analysis: Analysis<'ceph_lateral'> = {
   id: 'basic',
   components: [
     {

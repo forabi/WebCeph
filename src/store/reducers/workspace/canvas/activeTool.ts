@@ -32,4 +32,3 @@ export const getActiveTool = createSelector(
   getActiveToolId,
   (state, id) => Tools[id](state),
 );
-

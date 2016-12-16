@@ -7,6 +7,7 @@ import { createSelector } from 'reselect';
 const KEY_IMAGES: StoreKey = 'workspace.images.props';
 const KEY_IMAGES_LOAD_STATUS: StoreKey = 'workspace.images.status';
 const KEY_TRACING: StoreKey = 'workspace.images.tracing';
+const KEY_ANALYSIS_LOAD_STATUS: StoreKey = 'workspace.images.analysis.status';
 
 const imagesReducer = handleActions<typeof KEY_IMAGES>(
   {
@@ -40,6 +41,35 @@ const imagesReducer = handleActions<typeof KEY_IMAGES>(
     },
     CLOSE_IMAGE_REQUESTED: (state, { payload: { id } }) => {
       return omit(state, id) as typeof state;
+    },
+    SET_SCALE_FACTOR_REQUESTED: (state, { payload: { imageId, value } }) => {
+      return {
+        ...state,
+        [imageId]: {
+          ...state[imageId],
+          scaleFactor: value,
+        },
+      };
+    },
+    UNSET_SCALE_FACTOR_REQUESTED: (state, { payload: { imageId } }) => {
+      return {
+        ...state,
+        [imageId]: {
+          ...state[imageId],
+          scaleFactor: null,
+        },
+      };
+    },
+    SET_ANALYSIS_SUCCEEDED: (state, { payload: { imageId, analysisId } }) => {
+      return {
+        ...state,
+        [imageId]: {
+          ...state[imageId],
+          analysis: {
+            activeId: analysisId,
+          },
+        },
+      };
     },
   },
   { },
@@ -78,7 +108,49 @@ const loadStatusReducer = handleActions<typeof KEY_IMAGES_LOAD_STATUS>({
   },
 }, { });
 
+const analysisLoadStatusReducer = handleActions<typeof KEY_ANALYSIS_LOAD_STATUS>({
+  SET_ANALYSIS_REQUESTED: (state, { payload: { imageId, analysisId } }) => {
+    return {
+      ...state,
+      [imageId]: {
+        isLoading: true,
+        error: null,
+        analysisId,
+      },
+    };
+  },
+  SET_ANALYSIS_FAILED: (state, { payload: { imageId, analysisId, error } }) => {
+    return {
+      ...state,
+      [imageId]: {
+        isLoading: false,
+        error,
+        analysisId,
+      },
+    };
+  },
+  SET_ANALYSIS_SUCCEEDED: (state, { payload: { imageId, analysisId } }) => {
+    return {
+      ...state,
+      [imageId]: {
+        isLoading: false,
+        error: null,
+        analysisId,
+      },
+    };
+  },
+}, { });
+
 const tracingReducer = handleActions<typeof KEY_TRACING>({
+  SET_TRACING_MODE_REQUESTED: (state, { payload: { imageId, mode } }) => {
+    return {
+      ...state,
+      [imageId]: {
+        ...state[imageId],
+        mode,
+      },
+    };
+  },
   ADD_MANUAL_LANDMARK_REQUESTED: (state, { payload }) => {
     const { imageId, symbol, value } = payload;
     return {
@@ -130,8 +202,9 @@ const tracingReducer = handleActions<typeof KEY_TRACING>({
 }, { });
 
 const reducers: Partial<ReducerMap> = {
-  [KEY_IMAGES]: imagesReducer,
   [KEY_IMAGES_LOAD_STATUS]: loadStatusReducer,
+  [KEY_ANALYSIS_LOAD_STATUS]: analysisLoadStatusReducer,
+  [KEY_IMAGES]: imagesReducer,
   [KEY_TRACING]: tracingReducer,
 };
 
@@ -188,4 +261,9 @@ export const getTracingDataByImageId = createSelector(
 export const getManualLandmarks = createSelector(
   getTracingDataByImageId,
   (getTracing) => (id: string) => getTracing(id).manualLandmarks,
+);
+
+export const getScaleFactor = createSelector(
+  getImageProps,
+  (getProps) => (id: string) => getProps(id).scaleFactor,
 );

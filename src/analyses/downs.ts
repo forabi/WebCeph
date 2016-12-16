@@ -7,7 +7,7 @@ import {
   facialAngle,
 } from 'analyses/landmarks/angles/skeletal';
 
-const analysis: Analysis = {
+const analysis: Analysis<'ceph_lateral'> = {
   id: 'downs',
   components: [
     ...common.components,

@@ -42,33 +42,32 @@ export const AnalysisResultsViewer = pure(({ open, onRequestClose, results }: Pr
         </TableRow>
       </TableHeader>
       <TableBody displayRowCheckbox={false}>
-      {
-        map(results, ({ category, indication, relevantComponents }) => (
-          <TableRow key={category}>
-            <TableRowColumn>
-              {mapCategoryToString(category) || '-'}
-            </TableRowColumn>
-            <TableRowColumn>
-              {mapIndicationToString(indication) || '-'}
-            </TableRowColumn>
-            <TableRowColumn>{
-              map(relevantComponents, ({ symbol, value }) => (
-                <div key={symbol}>
-                  {symbol} = {value.toFixed(1)}
-                </div>
-              ))
-            }</TableRowColumn>
-            <TableRowColumn>{
-              map(relevantComponents, ({ stdDev, symbol, norm }) => (
-                <div key={symbol}>
-                  {norm}
-                  {stdDev ? `±${stdDev.toFixed(0)}` : ''}
-                </div>
-              ))
-            }</TableRowColumn>
-          </TableRow>
-        ))
-      }
+    {map(results, ({ category, indication, relevantComponents }) => (
+        <TableRow key={category}>
+          <TableRowColumn>
+            {mapCategoryToString(category) || '-'}
+          </TableRowColumn>
+          <TableRowColumn>
+            {mapIndicationToString(indication) || '-'}
+          </TableRowColumn>
+          <TableRowColumn>
+          {map(relevantComponents, ({ symbol, value }) => (
+            <div key={symbol}>
+              {symbol} = {value.toLocaleString('en-US')}
+            </div>
+          ))}
+          </TableRowColumn>
+          <TableRowColumn>
+          {map(relevantComponents, ({ symbol, mean, max, min }) => (
+            <div key={symbol}>
+              -{(mean - min).toLocaleString('en-US')},
+              <b>{mean.toLocaleString('en-US')}</b>,
+              +{(max - mean).toLocaleString('en-US')},
+            </div>
+          ))}
+          </TableRowColumn>
+        </TableRow>
+      ))}
       </TableBody>
     </Table>
   </Dialog>

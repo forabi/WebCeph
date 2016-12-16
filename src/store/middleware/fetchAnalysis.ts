@@ -9,12 +9,16 @@ const middleware: Middleware = (_: Store<StoreState>) => (next: GenericDispatch)
     if (!isActionOfType(action, 'SET_ANALYSIS_REQUESTED')) {
       return next(action);
     } else {
-      const analysisId = action.payload;
+      const { imageId, analysisId } = action.payload;
       try {
         await require(`async-module-loader?promise!./analyses/${analysisId}`);
-        next(fetchAnalysisSucceeded(analysisId));
+        next(fetchAnalysisSucceeded({ imageId, analysisId}));
       } catch (e) {
-        next(fetchAnalysisFailed({ analysisId, message: e.message }));
+        next(fetchAnalysisFailed({
+          error: { message: e.message },
+          analysisId,
+          imageId,
+        }));
       }
     }
   };

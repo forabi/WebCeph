@@ -1,6 +1,6 @@
 import { SNA, SNB, ANB, FMPA, SN_MP } from 'analyses/landmarks/angles/skeletal';
 
-const analysis: Analysis = {
+const analysis: Analysis<'ceph_lateral'> = {
   id: 'common',
   components: [
     {

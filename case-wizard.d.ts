@@ -160,23 +160,47 @@ type AnalysisComponent = {
 
 type CategorizedAnalysisResult<T extends Category> = {
   category: T;
-  indication?: Indication<T>;
+  indication: Indication<T>;
   severity?: Severity;
-  relevantComponents: ReadonlyArray<{
-    symbol: string;
-    value: number;
-    norm?: number;
-    stdDev?: number;
-  }>;
+  relevantComponents: ReadonlyArray<
+    Pick<
+      LandmarkInterpretation<T>, (
+        'mean' | 'max' | 'min' | 'value'
+      )
+    > & {
+      symbol: string;
+    }
+  >;
 };
+
+interface Analyses {
+  ceph_lateral: (
+    'downs' | 'ricketts_lateral' |
+    'common' | 'basic ' | 'bjork' |
+    'tweed' | 'steiner' | 'basic'
+  );
+  ceph_pa: (
+    'ricketts_frontal'
+  );
+  photo_lateral: (
+    'soft_tissue_photo_lateral'
+  );
+  photo_frontal: (
+    'frontal_face_proportions'
+  );
+  panoramic: void;
+};
+
+type ImageType = keyof Analyses;
+type AnalysisId<T extends ImageType> = Analyses[T]; 
 
 /**
  * Describes a cephalometric analysis, composed of a list of
  * landmarks and their respective mean values and an interpretation
  * method.
  */
-interface Analysis {
-  id: string;
+interface Analysis<T extends ImageType> {
+  id: AnalysisId<T>;
   components: AnalysisComponent[];
 
   /**
@@ -184,7 +208,7 @@ interface Analysis {
    * this function should return an array of interpreted results grouped
    * by category.
    */
-  interpret?: InterpretAnalysis<Category>;
+  interpret: InterpretAnalysis<Category>;
 }
 
 type Rotation = {
@@ -236,11 +260,10 @@ interface GeoVector {
 };
 
 type SingleGeoObject = GeoPoint | GeoVector | GeoAngle;
-type CompositeGeoObject = Array<SingleGeoObjet>;
-type GeoObject = GeoObject | CompositeGeoObject;
+type CompositeGeoObject = Array<SingleGeoObject>;
+type GeoObject = SingleGeoObject | CompositeGeoObject;
 
-type StepState = 'done' | 'current' | 'pending' | 'evaluating';
-type Step = CephLandmark & { title: string, state: StepState };
+type StepState = 'done' | 'current' | 'pending' | 'skipped';
 
 type GenericError = { message: string, code?: number };
 
@@ -261,12 +284,6 @@ interface UndoableState<T> {
   present: T,
   future: T[];
 }
-
-type ImageType = (
-  'ceph_lateral' | 'ceph_pa' |
-  'photo_lateral' | 'photo_frontal' |
-  'panoramic'
-);
 
 interface StoreState {
   'env.connection.isOffline': boolean;
@@ -310,7 +327,7 @@ interface StoreState {
   };
   /** Data indexed by image ID */
   'workspace.images.props': {
-    [imageId: string]: ImageBlobData & CephImageData;
+    [imageId: string]: ImageBlobData & CephImageData<ImageType>;
   };
   'workspace.images.tracing': {
     [imageId: string]: CephImageTracingData;
@@ -323,6 +340,21 @@ interface StoreState {
       isLoading: false;
       error: GenericError;
     } | {
+      isLoading: false;
+      error: null;
+    };
+  };
+  'workspace.images.analysis.status': {
+    [imageId: string]: {
+      analysisId: AnalysisId<string>;
+      isLoading: true;
+      error: null;
+    } | {
+      analysisId: AnalysisId<string>;
+      isLoading: false;
+      error: GenericError;
+    } | {
+      analysisId: AnalysisId<string>;
       isLoading: false;
       error: null;
     };
@@ -364,9 +396,9 @@ type ImageBlobData = {
   height: number;
 };
 
-type CephImageData = {
+type CephImageData<T extends ImageType> = {
   /** A null value indicates that the image type is not set or is unknown */
-  type: ImageType | null;
+  type: T | null;
   scaleFactor: number | null;
   flipX: boolean;
   flipY: boolean;
@@ -378,7 +410,7 @@ type CephImageData = {
   invertColors: boolean;
   analysis: {
     /** Last used analysis for this image */
-    activeId: string | null;
+    activeId: AnalysisId<T> | null;
   };
 };
 
@@ -511,10 +543,18 @@ interface Events {
   };
   UNHIGHLIGHT_STEP_ON_CANVAS_REQUESTED: void;
   SET_ACTIVE_TOOL_REQUESTED: ToolId;
-  SET_ANALYSIS_REQUESTED: string,
-  SET_ANALYSIS_SUCCEEDED: string,
-  SET_ANALYSIS_FAILED: GenericError & {
-    analysisId: string
+  SET_ANALYSIS_REQUESTED: {
+    imageId: string;
+    analysisId: AnalysisId<ImageType>;
+  };
+  SET_ANALYSIS_SUCCEEDED: {
+    imageId: string;
+    analysisId: AnalysisId<ImageType>;
+  };
+  SET_ANALYSIS_FAILED: {
+    imageId: string;
+    analysisId: AnalysisId<ImageType>;
+    error: GenericError;
   };
   SET_TRACING_MODE_REQUESTED: {
     imageId: string;

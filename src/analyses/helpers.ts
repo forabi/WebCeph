@@ -213,8 +213,8 @@ export function getStepsForLandmarks(
   );
 };
 
-export function getStepsForAnalysis(
-  analysis: Analysis,
+export function getStepsForAnalysis<T extends ImageType>(
+  analysis: Analysis<T>,
   deduplicateVectors = true,
 ): CephLandmark[] {
   return getStepsForLandmarks(analysis.components.map(c => c.landmark), deduplicateVectors);
@@ -313,11 +313,22 @@ const indicationMap: Record<Indication<Category>, string> = {
   resessive: 'Recessive',
 };
 
+const severityMap: Record<Severity, string> = {
+  low: 'Slight',
+  medium: 'Medium',
+  high: 'Severe',
+  none: 'None',
+};
+
 export const getDisplayNameForCategory =
   (category: Category) => categoryMap[category];
 
 export const getDisplayNameForIndication =
   (indication: Indication<Category>) => indicationMap[indication];
+
+export const getDisplayNameForSeverity =
+  (severity: Severity) => severityMap[severity];
+
 
 /**
  * Determines whether a step in a cephalometric analysis can be mapped
@@ -341,7 +352,7 @@ export function isStepComputable(step: CephLandmark) {
  * grouped by category and resolves indication and severity with the default
  * resolving strategy.
  */
-export const defaultInterpretAnalysis = (analysis: Analysis): InterpretAnalysis<Category> => {
+export const defaultInterpretAnalysis = <T extends ImageType>(analysis: Analysis<T>): InterpretAnalysis<Category> => {
   return (values, _) => {
     const results = flatten(
       map(analysis.components, ({ landmark: { symbol, interpret }, max, min, mean }) => {

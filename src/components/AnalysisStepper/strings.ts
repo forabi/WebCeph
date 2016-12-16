@@ -15,26 +15,28 @@ export const descriptions: { [id: string]: string } = {
   B: 'Most concave point on mandibular symphysis',
 };
 
-
-export const getDescriptionForStep = (landmark: CephLandmark) => {
+export const getDescriptionForLandmark = (landmark: CephLandmark) => {
   return descriptions[landmark.symbol] || landmark.description || null;
 };
 
-export const getTitleForStep = (landmark: CephLandmark) => {
+export const getCommandForStep = (landmark: CephLandmark): string => {
+  const displayName = landmark.name || landmark.symbol;
   if (landmark.type === 'point') {
-    return `Set point ${landmark.symbol}${ landmark.name ? ` (${landmark.name})` : '' }`;
+    return `Set point ${displayName}`;
   } else if (landmark.type === 'line') {
-    return `Draw line ${landmark.symbol}${ landmark.name ? ` (${landmark.name})` : '' }`;
+    return `Draw line ${displayName}`;
   } else if (landmark.type === 'angle') {
-    return `Calculate angle ${landmark.symbol}${ landmark.name ? ` (${landmark.name})` : '' }`;
+    return `Calculate ${landmark.name || `angle ${landmark.symbol}`}`;
   } else if (landmark.type === 'distance') {
-    return `Measure distance between points ${landmark.components[0].symbol} and ${landmark.components[1].symbol}`;
+    return (
+      `Measure distance between points ` +
+      `${getCommandForStep(landmark.components[0])} and ` +
+      `${getCommandForStep(landmark.components[1])}`
+    );
   } else if (landmark.type === 'sum') {
-    return `Calculate ${landmark.name || landmark.symbol || landmark.components.map(c => c.symbol).join(' + ')}`;
+    return `Calculate ${displayName}`;
+  } else if (landmark.type === 'ratio') {
+    return `Calculate ratio ${displayName}`;
   }
-  console.warn(
-    `Could not get title for step`,
-    landmark,
-  );
-  return undefined;
+  return displayName;
 };

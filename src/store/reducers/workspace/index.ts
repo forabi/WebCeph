@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
 import canvas, { getHighlightedStep } from './canvas';
-import analysis, {
+import {
   getGeometricalRepresentationBySymbol,
-  getAllLandmarks,
+  getAllGeoObjects,
   getManualLandmarks,
 } from './analysis';
 import image, { hasImage } from './image';
@@ -18,7 +18,6 @@ export default {
   ...image,
   ...canvas,
   ...workers,
-  ...analysis,
   ...fileExport,
 };
 
@@ -27,7 +26,7 @@ export const canEdit = hasImage;
 export const getLandmarksToDisplay = createSelector(
   getHighlightedStep,
   getGeometricalRepresentationBySymbol,
-  getAllLandmarks,
+  getAllGeoObjects,
   (highlighted, getGeo, all) => {
     if (highlighted !== null) {
       return { ...getGeo(highlighted), ...all };
@@ -38,7 +37,7 @@ export const getLandmarksToDisplay = createSelector(
 
 export const getHighlightedLandmarks = createSelector(
   getHighlightedStep,
-  getAllLandmarks,
+  getAllGeoObjects,
   getGeometricalRepresentationBySymbol,
   (step, all, getGeo): { [symbol: string]: boolean } => {
     if (step === null) {

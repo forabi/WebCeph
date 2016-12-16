@@ -1,4 +1,4 @@
-const analysis: Analysis = {
+const analysis: Analysis<'ceph_lateral'> = {
   id: 'steiner',
   components: [],
 };
