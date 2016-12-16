@@ -10,7 +10,6 @@ const isExportingReducer = handleActions<typeof KEY_IS_EXPORTING>({
   EXPORT_FILE_SUCEEDED: () => false,
 }, false);
 
-
 const exportErrorReducer = handleActions<typeof KEY_EXPORT_ERROR>({
   EXPORT_FILE_REQUESTED: () => null,
   EXPORT_FILE_FAILED: (_, { payload }) => payload,

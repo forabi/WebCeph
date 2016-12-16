@@ -331,8 +331,8 @@ export const getDisplayNameForSeverity =
 
 
 /**
- * Determines whether a step in a cephalometric analysis can be mapped
- * to a geometrical object
+ * Determines whether a step in a cephalometric analysis can be
+ * automatically mapped to a geometrical object
  */
 export function isStepAutomatic(step: CephLandmark): boolean {
   return typeof step.map === 'function';
@@ -340,6 +340,9 @@ export function isStepAutomatic(step: CephLandmark): boolean {
 
 /** Determines whether a step in a cephalometric analysis needs to be performed by the user  */
 export const isStepManual = (step: CephLandmark) => !isStepAutomatic(step);
+
+/** Determines whether a step in a cephalometric analysis can be represented a geometrical object  */
+export const isStepMappable = (_: CephLandmark) => true;
 
 /** Determines whether a step in a cephalometric analysis can be computed as a numerical value */
 export function isStepComputable(step: CephLandmark) {

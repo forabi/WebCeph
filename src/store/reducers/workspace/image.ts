@@ -263,6 +263,14 @@ export const getManualLandmarks = createSelector(
   (getTracing) => (id: string) => getTracing(id).manualLandmarks,
 );
 
+export const getActiveImageId = (_: StoreState, { imageId }: { imageId: string }) => imageId;
+
+export const getActiveManualLandmarks = createSelector(
+  getActiveImageId,
+  getManualLandmarks,
+  (id, getManual) => getManual(id),
+);
+
 export const getScaleFactor = createSelector(
   getImageProps,
   (getProps) => (id: string) => getProps(id).scaleFactor,

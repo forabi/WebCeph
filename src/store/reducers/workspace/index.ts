@@ -1,11 +1,11 @@
 import { createSelector } from 'reselect';
 import canvas, { getHighlightedStep } from './canvas';
 import {
-  getGeometricalRepresentationBySymbol,
+  getMappedValue,
   getAllGeoObjects,
-  getManualLandmarks,
+  findStepBySymbol,
 } from './analysis';
-import image, { hasImage } from './image';
+import image, { hasImage, getActiveManualLandmarks } from './image';
 import workers from './workers';
 import fileExport, { getExportError, hasExportError } from './export';
 
@@ -23,42 +23,47 @@ export default {
 
 export const canEdit = hasImage;
 
-export const getLandmarksToDisplay = createSelector(
-  getHighlightedStep,
-  getGeometricalRepresentationBySymbol,
-  getAllGeoObjects,
-  (highlighted, getGeo, all) => {
-    if (highlighted !== null) {
-      return { ...getGeo(highlighted), ...all };
-    }
-    return all;
-  }
-);
-
 export const getHighlightedLandmarks = createSelector(
   getHighlightedStep,
+  findStepBySymbol,
   getAllGeoObjects,
-  getGeometricalRepresentationBySymbol,
-  (step, all, getGeo): { [symbol: string]: boolean } => {
-    if (step === null) {
+  getMappedValue,
+  (symbol, findStep, all, getMapped) => {
+    if (symbol === null) {
       return { };
     }
     const unhighlighted = mapValues(all, () => false);
-    const highlighted = mapValues(getGeo(step), () => true);
-    return { ...unhighlighted, ...highlighted };
+    const step = findStep(symbol);
+    if (step !== null) {
+      const highlighted = mapValues(getMapped(step), () => true);
+      return { ...unhighlighted, ...highlighted };
+    }
+    return unhighlighted;
   },
 );
+
+export const getLandmarksToDisplay = getAllGeoObjects;
 
 export const isHighlightMode = createSelector(
   getHighlightedLandmarks,
   (highlightedLandmarks) => !isEmpty(highlightedLandmarks),
 );
 
-export const getSortedLandmarksToDisplay = createSelector(
-  getManualLandmarks,
+export const isManualObject = createSelector(
+  getActiveManualLandmarks,
+  (manual) => (symbol: string) => manual[symbol] !== undefined,
+);
+
+export const isHighlightedObject = createSelector(
   getHighlightedLandmarks,
+  (highlighted) => (symbol: string) => highlighted[symbol] === true,
+);
+
+export const getSortedLandmarksToDisplay = createSelector(
+  isManualObject,
+  isHighlightedObject,
   getLandmarksToDisplay,
-  ({ present: manualLandmarks }, highlightedLandmarks, landmarksToDisplay) => {
+  (isManual, isHighlighted, landmarksToDisplay) => {
     return sortBy(
       map(
         landmarksToDisplay,
@@ -69,21 +74,20 @@ export const getSortedLandmarksToDisplay = createSelector(
         }),
       ),
       ({ symbol }) => (
-        manualLandmarks[symbol] !== undefined ||
-        highlightedLandmarks[symbol] === true
+        isManual(symbol) || isHighlighted(symbol)
       ),
     );
-  }
-)
+  },
+);
 
 export const hasUnsavedWork = createSelector(
-  getManualLandmarks,
+  getManualLandmarksHistory,
   ({ present, past }) => !isEmpty(present) || !isEmpty(past),
 );
 
 export const canUndo = hasUnsavedWork;
 export const canRedo = createSelector(
-  getManualLandmarks,
+  getManualLandmarksHistory,
   ({ future }) => !isEmpty(future),
 );
 

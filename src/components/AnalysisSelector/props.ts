@@ -1,11 +1,11 @@
 export interface StateProps {
-  currentAnalysisId: string | null;
-  analyses: string[];
+  currentAnalysisId: AnalysisId<ImageType> | null;
+  analyses: Array<AnalysisId<ImageType>>;
   isLoading: boolean;
 };
 
 export interface DispatchProps {
-  onChange(id: string): any;
+  onChange(id: AnalysisId<ImageType>): any;
 }
 
 export type ConnectableProps = StateProps & DispatchProps;

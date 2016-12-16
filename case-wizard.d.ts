@@ -189,7 +189,6 @@ interface Analyses {
   photo_frontal: (
     'frontal_face_proportions'
   );
-  panoramic: void;
 };
 
 type ImageType = keyof Analyses;
@@ -315,17 +314,20 @@ interface StoreState {
   'workspace.canvas.dimensions': {
     width: number;
     height: number;
+    top: number;
+    left: number;
   };
   'workspace.canvas.mouse.position': null | {
     x: number;
     y: number;
   };
-  'workspace.canvas.tools.activeToolId': string;
+  'workspace.canvas.tools.activeToolId': ToolId;
   'workspace.canvas.scale.value': number;
   'workspace.canvas.scale.offset': null | {
     top: number;
     left: number;
   };
+  'workspace.canvas.highlightedStep': string | null;
   /** Data indexed by image ID */
   'workspace.images.props': {
     [imageId: string]: ImageBlobData & CephImageData<ImageType>;
@@ -386,8 +388,10 @@ interface StoreState {
 
 type ToolId = (
   'ADD_POINT' |
-  'REMOVE_LANDMARK' |
-  'ZOOM_WITH_CURSOR'
+  'ERASER' |
+  'ZOOM_WITH_WHEEL' |
+  'SELECT' |
+  'ZOOM_WITH_CLICK'
 );
 
 type ImageBlobData = {
