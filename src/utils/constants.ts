@@ -23,7 +23,7 @@ export const Cursor = {
   EXPLAIN: 'EXPLAIN',
 };
 
-const cursorToCSSMap: { [id: string]: (null | string)[] } = {
+const cursorToCSSMap: Record<string, Array<null | string>> = {
   [Cursor.SELECT]: [null],
   [Cursor.ADD_LANDMARK]: [null, 'crosshair', 'cell'],
   [Cursor.REMOVE_LANDMARK]: ['draw-eraser', 'cell', 'crosshair'],
