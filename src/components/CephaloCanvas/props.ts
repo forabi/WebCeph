@@ -5,10 +5,8 @@ export interface StateProps {
   isInverted?: boolean;
   isFlippedX?: boolean;
   isFlippedY?: boolean;
-  canvasSize: {
-    height: number;
-    width: number;
-  };
+  canvasHeight: number;
+  canvasWidth: number;
   imageHeight: number;
   imageWidth: number;
   scale: number;
