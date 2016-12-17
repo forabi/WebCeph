@@ -23,9 +23,8 @@ import {
 } from 'store/reducers/workspace/image';
 
 import {
-  getCanvasHeight,
-  getCanvasWidth,
-} from 'store/reducers/workspace/canvas/canvasSize';
+  getCanvasDimensions,
+} from 'store/reducers/workspace/canvas';
 
 import {
   getScale,
@@ -117,8 +116,7 @@ const getPropsForLandmark = createSelector(
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: StoreState) => {
     return {
-      canvasHeight: getCanvasHeight(state) as number,
-      canvasWidth: getCanvasWidth(state) as number,
+      canvasSize: getCanvasDimensions(state),
       src: getImageData(state) as string,
       imageWidth: getImageWidth(state) as number,
       imageHeight: getImageHeight(state) as number,
