@@ -8,6 +8,7 @@ const autoprefixer = require('autoprefixer');
 const AsyncModulePlugin = require('async-module-loader/plugin');
 const BabiliPlugin = require('babili-webpack-plugin');
 const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 let Dashboard;
 let DashboardPlugin;
@@ -240,6 +241,10 @@ const config = {
     }),
     prod(new webpack.optimize.OccurrenceOrderPlugin(true)),
     prod(new BabiliPlugin()),
+    new CopyPlugin([
+      { from: 'src/assets/icons', to: 'icons' },
+      { from: 'src/manifest.webmanifest', to: 'manifest.webmanifest' },
+    ]),
   ]),
 };
 
