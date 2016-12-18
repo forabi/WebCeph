@@ -1,7 +1,8 @@
 import createZoomWithWheel from './zoomWithWheel';
 import { Cursor } from 'utils/constants';
 
-import { getScale } from 'store/reducers/workspace/canvas/scale';
+import { getScale } from 'store/reducers/workspace/canvas';
+import { getActiveImageId } from 'store/reducers/workspace/image';
 
 import { setScale } from 'actions/workspace';
 
@@ -10,10 +11,16 @@ export const createZoomWithClick: EditorToolCreator = (
 ) => ({
   ...createZoomWithWheel(state),
   onCanvasLeftClick(dispatch, x, y) {
-    dispatch(setScale(getScale(state) * 1.2, x, y));
+    dispatch(setScale({
+      imageId: getActiveImageId(state),
+      scale: getScale(state) * 1.2,
+    }));
   },
   onCanvasRightClick(dispatch, x, y) {
-    dispatch(setScale(getScale(state) * 0.8, x, y));
+    dispatch(setScale({
+      imageId: getActiveImageId(state),
+      scale: getScale(state) * 0.8,
+    }));
   },
   getCursorForCanvas() {
     return Cursor.ZOOM;

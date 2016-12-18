@@ -11,6 +11,7 @@ import mapValues from 'lodash/mapValues';
 
 import {
   getActiveManualLandmarks as getManualLandmarks,
+  getActiveSkippedSteps as getSkippedSteps,
 } from './image';
 
 import {
@@ -86,6 +87,9 @@ export const getManualSteps = createSelector(
   (steps) => filter(steps, isStepManual),
 );
 
+export const isStepSkippable = isStepManual;
+export const isStepRemovable = isStepManual;
+
 export const getExpectedNextManualLandmark = createSelector(
   getManualSteps,
   getManualLandmarks,
@@ -93,28 +97,6 @@ export const getExpectedNextManualLandmark = createSelector(
     manualSteps,
     step => manualLandmarks[step.symbol] === undefined,
   ) || null),
-);
-
-export const getManualStepState = createSelector(
-  getManualLandmarks,
-  getExpectedNextManualLandmark,
-  (manualLandmarks, next) => (symbol: string): StepState => {
-    if (manualLandmarks[symbol] !== undefined) {
-      return 'done';
-    } else if (next && next.symbol === symbol) {
-      return 'current';
-    } else {
-      return 'pending';
-    }
-  },
-);
-
-export const getPendingSteps = createSelector(
-  getActiveAnalysisSteps,
-  getManualStepState,
-  (steps, getStepState) => {
-    return filter(steps, s => getStepState(s.symbol) === 'pending');
-  },
 );
 
 export const findEqualComponents = createSelector(
@@ -142,12 +124,12 @@ export const isManualStepMappingComplete = createSelector(
 
 export const isManualStepComplete = isManualStepMappingComplete;
 
-export const isStepEligibleForMapping = createSelector(
+export const isStepEligibleForAutomaticMapping = createSelector(
   isManualStepComplete,
   (isComplete) => {
     const isEligible = (s: CephLandmark): boolean => {
       if (isStepManual(s)) {
-        return typeof s.map === 'function';
+        return false;
       }
       return every(s.components, subcomponent => {
         if (isStepManual(subcomponent)) {
@@ -161,24 +143,14 @@ export const isStepEligibleForMapping = createSelector(
 );
 
 export const getMappedValue = createSelector(
-  isStepEligibleForMapping,
-  (isEligible) => (step: CephLandmark) => {
+  isStepEligibleForAutomaticMapping,
+  getManualLandmarks,
+  (isEligible, manual) => memoize((step: CephLandmark) => {
     if (isEligible(step)) {
       return tryMap(step);
     }
-    return undefined;
-  },
-);
-
-/**
- * Get geometrical representation
- */
-export const getAllGeoObjects = createSelector(
-  getAllPossibleActiveAnalysisSteps,
-  getMappedValue,
-  (steps, getMapped) => {
-    return mapValues(keyBy(steps, s => s.symbol), getMapped);
-  },
+    return manual[step.symbol] || undefined;
+  }),
 );
 
 /**
@@ -187,10 +159,10 @@ export const getAllGeoObjects = createSelector(
  * not define a `map` method.
  */
 export const isStepMappingComplete = createSelector(
-  getAllGeoObjects,
-  (objects) => (step: CephLandmark) => {
+  getMappedValue,
+  (getMapped) => (step: CephLandmark) => {
     if (isStepMappable(step)) {
-      return typeof objects[step.symbol] !== 'undefined';
+      return typeof getMapped(step) !== 'undefined';
     }
     return true;
   },
@@ -246,6 +218,46 @@ export const isStepComplete = createSelector(
   },
 );
 
+export const isStepSkipped = createSelector(
+  getSkippedSteps,
+  (skipped) => (s: CephLandmark) => skipped[s.symbol] === true,
+);
+
+export const getStepStates = createSelector(
+  getActiveAnalysisSteps,
+  isStepComplete,
+  isStepSkipped,
+  getExpectedNextManualLandmark,
+  (steps, isComplete, isSkipped, next) => {
+    return mapValues(keyBy(steps, s => s.symbol), (s): StepState => {
+      if (next !== null && next.symbol === s.symbol) {
+        return 'current';
+      } else if (isComplete(s)) {
+        return 'done';
+      } else if (isSkipped(s)) {
+        return 'skipped';
+      }
+      return 'pending';
+    });
+  },
+);
+
+export const getStepState = createSelector(
+  getStepStates,
+  (states) => (s: CephLandmark) => states[s.symbol],
+);
+
+/**
+ * Get geometrical representation
+ */
+export const getAllGeoObjects = createSelector(
+  getAllPossibleActiveAnalysisSteps,
+  getMappedValue,
+  (steps, getMapped) => {
+    return mapValues(keyBy(steps, s => s.symbol), getMapped);
+  },
+);
+
 /**
  * Determines whether all the components that the active analysis
  * is composed of were mapped and/or calculated.
@@ -262,16 +274,13 @@ export const isAnalysisComplete = createSelector(
 );
 
 export const getAllCalculatedValues = createSelector(
-  getActiveAnalysis,
+  getActiveAnalysisSteps,
   getCalculatedValue,
-  (analysis, getValue) => {
-    if (analysis !== null) {
-      return mapValues(
-        keyBy(analysis.components, c => c.landmark.symbol),
-        c => getValue(c.landmark),
-      );
-    }
-    return { };
+  (steps, getValue) => {
+    return mapValues(
+      keyBy(steps, c => c.symbol),
+      c => getValue(c),
+    );
   },
 );
 

@@ -47,8 +47,8 @@ const components: AnalysisComponent[] = [
   {
     landmark: lowerFacialHeightAngle,
     mean: 45,
-    max: 45,
-    min: 45,
+    max: 48,
+    min: 42,
   },
   {
     landmark: upperLipToELine,

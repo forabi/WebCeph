@@ -431,27 +431,12 @@ export function defaultInterpetLandmark<T extends Category>(
  * of interpretations composed of flattening the results of
  * each function call. 
  */
-export function composeInterpretation<T extends Category>(
-  ...args: Array<InterpretLandmark<T>>,
-): InterpretLandmark<T> {
+export function composeInterpretation<C extends Category>(
+  ...args: Array<InterpretLandmark<C>>,
+): InterpretLandmark<C> {
   return (value, max, min, mean) => {
     return flatten(map(args, fn => fn(value, max, min, mean)));
   };
-};
-
-/**
- * Default strategy for resolving conflicting severity values.
- * Tries to get the most reasonable severity value given contradicting
- * interpretations of the evaluated value of a landmark by returning the 
- * most occurring severity value.
- */
-export function resolveSeverity<C extends Category>(
-  results: Array<LandmarkInterpretation<C>>,
-): Severity {
-  const counts = countBy(results, r => r.severity);
-  const pairs = map(counts, (value, severity: Severity) => ({ value, severity }));
-  const max = maxBy(pairs, ({ value }) => value);
-  return max.severity;
 };
 
 /**
@@ -472,4 +457,19 @@ export function resolveIndication<C extends Category>(
   );
   const max = maxBy(pairs, ({ value }) => value);
   return max.indication;
+};
+
+/**
+ * Default strategy for resolving conflicting severity values.
+ * Tries to get the most reasonable severity value given contradicting
+ * interpretations of the evaluated value of a landmark by returning the 
+ * most occurring severity value.
+ */
+export function resolveSeverity<C extends Category>(
+  results: Array<LandmarkInterpretation<C>>,
+): Severity {
+  const counts = countBy(results, r => r.severity);
+  const pairs = map(counts, (value, severity: Severity) => ({ value, severity }));
+  const max = maxBy(pairs, ({ value }) => value);
+  return max.severity;
 };

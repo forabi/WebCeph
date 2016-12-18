@@ -1,7 +1,8 @@
 import createTrackCursor from './trackCursor';
 
 import { setScale } from 'actions/workspace';
-import { getScale } from 'store/reducers/workspace/canvas/scale';
+import { getScale } from 'store/reducers/workspace/canvas';
+import { getActiveImageId } from 'store/reducers/workspace/image';
 
 import clamp from 'lodash/clamp';
 import assign from 'lodash/assign';
@@ -19,18 +20,17 @@ const createZoomWithWheel: EditorToolCreator = (
     onCanvasMouseLeave() {
       // @TODO
     },
-    
     onCanvasMouseWheel: (dispatch, x, y, delta) => {
       console.log('triggering zoom at', x, y);
       const wheel = delta / 120;
       const zoom = Math.exp(-wheel * zoomIntensity);
       const scale = getScale(state);
       const newScale = clamp(scale * zoom, 0.2, 2);
-      if (newScale !== scale) {
-        dispatch(setScale(newScale, x, y));
-      }
+      dispatch(setScale({
+      imageId: getActiveImageId(state),
+        scale: newScale,
+      }));
     },
-
     shouldShowLens: false,
   } as EditorTool,
 );

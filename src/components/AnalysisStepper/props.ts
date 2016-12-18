@@ -1,21 +1,21 @@
 export interface OwnProps {
-  className?: string,;
+  className?: string;
 }
 
 export interface StateProps {
   steps: CephLandmark[];
   highlightedStep: string | null;
-  getStepState(symbol: string): StepState;
-  getStepValue(symbol: string): number | undefined;
-  isStepRemovable(symbol: string): boolean;
-  isStepSkippable(symbol: string): boolean;
+  getStepState(step: CephLandmark): StepState;
+  getStepValue(step: CephLandmark): number | undefined;
+  isStepRemovable(step: CephLandmark): boolean;
+  isStepSkippable(step: CephLandmark): boolean;
 }
 
 export interface DispatchProps {
-  onRemoveLandmarkClick(symbol: string): void;
-  onEditLandmarkClick(symbol: string): void;
-  onStepMouseEnter(symbol: string): any;
-  onStepMouseLeave(symbol: string): any;
+  onRemoveLandmarkClick(step: CephLandmark): void;
+  onEditLandmarkClick(step: CephLandmark): void;
+  onStepMouseEnter(step: CephLandmark): any;
+  onStepMouseLeave(step: CephLandmark): any;
 }
 
 export interface AdditionalPropsToMerge {

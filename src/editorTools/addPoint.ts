@@ -11,6 +11,7 @@ import {
   getExpectedNextManualLandmark,
   isAnalysisComplete,
 } from 'store/reducers/workspace/analysis';
+import { getActiveImageId } from 'store/reducers/workspace/image';
 
 export const createAddPoint: EditorToolCreator = (
   state: StoreState,
@@ -27,10 +28,19 @@ export const createAddPoint: EditorToolCreator = (
   },
   onCanvasLeftClick(dispatch, x, y) {
     const landmark = getExpectedNextManualLandmark(state);
+    const imageId = getActiveImageId(state);
+    const value = { x, y };
     if (landmark !== null) {
-      dispatch(addManualLandmark(landmark.symbol, { x, y }));
+      dispatch(addManualLandmark({
+        imageId,
+        symbol: landmark.symbol,
+        value,
+      }));
     } else {
-      dispatch(addUnnamedManualLandmark({ x, y }));
+      dispatch(addUnnamedManualLandmark({
+        imageId,
+        value,
+      }));
     }
   },
   getCursorForCanvas() {

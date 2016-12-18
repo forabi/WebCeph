@@ -7,13 +7,13 @@ import {
 } from 'actions/workspace';
 
 import {
-  isLandmarkRemovable,
+  isStepRemovable,
 } from 'store/reducers/workspace/analysis';
 
 export const createEraser: EditorToolCreator = (
   state: StoreState,
 ) => {
-  const isRemovable = isLandmarkRemovable(state);
+  const isRemovable = isStepRemovable(state);
   return {
     ...createZoomWithWheel(state),
     ...createTrackCursor(state),

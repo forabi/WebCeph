@@ -263,12 +263,23 @@ export const getManualLandmarks = createSelector(
   (getTracing) => (id: string) => getTracing(id).manualLandmarks,
 );
 
-export const getActiveImageId = (_: StoreState, { imageId }: { imageId: string }) => imageId;
+export const getSkippedSteps = createSelector(
+  getTracingDataByImageId,
+  (getTracing) => (id: string) => getTracing(id).skippedSteps,
+);
+
+export const getActiveImageId = (_: StoreState) => 'image_1';
 
 export const getActiveManualLandmarks = createSelector(
   getActiveImageId,
   getManualLandmarks,
   (id, getManual) => getManual(id),
+);
+
+export const getActiveSkippedSteps = createSelector(
+  getActiveImageId,
+  getSkippedSteps,
+  (id, getSkipped) => getSkipped(id),
 );
 
 export const getScaleFactor = createSelector(
