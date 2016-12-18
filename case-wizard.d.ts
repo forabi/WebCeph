@@ -362,27 +362,23 @@ interface StoreState {
       error: null;
     };
   };
-  'workspace.images.activeImageId': string | null;
-  'workspace.superimposition': {
-    mode: 'auto' | 'manual' | 'assisted';
-    /** An order list of superimposed images. */
-    imageIds: string[];
+  'workspace.analysis.lastUsedId': {
+    activeId: string | null;
   };
-  'workspace.treatment.stages': {
-    /** User-specified order of treatment stages */
-    order: string[];
-    data: {
-      [stageId: string]: {
-        /** An ordered list of images assigned to this treatment stage */
-        imageIds: string[];
-      };
-    }
+  'workspace.images.activeImageId': string | null;
+  'workspace.superimposition.mode': 'auto' | 'manual' | 'assisted';
+  /** An order list of superimposed images. */
+  'workspace.superimposition.imageIds': string[];
+  'workspace.treatment.stages.order': string[];
+  /** User-specified order of treatment stages */
+  'workspace.treatment.stages.data': {
+    [stageId: string]: {
+      /** An ordered list of images assigned to this treatment stage */
+      imageIds: string[];
+    };
   };
   'workspace.workers': {
     [workerId: string]: WorkerDetails;
-  };
-  'workspace.analysis.lastUsedId': {
-    activeId: string | null;
   };
 };
 
