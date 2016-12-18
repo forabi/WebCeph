@@ -1,5 +1,4 @@
 import { handleActions } from 'utils/store';
-import { printUnexpectedPayloadWarning } from 'utils/debug';
 import { createSelector } from 'reselect';
 
 import values from 'lodash/values';
@@ -21,11 +20,7 @@ const isBeingChecked = handleActions<typeof KEY_IS_BEING_CHECKED>({
 }, false);
 
 const missingFeatures = handleActions<typeof KEY_RESULTS>({
-  MISSING_BROWSER_FEATURE_DETECTED: (state, { type, payload }) => {
-    if (payload === undefined) {
-      printUnexpectedPayloadWarning(type, state);
-      return state;
-    }
+  MISSING_BROWSER_FEATURE_DETECTED: (state, { payload }) => {
     const { userAgent, feature } = payload;
     return {
       ...state,

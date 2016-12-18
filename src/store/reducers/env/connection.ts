@@ -1,16 +1,14 @@
 import { handleActions } from 'utils/store';
-import { printUnexpectedPayloadWarning } from 'utils/debug';
 
 const KEY_IS_OFFLINE: StoreKey = 'env.connection.isOffline';
 
 const reducers: Partial<ReducerMap> = {
   [KEY_IS_OFFLINE]: handleActions<typeof KEY_IS_OFFLINE>({
-    CONNECTION_STATUS_CHANGED: (state, { type, payload }) => {
-      if (payload === undefined) {
-        printUnexpectedPayloadWarning(type, state);
-        return state;
+    CONNECTION_STATUS_CHANGED: (state, { payload }) => {
+      if (payload.isOffline !== undefined) {
+        return payload.isOffline;
       }
-      return payload.isOffline !== undefined ? payload.isOffline : state;
+      return state;
     },
   }, true),
 };
