@@ -286,7 +286,6 @@ interface UndoableState<T> {
 }
 
 interface StoreState {
-  'env.connection.isOffline': boolean;
   'app.init.isInitialized': boolean;
   'app.status.isUpdating': boolean;
   'app.status.isCaching': boolean;
@@ -297,6 +296,7 @@ interface StoreState {
   'app.persistence.isUpgrading': boolean;
   'app.persistence.save.error': GenericError | null;
   'app.persistence.load.error': GenericError | null;
+  'env.connection.isOffline': boolean;
   'env.compat.isIgnored': boolean;
   'env.compat.isBeingChecked': boolean;
   'env.compat.results': {
@@ -348,16 +348,13 @@ interface StoreState {
     };
   };
   'workspace.images.analysis.status': {
-    [imageId: string]: {
-      analysisId: AnalysisId<string>;
+    [analysisId: AnalysisId<ImageType>]: {
       isLoading: true;
       error: null;
     } | {
-      analysisId: AnalysisId<string>;
       isLoading: false;
       error: GenericError;
     } | {
-      analysisId: AnalysisId<string>;
       isLoading: false;
       error: null;
     };
@@ -552,11 +549,11 @@ interface Events {
     imageId: string;
     analysisId: AnalysisId<ImageType>;
   };
-  SET_ANALYSIS_SUCCEEDED: {
+  FETCH_ANALYSIS_SUCCEEDED: {
     imageId: string;
     analysisId: AnalysisId<ImageType>;
   };
-  SET_ANALYSIS_FAILED: {
+  FETCH_ANALYSIS_FAILED: {
     imageId: string;
     analysisId: AnalysisId<ImageType>;
     error: GenericError;

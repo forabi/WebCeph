@@ -1,9 +1,7 @@
-import compatibility from './compatibility';
-import init from './init';
-import offline from './offline';
+import compatibility from './compat';
+import connection from './connection';
 
 export default {
-  ...init,
   ...compatibility,
-  ...offline,
+  ...connection,
 };
