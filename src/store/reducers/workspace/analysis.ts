@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { handleActions } from 'utils/store';
 
 import every from 'lodash/every';
 import some from 'lodash/some';
@@ -24,6 +25,55 @@ import {
   tryCalculate,
   tryMap,
 } from 'analyses/helpers';
+
+
+const KEY_ANALYSIS_LOAD_STATUS: StoreKey = 'workspace.images.analysis.status';
+
+const analysisLoadStatusReducer = handleActions<typeof KEY_ANALYSIS_LOAD_STATUS>({
+  SET_ANALYSIS_REQUESTED: (state, { payload: { analysisId, imageType } }) => {
+    return {
+      ...state,
+      [imageType]: {
+        ...state[imageType],
+        [analysisId]: {
+          isLoading: true,
+          error: null,
+        },
+      },
+    };
+  },
+  FETCH_ANALYSIS_FAILED: (state, { payload: { analysisId, imageType, error } }) => {
+    return {
+      ...state,
+      [imageType]: {
+        ...state[imageType],
+        [analysisId]: {
+          isLoading: false,
+          error,
+        },
+      },
+    };
+  },
+  FETCH_ANALYSIS_SUCCEEDED: (state, { payload: { analysisId, imageType } }) => {
+    return {
+      ...state,
+      [imageType]: {
+        ...state[imageType],
+        [analysisId]: {
+          isLoading: false,
+          error: null,
+        },
+      },
+    };
+  },
+}, { });
+
+const reducers: Partial<ReducerMap> = {
+  [KEY_ANALYSIS_LOAD_STATUS]: analysisLoadStatusReducer,
+};
+
+export default reducers;
+
 
 const defaultAnalysisId: AnalysisId<'ceph_lateral'> = 'common';
 

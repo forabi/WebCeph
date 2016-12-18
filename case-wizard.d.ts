@@ -275,6 +275,7 @@ type WorkerDetails = {
 };
 
 type TracingMode = 'auto' | 'manual' | 'assisted';
+type WorkspaceMode = 'auto' | 'manual' | 'assisted';
 
 type ExportFileFormat = 'wceph_v1' | 'jpeg';
 type ExportFileOptions = any; // @TODO
@@ -309,7 +310,7 @@ interface StoreState {
   'workspace.export.isExporting': boolean;
   'workspace.export.error': GenericError | null;
   'workspace.import.isImporting': boolean;
-  'workspace.import.error': boolean;
+  'workspace.import.error': GenericError | null;
   'workspace.mode': 'tracing' | 'superimposition';
   'workspace.canvas.dimensions': {
     width: number;
@@ -347,23 +348,25 @@ interface StoreState {
       error: null;
     };
   };
-  'workspace.images.analysis.status': {
-    [analysisId: AnalysisId<ImageType>]: {
-      isLoading: true;
-      error: null;
-    } | {
-      isLoading: false;
-      error: GenericError;
-    } | {
-      isLoading: false;
-      error: null;
+  'workspace.images.analysis.status': Partial<{
+    [T in ImageType]: {
+      [analysisId: AnalysisId<T>]: {
+        isLoading: true;
+        error: null;
+      } | {
+        isLoading: false;
+        error: GenericError;
+      } | {
+        isLoading: false;
+        error: null;
+      };
     };
-  };
+  }>;
   'workspace.analysis.lastUsedId': {
     activeId: string | null;
   };
   'workspace.images.activeImageId': string | null;
-  'workspace.superimposition.mode': 'auto' | 'manual' | 'assisted';
+  'workspace.superimposition.mode': WorkspaceMode;
   /** An order list of superimposed images. */
   'workspace.superimposition.imageIds': string[];
   'workspace.treatment.stages.order': string[];
@@ -449,7 +452,7 @@ interface Events {
     format: ExportFileFormat;
     options?: ExportFileOptions;
   };
-  EXPORT_FILE_SUCEEDED: void,
+  EXPORT_FILE_SUCCEEDED: void,
   EXPORT_FILE_FAILED: GenericError,
   EXPORT_PROGRESS_CHANGED: {
     value: number;
@@ -542,15 +545,15 @@ interface Events {
   UNHIGHLIGHT_STEP_ON_CANVAS_REQUESTED: void;
   SET_ACTIVE_TOOL_REQUESTED: ToolId;
   SET_ANALYSIS_REQUESTED: {
-    imageId: string;
+    imageType: ImageType;
     analysisId: AnalysisId<ImageType>;
   };
   FETCH_ANALYSIS_SUCCEEDED: {
-    imageId: string;
+    imageType: ImageType;
     analysisId: AnalysisId<ImageType>;
   };
   FETCH_ANALYSIS_FAILED: {
-    imageId: string;
+    imageType: ImageType;
     analysisId: AnalysisId<ImageType>;
     error: GenericError;
   };
@@ -586,6 +589,7 @@ interface Events {
   LOAD_PERSISTED_STATE_REQUESTED: void;
   LOAD_PERSISTED_STATE_SUCCEEDED: Partial<StoreState>;
   LOAD_PERSISTED_STATE_FAILED: GenericError;
+  PERSIST_STATE_UPGRADE_STARTED: void;
   PERSIST_STATE_STARTED: void,
   PERSIST_STATE_SUCCEEDED: void,
   PERSIST_STATE_FAILED: GenericError,

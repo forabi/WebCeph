@@ -48,5 +48,5 @@ export const addWorker = createActionCreator('WORKER_CREATED');
 export const updateWorker = createActionCreator('WORKER_STATUS_CHANGED');
 export const removeWorker = createActionCreator('WORKER_TERMINATED');
 
-export const fetchAnalysisSucceeded = createActionCreator('SET_ANALYSIS_SUCCEEDED');
-export const fetchAnalysisFailed = createActionCreator('SET_ANALYSIS_FAILED');
+export const fetchAnalysisSucceeded = createActionCreator('FETCH_ANALYSIS_SUCCEEDED');
+export const fetchAnalysisFailed = createActionCreator('FETCH_ANALYSIS_FAILED');

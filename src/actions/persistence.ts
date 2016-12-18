@@ -6,6 +6,8 @@ export const restorePersistedStateSucceeded = createActionCreator('LOAD_PERSISTE
 
 export const restorePersistedStateFailed = createActionCreator('LOAD_PERSISTED_STATE_FAILED');
 
+export const persistStateUpgradeStarted = createActionCreator('PERSIST_STATE_UPGRADE_STARTED');
+
 export const persistStateStarted = createActionCreator('PERSIST_STATE_STARTED');
 
 export const persistStateSucceeded = createActionCreator('PERSIST_STATE_SUCCEEDED');

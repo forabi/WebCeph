@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import canvas, { getHighlightedStep } from './canvas';
-import {
+import analysis, {
   getMappedValue,
   getAllGeoObjects,
   findStepBySymbol,
@@ -15,6 +15,7 @@ import sortBy from 'lodash/sortBy';
 import mapValues from 'lodash/mapValues';
 
 export default {
+  ...analysis,
   ...image,
   ...canvas,
   ...workers,

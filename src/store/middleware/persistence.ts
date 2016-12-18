@@ -7,6 +7,7 @@ import {
   persistStateFailed,
   restorePersistedStateSucceeded,
   restorePersistedStateFailed,
+  persistStateUpgradeStarted,
   clearPersistedStateSucceeded,
   clearPersistedStateFailed,
 } from 'actions/persistence';
@@ -18,7 +19,7 @@ import { isActionOfType } from 'utils/store';
 
 const PERSISTABLE_EVENTS: ActionType[] = [
   'BROWSER_COMPATIBLITY_CHECK_SUCCEEDED',
-  'SET_ANALYSIS_SUCCEEDED',
+  'FETCH_ANALYSIS_SUCCEEDED',
 ];
 
 const isPersistenceNeededForAction = ({ type }: GenericAction): boolean => {
@@ -97,6 +98,7 @@ const loadStateMiddleware: Middleware = (_: Store<StoreState>) => (next: Generic
             `Could not find persisted state compatible with this ` +
             `version (${__VERSION__}). Upgrading...`,
           );
+          next(persistStateUpgradeStarted(void 0));
           // @TODO: perform any necessary upgrade operations
           await idb.clear(); // @FIXME: Workaround
           // @NOTE: Do not break on switch cases.

@@ -7,7 +7,6 @@ import { createSelector } from 'reselect';
 const KEY_IMAGES: StoreKey = 'workspace.images.props';
 const KEY_IMAGES_LOAD_STATUS: StoreKey = 'workspace.images.status';
 const KEY_TRACING: StoreKey = 'workspace.images.tracing';
-const KEY_ANALYSIS_LOAD_STATUS: StoreKey = 'workspace.images.analysis.status';
 
 const imagesReducer = handleActions<typeof KEY_IMAGES>(
   {
@@ -60,17 +59,6 @@ const imagesReducer = handleActions<typeof KEY_IMAGES>(
         },
       };
     },
-    SET_ANALYSIS_SUCCEEDED: (state, { payload: { imageId, analysisId } }) => {
-      return {
-        ...state,
-        [imageId]: {
-          ...state[imageId],
-          analysis: {
-            activeId: analysisId,
-          },
-        },
-      };
-    },
   },
   { },
 );
@@ -105,36 +93,6 @@ const loadStatusReducer = handleActions<typeof KEY_IMAGES_LOAD_STATUS>({
   },
   CLOSE_IMAGE_REQUESTED: (state, { payload: id }) => {
     return omit(state, id) as typeof state;
-  },
-}, { });
-
-const analysisLoadStatusReducer = handleActions<typeof KEY_ANALYSIS_LOAD_STATUS>({
-  SET_ANALYSIS_REQUESTED: (state, { payload: { analysisId } }) => {
-    return {
-      ...state,
-      [analysisId]: {
-        isLoading: true,
-        error: null,
-      },
-    };
-  },
-  FETCH_ANALYSIS_FAILED: (state, { payload: { analysisId, error } }) => {
-    return {
-      ...state,
-      [analysisId]: {
-        isLoading: false,
-        error,
-      },
-    };
-  },
-  FETCH_ANALYSIS_SUCCEEDED: (state, { payload: { analysisId } }) => {
-    return {
-      ...state,
-      [analysisId]: {
-        isLoading: false,
-        error: null,
-      },
-    };
   },
 }, { });
 
@@ -200,7 +158,6 @@ const tracingReducer = handleActions<typeof KEY_TRACING>({
 
 const reducers: Partial<ReducerMap> = {
   [KEY_IMAGES_LOAD_STATUS]: loadStatusReducer,
-  [KEY_ANALYSIS_LOAD_STATUS]: analysisLoadStatusReducer,
   [KEY_IMAGES]: imagesReducer,
   [KEY_TRACING]: tracingReducer,
 };
