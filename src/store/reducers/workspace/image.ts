@@ -109,33 +109,30 @@ const loadStatusReducer = handleActions<typeof KEY_IMAGES_LOAD_STATUS>({
 }, { });
 
 const analysisLoadStatusReducer = handleActions<typeof KEY_ANALYSIS_LOAD_STATUS>({
-  SET_ANALYSIS_REQUESTED: (state, { payload: { imageId, analysisId } }) => {
+  SET_ANALYSIS_REQUESTED: (state, { payload: { analysisId } }) => {
     return {
       ...state,
-      [imageId]: {
+      [analysisId]: {
         isLoading: true,
         error: null,
-        analysisId,
       },
     };
   },
-  SET_ANALYSIS_FAILED: (state, { payload: { imageId, analysisId, error } }) => {
+  FETCH_ANALYSIS_FAILED: (state, { payload: { analysisId, error } }) => {
     return {
       ...state,
-      [imageId]: {
+      [analysisId]: {
         isLoading: false,
         error,
-        analysisId,
       },
     };
   },
-  SET_ANALYSIS_SUCCEEDED: (state, { payload: { imageId, analysisId } }) => {
+  FETCH_ANALYSIS_SUCCEEDED: (state, { payload: { analysisId } }) => {
     return {
       ...state,
-      [imageId]: {
+      [analysisId]: {
         isLoading: false,
         error: null,
-        analysisId,
       },
     };
   },
