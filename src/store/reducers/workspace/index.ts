@@ -1,12 +1,15 @@
 import { createSelector } from 'reselect';
 import canvas, { getHighlightedStep } from './canvas';
-import analysis, {
+import analyses, {
   getMappedValue,
   getAllGeoObjects,
   findStepBySymbol,
-} from './analysis';
+} from './analyses';
+import treatment from './treatment';
+import superimposition from './superimposition';
 import image, { hasImage, getActiveManualLandmarks } from './image';
 import workers from './workers';
+import fileImport from './import';
 import fileExport, { getExportError, hasExportError } from './export';
 
 import isEmpty from 'lodash/isEmpty';
@@ -15,11 +18,14 @@ import sortBy from 'lodash/sortBy';
 import mapValues from 'lodash/mapValues';
 
 export default {
-  ...analysis,
+  ...analyses,
   ...image,
   ...canvas,
   ...workers,
   ...fileExport,
+  ...fileImport,
+  ...treatment,
+  ...superimposition,
 };
 
 export const canEdit = hasImage;
