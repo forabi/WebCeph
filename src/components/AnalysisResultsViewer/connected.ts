@@ -11,7 +11,7 @@ import {
 } from './props';
 import {
   getCategorizedAnalysisResults,
-} from 'store/reducers/workspace/analysis';
+} from 'store/reducers/workspace/analyses';
 
 import {
   toggleAnalysisResults,
@@ -30,7 +30,7 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = 
 );
 
 const connected = connect<StateProps, DispatchProps, OwnProps>(
-  mapStateToProps, mapDispatchToProps
+  mapStateToProps, mapDispatchToProps,
 )(AnalysisStepper);
 
 

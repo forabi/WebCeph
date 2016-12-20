@@ -13,14 +13,14 @@ const scaleInAndRotate = require('transitions/scale-in-and-rotate.scss');
 const fadeIn = require('transitions/fade-in.scss');
 
 const DropzonePlaceholder = require(
-  'svg-react-loader?name=DropzonePlaceholder!svgo-loader?useConfig=svgoConfig!./assets/placeholder.svg'
+  'svg-react-loader?name=DropzonePlaceholder!svgo-loader?useConfig=svgoConfig!./assets/placeholder.svg',
 ) as React.SFCFactory<React.ReactSVGElement>;
 
 const demoButtonStyle = { marginTop: 5 };
 
 class CephaloDropzone extends React.PureComponent<Props, { }> {
   refs: {
-    dropzone: null | React.ReactInstance & { open: () => void; }
+    dropzone: any;
   };
 
 
@@ -40,7 +40,7 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
     } = this.props;
     return (
       <Dropzone
-        ref="dropzone"
+        ref={this.setRef}
         className={classes.dropzone}
         activeClassName={classes.dropzone__active}
         rejectClassName={classes.dropzone__reject}

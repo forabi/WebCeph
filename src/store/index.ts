@@ -1,7 +1,7 @@
 import { createStore, applyMiddleware, combineReducers, compose, Middleware, Reducer } from 'redux';
 import reducers from './reducers';
 import analyticsMiddleware from './middleware/analytics';
-import fetchAnalysis from './middleware/fetchAnalysis';
+import fetchAnalysis from './middleware/fetchanalyses';
 import exportMiddleware from './middleware/export';
 import importMiddleware from './middleware/import';
 import autoScaleMiddleware from './middleware/autoScale';

@@ -10,7 +10,7 @@ import {
 import {
   getExpectedNextManualLandmark,
   isAnalysisComplete,
-} from 'store/reducers/workspace/analysis';
+} from 'store/reducers/workspace/analyses';
 import { getActiveImageId } from 'store/reducers/workspace/image';
 
 export const createAddPoint: EditorToolCreator = (

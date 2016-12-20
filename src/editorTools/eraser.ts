@@ -8,7 +8,7 @@ import {
 
 import {
   isStepRemovable,
-} from 'store/reducers/workspace/analysis';
+} from 'store/reducers/workspace/analyses';
 
 export const createEraser: EditorToolCreator = (
   state: StoreState,

@@ -17,7 +17,7 @@ const getImageIds = (_: any) => ['image_1'];
 import {
   getActiveAnalysisId,
   getManualLandmarks,
-} from 'store/reducers/workspace/analysis';
+} from 'store/reducers/workspace/analyses';
 
 import {
   getImageData,

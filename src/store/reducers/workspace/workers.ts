@@ -65,5 +65,5 @@ export const getWorkerDetails = createSelector(
   getWorkers,
   (workers) => (workerId: string): WorkerDetails => {
     return workers[workerId];
-  }
+  },
 );

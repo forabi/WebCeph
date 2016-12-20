@@ -11,7 +11,7 @@ import Props from './props';
 
 const classes = require('./style.scss');
 
-const DetailsForNerds = ({ missingFeatures } : { missingFeatures: MissingBrowserFeature[] }) => (
+const DetailsForNerds = ({ missingFeatures }: { missingFeatures: MissingBrowserFeature[] }) => (
   <div>
     If you are curious, the following features are missing:
     <List>
@@ -77,7 +77,7 @@ const CompatibilityChecker = pure((props: Props) => {
             ))
           }
         </div>
-        { !isNerdMode ? null : <DetailsForNerds missingFeatures={missingFeatures} /> }
+        {!isNerdMode ? null : <DetailsForNerds missingFeatures={missingFeatures} />}
       </Dialog>
     </div>
   );

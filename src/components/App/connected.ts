@@ -30,7 +30,7 @@ import {
 import {
   areResultsShown,
   canShowResults,
-} from 'store/reducers/workspace/analysis';
+} from 'store/reducers/workspace/analyses';
 
 import {
   hasImage,

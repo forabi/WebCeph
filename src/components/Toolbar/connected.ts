@@ -37,7 +37,7 @@ import {
 import {
   canShowResults,
   areResultsShown,
-} from 'store/reducers/workspace/analysis';
+} from 'store/reducers/workspace/analyses';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: StoreState): StateProps => {

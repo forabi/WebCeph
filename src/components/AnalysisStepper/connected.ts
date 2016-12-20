@@ -16,7 +16,7 @@ import {
   getActiveAnalysisSteps,
   isStepSkippable,
   isStepRemovable,
-} from 'store/reducers/workspace/analysis';
+} from 'store/reducers/workspace/analyses';
 import {
   getHighlightedStep,
 } from 'store/reducers/workspace/canvas';
@@ -40,7 +40,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: StoreStat
 
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = (dispatch) => (
   {
-    onRemoveLandmarkClick: ({ symbol }) => dispatch(removeManualLandmark(symbol)),
+    onRemoveLandmarkClick: ({ symbol }) => dispatch(removeManualLandmark({ symbol })),
     onEditLandmarkClick: noop, // @TODO
     onStepMouseEnter: ({ symbol }) => dispatch(highlightStep({ symbol })),
     onStepMouseLeave: (_) => dispatch(unhighlightStep(void 0)),

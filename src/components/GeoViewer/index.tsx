@@ -28,7 +28,6 @@ const createBoundingRect = memoize((top: number, left: number, width: number, he
   bottom: height,
 }));
 
-
 const GeoViewer = pure((props: Props) => {
   const {
     objects,
