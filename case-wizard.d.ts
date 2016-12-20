@@ -276,6 +276,16 @@ type WorkerDetails = {
 
 type TracingMode = 'auto' | 'manual' | 'assisted';
 type WorkspaceMode = 'auto' | 'manual' | 'assisted';
+type SuperimpositionMode = 'auto' | 'manual';
+
+type TreatmentStage = {
+  /**
+   * Display name for this treatment stage
+   */
+  name: string;
+  /** An ordered list of images assigned to this treatment stage */
+  imageIds: string[];  
+};
 
 type ExportFileFormat = 'wceph_v1' | 'jpeg';
 type ExportFileOptions = any; // @TODO
@@ -348,7 +358,7 @@ interface StoreState {
       error: null;
     };
   };
-  'workspace.images.analysis.status': Partial<{
+  'workspace.analyses.status': Partial<{
     [T in ImageType]: {
       [analysisId: AnalysisId<T>]: {
         isLoading: true;
@@ -362,20 +372,17 @@ interface StoreState {
       };
     };
   }>;
-  'workspace.analysis.lastUsedId': {
-    activeId: string | null;
+  'workspace.analyses.lastUsedId': {
+    [T in ImageType]: AnalysisId<T>;
   };
   'workspace.images.activeImageId': string | null;
-  'workspace.superimposition.mode': WorkspaceMode;
+  'workspace.superimposition.mode': SuperimpositionMode;
   /** An order list of superimposed images. */
   'workspace.superimposition.imageIds': string[];
   'workspace.treatment.stages.order': string[];
   /** User-specified order of treatment stages */
   'workspace.treatment.stages.data': {
-    [stageId: string]: {
-      /** An ordered list of images assigned to this treatment stage */
-      imageIds: string[];
-    };
+    [stageId: string]: TreatmentStage;
   };
   'workspace.workers': {
     [workerId: string]: WorkerDetails;
@@ -471,7 +478,7 @@ interface Events {
   };
   LOAD_IMAGE_SUCCEEDED: (
     ImageBlobData & 
-    Partial<CephImageData> &
+    Partial<CephImageData<ImageType>> &
     {
       id: string;
       tracing?: CephImageTracingData;
@@ -489,6 +496,9 @@ interface Events {
     left: number;
     width: number;
     height: number;
+  };
+  SET_ACTIVE_IMAGE_ID: {
+    imageId: string;
   };
   ADD_MANUAL_LANDMARK_REQUESTED: {
     imageId: string;
@@ -575,6 +585,23 @@ interface Events {
   };
   UNSET_SCALE_FACTOR_REQUESTED: {
     imageId: string;
+  };
+  SUPERIMPOSE_IMAGES_REQUESTED: {
+    imageIds: string[];
+  };
+  SET_SUPERIMPOSITION_MODE_REQUESTED: {
+    mode: SuperimpositionMode;
+  };
+  ADD_TREATMENT_STAGE: {
+    id: string;
+    data: TreatmentStage;
+  };
+  REMOVE_TREATMENT_STAGE: {
+    id: string;
+  };
+  UPDATE_TREATMENT_STAGE: {
+    id: string;
+    update: Partial<TreatmentStage>;
   };
   TOGGLE_ANALYSIS_RESULTS_REQUESTED: void;
   BROWSER_COMPATIBLITY_CHECK_REQUESTED: void;

@@ -7,6 +7,7 @@ import { createSelector } from 'reselect';
 const KEY_IMAGES: StoreKey = 'workspace.images.props';
 const KEY_IMAGES_LOAD_STATUS: StoreKey = 'workspace.images.status';
 const KEY_TRACING: StoreKey = 'workspace.images.tracing';
+const KEY_ACTIVE_IMAGE_ID: StoreKey = 'workspace.images.activeImageId';
 
 const imagesReducer = handleActions<typeof KEY_IMAGES>(
   {
@@ -160,6 +161,10 @@ const reducers: Partial<ReducerMap> = {
   [KEY_IMAGES_LOAD_STATUS]: loadStatusReducer,
   [KEY_IMAGES]: imagesReducer,
   [KEY_TRACING]: tracingReducer,
+  [KEY_ACTIVE_IMAGE_ID]: handleActions<typeof KEY_ACTIVE_IMAGE_ID>({
+    SET_ACTIVE_IMAGE_ID: (_, { payload: { imageId } }) => imageId,
+    RESET_WORKSPACE_REQUESTED: () => null,
+  }, null),
 };
 
 export default reducers;
@@ -222,18 +227,29 @@ export const getSkippedSteps = createSelector(
   (getTracing) => (id: string) => getTracing(id).skippedSteps,
 );
 
-export const getActiveImageId = (_: StoreState) => 'image_1';
+export const getAnalysisId = createSelector(
+  getImageProps,
+  (getProps) => (id: string) => getProps(id).analysis,
+);
+
+export const getActiveImageId = (state: StoreState) => state[KEY_ACTIVE_IMAGE_ID];
+
+export const getActiveImageAnalysisId = createSelector(
+  getActiveImageId,
+  getAnalysisId,
+  (id, getId) => getId(id!).activeId,
+);
 
 export const getActiveManualLandmarks = createSelector(
   getActiveImageId,
   getManualLandmarks,
-  (id, getManual) => getManual(id),
+  (id, getManual) => getManual(id!),
 );
 
 export const getActiveSkippedSteps = createSelector(
   getActiveImageId,
   getSkippedSteps,
-  (id, getSkipped) => getSkipped(id),
+  (id, getSkipped) => getSkipped(id!),
 );
 
 export const getScaleFactor = createSelector(

@@ -13,6 +13,7 @@ import mapValues from 'lodash/mapValues';
 import {
   getActiveManualLandmarks as getManualLandmarks,
   getActiveSkippedSteps as getSkippedSteps,
+  getActiveImageAnalysisId,
 } from './image';
 
 import {
@@ -26,8 +27,8 @@ import {
   tryMap,
 } from 'analyses/helpers';
 
-
-const KEY_ANALYSIS_LOAD_STATUS: StoreKey = 'workspace.images.analysis.status';
+const KEY_ANALYSIS_LOAD_STATUS: StoreKey = 'workspace.analyses.status';
+const KEY_LAST_USED_ID: StoreKey = 'workspace.analyses.lastUsedId';
 
 const analysisLoadStatusReducer = handleActions<typeof KEY_ANALYSIS_LOAD_STATUS>({
   SET_ANALYSIS_REQUESTED: (state, { payload: { analysisId, imageType } }) => {
@@ -70,42 +71,33 @@ const analysisLoadStatusReducer = handleActions<typeof KEY_ANALYSIS_LOAD_STATUS>
 
 const reducers: Partial<ReducerMap> = {
   [KEY_ANALYSIS_LOAD_STATUS]: analysisLoadStatusReducer,
+  [KEY_LAST_USED_ID]: handleActions<typeof KEY_LAST_USED_ID>({
+    SET_ANALYSIS_REQUESTED: (state, { payload: { imageType, analysisId } }) => {
+      return {
+        ...state,
+        [imageType]: analysisId,
+      };
+    },
+  }, {
+    ceph_lateral: 'ricketts_lateral',
+    ceph_pa: 'ricketts_frontal',
+    photo_frontal: 'frontal_face_proportions',
+    photo_lateral: 'soft_tissues_photo_lateral',
+  }),
 };
 
 export default reducers;
 
-
-const defaultAnalysisId: AnalysisId<'ceph_lateral'> = 'common';
-
-export const getActiveAnalysisId = (_: StoreState): AnalysisId<ImageType> => defaultAnalysisId;
-
 export const isAnalysisSet = createSelector(
-  getActiveAnalysisId,
+  getActiveImageAnalysisId,
   (id) => id !== null,
 );
 
-// @FIXME: dynamically require analysis
-import downs from 'analyses/downs';
-import basic from 'analyses/basic';
-import bjork from 'analyses/bjork';
-import common from 'analyses/common';
-import dental from 'analyses/dental';
-import softTissues from 'analyses/softTissues';
-
-const analyses: Record<string, Analysis<ImageType>> = {
-  downs,
-  basic,
-  bjork,
-  common,
-  dental,
-  softTissues,
-};
-
 export const getActiveAnalysis = createSelector(
-  getActiveAnalysisId,
+  getActiveImageAnalysisId,
   (analysisId) => {
     if (analysisId !== null) {
-      return analyses[analysisId] as Analysis<ImageType>;
+      return require(`analysis/${analysisId}`) as Analysis<ImageType>;
     }
     return null;
   },
