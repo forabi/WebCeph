@@ -9,6 +9,7 @@ const AsyncModulePlugin = require('async-module-loader/plugin');
 const BabiliPlugin = require('babili-webpack-plugin');
 const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const CarteBlanche = require('carte-blanche');
 
 let Dashboard;
 let DashboardPlugin;
@@ -170,6 +171,9 @@ const config = {
   },
 
   plugins: compact([
+    dev(new CarteBlanche({
+      componentRoot: path.join(__dirname, 'src/components'),
+    })),
     new webpack.LoaderOptionsPlugin({
       options: {
         context: __dirname,

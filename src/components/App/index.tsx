@@ -3,8 +3,6 @@ import * as React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import AnalysisResultsViewer from 'components/AnalysisResultsViewer/connected';
-import AnalysisSelector from 'components/AnalysisSelector/connected';
-import AnalysisStepper from 'components/AnalysisStepper/connected';
 import Workspace from 'components/Workspace/connected';
 import CommandPalette from 'components/CommandPalette/connected';
 import CompatibilityChecker from 'components/CompatibilityChecker/connected';
@@ -41,7 +39,7 @@ const addLifeCycleHooks = lifecycle({
 
 const enhance = compose<Props, State>(pure, addLifeCycleHooks);
 
-const App = enhance(({ userAgent, isReady, isSummaryShown = false, shouldShowStepper = false }: Props) => (
+const App = enhance(({ userAgent, isReady, isSummaryShown = false }: Props) => (
   <MuiThemeProvider muiTheme={getMuiTheme()}>
     { isReady ? (
         <div className={classes.root}>
@@ -52,10 +50,6 @@ const App = enhance(({ userAgent, isReady, isSummaryShown = false, shouldShowSte
             <Menu className={classes.menu} />
             <div className={classes.row}>
               <Workspace className={classes.main} />
-              <div className={cx(classes.sidebar, { [classes.sidebar_hidden]: !shouldShowStepper })}>
-                <AnalysisSelector className={classes.selector} />
-                <AnalysisStepper className={classes.stepper} />
-              </div>
             </div>
             <ReactCSSTransitionGroup
               className={cx(fadeIn.root, classes.toolbar)}

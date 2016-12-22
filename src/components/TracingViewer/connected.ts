@@ -9,23 +9,16 @@ import CephaloCanvas from './index';
 import {
   StateProps,
   DispatchProps,
+  OwnProps,
 } from './props';
 
 import {
-  getImageHeight,
-  getImageWidth,
-  getImageData,
-  getImageBrightness,
-  getImageContrast,
-  isImageFlippedX,
-  isImageFlippedY,
-  isImageInverted,
+  getImageProps
 } from 'store/reducers/workspace/image';
 
 import {
-  getCanvasHeight,
-  getCanvasWidth,
-} from 'store/reducers/workspace/canvas/canvasSize';
+  getCanvasDimensions
+} from 'store/reducers/workspace/canvas';
 
 import {
   getScale,
@@ -40,8 +33,6 @@ import {
 } from 'store/reducers/workspace';
 
 import * as cx from 'classnames';
-
-type OwnProps = { };
 
 const classes = require('./style.scss');
 import { createSelector } from 'reselect';
@@ -115,11 +106,10 @@ const getPropsForLandmark = createSelector(
 );
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
-  (state: StoreState) => {
+  (state: StoreState, { imageId }: OwnProps) => {
     return {
-      canvasHeight: getCanvasHeight(state) as number,
-      canvasWidth: getCanvasWidth(state) as number,
-      src: getImageData(state) as string,
+      canvasSize: getCanvasDimensions(state),
+      src: getImageProps(state)(imageId).data,
       imageWidth: getImageWidth(state) as number,
       imageHeight: getImageHeight(state) as number,
       scale: getScale(state),

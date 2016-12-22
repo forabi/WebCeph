@@ -5,8 +5,10 @@ export interface StateProps {
   isInverted?: boolean;
   isFlippedX?: boolean;
   isFlippedY?: boolean;
-  canvasHeight: number;
-  canvasWidth: number;
+  canvasSize: {
+    height: number;
+    width: number;
+  };
   imageHeight: number;
   imageWidth: number;
   scale: number;
@@ -29,10 +31,11 @@ export interface DispatchProps {
 
 export type ConnectableProps = StateProps & DispatchProps;
 
-export interface UnconnectableProps {
+export interface OwnProps {
   className?: string;
+  imageId: string;
 };
 
-export type Props = ConnectableProps & UnconnectableProps;
+export type Props = ConnectableProps & OwnProps;
 
 export default Props;

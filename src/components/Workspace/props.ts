@@ -1,9 +1,10 @@
 export interface StateProps {
-  hasImage: boolean;
   isLoading: boolean;
   shouldShowLens: boolean;
   hasError: boolean;
   errorMessage: string | null;
+  mode: WorkspaceMode;
+  imageIds: string[] | null;
 };
 
 export interface DispatchProps {

@@ -1,5 +1,6 @@
 import { handleActions } from 'utils/store';
 import some from 'lodash/some';
+import every from 'lodash/every';
 import omit from 'lodash/omit';
 
 import { createSelector } from 'reselect';
@@ -182,9 +183,9 @@ export const getImageStatus = createSelector(
   (all) => (imageId: string) => all[imageId],
 );
 
-export const isImageLoading = createSelector(
+export const isAnyImageLoading = createSelector(
   getImageStatus,
-  (getStatus) => (id: string) => getStatus(id).isLoading,
+  (getStatus) => (ids: string[]) => some(ids, id => getStatus(id).isLoading === true),
 );
 
 export const hasImageLoadFailed = createSelector(
@@ -192,14 +193,6 @@ export const hasImageLoadFailed = createSelector(
   (getStatus) => (id: string) => {
     const props = getStatus(id);
     return props.isLoading === false && props.error === null;
-  },
-);
-
-export const isImageLoaded = createSelector(
-  getImageStatus,
-  (getStatus) => (id: string) => {
-    const props = getStatus(id);
-    return props.isLoading === false && props.error !== null;
   },
 );
 

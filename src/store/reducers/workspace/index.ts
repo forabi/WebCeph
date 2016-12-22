@@ -7,7 +7,9 @@ import analyses, {
 } from './analyses';
 import treatment from './treatment';
 import superimposition from './superimposition';
-import image, { hasImage, getActiveManualLandmarks } from './image';
+import image, { hasImage, getActiveManualLandmarks, getActiveImageId } from './image';
+import { getSuperimposedImages } from './superimposition';
+import { getWorkspaceMode } from './mode';
 import workers from './workers';
 import fileImport from './import';
 import fileExport, { getExportError, hasExportError } from './export';
@@ -102,4 +104,21 @@ export const workspaceHasError = createSelector(
 export const getWorkspaceErrorMessage = createSelector(
   (getExportError),
   (error) => error !== null ? error.message : null,
+);
+
+export const getWorkspaceImageIds = createSelector(
+  getWorkspaceMode,
+  getActiveImageId,
+  getSuperimposedImages,
+  (mode, activeId, superimposed) => {
+    if (mode === 'tracing') {
+      return activeId !== null ? [activeId] : [];
+    }
+    return superimposed;
+  },
+);
+
+export const doesWorkspaceHaveImages = createSelector(
+  getWorkspaceImageIds,
+  (ids) => !isEmpty(ids),
 );

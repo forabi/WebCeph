@@ -275,7 +275,7 @@ type WorkerDetails = {
 };
 
 type TracingMode = 'auto' | 'manual' | 'assisted';
-type WorkspaceMode = 'auto' | 'manual' | 'assisted';
+type WorkspaceMode = 'tracing' | 'superimposition';
 type SuperimpositionMode = 'auto' | 'manual';
 
 type TreatmentStage = {
@@ -443,7 +443,7 @@ interface Events {
     /**
      * A null value indicates unknown progress,
      * undefined indicates no change in value
-     * */
+     */
     progress: number | null;
     complete: boolean;
     error: GenericError;
@@ -496,6 +496,9 @@ interface Events {
     left: number;
     width: number;
     height: number;
+  };
+  SET_WORKSPACE_MODE_REQUESTED: {
+    mode: WorkspaceMode;
   };
   SET_ACTIVE_IMAGE_ID: {
     imageId: string;

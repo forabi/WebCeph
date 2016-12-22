@@ -41,22 +41,4 @@
     flex-basis: 75%;
   }
 
-  .sidebar {
-    &_hidden {
-      display: none;
-    }
-    width: 25vw;
-    max-width: 25vw;
-    flex-grow: 0;
-    display: flex;
-    flex-direction: column;
-    .selector {
-      flex-grow: 0;
-      width: 100%;
-    }
-    .stepper {
-      flex-grow: 1;
-    }
-  }
-
 }

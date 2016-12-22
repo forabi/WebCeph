@@ -7,7 +7,9 @@ import Dialog from 'material-ui/Dialog';
 
 import ResizeObservable from 'utils/resize-observable';
 
-import CephaloCanvas from 'components/CephaloCanvas/connected';
+import TracingViewer from 'components/TracingViewer/connected';
+import AnalysisSelector from 'components/AnalysisSelector/connected';
+import AnalysisStepper from 'components/AnalysisStepper/connected';
 import CephaloDropzone from 'components/CephaloDropzone/connected';
 import CephaloImage from 'components/CephaloImage/connected';
 import Lens from 'components/CephaloLens/connected';
@@ -20,26 +22,36 @@ import { pure } from 'recompose';
 
 const classes = require('./style.scss');
 
-const Content = pure(({ hasImage, shouldShowLens, isLoading }: Props) => {
-  if (hasImage) {
-    return (
-      <div>
-        {
-          shouldShowLens ? (
-            <Lens className={classes.lens} margin={15}>
-              <CephaloImage />
-            </Lens>
-          ) : null
-        }
-        <CephaloCanvas />
-      </div>
-    );
-  } else if (isLoading) {
-    return (
-      <div className={classes.loading_container}>
-        <CircularProgress color="white" size={120} />
-      </div>
-    );
+const Content = pure(({ hasImages, mode, shouldShowLens, isLoading }: Props) => {
+  if (hasImages) {
+    if (isLoading) {
+      return (
+        <div className={classes.loading_container}>
+          <CircularProgress color="white" size={120} />
+        </div>
+      );
+    } else if (mode === 'tracing') {
+      return (
+        <div>
+          {
+            shouldShowLens ? (
+              <Lens className={classes.lens} margin={15}>
+                <CephaloImage />
+              </Lens>
+            ) : null
+          }
+          <TracingViewer imageId={imageIds[0]} />
+          <div className={classes.sidebar}>
+            <AnalysisSelector className={classes.selector} />
+            <AnalysisStepper className={classes.stepper} />
+          </div>
+        </div>
+      );
+    } else if (hasImages && mode === 'superimposition') {
+      return (
+        <span>Superimposition mode is still in the works :)</span>
+      );
+    }
   }
   return <CephaloDropzone />;
 });
@@ -62,7 +74,7 @@ class CephaloCanvasContainer extends React.PureComponent<Props, { }> {
   public render() {
     const {
       className,
-      hasImage,
+      hasImages,
       hasError, errorMessage, onRequestDismissError,
     } = this.props;
     const errorActions = [
@@ -75,7 +87,7 @@ class CephaloCanvasContainer extends React.PureComponent<Props, { }> {
     ];
     return (
       <ResizeObservable
-        ref={hasImage ? this.setRef : undefined}
+        ref={hasImages ? this.setRef : undefined}
         className={cx(className, classes.root)}
         onResize={this.handleResize}
       >

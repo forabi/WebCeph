@@ -9,21 +9,29 @@ import {
   DispatchProps,
   OwnProps,
 } from './props';
-import { hasImage, isImageLoading } from 'store/reducers/workspace/image';
+import { isAnyImageLoading } from 'store/reducers/workspace/image';
 import { shouldShowLens } from 'store/reducers/workspace/canvas';
 import {
   workspaceHasError,
   getWorkspaceErrorMessage,
+  getWorkspaceImageIds,
+  doesWorkspaceHaveImages,
 } from 'store/reducers/workspace';
+import {
+  getWorkspaceMode,
+} from 'store/reducers/workspace/mode';
 import {
   canvasResized,
   ignoreWorkspaceError,
 } from 'actions/workspace';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: StoreState) => {
+  const imageIds = getWorkspaceImageIds(state);
   return {
-    hasImage: hasImage(state),
-    isLoading: isImageLoading(state),
+    imageIds,
+    mode: getWorkspaceMode(state),
+    hasImages: doesWorkspaceHaveImages(state),
+    isLoading: isAnyImageLoading(state)(imageIds),
     shouldShowLens: false, // shouldShowLens(state),
     hasError: workspaceHasError(state),
     errorMessage: getWorkspaceErrorMessage(state),
