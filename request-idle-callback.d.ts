@@ -7,7 +7,7 @@ declare interface RequestIdleCallbackOptions {
 }
 
 /**
- * The DOMHighResTimeStamp type is a double and is used to store a time value.
+ * The `DOMHighResTimeStamp` type is a double and is used to store a time value.
  * The value could be a discrete point in time or the difference in time between
  * two discrete points in time. The unit is milliseconds and should be accurate 
  * to 5 µs (microseconds). However, if the browser is unable to provide a 
@@ -23,13 +23,14 @@ declare interface Deadline {
 }
 
 /**
- * The window.requestIdleCallback() method queues a function to be called
+ * The `window.requestIdleCallback()` method queues a function to be called
  * during a browser's idle periods. This enables developers to perform
  * background and low priority work on the main event loop,
  * without impacting latency-critical events such as animation and input response.
  * Functions are generally called in first-in-first-out order
  * unless the function's timeout is reached before the browser calls it.
- * @return An unsigned long integer that can be used to cancel the callback using the Window.cancelIdleCallback() method.
+ * @return An unsigned long integer that can be used to cancel the callback using
+ * the `Window.cancelIdleCallback()` method.
  */
 declare interface RequestIdleCallback {
   (
@@ -41,7 +42,7 @@ declare interface RequestIdleCallback {
 }
 
 /**
- * The Window.cancelIdleCallback() enables you to cancel a callback
+ * The `Window.cancelIdleCallback()` enables you to cancel a callback
  * previously scheduled with Window.requestIdleCallback.
  */
 declare interface CancelIdleCallback {
