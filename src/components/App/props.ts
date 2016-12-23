@@ -5,7 +5,6 @@ export interface OwnProps {
 
 export interface StateProps {
   isSummaryShown?: boolean;
-  shouldShowStepper?: boolean;
   shouldCheckCompatibility: boolean;
   isReady: boolean;
 }

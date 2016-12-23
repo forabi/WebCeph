@@ -1,8 +1,9 @@
-import { Event } from 'utils/constants';
+const redoType: ActionType = 'REDO_REQUESTED';
+const undoType: ActionType = 'UNDO_REQUESTED';
 
 const undoableConfig = {
-  undoType: Event.UNDO_REQUESTED,
-  redoType: Event.REDO_REQUESTED,
+  undoType,
+  redoType,
   limit: 100,
 };
 

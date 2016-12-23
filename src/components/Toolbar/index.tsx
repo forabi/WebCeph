@@ -20,8 +20,6 @@ import * as cx from 'classnames';
 
 const classes = require('./style.scss');
 
-import { ToolsIds } from 'editorTools';
-
 import Props from './props';
 
 const CephaloEditorToolbar = (props: Props) => {
@@ -51,28 +49,28 @@ const CephaloEditorToolbar = (props: Props) => {
       <FlatButton onTouchTap={onRedoClick} disabled={cannotEdit || !canRedo} label="Redo" icon={<IconRedo/>} />
       <FlatButton onTouchTap={onFlipXClick} disabled={cannotEdit} label="Flip" icon={<IconFlip/>} />
       <FlatButton
-        disabled={cannotEdit || activeToolId === ToolsIds.SELECT}
+        disabled={cannotEdit || activeToolId === 'SELECT'}
         label=""
         icon={<IconSelect />}
-        onTouchTap={onToolButtonClick.bind(null, ToolsIds.SELECT)}
+        onTouchTap={onToolButtonClick.bind(null, 'SELECT')}
       />
       <FlatButton
-        disabled={cannotEdit || activeToolId === ToolsIds.ADD_POINT}
+        disabled={cannotEdit || activeToolId === 'ADD_POINT'}
         label=""
         icon={<IconAddPoint />}
-        onTouchTap={onToolButtonClick.bind(null, ToolsIds.ADD_POINT)}
+        onTouchTap={onToolButtonClick.bind(null, 'ADD_POINT')}
       />
       <FlatButton
-        disabled={cannotEdit || activeToolId === ToolsIds.ERASER}
+        disabled={cannotEdit || activeToolId === 'ERASER'}
         label=""
         icon={<IconEraser />}
-        onTouchTap={onToolButtonClick.bind(null, ToolsIds.ERASER)}
+        onTouchTap={onToolButtonClick.bind(null, 'ERASER')}
       />
       <FlatButton
-        disabled={cannotEdit || activeToolId === ToolsIds.ZOOM_WITH_CLICK}
+        disabled={cannotEdit || activeToolId === 'ZOOM_WITH_CLICK'}
         label=""
         icon={<IconZoom />}
-        onTouchTap={onToolButtonClick.bind(null, ToolsIds.ZOOM_WITH_CLICK)}
+        onTouchTap={onToolButtonClick.bind(null, 'ZOOM_WITH_CLICK')}
       />
       <FlatButton
         disabled={!canShowSummary}

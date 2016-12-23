@@ -207,6 +207,14 @@ export const hasImageLoadFailed = createSelector(
   },
 );
 
+export const isImageLoaded = createSelector(
+  getImageStatus,
+  (getStatus) => (id: string) => {
+    const props = getStatus(id);
+    return props.isLoading === false && props.error !== null;
+  },
+);
+
 export const hasImage = createSelector(
   getAllImages,
   isImageLoaded,

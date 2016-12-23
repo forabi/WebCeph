@@ -378,6 +378,7 @@ interface StoreState {
   'workspace.analyses.lastUsedId': {
     [T in ImageType]: AnalysisId<T>;
   };
+  'workspace.analyses.summary.isShown': boolean;
   'workspace.images.activeImageId': string | null;
   'workspace.superimposition.mode': SuperimpositionMode;
   /** An order list of superimposed images. */
@@ -625,12 +626,12 @@ interface Events {
   LOAD_PERSISTED_STATE_SUCCEEDED: Partial<StoreState>;
   LOAD_PERSISTED_STATE_FAILED: GenericError;
   PERSIST_STATE_UPGRADE_STARTED: void;
-  PERSIST_STATE_STARTED: void,
-  PERSIST_STATE_SUCCEEDED: void,
-  PERSIST_STATE_FAILED: GenericError,
-  CLEAR_PRESISTED_STATE_REQUESTED: void,
-  CLEAR_PRESISTED_STATE_SUCCEEDED: void,
-  CLEAR_PERSISTED_STATE_FAILED: GenericError,
+  PERSIST_STATE_STARTED: void;
+  PERSIST_STATE_SUCCEEDED: void;
+  PERSIST_STATE_FAILED: GenericError;
+  CLEAR_PRESISTED_STATE_REQUESTED: void;
+  CLEAR_PRESISTED_STATE_SUCCEEDED: void;
+  CLEAR_PERSISTED_STATE_FAILED: GenericError;
 };
 
 type GenericDispatch = (action: GenericAction) => any;

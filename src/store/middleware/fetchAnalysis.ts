@@ -11,7 +11,7 @@ const middleware: Middleware = (_: Store<StoreState>) => (next: GenericDispatch)
     } else {
       const { imageType, analysisId } = action.payload;
       try {
-        await require(`async-module-loader?promise!./analyses/${analysisId}`);
+        await require(`async-module-loader?promise!analyses/${analysisId}`);
         next(fetchAnalysisSucceeded({ imageType, analysisId}));
       } catch (e) {
         next(fetchAnalysisFailed({

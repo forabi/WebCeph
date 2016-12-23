@@ -35,7 +35,7 @@ import {
 } from 'store/reducers/workspace/canvas';
 
 import {
-  canShowResults,
+  canShowSummary,
   areResultsShown,
 } from 'store/reducers/workspace/analyses';
 
@@ -50,7 +50,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
       canEdit: canEdit(state),
       canRedo: canRedo(state),
       canUndo: canUndo(state),
-      canShowSummary: !areResultsShown(state) && canShowResults(state),
+      canShowSummary: !areResultsShown(state) && canShowSummary(state),
       canExport: !_isExporting && hasImage(state) && hasUnsavedWork(state),
       isExporting: _isExporting,
     };

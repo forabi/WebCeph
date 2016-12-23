@@ -2,7 +2,7 @@ export interface StateProps {
   canEdit: boolean;
   canRedo: boolean;
   canUndo: boolean;
-  activeToolId: string;
+  activeToolId: ToolId;
   isImageInverted: boolean;
   brightness: number;
   contrast: number;

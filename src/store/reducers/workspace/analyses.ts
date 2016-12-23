@@ -29,6 +29,7 @@ import {
 
 const KEY_ANALYSIS_LOAD_STATUS: StoreKey = 'workspace.analyses.status';
 const KEY_LAST_USED_ID: StoreKey = 'workspace.analyses.lastUsedId';
+const KEY_SUMMARY_SHOWN: StoreKey = 'workspace.analyses.summary.isShown';
 
 const analysisLoadStatusReducer = handleActions<typeof KEY_ANALYSIS_LOAD_STATUS>({
   SET_ANALYSIS_REQUESTED: (state, { payload: { analysisId, imageType } }) => {
@@ -83,10 +84,16 @@ const reducers: Partial<ReducerMap> = {
     ceph_pa: 'ricketts_frontal',
     photo_frontal: 'frontal_face_proportions',
     photo_lateral: 'soft_tissues_photo_lateral',
+    panoramic: 'panoramic_analysis',
   }),
+  [KEY_SUMMARY_SHOWN]: handleActions<typeof KEY_SUMMARY_SHOWN>({
+    TOGGLE_ANALYSIS_RESULTS_REQUESTED: (state) => !state,
+  }, false),
 };
 
 export default reducers;
+
+export const isSummaryShown = (state: StoreState) => state[KEY_SUMMARY_SHOWN];
 
 export const isAnalysisSet = createSelector(
   getActiveImageAnalysisId,
@@ -97,7 +104,7 @@ export const getActiveAnalysis = createSelector(
   getActiveImageAnalysisId,
   (analysisId) => {
     if (analysisId !== null) {
-      return require(`analysis/${analysisId}`) as Analysis<ImageType>;
+      return require(`analyses/${analysisId}`) as Analysis<ImageType>;
     }
     return null;
   },
@@ -338,7 +345,7 @@ export const getCategorizedAnalysisResults = createSelector(
   },
 );
 
-export const canShowResults = createSelector(
+export const canShowSummary = createSelector(
   getCategorizedAnalysisResults,
   (results) => !isEmpty(results),
 );

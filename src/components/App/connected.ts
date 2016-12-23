@@ -15,27 +15,22 @@ import {
 
 import {
   isAppInitialized,
-} from 'store/reducers/env/init';
+} from 'store/reducers/app';
 
 import {
   isCompatibilityIgnored,
   isCheckingCompatiblity,
   isBrowserCompatible,
-} from 'store/reducers/env/compatibility';
+} from 'store/reducers/env/compat';
 
 import {
   restorePersistedState,
 } from 'actions/persistence';
 
 import {
-  areResultsShown,
-  canShowResults,
+  isSummaryShown,
+  canShowSummary,
 } from 'store/reducers/workspace/analyses';
-
-import {
-  hasImage,
-  isImageLoading,
-} from 'store/reducers/workspace/image';
 
 import {
   checkBrowserCompatibility,
@@ -46,8 +41,7 @@ import { connectionStatusChanged } from 'actions/env';
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: StoreState, { userAgent }: OwnProps) => {
     return {
-      isSummaryShown: areResultsShown(state) && canShowResults(state),
-      shouldShowStepper: hasImage(state) || isImageLoading(state),
+      isSummaryShown: canShowSummary(state) && isSummaryShown(state),
       isReady: isAppInitialized(state),
       shouldCheckCompatibility: !(
         isBrowserCompatible(state)(userAgent) ||
