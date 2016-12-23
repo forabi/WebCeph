@@ -1,6 +1,5 @@
 import { handleActions } from 'utils/store';
 import some from 'lodash/some';
-import every from 'lodash/every';
 import omit from 'lodash/omit';
 
 import { createSelector } from 'reselect';
@@ -12,6 +11,15 @@ const KEY_ACTIVE_IMAGE_ID: StoreKey = 'workspace.images.activeImageId';
 
 const imagesReducer = handleActions<typeof KEY_IMAGES>(
   {
+    SET_IMAGE_PROPS: (state, { payload }) => {
+      return {
+        ...state,
+        [payload.id]: {
+          ...state[payload.id],
+          ...payload,
+        },
+      };
+    },
     LOAD_IMAGE_SUCCEEDED: (state, { payload }) => {
       return {
         ...state,
@@ -24,15 +32,6 @@ const imagesReducer = handleActions<typeof KEY_IMAGES>(
           brightness: 0.5,
           contrast: 0.5,
           invertColors: false,
-          tracing: {
-            mode: 'assisted',
-            manualLandmarks: {
-
-            },
-            skippedSteps: {
-
-            },
-          },
           analysis: {
             activeId: null,
           },
@@ -62,7 +61,7 @@ const imagesReducer = handleActions<typeof KEY_IMAGES>(
       };
     },
   },
-  { },
+  {},
 );
 
 const loadStatusReducer = handleActions<typeof KEY_IMAGES_LOAD_STATUS>({
@@ -96,9 +95,21 @@ const loadStatusReducer = handleActions<typeof KEY_IMAGES_LOAD_STATUS>({
   CLOSE_IMAGE_REQUESTED: (state, { payload: id }) => {
     return omit(state, id) as typeof state;
   },
-}, { });
+}, {});
 
 const tracingReducer = handleActions<typeof KEY_TRACING>({
+  SET_IMAGE_PROPS: (state, { payload: { id, tracing } }) => {
+    if (tracing) {
+      return {
+        ...state,
+        [id]: {
+          ...state[id],
+          ...tracing,
+        },
+      };
+    }
+    return state;
+  },
   SET_TRACING_MODE_REQUESTED: (state, { payload: { imageId, mode } }) => {
     return {
       ...state,
@@ -156,7 +167,7 @@ const tracingReducer = handleActions<typeof KEY_TRACING>({
       },
     };
   },
-}, { });
+}, {});
 
 const reducers: Partial<ReducerMap> = {
   [KEY_IMAGES_LOAD_STATUS]: loadStatusReducer,

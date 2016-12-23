@@ -17,7 +17,7 @@ const middleware: Middleware = ({ getState }: Store<StoreState>) =>
       try {
         const payload = action.payload;
         if (payload.format === 'wceph_v1') {
-          const options: WCeph.ExportOptions = { };
+          const options: ExportOptions = { };
           const state = getState();
           const file = await createExport(state, options);
           saveAs(file, file.name);

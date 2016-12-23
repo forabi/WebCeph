@@ -56,9 +56,12 @@ export type WCephJSON = {
       };
       analysis: {
         /** Last used analysis for this image */
-        activeId: string | null;
+        activeId: (
+          'common' | 'downs' | 'basic' |
+          'bjork' | 'tweed'
+        ) | null;
       };
-    }
+    },
   };
 
   workspace: {

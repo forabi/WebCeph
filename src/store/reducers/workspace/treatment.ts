@@ -1,4 +1,5 @@
 import { handleActions } from 'utils/store';
+import { createSelector } from 'reselect';
 
 import without from 'lodash/without';
 import omit from 'lodash/omit';
@@ -39,3 +40,8 @@ export default reducers;
 
 export const getTreatmentStagesOrder = (state: StoreState) => state[KEY_STAGES_ORDER];
 export const getTreatmentStagesData = (state: StoreState) => state[KEY_STAGES_DATA];
+
+export const getTreatmentStageDataById = createSelector(
+  getTreatmentStagesData,
+  (data) => (stageId: string) => data[stageId],
+);

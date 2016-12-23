@@ -264,7 +264,7 @@ export const validateIndexJSON = (json: WCephJSON): ValidationError[] => {
   );
 };
 
-const validateFile: WCeph.Validator = async (fileToValidate, options) => {
+const validateFile: Validator = async (fileToValidate, options) => {
   const {
 
   } = options;

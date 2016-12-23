@@ -189,10 +189,13 @@ interface Analyses {
   photo_frontal: (
     'frontal_face_proportions'
   );
+  panoramic: (
+    'panoramic_analysis'
+  );
 };
 
 type ImageType = keyof Analyses;
-type AnalysisId<T extends ImageType> = Analyses[T]; 
+type AnalysisId<T extends ImageType> = Analyses[T];
 
 /**
  * Describes a cephalometric analysis, composed of a list of
@@ -260,7 +263,7 @@ interface GeoVector {
 };
 
 type SingleGeoObject = GeoPoint | GeoVector | GeoAngle;
-type CompositeGeoObject = Array<SingleGeoObject>;
+type CompositeGeoObject = SingleGeoObject[];
 type GeoObject = SingleGeoObject | CompositeGeoObject;
 
 type StepState = 'done' | 'current' | 'pending' | 'skipped';
@@ -271,7 +274,7 @@ type WorkerDetails = {
   id: string;
   type: 'image_worker' | 'tracing_worker';
   isBusy: boolean;
-  error: null | GenericError; 
+  error: null | GenericError;
 };
 
 type TracingMode = 'auto' | 'manual' | 'assisted';
@@ -284,7 +287,7 @@ type TreatmentStage = {
    */
   name: string;
   /** An ordered list of images assigned to this treatment stage */
-  imageIds: string[];  
+  imageIds: string[];
 };
 
 type ExportFileFormat = 'wceph_v1' | 'jpeg';
@@ -292,7 +295,7 @@ type ExportFileOptions = any; // @TODO
 
 interface UndoableState<T> {
   past: T[];
-  present: T,
+  present: T;
   future: T[];
 }
 
@@ -459,8 +462,8 @@ interface Events {
     format: ExportFileFormat;
     options?: ExportFileOptions;
   };
-  EXPORT_FILE_SUCCEEDED: void,
-  EXPORT_FILE_FAILED: GenericError,
+  EXPORT_FILE_SUCCEEDED: void;
+  EXPORT_FILE_FAILED: GenericError;
   EXPORT_PROGRESS_CHANGED: {
     value: number;
     data?: any; // @TODO;
@@ -471,18 +474,13 @@ interface Events {
   IMPORT_PROGRESS_CHANGED: {
     value: number;
     data?: any; // @TODO;
-  },
+  };
   LOAD_IMAGE_REQUESTED: {
     id: string;
     file: File;
   };
   LOAD_IMAGE_SUCCEEDED: (
-    ImageBlobData & 
-    Partial<CephImageData<ImageType>> &
-    {
-      id: string;
-      tracing?: CephImageTracingData;
-    }
+    { id: string } & ImageBlobData
   );
   LOAD_IMAGE_FAILED: {
     id: string;
@@ -490,7 +488,7 @@ interface Events {
   };
   CLOSE_IMAGE_REQUESTED: {
     id: string;
-  }
+  };
   CANVAS_RESIZED: {
     top: number;
     left: number;
@@ -503,6 +501,13 @@ interface Events {
   SET_ACTIVE_IMAGE_ID: {
     imageId: string;
   };
+  SET_IMAGE_PROPS: (
+    { id: string } &
+    Partial<CephImageData<ImageType>> &
+    Partial<{
+      tracing: CephImageTracingData;
+    }>
+  );
   ADD_MANUAL_LANDMARK_REQUESTED: {
     imageId: string;
     symbol: string;
@@ -655,9 +660,15 @@ type ActionToReducerMap<Key extends StoreKey> = Partial<{
 
 /* Tools */
 /** An Editor Tool is just a collection of functions that consume state and dispatch actions.
- * The functions are collected to simplify the canvas logic and make it easier to switch the behavior of mouse actions on the canvas.
+ * The functions are collected to simplify the canvas logic and make it easier to switch
+ * the behavior of mouse actions on the canvas.
  */
 interface EditorTool {
+  /** Indicates whether the lens should be shown when this tool is active.
+   * `null` indicates no preference.
+   */
+  shouldShowLens: boolean | null;
+
   /**
    * Triggered when mouse enters the canvas.
    */
@@ -676,7 +687,7 @@ interface EditorTool {
    * Triggered when the right mouse button is clicked.
    */
   onCanvasRightClick?(dispatch: GenericDispatch, x: number, y: number): void;
-  
+
   /**
    * Triggered when the mouse scrolls over the canvas.
    * Useful for implementing zoom functionality.
@@ -713,11 +724,6 @@ interface EditorTool {
 
   getCursorForCanvas?(): string | undefined;
 
-  /** Indicates whether the lens should be shown when this tool is active.
-   * `null` indicates no preference.
-   */
-  shouldShowLens: boolean | null;
-
   getPropsForLandmark?(symbol: string): { [id: string]: any } | undefined;
 }
 
@@ -736,58 +742,57 @@ type ExportProgressCallback = (
   data?: any, // @TODO
 ) => void;
 
-namespace WCeph {
-  type ImportOptions = Partial<{
-    imagesToLoad: string[];
-    loadTracingData: boolean;
-    loadWorkspaceSettings: boolean;
-    loadSuperimpositionState: boolean;
-    treatmentStagesToLoad: string[];
+type ImportOptions = Partial<{
+  /** IDs to assign for imported images */
+  ids: string[];
+  loadTracingData: boolean;
+  loadWorkspaceSettings: boolean;
+  loadSuperimpositionState: boolean;
+  treatmentStagesToLoad: string[];
+}>;
+
+/**
+ * A WCeph File importer recieves the file to be imported along with any import options and
+ * returns an array of actions to be dispatched in order.
+ */
+type Importer = (file: File, options: ImportOptions) => Promise<Array<Action<any>>>;
+
+type ExportOptions = Partial<{
+  imagesToSave: string[];
+  saveTracingData: boolean;
+  saveWorkspaceSettings: boolean;
+  saveSuperimpositionState: boolean;
+  treatmentStagesToSave: string[];
+  thumbs: Partial<{
+    '64x64': boolean;
+    '128x128': boolean;
+    '256x256': boolean;
+    '512x512': boolean;
   }>;
+}>;
 
-  /**
-   * A WCeph File importer recieves the file to be imported along with any import options and
-   * returns an array of actions to be dispatched in order.
-   */
-  type Importer = (file: File, options: ImportOptions) => Promise<Action<any>[]>;
+type ValidateOptions = {
 
-  type ExportOptions = Partial<{
-    imagesToSave: string[];
-    saveTracingData: boolean;
-    saveWorkspaceSettings: boolean;
-    saveSuperimpositionState: boolean;
-    treatmentStagesToSave: string[];
-    thumbs: Partial<{
-      '64x64': boolean;
-      '128x128': boolean;
-      '256x256': boolean;
-      '512x512': boolean;
-    }>;
-  }>;
+};
 
-  type ValidateOptions = {
+/**
+ * A WCeph File exporter recieves the application state along with any export options and
+ * returns an File blob to be saved.
+ */
+type Exporter = (
+  state: StoreState,
+  options: ExportOptions,
+  progressCallback?: ExportProgressCallback,
+) => Promise<File>;
 
-  };
-
-  /**
-   * A WCeph File exporter recieves the application state along with any export options and
-   * returns an File blob to be saved.
-   */
-  type Exporter = (
-    state: StoreState,
-    options: ExportOptions,
-    progressCallback?: ExportProgressCallback,
-  ) => Promise<File>;
-
-  /**
-   * A WCeph validator recieves the file to validate and returns zero, one or more validation errors.
-   * A return value with length = 0 means that the files is valid.
-   */
-  type Validator = (
-    fileToValidate: File,
-    options: ValidateOptions,
-  ) => Promise<ValidationError[]>;
-}
+/**
+ * A WCeph validator recieves the file to validate and returns zero, one or more validation errors.
+ * A return value with length = 0 means that the files is valid.
+ */
+type Validator = (
+  fileToValidate: File,
+  options: ValidateOptions,
+) => Promise<ValidationError[]>;
 
 /* Browser compatiblity checking */
 type BrowserId = 'Chrome' | 'Firefox' | 'Opera' | 'Microsoft Edge' | 'Safari';
@@ -811,4 +816,14 @@ interface Browser {
    * URL to the download page of the browser
    */
   downloadUrl: string;
+}
+
+declare module 'lodash/zipObject' {
+  const zipObject: <K extends string, V>(keys: K[], values: V[]) => Record<K, V>;
+  export = zipObject;
+}
+
+declare module 'lodash/pick' {
+  const pick: <T extends Record<string, any>, K extends keyof T>(obj: T, ...args: K[]) => Pick<T, K>;
+  export = pick;
 }

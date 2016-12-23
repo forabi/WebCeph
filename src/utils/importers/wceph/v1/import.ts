@@ -5,27 +5,29 @@ import {
 
 import JSZip from 'jszip';
 
-import each from 'lodash/each';
 import map from 'lodash/map';
+import keys from 'lodash/keys';
 
 import {
-  importFileRequested,
-  flipX as flipImageX,
-  flipY as flipImageY,
-  setBrightness,
-  setContrast,
-  invertColors as invertImageColors,
-  setAnalysis,
-  addManualLandmark,
+  setImageProps,
+  setWorkspaceMode,
+  setActiveImageId,
+  setSuperimpositionMode,
+  superimposeImages,
 } from 'actions/workspace';
+
+import importImage from 'utils/importers/image/import';
 
 import { validateIndexJSON } from './validate';
 
-const importFile: WCeph.Importer = async (fileToImport, options) => {
-  const {
+import uniqueId from 'lodash/uniqueId';
 
+const importFile: Importer = async (fileToImport, options) => {
+  const {
+    loadWorkspaceSettings = true,
+    loadSuperimpositionState = true,
   } = options;
-  let actions: Action<any>[] = [];
+  let actions: Array<Action<any>> = [];
   const zip = new JSZip();
   await zip.loadAsync(fileToImport);
   const json: WCephJSON = JSON.parse(
@@ -58,46 +60,48 @@ const importFile: WCeph.Importer = async (fileToImport, options) => {
     );
   }
 
-  const loadImages = await Promise.all(map(
+  await Promise.all(map(
     json.refs.images,
-    async (path: string, id: string) => {
+    async (path: string) => {
+      const id = uniqueId('imported_image_');
       const blob = await zip.file(path).async('blob');
       const name = json.data[id].name;
       const imageFile = new File([blob], name || id);
-      return importFileRequested(imageFile);
-    }
+      actions.push(
+        ...(
+          await importImage(
+            imageFile,
+            {
+              ids: [id],
+            },
+          )
+        ),
+        setImageProps({
+          id,
+          ...json.data[id],
+        }),
+      );
+    },
   ));
 
-  actions = [
-    ...actions,
-    ...loadImages,
-  ];
+  if (loadSuperimpositionState) {
+    let { mode, imageIds } = json.superimposition;
+    if (mode === 'assisted') {
+      mode = 'auto';
+    }
+    actions.push(setSuperimpositionMode({ mode }));
+    actions.push(superimposeImages({ imageIds }));
+  }
 
-  each(json.data, (image, _) => {
-    const {
-      flipX, flipY,
-      brightness, contrast,
-      invertColors, tracing: { manualLandmarks },
-      analysis: { activeId: analysisId },
-    } = image;
-    if (flipX) {
-      actions.push(flipImageX());
+  if (loadWorkspaceSettings) {
+    let { mode, activeImageId } = json.workspace;
+    if (activeImageId === null) {
+      activeImageId = keys(json.refs.images)[0];
     }
-    if (flipY) {
-      actions.push(flipImageY());
-    }
-    actions.push(setBrightness(brightness * 100));
-    actions.push(setContrast(contrast));
-    if (invertColors) {
-      actions.push(invertImageColors());
-    }
-    each(manualLandmarks, (value: GeoObject, symbol: string) => {
-      actions.push(addManualLandmark(symbol, value));
-    });
-    if (analysisId !== null) {
-      actions.push(setAnalysis(analysisId));
-    }
-  });
+    actions.push(setActiveImageId({ imageId: activeImageId }));
+    actions.push(setWorkspaceMode({ mode: mode || 'tracing' }));
+  }
+
   return actions;
 };
 

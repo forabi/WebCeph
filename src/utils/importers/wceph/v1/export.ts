@@ -12,56 +12,48 @@ import find from 'lodash/find';
 import zipObject from 'lodash/zipObject';
 import map from 'lodash/map';
 
-const getImageIds = (_: any) => ['image_1'];
+import {
+  getWorkspaceImageIds,
+} from 'store/reducers/workspace';
 
 import {
-  getActiveAnalysisId,
-  getManualLandmarks,
-} from 'store/reducers/workspace/analyses';
-
-import {
-  getImageData,
-  getImageName,
-  getImageBrightness,
-  getImageContrast,
-  isImageInverted,
-  isImageFlippedY,
-  isImageFlippedX,
+  getImageProps,
+  getActiveImageId,
+  getTracingDataByImageId,
 } from 'store/reducers/workspace/image';
+
+import {
+  getWorkspaceMode,
+} from 'store/reducers/workspace/mode';
+
+import {
+  getTreatmentStagesOrder,
+  getTreatmentStageDataById,
+} from 'store/reducers/workspace/treatment';
+
+import {
+  getSuperimpsotionMode,
+  getSuperimposedImages,
+} from 'store/reducers/workspace/superimposition';
 
 import { validateIndexJSON } from './validate';
 
-const createExport: WCeph.Exporter = async (state, options, onUpdate) => {
+const createExport: Exporter = async (state, options, onUpdate) => {
   const {
-    imagesToSave = getImageIds(state),
+    imagesToSave = getWorkspaceImageIds(state),
+    treatmentStagesToSave = getTreatmentStagesOrder(state),
     saveWorkspaceSettings = true,
   } = options;
   const zip = new JSZip();
   const imgFolder = zip.folder(IMAGES_FOLDER_NAME);
 
-  /** Mock functions
-   * @TODO: replace with real selectors when superimposition branch is merged
-   */
-  const getData = (_: string) => getImageData(state);
-  const getName = (_: string) => getImageName(state);
-  const getType = (_: string) => null;
-  const getBrightness = (_: string) => getImageBrightness(state);
-  const getContrast = (_: string) => getImageContrast(state);
-  const isFlippedX = (_: string) => isImageFlippedX(state);
-  const isFlippedY = (_: string) => isImageFlippedY(state);
-  const isInverted = (_: string) => isImageInverted(state);
-  const getScaleFactor = (_: any) => null;
-  const getTracingMode = (_: any) => 'assisted';
-  const getManualLandmarksByImageId = (_: string) => getManualLandmarks(state).present;
-  const getSkippedSteps = (_: string) => ({ });
-  const getWorkspaceMode = (_: any) => 'tracing';
-  const getActiveImageId = (_: any) => imagesToSave[0];
-  const getAnalysisIdForImage = (_: string) => getActiveAnalysisId(state);
+  const getProps = getImageProps(state);
+  const getTracingData = getTracingDataByImageId(state);
+  const getTreatmentData = getTreatmentStageDataById(state);
 
-  // @TODO: use selectors to get data;
   await Promise.all(
     map(imagesToSave, async (imageId) => {
-      const dataURI = getData(imageId);
+      const dataURI = getProps(imageId).data;
       if (dataURI !== null) {
         const response = await fetch(dataURI);
         const blob = await response.blob();
@@ -85,7 +77,7 @@ const createExport: WCeph.Exporter = async (state, options, onUpdate) => {
         imagesToSave,
         map(
           imagesToSave,
-          (id) => `${IMAGES_FOLDER_NAME}/${id}`
+          (id) => `${IMAGES_FOLDER_NAME}/${id}`,
         ),
       ), // @FIXME @TODO
     },
@@ -94,34 +86,27 @@ const createExport: WCeph.Exporter = async (state, options, onUpdate) => {
       map(
         imagesToSave,
         (id) => ({
-          name: getName(id),
-          type: getType(id),
-          flipX: isFlippedX(id),
-          flipY: isFlippedY(id),
-          invertColors: isInverted(id),
-          contrast: getContrast(id),
-          brightness: getBrightness(id) / 100, // @FIXME
+          ...getProps(id),
           tracing: {
-            mode: getTracingMode(id),
-            scaleFactor: getScaleFactor(id),
-            manualLandmarks: getManualLandmarksByImageId(id),
-            skippedSteps: getSkippedSteps(id),
+            scaleFactor: getProps(id).scaleFactor,
+            ...getTracingData(id),
           },
-          analysis: {
-            activeId: getAnalysisIdForImage(id),
-          },
-        }), // @FIXME @TODO
+        }),
       ),
     ),
     superimposition: {
-      mode: 'assisted',
-      imageIds: [],
+      mode: getSuperimpsotionMode(state),
+      imageIds: getSuperimposedImages(state),
     },
     treatmentStages: {
-      order: [],
-      data: {
-
-      },
+      order: getTreatmentStagesOrder(state),
+      data: zipObject(
+        treatmentStagesToSave,
+        map(
+          treatmentStagesToSave,
+          id => getTreatmentData(id),
+        ),
+      ),
     },
     workspace: {
       mode: (
@@ -132,9 +117,9 @@ const createExport: WCeph.Exporter = async (state, options, onUpdate) => {
         saveWorkspaceSettings ?
           find(
             imagesToSave,
-            getActiveImageId(state)
+            getActiveImageId(state) || undefined,
           ) || null
-        : undefined
+        : null
       ),
     },
   };
@@ -170,9 +155,10 @@ const createExport: WCeph.Exporter = async (state, options, onUpdate) => {
       onUpdate(percent);
     } : undefined,
   );
+
   // @TODO: better naming
-  const imageName = getName(imagesToSave[0]);
-  const imageId = imagesToSave[0];
+  const imageId = getActiveImageId(state)!;
+  const imageName = getProps(imageId).name;
   const basename = imageName !== null ? getBaseName(imageName) : imageId;
   return new File([blob], `${basename}.wceph`);
 };
