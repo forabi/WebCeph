@@ -10,12 +10,10 @@ import {
   OwnProps,
 } from './props';
 import { isAnyImageLoading } from 'store/reducers/workspace/image';
-import { shouldShowLens } from 'store/reducers/workspace/canvas';
 import {
   workspaceHasError,
   getWorkspaceErrorMessage,
   getWorkspaceImageIds,
-  doesWorkspaceHaveImages,
 } from 'store/reducers/workspace';
 import {
   getWorkspaceMode,
@@ -30,9 +28,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: StoreStat
   return {
     imageIds,
     mode: getWorkspaceMode(state),
-    hasImages: doesWorkspaceHaveImages(state),
     isLoading: isAnyImageLoading(state)(imageIds),
-    shouldShowLens: false, // shouldShowLens(state),
     hasError: workspaceHasError(state),
     errorMessage: getWorkspaceErrorMessage(state),
   };

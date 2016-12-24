@@ -22,8 +22,8 @@ import { pure } from 'recompose';
 
 const classes = require('./style.scss');
 
-const Content = pure(({ hasImages, mode, shouldShowLens, isLoading }: Props) => {
-  if (hasImages) {
+const Content = pure(({ imageIds, mode, shouldShowLens = true, isLoading }: Props) => {
+  if (imageIds.length > 0) {
     if (isLoading) {
       return (
         <div className={classes.loading_container}>
@@ -47,7 +47,7 @@ const Content = pure(({ hasImages, mode, shouldShowLens, isLoading }: Props) => 
           </div>
         </div>
       );
-    } else if (hasImages && mode === 'superimposition') {
+    } else if (mode === 'superimposition') {
       return (
         <span>Superimposition mode is still in the works :)</span>
       );
