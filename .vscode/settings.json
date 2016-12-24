@@ -13,10 +13,11 @@
     "build/": true,
     "src/assets": true
   },
-  "eslint.autoFixOnSave": true,
-  "tslint.autoFixOnSave": false,
   "editor.tabSize": 2,
   "editor.renderLineHighlight": "all",
   "editor.scrollBeyondLastLine": false,
-  "files.insertFinalNewline": true
+  "files.insertFinalNewline": true,
+  "tslint.autoFixOnSave": false,
+  "tslint.ignoreDefinitionFiles": false,
+  "tslint.exclude": "node_modules/**/*"
 }
