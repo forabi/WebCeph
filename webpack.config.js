@@ -129,12 +129,9 @@ const config = {
               transpileOnly: env.isDev,
               silent: env.isDev,
               compilerOptions: Object.assign(
-                {
-                  module: 'es2015',
-                },
                 env.isProd ? {
                   jsx: 'preserve',
-                } : { }
+                } : { },
               ),
             },
           },

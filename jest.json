@@ -1,0 +1,10 @@
+{
+  "bail": true,
+  "verbose": true,
+  "moduleDirectories": ["node_modules", "src"],
+  "testRegex": ".+\\.test\\.tsx?$",
+  "moduleFileExtensions": ["ts", "tsx", "js"],
+  "transform": {
+    "^.+\\.(ts|tsx)$": "<rootDir>/preprocessor.js"
+  }
+}
