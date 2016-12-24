@@ -13,6 +13,8 @@
     "noImplicitAny": true,
     "moduleResolution": "node",
     "jsx": "react",
+    "inlineSourceMap": true,
+    "inlineSources": true,
     "sourceMap": true,
     "module": "es2015",
     "isolatedModules": true,

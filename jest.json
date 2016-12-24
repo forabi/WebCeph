@@ -1,6 +1,6 @@
 {
   "bail": true,
-  "verbose": true,
+  "verbose": false,
   "moduleDirectories": ["node_modules", "src"],
   "testRegex": ".+\\.test\\.tsx?$",
   "moduleFileExtensions": ["ts", "tsx", "js"],

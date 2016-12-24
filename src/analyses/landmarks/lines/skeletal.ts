@@ -84,10 +84,11 @@ export const PtV: CephLandmark = {
   type: 'line',
   name: 'Pterygoid Vertical',
   symbol: 'PtV',
+  imageType: 'ceph_lateral',
   unit: 'mm',
   components: [Pt, FH],
-  map(Pt: GeoPoint, FH: GeoVector) {
-    return createPerpendicular(FH, Pt);
+  map(geoPt: GeoPoint, geoFH: GeoVector) {
+    return createPerpendicular(geoFH, geoPt);
   },
 };
 
