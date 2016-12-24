@@ -27,7 +27,7 @@ const importFile: Importer = async (fileToImport, options) => {
     loadWorkspaceSettings = true,
     loadSuperimpositionState = true,
   } = options;
-  let actions: Array<Action<any>> = [];
+  let actions: GenericAction[] = [];
   const zip = new JSZip();
   await zip.loadAsync(fileToImport);
   const json: WCephJSON = JSON.parse(

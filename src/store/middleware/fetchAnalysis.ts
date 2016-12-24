@@ -5,7 +5,7 @@ import { Store, Middleware } from 'redux';
 declare const require: __WebpackModuleApi.RequireFunction;
 
 const middleware: Middleware = (_: Store<StoreState>) => (next: GenericDispatch) =>
-  async (action: Action<any>) => {
+  async (action: GenericAction) => {
     if (!isActionOfType(action, 'SET_ANALYSIS_REQUESTED')) {
       return next(action);
     } else {

@@ -121,8 +121,8 @@ const loadStateMiddleware: Middleware = (_: Store<StoreState>) => (next: Generic
     }
   };
 
-const clearStateMiddleware: Middleware = (_: Store<any>) => (next: GenericDispatch) =>
-  async (action: Action<any>) => {
+const clearStateMiddleware: Middleware = (_: Store<StoreState>) => (next: GenericDispatch) =>
+  async (action: GenericAction) => {
     if (isActionOfType(action, 'CLEAR_PRESISTED_STATE_SUCCEEDED')) {
       try {
         await idb.clear();

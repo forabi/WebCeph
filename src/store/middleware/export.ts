@@ -8,7 +8,7 @@ import createExport from 'utils/importers/wceph/v1/export';
 import { isActionOfType } from 'utils/store';
 
 const middleware: Middleware = ({ getState }: Store<StoreState>) =>
-  (next: Dispatch<any>) => async (action: Action<any>) => {
+  (next: Dispatch<GenericAction>) => async (action: GenericAction) => {
     if (!isActionOfType(action, 'EXPORT_FILE_REQUESTED')) {
       return next(action);
     } else {

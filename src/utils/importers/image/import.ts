@@ -11,7 +11,7 @@ const importFile: Importer = async (fileToImport, options) => {
   const {
     ids = [uniqueId('imported_image_')],
   } = options;
-  const actions: Array<Action<any>> = [];
+  const actions: GenericAction[] = [];
   const dataURL = await readFileAsDataURL(fileToImport);
   const img = new Image();
   img.src = dataURL;

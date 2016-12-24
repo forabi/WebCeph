@@ -756,7 +756,7 @@ type ImportOptions = Partial<{
  * A WCeph File importer recieves the file to be imported along with any import options and
  * returns an array of actions to be dispatched in order.
  */
-type Importer = (file: File, options: ImportOptions) => Promise<Array<Action<any>>>;
+type Importer = (file: File, options: ImportOptions) => Promise<GenericAction[]>;
 
 type ExportOptions = Partial<{
   imagesToSave: string[];

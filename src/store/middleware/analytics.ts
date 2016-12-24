@@ -10,17 +10,18 @@ const loggable: ActionType[] = [
 const isLoggable = (type: string) => {
   return Boolean(find(
     loggable,
-    type
+    type,
   ));
 };
 
-const middleware: Middleware = (store: Store<any>) => (next: Dispatch<any>) => (action: Action<any>) => {
-  const { type, payload } = action;
-  if (isLoggable(type)) {
-    console.log('It works!', type, payload, store.getState());
-    // @TODO: fetch();
-  }
-  return next(action);
-};
+const middleware: Middleware = (store: Store<StoreState>) =>
+  (next: Dispatch<GenericAction>) => (action: GenericAction) => {
+    const { type, payload } = action;
+    if (isLoggable(type)) {
+      console.log('It works!', type, payload, store.getState());
+      // @TODO: fetch();
+    }
+    return next(action);
+  };
 
 export default middleware;

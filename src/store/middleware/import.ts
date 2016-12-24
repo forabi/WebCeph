@@ -29,8 +29,8 @@ const importers = [
   },
 ];
 
-const middleware: Middleware = ({ dispatch }: Store<any>) =>
-  (next: GenericDispatch) => async (action: Action<any>) => {
+const middleware: Middleware = ({ dispatch }: Store<StoreState>) =>
+  (next: GenericDispatch) => async (action: GenericAction) => {
     try {
       if (isActionOfType(action, 'LOAD_IMAGE_FROM_URL_REQUESTED')) {
         next(action);

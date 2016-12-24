@@ -10,12 +10,12 @@ import {
 
 import { isActionOfType } from 'utils/store';
 
-const middleware: Middleware = ({ getState, dispatch }: Store<any>) =>
+const middleware: Middleware = ({ getState, dispatch }: Store<StoreState>) =>
   (next: GenericDispatch) => async (action: GenericAction) => {
     if (!isActionOfType(action, 'LOAD_IMAGE_SUCCEEDED')) {
       return next(action);
     } else {
-      const { imageId, height, width } = action.payload;
+      const { id: imageId, height, width } = action.payload;
       try {
         const {
           width: canvasWidth,
