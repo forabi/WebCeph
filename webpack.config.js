@@ -171,9 +171,6 @@ const config = {
   },
 
   plugins: compact([
-    dev(new CarteBlanche({
-      componentRoot: path.join(__dirname, 'src/components'),
-    })),
     new webpack.LoaderOptionsPlugin({
       options: {
         minimize: true,
@@ -247,6 +244,9 @@ const config = {
       { from: 'src/assets/icons', to: 'icons' },
       { from: 'src/manifest.webmanifest', to: 'manifest.webmanifest' },
     ]),
+    // dev(new CarteBlanche({
+    //   componentRoot: path.join(__dirname, 'src/components'),
+    // })),
   ]),
 };
 
