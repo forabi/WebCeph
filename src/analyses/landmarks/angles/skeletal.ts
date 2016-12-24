@@ -1,4 +1,5 @@
-import { S, N, A, B, Ar, Pog, Go, Me, Gn, Xi, ANS } from 'analyses/landmarks/points/skeletal';
+import { S, N, A, B, Ar, Pog, Go, Me, Gn, ANS } from 'analyses/landmarks/points/skeletal';
+import { Xi } from 'analyses/landmarks/points/skeletal-custom';
 import {
   FH, NPog, dentalPlane,
   SN,
