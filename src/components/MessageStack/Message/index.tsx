@@ -22,8 +22,8 @@ type ButtonProps = {
 
 const defaultButtons: ButtonProps[] = [];
 
-export const DismissButton = (onDismiss: () => any): ButtonProps => ({
-  icon: <IconClose />,
+const createDismissProps = (onDismiss: () => any, color = 'white'): ButtonProps => ({
+  icon: <IconClose color={color} />,
   onClick: onDismiss,
 });
 
@@ -49,7 +49,7 @@ class Message extends React.PureComponent<MessageProps, { }> {
     if (typeof onDismiss === 'function') {
       allButtons = [
         ...buttons,
-        DismissButton(onDismiss),
+        createDismissProps(onDismiss),
       ];
     }
     return (
