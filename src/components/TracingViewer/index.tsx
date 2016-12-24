@@ -31,8 +31,7 @@ function isTouchEvent<T>(e: any): e is React.TouchEvent<T> {
  */
 export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, mouseY: number }> {
   public refs: {
-    canvas: React.ReactInstance,
-    image: React.ReactInstance,
+    canvas: React.ReactInstance;
   };
 
   state = { mouseX: 0, mouseY: 0 };
@@ -41,12 +40,10 @@ export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, 
     const {
       className,
       src,
-      canvasWidth, canvasHeight,
+      canvasSize: { width: canvasWidth, height: canvasHeight },
       imageHeight, imageWidth,
       contrast = 50, brightness = 50,
       scale,
-      getCursorForCanvas = noop,
-      getCursorForLandmark,
       isHighlightMode,
       getPropsForLandmark,
       landmarks,
@@ -56,7 +53,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, 
     return (
       <div style={{ height: minHeight, width: minWidth }}>
         <svg
-          ref="canvas"
+          ref={this.setRef}
           className={cx(classes.canvas, className)}
           viewBox={`0 0 ${minWidth} ${minHeight}`}
           onContextMenu={this.handleContextMenu}
@@ -74,7 +71,6 @@ export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, 
             <g filter="">
               <g filter="">
                 <image
-                  ref="image"
                   className={classes.image}
                   xlinkHref={src}
                   x={0}
@@ -108,6 +104,8 @@ export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, 
       </div>
     );
   }
+
+  private setRef = (node: React.ReactInstance) => this.refs.canvas = node;
 
   private convertMousePositionRelativeToOriginalImage = (
     e: React.MouseEvent<SVGElement> | React.TouchEvent<SVGElement>,
@@ -145,7 +143,7 @@ export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, 
     const { scale } = this.props;
     let transform = '';
     const translateX = 0; // (imageWidth * scale) - scaleOriginX;
-    const translateY = 0; //(scaleOriginY * scale) - scaleOriginY;
+    const translateY = 0; // (scaleOriginY * scale) - scaleOriginY;
     transform += ` translate(${-1 * translateX}, ${-1 * translateY}) `;
     transform += ` scale(${scale}, ${scale})`;
     if (this.props.isFlippedX) {
