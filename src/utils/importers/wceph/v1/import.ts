@@ -67,20 +67,14 @@ const importFile: Importer = async (fileToImport, options) => {
       const blob = await zip.file(path).async('blob');
       const name = json.data[id].name;
       const imageFile = new File([blob], name || id);
-      actions.push(
-        ...(
-          await importImage(
-            imageFile,
-            {
-              ids: [id],
-            },
-          )
-        ),
+      actions = [
+        ...actions,
+        ...(await importImage(imageFile, { ids: [id] })),
         setImageProps({
           id,
           ...json.data[id],
         }),
-      );
+      ];
     },
   ));
 
