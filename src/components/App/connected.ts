@@ -66,7 +66,7 @@ const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> =
       ...stateProps,
       ...dispatchProps,
       ...ownProps,
-      onComponentMount: async () => {
+      onComponentMount: () => {
         if (!isReady) {
           dispatch(restorePersistedState(void 0));
         }

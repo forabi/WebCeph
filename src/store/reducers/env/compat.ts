@@ -60,7 +60,7 @@ export const getMissingFeatures = createSelector(
       return values(results.missingFeatures);
     }
     return [];
-  })
+  }),
 );
 
 export const isBrowserChecked = createSelector(
