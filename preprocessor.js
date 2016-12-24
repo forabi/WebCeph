@@ -11,6 +11,7 @@ const tsConfig = requireJSON('./tsconfig.json');
 const babelConfig = requireJSON('./.babelrc');
 
 babelConfig.presets[0] = 'babel-preset-es2015';
+babelConfig.plugins = ['transform-runtime'];
 
 module.exports = {
   process(src, path) {

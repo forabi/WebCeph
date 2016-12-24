@@ -19,15 +19,15 @@ import isBoolean from 'lodash/isBoolean';
 import isNumber from 'lodash/isNumber';
 import isString from 'lodash/isString';
 
-function isV1GeometricalPoint(object: any) {
+export function isV1GeometricalPoint(object: any) {
   return has(object, 'x') && has(object, 'y');
 };
 
-function isV1GeometricalVector(object: any) {
+export function isV1GeometricalVector(object: any) {
   return has(object, 'x2') && has(object, 'y1') && has(object, 'x2') && has(object, 'y2');
 };
 
-function isV1GeometricalAngle(object: any) {
+export function isV1GeometricalAngle(object: any) {
   return has(object, 'vectors') && object.vectors.length === 2 && each(object.vectors, isV1GeometricalVector);
 };
 

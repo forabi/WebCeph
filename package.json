@@ -7,6 +7,7 @@
     "eslint": "eslint *.js src",
     "lint": "npm run tslint && npm run eslint",
     "test": "jest --config jest.json",
+    "test:watch": "jest --config jest.json --watch",
     "webpack:validate": "webpack-validator webpack.config.js",
     "dev": "NODE_ENV=development HOT=1 babel-node devServer.js",
     "prod": "NODE_ENV=production webpack --bail --progress",

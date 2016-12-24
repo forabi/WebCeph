@@ -31,7 +31,7 @@ const importFile: Importer = async (fileToImport, options) => {
   const zip = new JSZip();
   await zip.loadAsync(fileToImport);
   const json: WCephJSON = JSON.parse(
-    await zip.file(JSON_FILE_NAME).async('string')
+    await zip.file(JSON_FILE_NAME).async('string'),
   );
 
   const errors = validateIndexJSON(json);
@@ -62,17 +62,18 @@ const importFile: Importer = async (fileToImport, options) => {
 
   await Promise.all(map(
     json.refs.images,
-    async (path: string) => {
+    async (path: string, originalId: string) => {
       const id = uniqueId('imported_image_');
       const blob = await zip.file(path).async('blob');
-      const name = json.data[id].name;
-      const imageFile = new File([blob], name || id);
+      const name = json.data[originalId].name;
+      const imageFile = new File([blob], name || originalId);
+      const imageActions = await importImage(imageFile, { ids: [id] });
       actions = [
         ...actions,
-        ...(await importImage(imageFile, { ids: [id] })),
+        ...imageActions,
         setImageProps({
           id,
-          ...json.data[id],
+          ...json.data[originalId],
         }),
       ];
     },
