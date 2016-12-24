@@ -95,6 +95,7 @@
     "babel-register": "^6.16.3",
     "babili": "^0.0.9",
     "babili-webpack-plugin": "^0.0.7",
+    "carte-blanche": "^0.3.1",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.25.0",
     "eslint": "^3.7.1",
