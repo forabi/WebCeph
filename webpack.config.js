@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const webpack = require('webpack');
 const fail = require('webpack-fail-plugin');
 const path = require('path');
@@ -9,12 +10,12 @@ const AsyncModulePlugin = require('async-module-loader/plugin');
 const BabiliPlugin = require('babili-webpack-plugin');
 const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const CarteBlanche = require('carte-blanche');
 
 let Dashboard;
 let DashboardPlugin;
 let dashboard;
 
+/* eslint-disable global-require */
 if (env.isDev) {
   Dashboard = require('webpack-dashboard');
   DashboardPlugin = require('webpack-dashboard/plugin');
@@ -24,7 +25,6 @@ if (env.isDev) {
 
 const prod = p => (env.isProd ? p : null);
 const hot = p => (env.isHot ? p : null);
-const dev = p => (env.isDev ? p : null);
 
 const pkg = require('./package.json');
 
@@ -241,9 +241,6 @@ const config = {
       { from: 'src/assets/icons', to: 'icons' },
       { from: 'src/manifest.webmanifest', to: 'manifest.webmanifest' },
     ]),
-    // dev(new CarteBlanche({
-    //   componentRoot: path.join(__dirname, 'src/components'),
-    // })),
   ]),
 };
 

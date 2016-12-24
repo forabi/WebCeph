@@ -19,5 +19,8 @@
   "files.insertFinalNewline": true,
   "tslint.autoFixOnSave": false,
   "tslint.ignoreDefinitionFiles": false,
-  "tslint.exclude": "node_modules/**/*"
+  "tslint.exclude": [
+    "node_modules/**/*",
+    "**/*.js"
+  ]
 }
