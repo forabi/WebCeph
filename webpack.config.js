@@ -176,6 +176,8 @@ const config = {
     })),
     new webpack.LoaderOptionsPlugin({
       options: {
+        minimize: true,
+        debug: false,
         context: __dirname,
         postcss() {
           return {
@@ -238,10 +240,6 @@ const config = {
     }),
     new ServiceWorkerWebpackPlugin({
       entry: path.join(__dirname, 'src/service-worker.ts'),
-    }),
-    new webpack.LoaderOptionsPlugin({
-      minimize: true,
-      debug: false,
     }),
     prod(new webpack.optimize.OccurrenceOrderPlugin(true)),
     prod(new BabiliPlugin()),
