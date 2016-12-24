@@ -1,0 +1,31 @@
+.root {
+  display: flex;
+  flex-wrap: nowrap;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  max-width: 25vw;
+  min-width: 300px;
+  border-radius: 0.2rem;
+  padding: 0.7rem;
+  flex-shrink: 1;
+  align-items: center;
+  & > * {
+    display: inline;
+    margin: 0 0.5rem;
+    &:last-child {
+      margin-right: 0;
+    }
+    &:first-child {
+      margin-left: 0;
+    }
+  }
+}
+
+.text {
+  flex-grow: 1;
+  width: 100%;
+}
+
+.button_container {
+  display: inline-flex;
+}
