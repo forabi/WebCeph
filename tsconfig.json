@@ -25,7 +25,7 @@
     "strictNullChecks": true,
     "noUnusedLocals": true,
     "noImplicitThis": true,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
@@ -35,7 +35,7 @@
       ]
     }
   },
-  "compileOnSave": true,
+  "compileOnSave": false,
   "exclude": [
       "node_modules",
       "build/**"

@@ -46,13 +46,13 @@ type CalculateLandmark<Calculated extends (number | undefined), MappedComponent,
   /** The calculated values of this landmark's components
    * in the same order they were defined
    */
-  ...calculated: Array<Calculated | undefined>
+  ...calculated: Array<Calculated | undefined>,
 ) => (
   /**
    * The geometrical representation of this landmark's components
    * in the same order they were defined.
    */
-  ...mapped: Array<MappedComponent | undefined>
+  ...mapped: Array<MappedComponent | undefined>,
 ) => (
   /**
    * The geometrical representation of this landmark itself.
@@ -65,17 +65,17 @@ type MapLandmark<Mapped, Result> = (
   /** The geometrical representation of this landmark's components
    * in the same order they were defined
    */
-  ...mapped: Array<Mapped | undefined>
+  ...mapped: Array<Mapped | undefined>,
 ) => Result;
 
 type InterpretLandmark<C extends Category> = (
-  value: number, min: number, max: number, mean: number
-) => LandmarkInterpretation<C>[];
+  value: number, min: number, max: number, mean: number,
+) => Array<LandmarkInterpretation<C>>;
 
 type InterpretAnalysis<C extends Category> = (
   values: Record<string, number | undefined>,
-  objects: Record<string, GeoObject | undefined>
-) => CategorizedAnalysisResult<C>[];
+  objects: Record<string, GeoObject | undefined>,
+) => Array<CategorizedAnalysisResult<C>>;
 
 /**
  * A generic interface that represents any cephalometric landmark, including
@@ -162,15 +162,7 @@ type CategorizedAnalysisResult<T extends Category> = {
   category: T;
   indication: Indication<T>;
   severity?: Severity;
-  relevantComponents: ReadonlyArray<
-    Pick<
-      LandmarkInterpretation<T>, (
-        'mean' | 'max' | 'min' | 'value'
-      )
-    > & {
-      symbol: string;
-    }
-  >;
+  relevantComponents: Array<Pick<LandmarkInterpretation<T>, 'mean' | 'max' | 'min' | 'value'> & { symbol: string }>;
 };
 
 interface Analyses {
@@ -192,7 +184,7 @@ interface Analyses {
   panoramic: (
     'panoramic_analysis'
   );
-};
+}
 
 type ImageType = keyof Analyses;
 type AnalysisId<T extends ImageType> = Analyses[T];
@@ -243,14 +235,14 @@ type Transformation = Rotation | Scale;
 interface GeoPoint {
   x: number;
   y: number;
-};
+}
 
 /**
  * Describes a geometrical angle in a 2D-plane
  */
 interface GeoAngle {
   vectors: [GeoVector, GeoVector];
-};
+}
 
 /**
  * Describes a geometrical line in a 2D-plane
@@ -260,7 +252,7 @@ interface GeoVector {
   y1: number;
   x2: number;
   y2: number;
-};
+}
 
 type SingleGeoObject = GeoPoint | GeoVector | GeoAngle;
 type CompositeGeoObject = SingleGeoObject[];
@@ -364,7 +356,7 @@ interface StoreState {
   };
   'workspace.analyses.status': Partial<{
     [T in ImageType]: {
-      [analysisId: AnalysisId<T>]: {
+      [analysisId: string]: {
         isLoading: true;
         error: null;
       } | {
@@ -392,7 +384,7 @@ interface StoreState {
   'workspace.workers': {
     [workerId: string]: WorkerDetails;
   };
-};
+}
 
 type ToolId = (
   'ADD_POINT' |
@@ -521,7 +513,7 @@ interface Events {
   ADD_UNKOWN_MANUAL_LANDMARK_REQUESTED: {
     imageId: string;
     value: GeoObject;
-  }
+  };
   REMOVE_MANUAL_LANDMARK_REQUESTED: {
     imageId: string;
     symbol: string;
@@ -544,7 +536,7 @@ interface Events {
   };
   INVERT_IMAGE_REQUESTED: {
     imageId: string;
-  },
+  };
   RESET_WORKSPACE_REQUESTED: void;
   IGNORE_WORKSPACE_ERROR_REQUESTED: void;
   MOUSE_POSITION_CHANGED: {
@@ -636,7 +628,7 @@ interface Events {
   CLEAR_PRESISTED_STATE_REQUESTED: void;
   CLEAR_PRESISTED_STATE_SUCCEEDED: void;
   CLEAR_PERSISTED_STATE_FAILED: GenericError;
-};
+}
 
 type GenericDispatch = (action: GenericAction) => any;
 
@@ -698,13 +690,13 @@ interface EditorTool {
    * Triggered when the mouse scrolls over the canvas.
    * Useful for implementing zoom functionality.
    */
-  onCanvasMouseWheel?(dispatch: GenericDispatch, x: number, y: number, delta: number);
+  onCanvasMouseWheel?(dispatch: GenericDispatch, x: number, y: number, delta: number): void;
 
   /**
    * Triggered when the mouse moves over the canvas.
    * Useful for implementing lens functionality.
    */
-  onCanvasMouseMove?(dispatch: GenericDispatch, x: number, y: number);
+  onCanvasMouseMove?(dispatch: GenericDispatch, x: number, y: number): void;
 
   /**
    * Triggered when the mouse enters a landmark.
