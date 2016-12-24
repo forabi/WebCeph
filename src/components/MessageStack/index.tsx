@@ -32,6 +32,9 @@ class MessageStack extends React.PureComponent<Props, State> {
     return (
       <div className={cx(classes.root, className)}>
         {map(messages, (message) => {
+          if (this.state.dismissed[message.id]) {
+            return null;
+          }
           return (
             <Message
               key={message.id}
