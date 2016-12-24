@@ -5,7 +5,7 @@ export function createAction<T extends ActionType>(type: T, payload: Events[T]):
   };
 };
 
-export function createActionCreator<T extends ActionType>(type: T) {
+export function createActionCreator<T extends ActionType>(type: T): ActionCreator<T> {
   return (payload: Events[T]) => createAction<T>(type, payload);
 };
 

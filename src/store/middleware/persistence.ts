@@ -27,10 +27,10 @@ const isPersistenceNeededForAction = ({ type }: GenericAction): boolean => {
 };
 
 const PERSISTABLE_KEYS: StoreKey[] = [
-  'app.status.isCached',
+  'app.status.isInstalled',
   'env.compat.isIgnored',
   'env.compat.results',
-  'workspace.analysis.lastUsedId',
+  'workspace.analyses.lastUsedId',
 ];
 
 const isStoreEntryPersistable = (key: string): boolean => {

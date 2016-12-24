@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-
 import ReduxApp, { store } from './ReduxApp';
 import { Store } from 'redux';
-import { setAppUpdateStatus } from 'actions/env';
+import { setAppUpdateStatus, setAppInstallStatus } from 'actions/env';
+import { isAppInitialized, isAppInstalled } from 'store/reducers/app';
 
 declare var System: any;
 declare var module: __WebpackModuleApi.Module;
@@ -13,34 +13,49 @@ declare var window: Window & {
 };
 
 if (!__DEBUG__ && location.protocol !== 'https:') {
- location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
+  // Auto redirect to HTTPS version
+  location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
 }
 
 if (window.ResizeObserver === undefined) {
   window.ResizeObserver = require('resize-observer-polyfill').default;
 }
 
-if (!__DEBUG__ && 'serviceWorker' in navigator) {
+const installOrUpdateApp = () => {
+  const state = store.getState();
   const runtime = require('serviceworker-webpack-plugin/lib/runtime');
   runtime.register().then((reg: ServiceWorkerRegistration) => {
     reg.onupdatefound = () => {
       const newWorker = reg.installing;
+      let setStatus = isAppInstalled(state) ? setAppUpdateStatus : setAppInstallStatus;
       if (newWorker !== undefined) {
         switch (newWorker.state) {
           case 'installing':
             store.dispatch(
-              setAppUpdateStatus({ complete: false }),
+              setStatus({ complete: false }),
             );
             break;
           case 'installed':
             store.dispatch(
-              setAppUpdateStatus({ complete: true }),
+              setStatus({ complete: true }),
             );
           default:
             break;
         }
       }
     };
+  });
+};
+
+if (!__DEBUG__ && 'serviceWorker' in navigator) {
+  let unsubscribe = store.subscribe(() => {
+    const state = store.getState();
+    // Wait for persisted state to load so that we can know whether we are
+    // updating the app or installing for the first time.
+    if (isAppInitialized(state)) {
+      unsubscribe();
+      installOrUpdateApp();
+    }
   });
 }
 

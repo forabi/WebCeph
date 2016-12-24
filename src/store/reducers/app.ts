@@ -1,9 +1,11 @@
 import { handleActions } from 'utils/store';
+import { createSelector } from 'reselect';
 
 const KEY_IS_INITIALIZED: StoreKey = 'app.init.isInitialized';
 const KEY_IS_UPDATING: StoreKey = 'app.status.isUpdating';
-const KEY_IS_CACHING: StoreKey = 'app.status.isCaching';
-const KEY_IS_CACHED: StoreKey = 'app.status.isCached';
+const KEY_IS_INSTALLING: StoreKey = 'app.status.isInstalling';
+const KEY_IS_INSTALLED: StoreKey = 'app.status.isInstalled';
+const KEY_IS_UPDATED: StoreKey = 'app.status.isUpdated';
 const PERSISTENCE_IS_SAVING: StoreKey = 'app.persistence.isSaving';
 const PERSISTENCE_IS_LOADING: StoreKey = 'app.persistence.isLoading';
 const PERSISTENCE_IS_UPGRADING: StoreKey = 'app.persistence.isUpgrading';
@@ -16,19 +18,23 @@ const reducers: Partial<ReducerMap> = {
     LOAD_PERSISTED_STATE_FAILED: (_, __) => true,
   }, false),
   [KEY_IS_UPDATING]: handleActions<typeof KEY_IS_UPDATING>({
-    // @TODO: handle updates differently
-    APP_CACHING_STATUS_CHANGED: (_, { payload }) => {
+    APP_UPDATE_STATUS_CHANGED: (_, { payload }) => {
       return payload.complete !== true && payload.error !== null;
     },
   }, false),
-  [KEY_IS_CACHING]: handleActions<typeof KEY_IS_CACHING>({
-    APP_CACHING_STATUS_CHANGED: (_, { payload }) => {
+  [KEY_IS_INSTALLING]: handleActions<typeof KEY_IS_UPDATING>({
+    APP_INSTALL_STATUS_CHANGED: (_, { payload }) => {
       return payload.complete !== true && payload.error !== null;
     },
   }, false),
-  [KEY_IS_CACHED]: handleActions<typeof KEY_IS_CACHED>({
-    APP_CACHING_STATUS_CHANGED: (_, { payload }) => {
-      return payload.complete === true && payload.error !== null;
+  [KEY_IS_INSTALLED]: handleActions<typeof KEY_IS_INSTALLED>({
+    APP_INSTALL_STATUS_CHANGED: (_, { payload }) => {
+      return payload.complete === true && payload.error === null;
+    },
+  }, false),
+  [KEY_IS_UPDATED]: handleActions<typeof KEY_IS_UPDATING>({
+    APP_UPDATE_STATUS_CHANGED: (_, { payload }) => {
+      return payload.complete === true && payload.error === null;
     },
   }, false),
   [PERSISTENCE_IS_SAVING]: handleActions<typeof PERSISTENCE_IS_SAVING>({
@@ -59,3 +65,13 @@ const reducers: Partial<ReducerMap> = {
 export default reducers;
 
 export const isAppInitialized = (state: StoreState) => state[KEY_IS_INITIALIZED];
+export const isAppUpdating = (state: StoreState) => state[KEY_IS_UPDATING];
+export const isAppInstalling = (state: StoreState) => state[KEY_IS_INSTALLING];
+export const isAppCaching = createSelector(
+  isAppInstalling,
+  isAppUpdating,
+  (isCaching, isUpdating) => isCaching || isUpdating,
+);
+
+export const isAppInstalled = (state: StoreState) => state[KEY_IS_INSTALLED];
+export const isAppUpdated = (state: StoreState) => state[KEY_IS_UPDATED];

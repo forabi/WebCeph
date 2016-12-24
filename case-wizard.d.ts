@@ -302,8 +302,9 @@ interface UndoableState<T> {
 interface StoreState {
   'app.init.isInitialized': boolean;
   'app.status.isUpdating': boolean;
-  'app.status.isCaching': boolean;
-  'app.status.isCached': boolean;
+  'app.status.isInstalling': boolean;
+  'app.status.isInstalled': boolean;
+  'app.status.isUpdated': boolean;
   'app.persistence.isSupported': boolean;
   'app.persistence.isSaving': boolean;
   'app.persistence.isLoading': boolean;
@@ -437,21 +438,24 @@ type CephImageTracingData = {
   };
 };
 
+type ProgressStatus = Partial<{
+  /**
+   * A null value indicates unknown progress,
+   * undefined indicates no change in value
+   */
+  progress: number | null;
+  complete: boolean;
+  error: GenericError;
+}>;
+
 interface Events {
   CONNECTION_STATUS_CHANGED: Partial<{
     isOffline: boolean;
     isSlow: boolean;
     isMetered: boolean;
   }>;
-  APP_CACHING_STATUS_CHANGED: Partial<{
-    /**
-     * A null value indicates unknown progress,
-     * undefined indicates no change in value
-     */
-    progress: number | null;
-    complete: boolean;
-    error: GenericError;
-  }>;
+  APP_INSTALL_STATUS_CHANGED: ProgressStatus;
+  APP_UPDATE_STATUS_CHANGED: ProgressStatus;
   WORKER_CREATED: WorkerDetails;
   WORKER_TERMINATED: string;
   WORKER_STATUS_CHANGED: Pick<WorkerDetails, 'id'> & Pick<WorkerDetails, 'isBusy' | 'error'>;
@@ -638,6 +642,7 @@ type GenericDispatch = (action: GenericAction) => any;
 
 type ActionType = keyof Events;
 type StoreKey = keyof StoreState;
+type ActionCreator<T extends ActionType> = (payload: Events[T]) => Action<T>;
 
 type GenericAction = {
   type: ActionType;
