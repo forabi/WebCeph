@@ -1,5 +1,5 @@
 {
-  "bail": true,
+  "bail": false,
   "verbose": false,
   "moduleDirectories": ["node_modules", "src"],
   "testRegex": ".+\\.test\\.tsx?$",
