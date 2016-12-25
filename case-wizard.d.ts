@@ -165,6 +165,10 @@ type CategorizedAnalysisResult<T extends Category> = {
   relevantComponents: Array<Pick<LandmarkInterpretation<T>, 'mean' | 'max' | 'min' | 'value'> & { symbol: string }>;
 };
 
+type IndexedAnalysisInterpretation = Partial<{
+  [C in Category]: CategorizedAnalysisResult<C>;
+}>;
+
 interface Analyses {
   ceph_lateral: (
     'downs' | 'ricketts_lateral' |

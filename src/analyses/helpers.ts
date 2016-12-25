@@ -9,6 +9,7 @@ import isPlainObject from 'lodash/isPlainObject';
 import countBy from 'lodash/countBy';
 import maxBy from 'lodash/maxBy';
 import groupBy from 'lodash/groupBy';
+import keyBy from 'lodash/keyBy';
 
 import {
   createVectorFromPoints,
@@ -472,4 +473,36 @@ export function resolveSeverity<C extends Category>(
   const pairs = map(counts, (value, severity: Severity) => ({ value, severity }));
   const max = maxBy(pairs, ({ value }) => value);
   return max.severity;
+};
+
+export const indexAnalysisResults = <C extends Category>(
+  results: Array<CategorizedAnalysisResult<C>>
+) => {
+  return keyBy(results, 'category') as IndexedAnalysisInterpretation;
+};
+
+/** 
+ * Given a **topoligcally sorted** list of cephalometric landmarks
+ * and a record of manually set landmarks, this function tries 
+ * to calculate and map each given landmark taking into account
+ * the previous steps.
+ */
+export const mapAndCalculateSteps = (
+  steps: CephLandmark[],
+  manualLandmarks: Record<string, GeoObject>,
+) => {
+  const objects: Record<string, GeoObject | undefined> = { ...manualLandmarks };
+  const values: Record<string, number | undefined> = { };
+  for (const step of steps) {
+    const mapped = map(step.components, c => objects[c.symbol]);
+    const calculated = map(step.components, c => values[c.symbol]);
+    if (typeof step.map === 'function') {
+      const mappedComponent = step.map(...mapped);
+      objects[step.symbol] = mappedComponent;
+      if (typeof step.calculate === 'function') {
+        values[step.symbol] = step.calculate(...calculated)(...mapped)(mappedComponent);
+      }
+    }
+  }
+  return { values, objects };
 };
