@@ -1,14 +1,15 @@
+import expect from 'expect';
+
 import exportFile from './export';
 import importFile from './import';
-import createConfiguredStore from 'store';
 
-test('WCeph Exporter', async () => {
-  const store = createConfiguredStore();
-  const state: StoreState = {
-    ...store.getState(),
+it('WCeph Exporter', async () => {
+  const state: Partial<StoreState> = {
+    'workspace.mode': 'tracing',
+    'workspace.images.activeImageId': 'img_1',
     'workspace.images.props': {
       img_1: {
-        name: null,
+        name: 'Patient 1',
         type: 'ceph_lateral',
         flipX: true,
         flipY: false,
@@ -39,7 +40,8 @@ test('WCeph Exporter', async () => {
       },
     },
   };
-  const file = await exportFile(state, { });
-  expect(file).toBeInstanceOf(File);
-  expect(importFile(file, { })).not.toThrow();
+  const file = await exportFile(state as StoreState, { });
+  expect(file).toBeA(File);
+  expect(file.name).toBe('Patient 1.wceph');
+  // expect(importFile(file, { })).toNotThrow();
 });

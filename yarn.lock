@@ -14,7 +14,7 @@
   version "0.0.31"
   resolved "https://registry.yarnpkg.com/@types/classnames/-/classnames-0.0.31.tgz#05372b801af9e33fd112e93b6df7632aa56f0637"
 
-"@types/expect@^1.13.30":
+"@types/expect@^1.13.31":
   version "1.13.31"
   resolved "https://registry.yarnpkg.com/@types/expect/-/expect-1.13.31.tgz#3290a74f6ee1dce8a77923fbd1f17d9aa25f5246"
 
@@ -53,6 +53,10 @@
 "@types/mime@*":
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-0.0.29.tgz#fbcfd330573b912ef59eeee14602bface630754b"
+
+"@types/mocha@^2.2.34":
+  version "2.2.34"
+  resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-2.2.34.tgz#398e8a265f1db1e5f8c6e520064a74cbef84cbdc"
 
 "@types/node@*", "@types/node@^6.0.45":
   version "6.0.51"
@@ -4446,11 +4450,7 @@ lowercase-keys@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/lowercase-keys/-/lowercase-keys-1.0.0.tgz#4e3366b39e7f5457e35f1324bdf6f88d0bfc7306"
 
-lru-cache@2:
-  version "2.7.3"
-  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-2.7.3.tgz#6d4524e8b955f95d4f5b58851ce21dd72fb4e952"
-
-lru-cache@2.2.x:
+lru-cache@2, lru-cache@2.2.x:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-2.2.4.tgz#6c658619becf14031d0d0b594b16042ce4dc063d"
 

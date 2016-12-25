@@ -16,7 +16,7 @@ let DashboardPlugin;
 let dashboard;
 
 /* eslint-disable global-require */
-if (env.isDev) {
+if (env.isDev && !env.isTest) {
   Dashboard = require('webpack-dashboard');
   DashboardPlugin = require('webpack-dashboard/plugin');
 
@@ -102,6 +102,10 @@ const config = {
     ],
   },
 
+  performance: {
+    hints: env.isProd,
+  },
+
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: env.isProd ? '[name]_[chunkhash].js' : '[name]_[hash].js',
@@ -127,7 +131,7 @@ const config = {
             loader: 'ts-loader',
             query: {
               transpileOnly: env.isDev,
-              silent: env.isDev,
+              silent: false,
               compilerOptions: Object.assign(
                 env.isProd ? {
                   jsx: 'preserve',
@@ -141,7 +145,8 @@ const config = {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         use: ['babel-loader'],
-      }, {
+      },
+      {
         test: /\.css$/,
         use: localCSSLoaders,
       },

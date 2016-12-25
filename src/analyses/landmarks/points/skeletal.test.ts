@@ -1,5 +1,7 @@
+import expect from 'expect';
+
 import { N } from './skeletal';
 
-test('Skeletal points', () => {
+it('Skeletal points', () => {
   expect(N.name).toBe('Nasion');
 });

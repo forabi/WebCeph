@@ -1,9 +1,8 @@
-const webpackConfig = require('./webpack.config');
-
-webpackConfig.devtool = 'inline-source-map';
-webpackConfig.entry = { };
-
 module.exports = (config) => {
+  /* eslint-disable global-require */
+  const webpackConfig = require('./webpack.config');
+  webpackConfig.devtool = 'inline-source-map';
+  webpackConfig.entry = { };
   config.set({
     frameworks: ['mocha'],
     files: [

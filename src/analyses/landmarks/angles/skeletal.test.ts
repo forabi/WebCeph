@@ -1,6 +1,8 @@
+import expect from 'expect';
+
 import { ANB } from './skeletal';
 
-test('ANB interpretation', () => {
+it('ANB interpretation', () => {
   const [class1] = ANB.interpret!(3, 0, 4, 2);
   expect(class1.category).toBe('skeletalPattern');
   expect(class1.indication).toBe('class1');

@@ -4,11 +4,13 @@ import {
   JSON_FILE_NAME,
 } from './format';
 
+import uniqueId from 'lodash/uniqueId';
+
 import JSZip from 'jszip';
 
 import { getBaseName } from 'utils/file';
 
-import find from 'lodash/find';
+import findIndex from 'lodash/findIndex';
 import zipObject from 'lodash/zipObject';
 import map from 'lodash/map';
 
@@ -66,6 +68,10 @@ const createExport: Exporter = async (state, options, onUpdate) => {
     }),
   );
 
+  const activeImageId = getActiveImageId(state);
+  const hasActiveImage = activeImageId !== null && findIndex(
+    imagesToSave, id => id === activeImageId) !== -1;
+
   const json: WCephJSON = {
     version: 1,
     debug: __DEBUG__ || undefined,
@@ -115,10 +121,7 @@ const createExport: Exporter = async (state, options, onUpdate) => {
       ),
       activeImageId: (
         saveWorkspaceSettings ?
-          find(
-            imagesToSave,
-            getActiveImageId(state) || undefined,
-          ) || null
+          hasActiveImage ? activeImageId : null
         : null
       ),
     },
@@ -156,10 +159,14 @@ const createExport: Exporter = async (state, options, onUpdate) => {
     } : undefined,
   );
 
-  // @TODO: better naming
-  const imageId = getActiveImageId(state)!;
-  const imageName = getProps(imageId).name;
-  const basename = imageName !== null ? getBaseName(imageName) : imageId;
+  let props = activeImageId !== null ? getProps(activeImageId) : null;
+  let imageName;
+  if (hasActiveImage && props && props.name !== null) {
+    imageName = props.name;
+  } else {
+    imageName = uniqueId('Exported tracing ');
+  }
+  const basename = imageName !== null ? getBaseName(imageName) : activeImageId;
   return new File([blob], `${basename}.wceph`);
 };
 
