@@ -245,9 +245,15 @@ export function isCephAngle(object: any): object is CephAngle {
  * Returns the GeoObject the landmark maps to.
  * Returns undefined if the landmark is not mappable.
  */
-export function tryMap(landmark: CephLandmark): GeoObject | undefined {
-  if (typeof landmark.map === 'function') {
-    return landmark.map(...map(landmark.components, tryMap));
+export function tryMap(
+  landmark: CephLandmark,
+  manualObjects: Record<string, GeoObject | undefined>,
+): GeoObject | undefined {
+  const manual = manualObjects[landmark.symbol];
+  if (typeof manual !== 'undefined') {
+    return manual;
+  } else if (typeof landmark.map === 'function') {
+    return landmark.map(...map(landmark.components, c => tryMap(c, manualObjects)));
   }
   return undefined;
 };
@@ -257,17 +263,24 @@ export function tryMap(landmark: CephLandmark): GeoObject | undefined {
  * Returns the calculated value as specified in the landmark.calculate method.
  * Returns undefined if the landmark cannot be calculated.
  */
-export function tryCalculate(landmark: CephLandmark): number | undefined {
-  if (typeof landmark.calculate === 'function') {
+export function tryCalculate(
+  landmark: CephLandmark,
+  manualObjects: Record<string, GeoObject | undefined>,
+  values: Record<string, number | undefined>,
+): number | undefined {
+  const manualValue = values[landmark.symbol];
+  if (typeof manualValue !== 'undefined') {
+    return manualValue;
+  } else if (typeof landmark.calculate === 'function') {
     return landmark.calculate(
       // The calculated values of this landmark's components
-      ...map(landmark.components, tryCalculate),
+      ...map(landmark.components, c => tryCalculate(c, manualObjects, values)),
     )(
       // The geometrical representation of this landmark's components
-      ...map(landmark.components, tryMap),
+      ...map(landmark.components, c => tryMap(c, manualObjects)),
     )(
       // The geometrical representation of this landmark
-      tryMap(landmark),
+      tryMap(landmark, manualObjects),
     );
   }
   return undefined;
