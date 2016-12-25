@@ -86,13 +86,13 @@ export const getSortedLandmarksToDisplay = createSelector(
 );
 
 export const hasUnsavedWork = createSelector(
-  getManualLandmarksHistory,
+  getActiveManualLandmarks,
   ({ present, past }) => !isEmpty(present) || !isEmpty(past),
 );
 
 export const canUndo = hasUnsavedWork;
 export const canRedo = createSelector(
-  getManualLandmarksHistory,
+  getActiveManualLandmarks,
   ({ future }) => !isEmpty(future),
 );
 

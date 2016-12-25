@@ -1,6 +1,8 @@
+import expect from 'expect';
+
 import { point, isCephPoint } from './helpers';
 
-test('Create point with point()', () => {
+it('Create point with point()', () => {
   const N = point('N', 'Nasion');
   expect(N.symbol).toBe('N');
   expect(N.name).toBe('Nasion');
