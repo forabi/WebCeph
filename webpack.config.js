@@ -64,7 +64,7 @@ const config = {
     hot: env.isHot,
   } : undefined,
 
-  devtool: env.isTest ? 'inline-source-map' : env.isDev ? 'eval' : false,
+  devtool: env.isDev ? 'eval' : 'inline-source-map',
 
   entry: {
     bundle: compact([
@@ -102,9 +102,7 @@ const config = {
     ],
   },
 
-  performance: {
-    hints: env.isProd,
-  },
+  performance: env.isDev ? false : undefined,
 
   output: {
     path: path.resolve(__dirname, 'build'),
@@ -130,7 +128,7 @@ const config = {
           {
             loader: 'ts-loader',
             query: {
-              transpileOnly: env.isDev,
+              transpileOnly: true,
               silent: true,
               compilerOptions: Object.assign(
                 env.isProd ? {
