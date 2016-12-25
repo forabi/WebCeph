@@ -3,45 +3,47 @@ import expect from 'expect';
 import basic from './basic';
 import { mapAndCalculateSteps, getStepsForAnalysis, indexAnalysisResults } from 'analyses/helpers';
 
+import each from 'lodash/each';
+
 const class2 = {
   N: {
-    x: 1377.9928674824785,
-    y: 473.3672727272727,
+    x: 1377,
+    y: 473,
   },
   S: {
-    x: 623.9564737597547,
-    y: 661.8763636363636,
+    x: 623,
+    y: 661,
   },
   A: {
-    x: 1365.4255942537663,
-    y: 1147.810909090909,
+    x: 1365,
+    y: 1147,
   },
   B: {
-    x: 1231.374679814171,
-    y: 1654.690909090909,
+    x: 1231,
+    y: 1654,
   },
 };
 
 const verticalGrowth = {
   N: {
-    x: 1377.9928674824785,
-    y: 473.3672727272727,
+    x: 1377,
+    y: 473,
   },
   S: {
-    x: 623.9564737597547,
-    y: 661.8763636363636,
+    x: 623,
+    y: 661,
   },
   Ar: {
-    x: 494.0946503963966,
-    y: 955.1127272727272,
+    x: 494,
+    y: 955,
   },
   Go: {
-    x: 569.498289768669,
-    y: 1403.3454545454545,
+    x: 569,
+    y: 1403,
   },
   Me: {
-    x: 1130.8364939844746,
-    y: 1855.7672727272727,
+    x: 1130,
+    y: 1855,
   },
 };
 
@@ -91,25 +93,52 @@ describe('Basic Analysis', () => {
     },
   };
 
-  describe('should be interpreted correctly', () => {
-    const steps = getStepsForAnalysis(basic, false);
-    const { values, objects } = mapAndCalculateSteps(steps, manualLandmarks);
-    describe('every value is mapped or calculated', () => {
+  const steps = getStepsForAnalysis(basic, false);
+  const { values, objects } = mapAndCalculateSteps(steps, manualLandmarks);
+
+  it('should be calculated correctly', () => {
+    describe('every component is mapped or calculated', () => {
       for (const { symbol } of steps) {
         it (`${symbol} is mapped or calculated`, () => {
           expect(objects[symbol] || values[symbol]).toExist();
         });
       }
     });
+
+    describe('calculated values are correct', () => {
+      const expected = {
+        'ANB': 6,
+        'SNA': 74,
+        'SNB': 68,
+        'Björk': 412,
+        'MM': 43,
+        'Y-FH Angle': 63,
+        'NAPog': 11,
+        'FMPA': 38,
+      };
+
+      each(expected, (value, symbol: string) => {
+        it(`${symbol} value is correct`, () => {
+          expect(value).toEqual(Math.floor(values[symbol]!));
+        });
+      });
+    });
+  });
+
+  describe('should be interpreted correctly', () => {
     it('every indication is correct', () => {
       const results = basic.interpret(values, objects);
       const grouped = indexAnalysisResults(results);
       expect(grouped.skeletalPattern).toExist();
       expect(grouped.skeletalPattern!.indication).toEqual('class2');
+      expect(grouped.skeletalPattern!.relevantComponents[0].symbol).toBe('ANB');
       expect(grouped.growthPattern).toExist();
       expect(grouped.growthPattern!.indication).toEqual('vertical');
+      expect(grouped.growthPattern!.relevantComponents[0].symbol).toBe('Y-FH Angle');
+      expect(grouped.growthPattern!.relevantComponents[1].symbol).toBe('Björk');
       expect(grouped.mandibularRotation).toExist();
       expect(grouped.mandibularRotation!.indication).toEqual('clockwise');
+      expect(grouped.mandibularRotation!.relevantComponents[0].symbol).toBe('FMPA');
     });
   });
 });
