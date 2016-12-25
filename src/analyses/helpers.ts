@@ -10,6 +10,8 @@ import countBy from 'lodash/countBy';
 import maxBy from 'lodash/maxBy';
 import groupBy from 'lodash/groupBy';
 import keyBy from 'lodash/keyBy';
+import some from 'lodash/some';
+import isUndefined from 'lodash/isUndefined';
 
 import {
   createVectorFromPoints,
@@ -191,7 +193,8 @@ export function areEqualSymbols(l1: CephLandmark, l2: CephLandmark) {
 };
 
 export function getStepsForLandmarks(
-  landmarks: CephLandmark[], removeEqualSteps = true,
+  landmarks: CephLandmark[],
+  removeEqualSteps = true,
 ): CephLandmark[] {
   return uniqWith(
     flatten(map(
@@ -205,12 +208,12 @@ export function getStepsForLandmarks(
           return [];
         }
         return [
-          ...getStepsForLandmarks(landmark.components),
+          ...getStepsForLandmarks(landmark.components, removeEqualSteps),
           landmark,
         ];
       },
     )),
-    removeEqualSteps ? areEqualSteps : areEqualSymbols,
+    removeEqualSteps === true ? areEqualSteps : areEqualSymbols,
   );
 };
 
@@ -495,12 +498,23 @@ export const mapAndCalculateSteps = (
   const values: Record<string, number | undefined> = { };
   for (const step of steps) {
     const mapped = map(step.components, c => objects[c.symbol]);
-    const calculated = map(step.components, c => values[c.symbol]);
-    if (typeof step.map === 'function') {
-      const mappedComponent = step.map(...mapped);
-      objects[step.symbol] = mappedComponent;
+    if (some(mapped, isUndefined)) {
+      if (__DEBUG__) {
+        const unmapped = step.components
+          .map(({ symbol }) => symbol)
+          .filter(symbol => isUndefined(objects[symbol]));
+        console.warn(
+          `Every sub component must be mapped in order to map ${step.symbol}. ` +
+          `The following sub components were not mapped: ${unmapped.join(', ')}`,
+        );
+      }
+    } else {
+      const calculated = map(step.components, c => values[c.symbol]);
+      if (typeof step.map === 'function') {
+        objects[step.symbol] = step.map(...mapped);
+      }
       if (typeof step.calculate === 'function') {
-        values[step.symbol] = step.calculate(...calculated)(...mapped)(mappedComponent);
+        values[step.symbol] = step.calculate(...calculated)(...mapped)(objects[step.symbol]);
       }
     }
   }

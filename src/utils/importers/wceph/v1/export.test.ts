@@ -10,7 +10,7 @@ import find from 'lodash/find';
 
 describe('WCeph Exporter', () => {
   it('should be able to export a valid WCeph v1 file', async () => {
-    const url = require('file-loader!./fixrures/images/ceph1.jpg');
+    const url = require('file-loader!./fixtures/images/ceph1.jpg');
     const imageFile = new File([await (await fetch(url)).blob()], 'Export test.jpg');
     const state: Partial<StoreState> = {
       'workspace.mode': 'tracing',

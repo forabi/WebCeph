@@ -28,7 +28,7 @@ module.exports = (config) => {
     port: 9876,
     colors: true,
     logLevel: config.LOG_ERROR,
-    browsers: ['Chrome', 'Firefox'],
+    browsers: ['Chrome'],
     singleRun: false,
     concurrency: Infinity,
     webpack: webpackConfig,
