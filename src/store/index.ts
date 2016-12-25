@@ -14,7 +14,7 @@ import {
 
 declare const window: Window & { devToolsExtension?: () => any };
 
-const reducer = combineReducers(reducers);
+const reducer = combineReducers<StoreState>(reducers);
 
 const middlewares: Middleware[] = [
   compatibilityMiddleware,

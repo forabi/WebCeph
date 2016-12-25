@@ -1,7 +1,11 @@
 import exportFile from './export';
+import importFile from './import';
+import createConfiguredStore from 'store';
 
 test('WCeph Exporter', async () => {
-  const state: Partial<StoreState> = {
+  const store = createConfiguredStore();
+  const state: StoreState = {
+    ...store.getState(),
     'workspace.images.props': {
       img_1: {
         name: null,
@@ -35,6 +39,7 @@ test('WCeph Exporter', async () => {
       },
     },
   };
-  const file = await exportFile(state as StoreState, { });
+  const file = await exportFile(state, { });
   expect(file).toBeInstanceOf(File);
+  expect(importFile(file, { })).not.toThrow();
 });
