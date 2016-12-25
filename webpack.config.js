@@ -131,7 +131,7 @@ const config = {
             loader: 'ts-loader',
             query: {
               transpileOnly: env.isDev,
-              silent: false,
+              silent: true,
               compilerOptions: Object.assign(
                 env.isProd ? {
                   jsx: 'preserve',
