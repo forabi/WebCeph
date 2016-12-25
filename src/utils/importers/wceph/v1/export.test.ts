@@ -3,7 +3,14 @@ import expect from 'expect';
 import exportFile from './export';
 import importFile from './import';
 
+import { isActionOfType } from 'utils/store';
+import { readFileAsDataURL } from 'utils/file';
+
+import find from 'lodash/find';
+
 it('WCeph Exporter', async () => {
+  const url = require('file-loader!./fixrures/images/ceph1.jpg');
+  const imageFile = new File([await (await fetch(url)).blob()], 'Export test.jpg');
   const state: Partial<StoreState> = {
     'workspace.mode': 'tracing',
     'workspace.images.activeImageId': 'img_1',
@@ -22,7 +29,7 @@ it('WCeph Exporter', async () => {
         analysis: {
           activeId: 'downs',
         },
-        data: 'whatever',
+        data: await readFileAsDataURL(imageFile),
       },
     },
     'workspace.images.tracing': {
@@ -40,8 +47,19 @@ it('WCeph Exporter', async () => {
       },
     },
   };
-  const file = await exportFile(state as StoreState, { });
-  expect(file).toBeA(File);
-  expect(file.name).toBe('Patient 1.wceph');
-  // expect(importFile(file, { })).toNotThrow();
+  const exportedFile = await exportFile(state as StoreState, { });
+  expect(exportedFile).toBeA(File);
+  expect(exportedFile.name).toBe('Patient 1.wceph');
+  const actions = await importFile(exportedFile, { });
+  expect(actions).toExist();
+  expect(find(actions, action => isActionOfType(action, 'SET_IMAGE_PROPS'))).toBeTruthy();
+  for (const action of actions) {
+    if (isActionOfType(action, 'SET_IMAGE_PROPS')) {
+      expect(action.payload.type).toBe('ceph_lateral');
+      // tslint:disable no-string-literal
+      expect(action.payload.tracing!.manualLandmarks!['N']).toMatch({ x: 400, y: 300 });
+      expect(action.payload.tracing!.skippedSteps!['S']).toBe(true);
+      expect(action.payload.flipX).toBe(true);
+    }
+  }
 });
