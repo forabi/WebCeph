@@ -168,7 +168,7 @@ type CategorizedAnalysisResult<T extends Category> = {
 interface Analyses {
   ceph_lateral: (
     'downs' | 'ricketts_lateral' |
-    'common' | 'basic ' | 'bjork' |
+    'common' | 'basic' | 'bjork' |
     'tweed' | 'steiner' | 'basic' |
     'soft_tissues_lateral'
   );

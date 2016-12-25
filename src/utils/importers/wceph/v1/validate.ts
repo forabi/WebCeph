@@ -83,11 +83,11 @@ function createErrorMaker<T>(type: ValidationErrorType): ErrorMaker<T> {
 };
 
 // @TODO: validate json structure
-const rules: [
+const rules: Array<[
   Rule<WCephJSON>,
   ErrorMaker<WCephJSON>,
   Fixer<WCephJSON> | undefined
-][] = [
+]> = [
   [
     ({ version }) => isDefined(version),
     createErrorMaker(ValidationErrorType.UNSPECIFIED_FILE_VERSION),
