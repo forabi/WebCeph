@@ -64,7 +64,7 @@ const config = {
     hot: env.isHot,
   } : undefined,
 
-  devtool: env.isDev ? 'eval' : false,
+  devtool: env.isTest ? 'inline-source-map' : env.isDev ? 'eval' : false,
 
   entry: {
     bundle: compact([
@@ -135,7 +135,7 @@ const config = {
               compilerOptions: Object.assign(
                 env.isProd ? {
                   jsx: 'preserve',
-                } : { },
+                } : { }
               ),
             },
           },

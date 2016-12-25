@@ -14,12 +14,17 @@ module.exports = (config) => {
     },
     plugins: [
       'karma-mocha',
+      'karma-mocha-reporter',
       'karma-chrome-launcher',
       'karma-firefox-launcher',
       'karma-sourcemap-loader',
       'karma-webpack',
     ],
-    reporters: ['progress'],
+    reporters: ['mocha'],
+    mochaReporter: {
+      showDiff: true,
+      output: 'autowatch',
+    },
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
@@ -27,7 +32,10 @@ module.exports = (config) => {
     singleRun: false,
     concurrency: Infinity,
     webpack: webpackConfig,
-    webpackMiddleware: {
+    webpackServer: {
+      stats: {
+        chunks: false,
+      },
       noInfo: true,
     },
   });

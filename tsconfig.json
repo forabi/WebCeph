@@ -15,7 +15,6 @@
     "jsx": "react",
     "inlineSourceMap": true,
     "inlineSources": true,
-    "noEmitOnError": true,
     "module": "es2015",
     "forceConsistentCasingInFileNames": true,
     "preserveConstEnums": true,
