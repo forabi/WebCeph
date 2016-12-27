@@ -98,11 +98,11 @@ describe('Basic Analysis', () => {
 
   it('should be calculated correctly', () => {
     describe('every component is mapped or calculated', () => {
-      for (const { symbol } of steps) {
+      each(steps, ({ symbol }) => {
         it (`${symbol} is mapped or calculated`, () => {
           expect(objects[symbol] || values[symbol]).toExist();
         });
-      }
+      });
     });
 
     describe('calculated values are correct', () => {
@@ -125,20 +125,62 @@ describe('Basic Analysis', () => {
     });
   });
 
+  const expected: IndexedAnalysisInterpretation = {
+    skeletalPattern: {
+      category: 'skeletalPattern',
+      indication: 'class2',
+      relevantComponents: [
+        {
+          symbol: 'ANB',
+          value: 74,
+          min: 0,
+          mean: 2,
+          max: 4,
+        },
+      ],
+      severity: 'none',
+    },
+    growthPattern: {
+      category: 'growthPattern',
+      indication: 'vertical',
+      relevantComponents: [
+        {
+          symbol: 'Y-FH Angle',
+          value: 63,
+          min: 57,
+          mean: 59,
+          max: 60.1,
+        },
+        {
+          symbol: 'Björk',
+          value: 412,
+          min: 390,
+          mean: 396,
+          max: 406,
+        },
+      ],
+    },
+    mandibularRotation: {
+      category: 'mandibularRotation',
+      indication: 'clockwise',
+      severity: 'none',
+      relevantComponents: [
+        {
+          symbol: 'FMPA',
+          value: 38,
+          min: 16.9,
+          mean: 21.9,
+          max: 26.9,
+        },
+      ],
+    },
+  };
+
   describe('should be interpreted correctly', () => {
     it('every indication is correct', () => {
       const results = basic.interpret(values, objects);
-      const grouped = indexAnalysisResults(results);
-      expect(grouped.skeletalPattern).toExist();
-      expect(grouped.skeletalPattern!.indication).toEqual('class2');
-      expect(grouped.skeletalPattern!.relevantComponents[0].symbol).toBe('ANB');
-      expect(grouped.growthPattern).toExist();
-      expect(grouped.growthPattern!.indication).toEqual('vertical');
-      expect(grouped.growthPattern!.relevantComponents[0].symbol).toBe('Y-FH Angle');
-      expect(grouped.growthPattern!.relevantComponents[1].symbol).toBe('Björk');
-      expect(grouped.mandibularRotation).toExist();
-      expect(grouped.mandibularRotation!.indication).toEqual('clockwise');
-      expect(grouped.mandibularRotation!.relevantComponents[0].symbol).toBe('FMPA');
+      const actual = indexAnalysisResults(results);
+      expect(actual).toMatch(expected);
     });
   });
 });
