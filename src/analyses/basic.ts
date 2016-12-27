@@ -17,8 +17,8 @@ const components: AnalysisComponent[] = [
   {
     landmark: yAxis,
     mean: 59,
-    max: 57,
-    min: 60.1,
+    min: 57,
+    max: 60.1,
   },
   {
     landmark: MM,

@@ -5,8 +5,8 @@ import { defaultInterpretAnalysis } from 'analyses/helpers';
 const components: AnalysisComponent[] = [
   {
     landmark: bjorkSum,
+    max: 406,
     mean: 396,
-    max: 412,
     min: 390,
   },
 ];
