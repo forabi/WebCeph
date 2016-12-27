@@ -24,7 +24,7 @@ type Categories = {
 };
 
 type Category = keyof Categories;
-type Indication<T extends Category> = Categories[T];
+type Indication<C extends Category> = Categories[C];
 type Severity = 'none' | 'low' | 'medium' | 'high';
 
 interface LandmarkInterpretation<T extends Category> {
