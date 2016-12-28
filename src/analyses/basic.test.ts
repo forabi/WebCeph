@@ -1,51 +1,5 @@
-import expect from 'expect';
-
 import basic from './basic';
-import { mapAndCalculateSteps, getStepsForAnalysis, indexAnalysisResults } from 'analyses/helpers';
-
-import each from 'lodash/each';
-
-const class2 = {
-  N: {
-    x: 1377,
-    y: 473,
-  },
-  S: {
-    x: 623,
-    y: 661,
-  },
-  A: {
-    x: 1365,
-    y: 1147,
-  },
-  B: {
-    x: 1231,
-    y: 1654,
-  },
-};
-
-const verticalGrowth = {
-  N: {
-    x: 1377,
-    y: 473,
-  },
-  S: {
-    x: 623,
-    y: 661,
-  },
-  Ar: {
-    x: 494,
-    y: 955,
-  },
-  Go: {
-    x: 569,
-    y: 1403,
-  },
-  Me: {
-    x: 1130,
-    y: 1855,
-  },
-};
+import { testAnalysis, class2, verticalGrowth } from 'utils/tests';
 
 describe('Basic Analysis', () => {
   const manualLandmarks = {
@@ -92,39 +46,6 @@ describe('Basic Analysis', () => {
       y: 1633,
     },
   };
-
-  const steps = getStepsForAnalysis(basic, false);
-  const { values, objects } = mapAndCalculateSteps(steps, manualLandmarks);
-
-  it('should be calculated correctly', () => {
-    describe('every component is mapped or calculated', () => {
-      each(steps, ({ symbol }) => {
-        it (`${symbol} is mapped or calculated`, () => {
-          expect(objects[symbol] || values[symbol]).toExist();
-        });
-      });
-    });
-
-    describe('calculated values are correct', () => {
-      const expected = {
-        'ANB': 6,
-        'SNA': 74,
-        'SNB': 68,
-        'Björk': 412,
-        'MM': 43,
-        'Y-FH Angle': 63,
-        'NAPog': 11,
-        'FMPA': 38,
-      };
-
-      each(expected, (value, symbol: string) => {
-        it(`${symbol} value is correct`, () => {
-          expect(value).toEqual(Math.floor(values[symbol]!));
-        });
-      });
-    });
-  });
-
   const expected: IndexedAnalysisInterpretation = {
     skeletalPattern: {
       category: 'skeletalPattern',
@@ -175,12 +96,5 @@ describe('Basic Analysis', () => {
       ],
     },
   };
-
-  describe('should be interpreted correctly', () => {
-    it('every indication is correct', () => {
-      const results = basic.interpret(values, objects);
-      const actual = indexAnalysisResults(results);
-      expect(actual).toMatch(expected);
-    });
-  });
+  testAnalysis(basic, manualLandmarks, expected);
 });
