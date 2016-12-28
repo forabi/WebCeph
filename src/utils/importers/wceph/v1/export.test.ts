@@ -55,15 +55,15 @@ describe('WCeph Exporter', () => {
     it('should be able to import the exported file correctly', async () => {
       const actions = await importFile(exportedFile, { });
       expect(actions).toExist();
-      expect(find(actions, action => isActionOfType(action, 'SET_IMAGE_PROPS'))).toBeTruthy();
-      for (const action of actions) {
-        if (isActionOfType(action, 'SET_IMAGE_PROPS')) {
-          expect(action.payload.type).toBe('ceph_lateral');
-          // tslint:disable no-string-literal
-          expect(action.payload.tracing!.manualLandmarks!['N']).toMatch({ x: 400, y: 300 });
-          expect(action.payload.tracing!.skippedSteps!['S']).toBe(true);
-          expect(action.payload.flipX).toBe(true);
-        }
+      expect(actions.length).toBeMoreThan(0);
+      const setImageProps = find(actions, action => isActionOfType(action, 'SET_IMAGE_PROPS'));
+      expect(setImageProps).toBeTruthy();
+      if (isActionOfType(setImageProps, 'SET_IMAGE_PROPS')) {
+        expect(setImageProps.payload.type).toBe('ceph_lateral');
+        // tslint:disable no-string-literal
+        expect(setImageProps.payload.tracing!.manualLandmarks!['N']).toMatch({ x: 400, y: 300 });
+        expect(setImageProps.payload.tracing!.skippedSteps!['S']).toBe(true);
+        expect(setImageProps.payload.flipX).toBe(true);
       }
     });
   });
