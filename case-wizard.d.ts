@@ -183,6 +183,7 @@ interface Analyses {
     'soft_tissues_photo_lateral'
   );
   photo_frontal: (
+    'soft_tissues_photo_frontal' |
     'frontal_face_proportions'
   );
   panoramic: (
