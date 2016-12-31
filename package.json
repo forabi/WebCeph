@@ -10,7 +10,7 @@
     "test:watch": "NODE_ENV=test karma start --watch --no-single-run",
     "webpack:validate": "webpack-validator webpack.config.js",
     "dev": "NODE_ENV=development HOT=1 babel-node devServer.js",
-    "prod": "NODE_ENV=production webpack --bail --progress",
+    "prod": "npm run test && NODE_ENV=production webpack --bail --progress",
     "modernizr:build": "modernizr -c modernizr-config.json -d ./src/utils/modernizr.js"
   },
   "repository": {
