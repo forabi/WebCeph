@@ -3,6 +3,6 @@ machine:
     version: 6.1.0
 dependencies:
   pre:
-    - sudo npm install --global yarn
+    - npm install --global yarn
   override:
     - yarn
