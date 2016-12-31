@@ -11,6 +11,8 @@ import {
 } from './helpers';
 
 import each from 'lodash/each';
+import startCase from 'lodash/startCase';
+import groupBy from 'lodash/groupBy';
 
 describe('Analysis helpers', () => {
   describe('Create point with point()', () => {
@@ -74,7 +76,7 @@ describe('Analysis helpers', () => {
   });
 
   describe('Default landmark intepretation', () => {
-    it('maps 3 ranges of values to 3 indications correclty', () => {
+    describe('maps 3 ranges of values to 3 indications correctly', () => {
       const interpet = defaultInterpetLandmark('skeletalPattern', ['class3', 'class1', 'class2']);
       const expected: Array<[number, Indication<'skeletalPattern'>]> = [
         [-3, 'class3'],
@@ -87,20 +89,19 @@ describe('Analysis helpers', () => {
         [ 4, 'class1'],
         [ 5, 'class2'],
       ];
-      it('For each range, ', () => {
-        each(expected, ([value, indication]) => {
-        it(`${indication}`, () => {
-            const [result] = interpet(value, 0, 4, 3);
-            it('sets correct category', () => {
-              expect(result.category).toBe('skeletalPattern');
+      const grouped = groupBy(expected, (([, indication]) => indication));
+      describe('For each range, ', () => {
+        each(grouped, (values, indication) => {
+          describe(`${startCase(indication)}`, () => {
+            it('sets correct category, indication and value', () => {
+              each(values, ([value]) => {
+                const [result] = interpet(value, 0, 4, 3);
+                expect(result.category).toEqual('skeletalPattern');
+                expect(result.indication).toEqual(indication);
+                expect(result.value).toEqual(value);
+              });
             });
-            it('sets correct indication', () => {
-              expect(result.indication).toBe(indication);
-            });
-            it('sets correct value', () => {
-              expect(result.value).toEqual(value);
-            });
-        });
+          });
         });
       });
     });

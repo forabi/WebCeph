@@ -4,6 +4,7 @@ import { mapAndCalculateSteps, getStepsForAnalysis, indexAnalysisResults } from 
 
 import keyBy from 'lodash/keyBy';
 import each from 'lodash/each';
+import lowerCase from 'lodash/lowerCase';
 
 export function testAnalysis(
   analysis: Analysis<ImageType>,
@@ -26,16 +27,16 @@ export function testAnalysis(
     const actual = indexAnalysisResults(results);
     each(expected, (result) => {
       const { category } = result;
-      describe(`provides interpretation for ${category}`, () => {
+      describe(`provides interpretation for ${lowerCase(category)}`, () => {
         expect(actual[category]).toExist();
-        it(`indication for ${category} is correct`, () => {
+        it(`indication for this category is correct`, () => {
           expect(actual[category]!.indication).toMatch(result!.indication);
         });
-        describe(`relevant components are listed in ${category}`, () => {
+        describe(`relevant components are listed`, () => {
           const expectedSymbols = keyBy(result.relevantComponents, c => c.symbol);
           const actualSymbols = keyBy(actual[category]!.relevantComponents, c => c.symbol);
           each(expectedSymbols, ({ value }, symbol) => {
-            it(`${symbol} is listed as a relevant component for ${category}`, () => {
+            it(`${symbol} is listed as a relevant component`, () => {
               expect(actualSymbols[symbol!]).toExist();
             });
             it(`${symbol} has the same value as the input`, () => {
