@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const webpack = require('webpack');
 const fail = require('webpack-fail-plugin');
+const failTests = require('./webpack-fail-tests-plugin');
 const path = require('path');
 const env = require('./env');
 const WebpackHTMLPlugin = require('webpack-html-plugin');
@@ -25,6 +26,7 @@ if (env.isDev && !env.isTest) {
 
 const prod = p => (env.isProd ? p : null);
 const hot = p => (env.isHot ? p : null);
+const test = p => (env.isTest ? p : null);
 
 const pkg = require('./package.json');
 
@@ -58,6 +60,8 @@ const sassLoaders = [
 const buildPath = env.isProd ? '' : '/';
 
 const config = {
+  bail: env.isProd || env.isTest,
+
   devServer: env.isDev ? {
     inline: true,
     contentBase: buildPath,
@@ -171,6 +175,8 @@ const config = {
   },
 
   plugins: compact([
+    prod(fail),
+    test(failTests),
     new webpack.LoaderOptionsPlugin({
       options: {
         minimize: true,
@@ -207,7 +213,6 @@ const config = {
     }),
     hot(new webpack.HotModuleReplacementPlugin()),
     dashboard ? new DashboardPlugin(dashboard.setData) : null,
-    fail,
     new webpack.optimize.CommonsChunkPlugin({
       names: ['common'],
       minSize: 100000,
