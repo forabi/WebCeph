@@ -46,14 +46,14 @@ describe('Basic Analysis', () => {
       y: 1633,
     },
   };
-  const expected: IndexedAnalysisInterpretation = {
-    skeletalPattern: {
+  const expected: Array<CategorizedAnalysisResult<Category>> = [
+    {
       category: 'skeletalPattern',
       indication: 'class2',
       relevantComponents: [
         {
           symbol: 'ANB',
-          value: 74,
+          value: 6,
           min: 0,
           mean: 2,
           max: 4,
@@ -61,7 +61,7 @@ describe('Basic Analysis', () => {
       ],
       severity: 'none',
     },
-    growthPattern: {
+    {
       category: 'growthPattern',
       indication: 'vertical',
       relevantComponents: [
@@ -81,7 +81,7 @@ describe('Basic Analysis', () => {
         },
       ],
     },
-    mandibularRotation: {
+    {
       category: 'mandibularRotation',
       indication: 'clockwise',
       severity: 'none',
@@ -95,6 +95,6 @@ describe('Basic Analysis', () => {
         },
       ],
     },
-  };
+  ];
   testAnalysis(basic, manualLandmarks, expected);
 });

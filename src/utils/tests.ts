@@ -8,7 +8,7 @@ import each from 'lodash/each';
 export function testAnalysis(
   analysis: Analysis<ImageType>,
   manualLandmarks: Record<string, GeoObject>,
-  expected: IndexedAnalysisInterpretation,
+  expected: Array<CategorizedAnalysisResult<Category>>,
 ) {
   const steps = getStepsForAnalysis(analysis, false);
   const { values, objects } = mapAndCalculateSteps(steps, manualLandmarks);
@@ -21,22 +21,25 @@ export function testAnalysis(
     });
   });
 
-  it('should be interpreted correctly', () => {
+  describe('should be interpreted correctly', () => {
     const results = analysis.interpret(values, objects);
     const actual = indexAnalysisResults(results);
-    each(expected, (result, category: Category) => {
-      it (`provides interpretation for ${category}`, () => {
+    each(expected, (result) => {
+      const { category } = result;
+      describe(`provides interpretation for ${category}`, () => {
         expect(actual[category]).toExist();
         it(`indication for ${category} is correct`, () => {
           expect(actual[category]!.indication).toMatch(result!.indication);
         });
-        it (`relevant components are listed in ${category}`, () => {
-          const expectedSymbols = keyBy(expected[category]!.relevantComponents, c => c.symbol);
+        describe(`relevant components are listed in ${category}`, () => {
+          const expectedSymbols = keyBy(result.relevantComponents, c => c.symbol);
           const actualSymbols = keyBy(actual[category]!.relevantComponents, c => c.symbol);
           each(expectedSymbols, ({ value }, symbol) => {
             it(`${symbol} is listed as a relevant component for ${category}`, () => {
               expect(actualSymbols[symbol!]).toExist();
-              expect(Math.floor(actualSymbols[symbol!].value)).toMatch(value);
+            });
+            it(`${symbol} has the same value as the input`, () => {
+              expect(Math.floor(actualSymbols[symbol!].value)).toEqual(value);
             });
           });
         });

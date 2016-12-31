@@ -23,7 +23,6 @@ module.exports = (config) => {
     reporters: ['mocha'],
     mochaReporter: {
       showDiff: true,
-      output: 'autowatch',
     },
     port: 9876,
     colors: true,
