@@ -9,3 +9,5 @@ dependencies:
 test:
   override:
     - COVERAGE_DIR=$CIRCLE_ARTIFACTS yarn test
+  post:
+  - bash <(curl -s https://codecov.io/bash) -t 09a19bce-2912-49a3-a53d-e1de5c70d5f4
