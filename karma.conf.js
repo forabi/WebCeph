@@ -42,11 +42,6 @@ module.exports = (config) => {
     coverageReporter: {
       reporters: compact([
         {
-          type: 'html',
-          dir: `${coverageDir}/html-js`,
-          subdir: '.',
-        },
-        {
           type: 'json',
           dir: `${coverageDir}`,
           subdir: '.',

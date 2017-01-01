@@ -7,7 +7,7 @@
     "eslint": "eslint *.js src",
     "lint": "npm run tslint && npm run eslint",
     "test": "NODE_ENV=test karma start --single-run && npm run ts-coverage-remap",
-    "ts-coverage-remap": "remap-istanbul -i $COVERAGE_DIR/json/coverage-final.json -o $COVERAGE_DIR/html-ts -t html",
+    "ts-coverage-remap": "remap-istanbul -i $CIRCLE_ARTIFACTS/json/coverage-final.json -o $CIRCLE_ARTIFACTS/html -t html",
     "test:watch": "NODE_ENV=test karma start --watch --no-single-run",
     "webpack:validate": "webpack-validator webpack.config.js",
     "dev": "NODE_ENV=development HOT=1 babel-node devServer.js",
