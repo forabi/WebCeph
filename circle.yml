@@ -8,4 +8,4 @@ dependencies:
     - yarn
 test:
   override:
-    COVERAGE_DIR=$CIRCLE_ARTIFACTS yarn test
+    - COVERAGE_DIR=$CIRCLE_ARTIFACTS yarn test
