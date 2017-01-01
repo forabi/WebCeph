@@ -43,12 +43,12 @@ module.exports = (config) => {
       reporters: compact([
         {
           type: 'json',
-          dir: `${coverageDir}`,
+          dir: `${coverageDir}/json`,
           subdir: '.',
         },
         {
           type: 'lcov',
-          dir: `${coverageDir}`,
+          dir: `${coverageDir}/lcov`,
           subdir: '.',
         },
       ]),
