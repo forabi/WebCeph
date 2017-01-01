@@ -1,10 +1,11 @@
 machine:
   node:
     version: 6.1.0
-  environment:
-    COVERAGE_DIR: $CIRCLE_ARTIFACTS
 dependencies:
   pre:
     - npm install --global yarn
   override:
     - yarn
+test:
+  override:
+    COVERAGE_DIR=$CIRCLE_ARTIFACTS yarn test
