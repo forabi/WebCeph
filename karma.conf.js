@@ -3,6 +3,8 @@ const env = require('./env');
 
 const ci = p => (env.isCI ? p : null);
 
+const coverageDir = process.env.COVERAGE_DIR || 'coverage';
+
 module.exports = (config) => {
   /* eslint-disable global-require */
   const webpackConfig = require('./webpack.config');
@@ -41,18 +43,19 @@ module.exports = (config) => {
       reporters: compact([
         {
           type: 'html',
-          dir: 'coverage/html-js',
+          dir: `${coverageDir}/html-js`,
           subdir: '.',
         },
         {
           type: 'json',
-          dir: 'coverage/json',
+          dir: `${coverageDir}`,
           subdir: '.',
         },
-        ci({
+        {
           type: 'lcov',
-          dir: `${process.env.CIRCLE_ARTIFACTS}/coverage`,
-        }),
+          dir: `${coverageDir}`,
+          subdir: '.',
+        },
       ]),
     },
     port: 9876,
