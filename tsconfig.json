@@ -14,6 +14,7 @@
     "moduleResolution": "node",
     "jsx": "react",
     "inlineSourceMap": true,
+    "sourceMap": false,
     "inlineSources": true,
     "module": "es2015",
     "forceConsistentCasingInFileNames": true,

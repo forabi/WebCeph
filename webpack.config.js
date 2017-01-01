@@ -123,7 +123,24 @@ const config = {
   },
 
   module: {
-    rules: [
+    rules: compact([
+      test({
+        enforce: 'post',
+        test: /\.tsx?$/,
+        include: path.resolve(__dirname, 'src'),
+        exclude: [
+          /node_modules/,
+          /\.test\.tsx?$/,
+        ],
+        use: [
+          {
+            loader: 'istanbul-instrumenter-loader',
+            query: {
+              esModules: true,
+            },
+          },
+        ],
+      }),
       {
         test: /\.tsx?$/,
         exclude: /node_modules/,
@@ -171,7 +188,7 @@ const config = {
         test: /\.html$/,
         use: 'html',
       },
-    ],
+    ]),
   },
 
   plugins: compact([

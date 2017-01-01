@@ -9,25 +9,26 @@ module.exports = (config) => {
   webpackConfig.devtool = 'inline-source-map';
   webpackConfig.entry = { };
   config.set({
-    frameworks: ['mocha'],
+    frameworks: ['mocha', 'source-map-support'],
     files: [
       'tests.webpack.js',
     ],
-    exclude: [],
     preprocessors: {
-      'tests.webpack.js': ['webpack', 'sourcemap'],
+      'tests.webpack.js': ['webpack'],
     },
     plugins: [
       'karma-mocha',
       'karma-mocha-reporter',
       'karma-chrome-launcher',
       'karma-firefox-launcher',
-      'karma-sourcemap-loader',
+      'karma-source-map-support',
       'karma-junit-reporter',
+      'karma-coverage',
       'karma-webpack',
     ],
     reporters: compact([
       'mocha',
+      'coverage',
       ci('junit'),
     ]),
     mochaReporter: {
@@ -35,6 +36,24 @@ module.exports = (config) => {
     },
     junitReporter: {
       outputFile: `${process.env.CIRCLE_TEST_REPORTS}/junit/test-results.xml`,
+    },
+    coverageReporter: {
+      reporters: compact([
+        {
+          type: 'html',
+          dir: 'coverage/html-js',
+          subdir: '.',
+        },
+        {
+          type: 'json',
+          dir: 'coverage/json',
+          subdir: '.',
+        },
+        ci({
+          type: 'lcov',
+          dir: `${process.env.CIRCLE_ARTIFACTS}/coverage`,
+        }),
+      ]),
     },
     port: 9876,
     colors: true,
