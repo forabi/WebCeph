@@ -196,7 +196,7 @@ export const getMappedValue = createSelector(
   getManualLandmarks,
   (isEligible, manual) => memoize((step: CephLandmark) => {
     if (isEligible(step)) {
-      return tryMap(step);
+      return tryMap(step, manual);
     }
     return manual[step.symbol] || undefined;
   }),

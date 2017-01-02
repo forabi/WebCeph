@@ -5,7 +5,7 @@ export interface StateProps {
 };
 
 export interface DispatchProps {
-  onChange(id: AnalysisId<ImageType>): any;
+  onChange<T extends ImageType>(id: AnalysisId<T>, imageType: T): any;
 }
 
 export type ConnectableProps = StateProps & DispatchProps;

@@ -13,28 +13,25 @@ import {
 } from './props';
 
 import {
-  getImageData,
-  getImageSize,
-  isImageFlippedX,
-  isImageFlippedY,
+  getActiveImageId,
+  getImageProps,
 } from 'store/reducers/workspace/image';
 
 import {
-  getCanvasSize,
-  getCanvasPosition,
   getMousePosition,
+  getCanvasDimensions,
 } from 'store/reducers/workspace/canvas';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: StoreState, { margin }: OwnProps) => {
-    const { top } = getCanvasPosition(state);
-    const { width: canvasWidth } = getCanvasSize(state);
-    const { x, y } = getMousePosition(state);
-    const { width: imageWidth, height: imageHeight } = getImageSize(state);
+    const { top, width: canvasWidth } = getCanvasDimensions(state);
+    const { x, y } = getMousePosition(state)!;
+    const props = getImageProps(state)(getActiveImageId(state)!);
+    const { width: imageWidth, height: imageHeight } = props;
     const width = 200;
     const height = 200;
     return {
-      src: getImageData(state),
+      src: props.data,
       x: x !== null ? x :  imageWidth / 2,
       y: y !== null ? y :  imageHeight / 2,
       width, // @TODO: get from state
@@ -42,8 +39,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
       top: top + margin,
       left: canvasWidth - width - margin,
       imageHeight, imageWidth,
-      isFlippedX: isImageFlippedX(state),
-      isFlippedY: isImageFlippedY(state),
+      isFlippedX: props.flipX,
+      isFlippedY: props.flipY,
     };
   };
 

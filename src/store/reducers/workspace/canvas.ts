@@ -64,6 +64,8 @@ export const getHighlightedStep = (state: StoreState) => state[KEY_HIGHLIGHTED_S
 
 export const getCanvasDimensions = (state: StoreState) => state[KEY_CANVAS_DIMENSIONS];
 
+export const getMousePosition = (state: StoreState) => state[KEY_CANVAS_MOUSE_POSITION];
+
 export const getActiveToolId = (state: StoreState) => state[KEY_CANVAS_TOOL_ID];
 
 export const getState = (state: StoreState) => state;

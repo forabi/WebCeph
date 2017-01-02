@@ -11,7 +11,7 @@ import Props from './props';
 import { getNameForAnalysis } from './strings';
 
 const AnalysisSelector = pure(({ className, isLoading, currentAnalysisId, onChange, analyses }: Props) => {
-  const setAnalysis = (_: any, __: any, value: AnalysisId<ImageType>) => onChange(value);
+  const setAnalysis = (_: any, __: any, value: AnalysisId<ImageType>) => onChange(value, 'ceph_lateral');
   return (
     <div>
       <DropDownMenu

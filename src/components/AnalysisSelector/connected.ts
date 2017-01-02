@@ -29,15 +29,15 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: StoreState): StateProps => {
     return {
       analyses,
-      currentAnalysisId: getActiveAnalysisId(state),
-      isLoading: isAnalysisLoading(state),
+      currentAnalysisId: 'basic',
+      isLoading: false,
     };
   };
 
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
   (dispatch: GenericDispatch): DispatchProps => {
     return {
-      onChange: (id) => dispatch(setAnalysis(id)),
+      onChange: (analysisId, imageType) => dispatch(setAnalysis({ analysisId, imageType })),
     };
   };
 
