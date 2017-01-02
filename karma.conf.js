@@ -26,11 +26,13 @@ module.exports = (config) => {
       'karma-source-map-support',
       'karma-junit-reporter',
       'karma-coverage',
+      'karma-remap-coverage',
       'karma-webpack',
     ],
     reporters: compact([
       'mocha',
       'coverage',
+      'remap-coverage',
       ci('junit'),
     ]),
     mochaReporter: {
@@ -40,18 +42,13 @@ module.exports = (config) => {
       outputFile: `${process.env.CIRCLE_TEST_REPORTS}/junit/test-results.xml`,
     },
     coverageReporter: {
-      reporters: compact([
-        {
-          type: 'json',
-          dir: `${coverageDir}/json`,
-          subdir: '.',
-        },
-        {
-          type: 'lcov',
-          dir: `${coverageDir}/lcov`,
-          subdir: '.',
-        },
-      ]),
+      type: 'in-memory',
+    },
+    remapCoverageReporter: {
+      'text-summary': null,
+      html: `${coverageDir}/html`,
+      json: `${coverageDir}/coverage.json`,
+      lcovonly: `${coverageDir}/coverage.lcov`,
     },
     port: 9876,
     colors: true,
