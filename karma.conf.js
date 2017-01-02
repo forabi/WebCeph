@@ -25,12 +25,12 @@ module.exports = (config) => {
       'karma-firefox-launcher',
       'karma-source-map-support',
       'karma-junit-reporter',
-      'karma-coverage',
+      'karma-remap-istanbul',
       'karma-webpack',
     ],
     reporters: compact([
       'mocha',
-      'coverage',
+      'remap-istanbul',
       ci('junit'),
     ]),
     mochaReporter: {
@@ -39,19 +39,11 @@ module.exports = (config) => {
     junitReporter: {
       outputFile: `${process.env.CIRCLE_TEST_REPORTS}/junit/test-results.xml`,
     },
-    coverageReporter: {
-      reporters: compact([
-        {
-          type: 'json',
-          dir: `${coverageDir}/json`,
-          subdir: '.',
-        },
-        {
-          type: 'lcov',
-          dir: `${coverageDir}/lcov`,
-          subdir: '.',
-        },
-      ]),
+    remapIstanbulReporter: {
+      reports: {
+        html: `${coverageDir}/html`,
+        json: `${coverageDir}/coverage-final.json`,
+      },
     },
     port: 9876,
     colors: true,
