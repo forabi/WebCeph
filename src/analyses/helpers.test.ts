@@ -8,11 +8,15 @@ import {
   isStepManual,
   isStepAutomatic,
   defaultInterpetLandmark,
+  angleBetweenPoints,
+  getStepsForLandmarks,
 } from './helpers';
 
 import each from 'lodash/each';
 import startCase from 'lodash/startCase';
 import groupBy from 'lodash/groupBy';
+import findIndex from 'lodash/findIndex';
+import countBy from 'lodash/countBy';
 
 describe('Analysis helpers', () => {
   describe('Create point with point()', () => {
@@ -105,5 +109,51 @@ describe('Analysis helpers', () => {
         });
       });
     });
+  });
+
+  describe('Get steps for landmarks', () => {
+    let A: CephPoint;
+    let B: CephPoint;
+    let C: CephPoint;
+    let AB: CephLine;
+    let ABC: CephAngle;
+
+    before(() => {
+      A = point('A');
+      B = point('B');
+      C = point('C');
+      AB = line(A, B);
+      ABC = angleBetweenPoints(A, B, C);
+    });
+
+    it('should maintain the original steps order', () => {
+      const steps = getStepsForLandmarks([A, B, C]);
+      expect(steps).toMatch([A, B, C]);
+    });
+
+    it('should list subcomponents for compound landmarks', () => {
+      const steps = getStepsForLandmarks([ABC]);
+      expect(steps).toInclude(A);
+      expect(steps).toInclude(B);
+      expect(steps).toInclude(C);
+    });
+
+    it('should list any subcomponent before the main component', () => {
+      const steps = getStepsForLandmarks([ABC]);
+      const indexOfABC = findIndex(steps, ABC);
+      expect(findIndex(steps, A)).toBeLessThan(indexOfABC);
+      expect(findIndex(steps, B)).toBeLessThan(indexOfABC);
+      expect(findIndex(steps, C)).toBeLessThan(indexOfABC);
+    });
+
+    it('should remove repeated steps (compared by symbol) regardless of removeEqualSteps param', () => {
+      each([true, false], (value) => {
+        const steps = getStepsForLandmarks([A, B, C, AB, ABC], value);
+        expect(countBy(steps, A).true).toEqual(1);
+        expect(countBy(steps, B).true).toEqual(1);
+        expect(countBy(steps, C).true).toEqual(1);
+      });
+    });
+    it('should be able to ignore equal steps (compared by type of landmark)');
   });
 });
