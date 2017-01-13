@@ -179,9 +179,11 @@ describe('Analysis helpers', () => {
       });
 
       it('should not remove a duplicated step if it is an explicit step', () => {
+        expect(getStepsForLandmarks([ABC, DAB], true))
+          .toNotContain(AB);
+
         expect(getStepsForLandmarks([AB, ABC, DAB], true))
-          .toContain(AB)
-          .toContain(BA);
+          .toContain(AB);
       });
 
       it('prefers an explicitly specified step over an implicit one when deduplicating', () => {
