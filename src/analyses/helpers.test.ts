@@ -17,6 +17,7 @@ import startCase from 'lodash/startCase';
 import groupBy from 'lodash/groupBy';
 import findIndex from 'lodash/findIndex';
 import countBy from 'lodash/countBy';
+import map from 'lodash/map';
 
 describe('Analysis helpers', () => {
   describe('Create point with point()', () => {
@@ -154,6 +155,37 @@ describe('Analysis helpers', () => {
         expect(countBy(steps, C).true).toEqual(1);
       });
     });
-    it('should be able to ignore equal steps (compared by type of landmark)');
+    describe('Ignoring equal steps (compared by type of landmark)', () => {
+      let BA: CephLine;
+      let DAB: CephAngle;
+
+      before(() => {
+        BA = line(B, A);
+        DAB = angleBetweenPoints(point('D'), A, B);
+      });
+
+      it('should respect the removeEqualSteps param', () => {
+        const duplicated = map(getStepsForLandmarks([ABC, DAB], false), s => s.symbol);
+        const deduplicated = map(getStepsForLandmarks([ABC, DAB], true), s => s.symbol);
+        expect(duplicated).toNotEqual(deduplicated);
+        expect(duplicated.length).toBeMoreThan(deduplicated.length);
+        expect(duplicated).toContain(AB.symbol);
+        expect(duplicated).toContain(BA.symbol);
+        expect(deduplicated).toNotContain(AB.symbol);
+      });
+
+      let deduplicated: string[];
+      before(() => {
+        deduplicated = map(getStepsForLandmarks([AB, ABC, DAB], true), s => s.symbol);
+      });
+
+      it('should not remove a duplicated step if it is an explicit step', () => {
+        expect(deduplicated).toContain(AB.symbol);
+      });
+
+      it('prefers an explicitly specified step over an implicit one when deduplicating', () => {
+        expect(deduplicated).toNotContain(BA.symbol);
+      });
+    });
   });
 });
