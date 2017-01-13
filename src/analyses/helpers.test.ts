@@ -155,6 +155,7 @@ describe('Analysis helpers', () => {
         expect(countBy(steps, C).true).toEqual(1);
       });
     });
+
     describe('Ignoring equal steps (compared by type of landmark)', () => {
       let BA: CephLine;
       let DAB: CephAngle;
@@ -165,26 +166,27 @@ describe('Analysis helpers', () => {
       });
 
       it('should respect the removeEqualSteps param', () => {
-        const duplicated = map(getStepsForLandmarks([ABC, DAB], false), s => s.symbol);
-        const deduplicated = map(getStepsForLandmarks([ABC, DAB], true), s => s.symbol);
-        expect(duplicated).toNotEqual(deduplicated);
-        expect(duplicated.length).toBeMoreThan(deduplicated.length);
-        expect(duplicated).toContain(AB.symbol);
-        expect(duplicated).toContain(BA.symbol);
-        expect(deduplicated).toNotContain(AB.symbol);
-      });
+        const duplicated = getStepsForLandmarks([ABC, DAB], false);
+        expect(duplicated)
+          .toContain(AB)
+          .toContain(BA);
 
-      let deduplicated: string[];
-      before(() => {
-        deduplicated = map(getStepsForLandmarks([AB, ABC, DAB], true), s => s.symbol);
+        const deduplicated = getStepsForLandmarks([ABC, DAB], true);
+        expect(duplicated.length).toBeMoreThan(deduplicated.length);
+        expect(deduplicated)
+          .toContain(BA)
+          .toNotContain(AB);
       });
 
       it('should not remove a duplicated step if it is an explicit step', () => {
-        expect(deduplicated).toContain(AB.symbol);
+        expect(getStepsForLandmarks([AB, ABC, DAB], true))
+          .toContain(AB)
+          .toContain(BA);
       });
 
       it('prefers an explicitly specified step over an implicit one when deduplicating', () => {
-        expect(deduplicated).toNotContain(BA.symbol);
+        expect(getStepsForLandmarks([ABC, DAB], true)).toContain(BA);
+        expect(getStepsForLandmarks([AB, ABC, DAB], true)).toNotContain(BA);
       });
     });
   });
