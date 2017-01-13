@@ -36,6 +36,7 @@ module.exports = (config) => {
       ci('junit'),
     ]),
     mochaReporter: {
+      output: 'autowatch',
       showDiff: true,
     },
     junitReporter: {
