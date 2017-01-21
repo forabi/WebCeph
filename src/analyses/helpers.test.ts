@@ -17,7 +17,6 @@ import startCase from 'lodash/startCase';
 import groupBy from 'lodash/groupBy';
 import findIndex from 'lodash/findIndex';
 import countBy from 'lodash/countBy';
-import map from 'lodash/map';
 
 describe('Analysis helpers', () => {
   describe('Create point with point()', () => {
