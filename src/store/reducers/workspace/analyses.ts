@@ -11,9 +11,9 @@ import keyBy from 'lodash/keyBy';
 import mapValues from 'lodash/mapValues';
 
 import {
-  getActiveManualLandmarks as getManualLandmarks,
+  getManualLandmarks,
   getActiveSkippedSteps as getSkippedSteps,
-  getActiveImageAnalysisId,
+  getAnalysisId,
 } from './image';
 
 import {
@@ -96,13 +96,14 @@ export default reducers;
 export const isSummaryShown = (state: StoreState) => state[KEY_SUMMARY_SHOWN];
 
 export const isAnalysisSet = createSelector(
-  getActiveImageAnalysisId,
-  (id) => id !== null,
+  getAnalysisId,
+  (getId) => (imageId: string) => getId(imageId) !== null,
 );
 
 export const getActiveAnalysis = createSelector(
-  getActiveImageAnalysisId,
-  (analysisId) => {
+  getAnalysisId,
+  (getAnalysisId) => (imageId: string) => {
+    const analysisId = getAnalysisId(imageId);
     if (analysisId !== null) {
       return require(`analyses/${analysisId}`) as Analysis<ImageType>;
     }
@@ -112,28 +113,39 @@ export const getActiveAnalysis = createSelector(
 
 export const getActiveAnalysisSteps = createSelector(
   getActiveAnalysis,
-  (analysis) => analysis === null ? [] : getStepsForAnalysis(analysis),
+  (getAnalysis) => (imageId: string): CephLandmark[] => {
+    const analysis = getAnalysis(imageId);
+    return analysis === null ? [] : getStepsForAnalysis(analysis, false);
+  },
 );
 
 export const getAllPossibleActiveAnalysisSteps = createSelector(
   getActiveAnalysis,
-  (analysis) => analysis === null ? [] : getStepsForAnalysis(analysis, false),
+  (getAnalysis) => (imageId: string): CephLandmark[] => {
+    const analysis = getAnalysis(imageId);
+    return analysis === null ? [] : getStepsForAnalysis(analysis, false);
+  },
 );
 
+type T = ((symbol: string, include: boolean) => null | CephLandmark);
 export const findStepBySymbol = createSelector(
   getAllPossibleActiveAnalysisSteps,
   getActiveAnalysisSteps,
-  (steps, deduplicatedSteps) => (symbol: string, includeDuplicates = true): CephLandmark | null => {
-    return find(
-      includeDuplicates ? steps : deduplicatedSteps,
-      (step: CephLandmark) => step.symbol === symbol,
-    ) || null;
+  (getSteps, getDeduplicatedSteps) => (imageId: string): T => {
+    return (symbol: string, includeDuplicates = true): CephLandmark | null => {
+      const steps = getSteps(imageId);
+      const deduplicatedSteps = getDeduplicatedSteps(imageId);
+      return find(
+        includeDuplicates ? steps : deduplicatedSteps,
+        (step: CephLandmark) => step.symbol === symbol,
+      ) || null;
+    };
   },
 );
 
 export const getManualSteps = createSelector(
   getActiveAnalysisSteps,
-  (steps) => filter(steps, isStepManual),
+  (getSteps) => (imageId: string) => filter(getSteps(imageId), isStepManual),
 );
 
 export const isStepSkippable = isStepManual;
@@ -163,7 +175,8 @@ export const findEqualComponents = createSelector(
  */
 export const isManualStepMappingComplete = createSelector(
   getManualLandmarks,
-  (objects) => (step: CephLandmark) => {
+  (getManual) => (imageId: string): ((step: CephLandmark) => boolean) => (step: CephLandmark) => {
+    const objects = getManual(imageId);
     if (isStepMappable(step)) {
       return typeof objects[step.symbol] !== 'undefined';
     }
@@ -194,7 +207,8 @@ export const isStepEligibleForAutomaticMapping = createSelector(
 export const getMappedValue = createSelector(
   isStepEligibleForAutomaticMapping,
   getManualLandmarks,
-  (isEligible, manual) => memoize((step: CephLandmark) => {
+  (isEligible, getManual) => (imageId: string) => memoize((step: CephLandmark) => {
+    const manual = getManual(imageId);
     if (isEligible(step)) {
       return tryMap(step, manual);
     }
@@ -302,8 +316,8 @@ export const getStepState = createSelector(
 export const getAllGeoObjects = createSelector(
   getAllPossibleActiveAnalysisSteps,
   getMappedValue,
-  (steps, getMapped) => {
-    return mapValues(keyBy(steps, s => s.symbol), getMapped);
+  (getSteps, getMapped) => (imageId: string) => {
+    return mapValues(keyBy(getSteps(imageId), s => s.symbol), getMapped(imageId));
   },
 );
 
@@ -314,7 +328,8 @@ export const getAllGeoObjects = createSelector(
 export const isAnalysisComplete = createSelector(
   getActiveAnalysis,
   isStepComplete,
-  (analysis, isComplete) => {
+  (getAnalysis, isComplete) => (imageId: string) => {
+    const analysis = getAnalysis(imageId);
     if (analysis !== null) {
       return every(analysis.components, isComplete);
     }
@@ -325,7 +340,8 @@ export const isAnalysisComplete = createSelector(
 export const getAllCalculatedValues = createSelector(
   getActiveAnalysisSteps,
   getCalculatedValue,
-  (steps, getValue) => {
+  (getSteps, getValue) => (imageId: string) => {
+    const steps = getSteps(imageId);
     return mapValues(
       keyBy(steps, c => c.symbol),
       c => getValue(c),
@@ -337,7 +353,10 @@ export const getCategorizedAnalysisResults = createSelector(
   getActiveAnalysis,
   getAllCalculatedValues,
   getAllGeoObjects,
-  (analysis, values, objects): Array<CategorizedAnalysisResult<Category>> => {
+  (getAnalysis, getValues, getObjects) => (imageId: string): Array<CategorizedAnalysisResult<Category>> => {
+    const analysis = getAnalysis(imageId);
+    const objects = getObjects(imageId);
+    const values = getValues(imageId);
     if (analysis !== null) {
       return analysis.interpret(values, objects);
     }
@@ -347,5 +366,5 @@ export const getCategorizedAnalysisResults = createSelector(
 
 export const canShowSummary = createSelector(
   getCategorizedAnalysisResults,
-  (results) => !isEmpty(results),
+  (getResults) => (imageId: string) => !isEmpty(getResults(imageId)),
 );
