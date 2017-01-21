@@ -765,6 +765,10 @@ type ExportOptions = Partial<{
   saveTracingData: boolean;
   saveWorkspaceSettings: boolean;
   saveSuperimpositionState: boolean;
+  /* Whether to include the reference image */
+  includeRasterImage: boolean;
+  /* Tracing objects to export per image */
+  objectsToExport: Record<string, Record<string, boolean>>;
   treatmentStagesToSave: string[];
   thumbs: Partial<{
     '64x64': boolean;
