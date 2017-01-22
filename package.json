@@ -137,7 +137,7 @@
     "typescript": "^2.1.5",
     "typings": "^2.0.0",
     "url-loader": "^0.5.7",
-    "webpack": "beta",
+    "webpack": "2",
     "webpack-dashboard": "^0.2.0",
     "webpack-dev-middleware": "^1.8.4",
     "webpack-fail-plugin": "^1.0.5",
