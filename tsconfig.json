@@ -34,7 +34,10 @@
         "*",
         "src/*"
       ]
-    }
+    },
+    "types": [
+      "./webceph.d.ts"
+    ]
   },
   "compileOnSave": false,
   "exclude": [
