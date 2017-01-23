@@ -58,7 +58,7 @@ const createExport: Exporter = async (state, options, _) => {
         {map(objectsToExport, (objects, imgId) => {
           <GeoViewer
             key={imgId}
-            objects={objectsToExport}
+            objects={objects}
             top={0}
             left={0}
             width={500}
