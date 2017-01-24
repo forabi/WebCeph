@@ -1,5 +1,6 @@
 import env from './env';
 import workspace from './workspace';
+import app from './app';
 
 import {
   isAppUpdating,
@@ -11,6 +12,7 @@ import {
 const reducers: ReducerMap = {
   ...workspace,
   ...env,
+  ...app,
 };
 
 import { createStructuredSelector } from 'reselect';

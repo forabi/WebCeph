@@ -28,6 +28,11 @@ import {
 } from 'actions/persistence';
 
 import {
+  isSummaryShown,
+  canShowSummary,
+} from 'store/reducers/workspace/analyses';
+
+import {
   checkBrowserCompatibility,
 } from 'actions/initialization';
 
@@ -36,6 +41,7 @@ import { connectionStatusChanged } from 'actions/env';
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: StoreState, { userAgent }: OwnProps) => {
     return {
+      isSummaryShown: canShowSummary(state) && isSummaryShown(state),
       isReady: isAppInitialized(state),
       shouldCheckCompatibility: !(
         isBrowserCompatible(state)(userAgent) ||

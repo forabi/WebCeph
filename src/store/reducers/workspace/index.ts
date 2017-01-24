@@ -7,7 +7,7 @@ import analyses, {
 } from './analyses';
 import treatment from './treatment';
 import superimposition from './superimposition';
-import image, { hasImage, getActiveManualLandmarks, getActiveImageId } from './image';
+import image, { hasImage, getManualLandmarks, getActiveImageId } from './image';
 import { getSuperimposedImages } from './superimposition';
 import { getWorkspaceMode } from './mode';
 import workers from './workers';
@@ -59,7 +59,7 @@ export const isHighlightMode = createSelector(
 );
 
 export const isManualObject = createSelector(
-  getActiveManualLandmarks,
+  getManualLandmarks,
   (manual) => (symbol: string) => manual[symbol] !== undefined,
 );
 
@@ -85,16 +85,16 @@ export const getSortedLandmarksToDisplay = createSelector(
   },
 );
 
-export const hasUnsavedWork = createSelector(
-  getActiveManualLandmarks,
-  ({ present, past }) => !isEmpty(present) || !isEmpty(past),
-);
+// export const hasUnsavedWork = createSelector(
+//   getActiveManualLandmarks,
+//   ({ present, past }) => !isEmpty(present) || !isEmpty(past),
+// );
 
-export const canUndo = hasUnsavedWork;
-export const canRedo = createSelector(
-  getActiveManualLandmarks,
-  ({ future }) => !isEmpty(future),
-);
+// export const canUndo = hasUnsavedWork;
+// export const canRedo = createSelector(
+//   getActiveManualLandmarks,
+//   ({ future }) => !isEmpty(future),
+// );
 
 export const workspaceHasError = createSelector(
   (hasExportError),

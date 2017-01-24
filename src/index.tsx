@@ -27,7 +27,7 @@ const installOrUpdateApp = () => {
   runtime.register().then((reg: ServiceWorkerRegistration) => {
     reg.onupdatefound = () => {
       const newWorker = reg.installing;
-      let setStatus = isAppInstalled(state) ? setAppUpdateStatus : setAppInstallStatus;
+      const setStatus = isAppInstalled(state) ? setAppUpdateStatus : setAppInstallStatus;
       if (newWorker !== undefined) {
         switch (newWorker.state) {
           case 'installing':
@@ -48,7 +48,7 @@ const installOrUpdateApp = () => {
 };
 
 if (!__DEBUG__ && 'serviceWorker' in navigator) {
-  let unsubscribe = store.subscribe(() => {
+  const unsubscribe = store.subscribe(() => {
     const state = store.getState();
     // Wait for persisted state to load so that we can know whether we are
     // updating the app or installing for the first time.
@@ -59,7 +59,7 @@ if (!__DEBUG__ && 'serviceWorker' in navigator) {
   });
 }
 
-import { hasUnsavedWork } from 'store/reducers/workspace';
+// import { hasUnsavedWork } from 'store/reducers/workspace';
 
 import { connectionStatusChanged } from 'actions/env';
 
@@ -67,17 +67,17 @@ if (__DEBUG__) {
   window.__STORE__ = store;
 }
 
-window.addEventListener('beforeunload', e => {
-  const state = store.getState();
-  if (hasUnsavedWork(state)) {
-    const confirmationMessage = (
-      'Are you sure you want to close this window?'
-    );
-    e.returnValue = confirmationMessage;
-    return confirmationMessage;
-  }
-  return undefined;
-});
+// window.addEventListener('beforeunload', e => {
+//   const state = store.getState();
+//   if (hasUnsavedWork(state)) {
+//     const confirmationMessage = (
+//       'Are you sure you want to close this window?'
+//     );
+//     e.returnValue = confirmationMessage;
+//     return confirmationMessage;
+//   }
+//   return undefined;
+// });
 
 const handleConnectionChange = () => {
   console.log('Connection changed', navigator.onLine);

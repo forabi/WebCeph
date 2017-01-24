@@ -2,7 +2,8 @@ import reduce from 'lodash/reduce';
 type Reducer<State, Action> = (state: State, action: Action) => State;
 
 /**
- * Creates a reducer that calls the specific reducer and returns the default state if the supplied reducer returns undefined
+ * Creates a reducer that calls the specific reducer and returns the default state if the
+ * supplied reducer returns undefined
  */
 export function wrapWithDefaultState<State, Action>(reducer: Reducer<State, Action>, defaultState: State) {
   return (state: State, action: Action) => {

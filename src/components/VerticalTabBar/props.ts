@@ -1,20 +1,18 @@
 export interface OwnProps {
   className?: string;
-  userAgent: string;
 }
 
 export interface StateProps {
-  shouldCheckCompatibility: boolean;
-  isReady: boolean;
+  activeTabId: number;
 }
 
 
 export interface DispatchProps {
-  dispatch: GenericDispatch;
+  onTabChanged: (i: number) => any;
+  onAddNewTab: () => any;
 }
 
 export interface MergeProps {
-  onComponentMount: () => any;
 }
 
 export type ConnectableProps = StateProps & DispatchProps & MergeProps;

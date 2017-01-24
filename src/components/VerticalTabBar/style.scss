@@ -1,0 +1,31 @@
+.root {
+  background-color: lightgray;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-start;
+  overflow-y: scroll;
+}
+
+.tab_item {
+  min-height: 64px;
+  min-width: 64px;
+  margin: 3px;
+  border: 1px solid darkgray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: x-large;
+  background: white;
+}
+
+.tab_item__active {
+  border: 3px solid cornflowerblue;
+}
+
+.tab_item_placeholder {
+  content: '+';
+  border-style: dashed;
+  opacity: 0.5;
+}

@@ -1,13 +1,7 @@
 import * as React from 'react';
 
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import VerticalTabBar from 'components/VerticalTabBar';
 
-import AnalysisResultsViewer from 'components/AnalysisResultsViewer/connected';
-import Workspace from 'components/Workspace/connected';
-import CommandPalette from 'components/CommandPalette/connected';
-import CompatibilityChecker from 'components/CompatibilityChecker/connected';
-import Menu from 'components/Menu/connected';
-import Toolbar from 'components/Toolbar/connected';
 import Progress from './Progress';
 
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
@@ -29,8 +23,6 @@ type State = { };
 
 const classes = require('./style.scss');
 
-const fadeIn = require('transitions/fade-in.scss');
-
 const addLifeCycleHooks = lifecycle({
   componentDidMount(this: React.Component<Props, { }>) {
     this.props.onComponentMount();
@@ -39,28 +31,23 @@ const addLifeCycleHooks = lifecycle({
 
 const enhance = compose<Props, State>(pure, addLifeCycleHooks);
 
-const App = enhance(({ userAgent, isReady, isSummaryShown = false }: Props) => (
+const App = enhance(({ userAgent, isReady }: Props) => (
   <MuiThemeProvider muiTheme={getMuiTheme()}>
     { isReady ? (
         <div className={classes.root}>
-          <CommandPalette className={classes.command_palette} />
-          <AnalysisResultsViewer open={isSummaryShown} />
-          <CompatibilityChecker userAgent={userAgent} />
           <div className={classes.container}>
-            <Menu className={classes.menu} />
             <div className={classes.row}>
-              <Workspace className={classes.main} />
+              <VerticalTabBar
+                className={classes.tab_bar}
+                activeTabId={1}
+                onTabChanged={(i) => alert(`Tab changed to ${i}`)}
+                onAddNewTab={() => alert('Add new tab')}
+              >
+                <div />
+                <div />
+              </VerticalTabBar>
+              <div className={classes.workspace} />
             </div>
-            <ReactCSSTransitionGroup
-              className={cx(fadeIn.root, classes.toolbar)}
-              transitionAppear
-              transitionName={fadeIn}
-              transitionAppearTimeout={1000}
-              transitionEnterTimeout={1000}
-              transitionLeaveTimeout={1000}
-            >
-              <Toolbar />
-            </ReactCSSTransitionGroup>
           </div>
         </div>
       ) : (

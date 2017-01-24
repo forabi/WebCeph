@@ -33,7 +33,7 @@ if (__DEBUG__) {
 
 const enableLoadingPersistedState = (r: Reducer<StoreState>): Reducer<StoreState> => {
   return (state: StoreState, action: GenericAction) => {
-    if (action.type == 'LOAD_PERSISTED_STATE_SUCCEEDED') {
+    if (action.type === 'LOAD_PERSISTED_STATE_SUCCEEDED') {
       return {
         ...r(state, action),
         ...action.payload,

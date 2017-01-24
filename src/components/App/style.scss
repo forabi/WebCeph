@@ -30,13 +30,17 @@
 
   }
 
+  .tab_bar {
+    flex-grow: 0;
+  }
+
   .row {
     display: flex;
     flex-direction: row;
     flex-grow: 1;
   }
 
-  .main {
+  .workspace {
     flex-grow: 1;
     flex-basis: 75%;
   }

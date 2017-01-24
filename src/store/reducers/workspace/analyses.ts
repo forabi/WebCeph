@@ -12,7 +12,7 @@ import mapValues from 'lodash/mapValues';
 
 import {
   getManualLandmarks,
-  getActiveSkippedSteps as getSkippedSteps,
+  getSkippedSteps,
   getAnalysisId,
 } from './image';
 
@@ -154,18 +154,25 @@ export const isStepRemovable = isStepManual;
 export const getExpectedNextManualLandmark = createSelector(
   getManualSteps,
   getManualLandmarks,
-  (manualSteps, manualLandmarks): CephLandmark | null => (find(
-    manualSteps,
-    step => manualLandmarks[step.symbol] === undefined,
-  ) || null),
+  (getSteps, getManual) => (imageId: string): CephLandmark | null => {
+    const manualLandmarks = getManual(imageId);
+    const manualSteps = getSteps(imageId);
+    return find(
+      manualSteps,
+      step => manualLandmarks[step.symbol] === undefined,
+    ) || null;
+  },
 );
 
+const EMPTY_ARRAY: CephLandmark[] = [];
+type C = (step: CephLandmark) => CephLandmark[];
 export const findEqualComponents = createSelector(
   getAllPossibleActiveAnalysisSteps,
-  (steps) => memoize(((step: CephLandmark): CephLandmark[] => {
-    const cs = filter(steps, s => !areEqualSymbols(step, s) && areEqualSteps(step, s)) || [];
+  (getSteps) => (imageId: string): C => (step: CephLandmark): CephLandmark[] => {
+    const steps = getSteps(imageId);
+    const cs = filter(steps, s => !areEqualSymbols(step, s) && areEqualSteps(step, s)) || EMPTY_ARRAY;
     return cs;
-  })),
+  },
 );
 
 /**
@@ -188,14 +195,14 @@ export const isManualStepComplete = isManualStepMappingComplete;
 
 export const isStepEligibleForAutomaticMapping = createSelector(
   isManualStepComplete,
-  (isComplete) => {
+  (isComplete) => (imageId: string) => {
     const isEligible = (s: CephLandmark): boolean => {
       if (isStepManual(s)) {
         return false;
       }
       return every(s.components, subcomponent => {
         if (isStepManual(subcomponent)) {
-          return isComplete(subcomponent);
+          return isComplete(imageId)(subcomponent);
         }
         return isEligible(subcomponent);
       });
@@ -209,13 +216,14 @@ export const getMappedValue = createSelector(
   getManualLandmarks,
   (isEligible, getManual) => (imageId: string) => memoize((step: CephLandmark) => {
     const manual = getManual(imageId);
-    if (isEligible(step)) {
+    if (isEligible(imageId)(step)) {
       return tryMap(step, manual);
     }
     return manual[step.symbol] || undefined;
   }),
 );
 
+type D = (step: CephLandmark) => boolean;
 /**
  * Determines whether a landmark that was defined with a `map`
  * method has been mapped. Returns true if the landmark does
@@ -223,9 +231,9 @@ export const getMappedValue = createSelector(
  */
 export const isStepMappingComplete = createSelector(
   getMappedValue,
-  (getMapped) => (step: CephLandmark) => {
+  (getMapped) => (imageId: string): D => (step: CephLandmark) => {
     if (isStepMappable(step)) {
-      return typeof getMapped(step) !== 'undefined';
+      return typeof getMapped(imageId)(step) !== 'undefined';
     }
     return true;
   },
@@ -234,12 +242,12 @@ export const isStepMappingComplete = createSelector(
 export const isStepEligibleForComputation = createSelector(
   isStepMappingComplete,
   findEqualComponents,
-  (isMapped, findEqual) => (step: CephLandmark) => {
+  (isMapped, findEqual) => (imageId: string): D => (step: CephLandmark) => {
     return (
       isStepComputable(step) &&
       every(step.components, (c: CephLandmark) => some(
-        [c, ...findEqual(c)],
-        eq => isMapped(eq),
+        [c, ...findEqual(imageId)(c)],
+        eq => isMapped(imageId)(eq),
       ))
     );
   },
@@ -247,8 +255,8 @@ export const isStepEligibleForComputation = createSelector(
 
 export const getCalculatedValue = createSelector(
   isStepEligibleForComputation,
-  (isEligible) => (step: CephLandmark) => {
-    if (isEligible(step)) {
+  (isEligible) => (imageId: string): ((step: CephLandmark) => number | undefined) => (step: CephLandmark) => {
+    if (isEligible(imageId)(step)) {
       return tryCalculate(step);
     }
     return undefined;
@@ -262,9 +270,9 @@ export const getCalculatedValue = createSelector(
  */
 export const isStepCalculationComplete = createSelector(
   getCalculatedValue,
-  (getValue) => (step: CephLandmark) => {
+  (getValue) => (imageId: string): D => (step: CephLandmark) => {
     if (isStepComputable(step)) {
-      return typeof getValue(step) !== 'undefined';
+      return typeof getValue(imageId)(step) !== 'undefined';
     }
     return true;
   },
@@ -276,14 +284,14 @@ export const isStepCalculationComplete = createSelector(
 export const isStepComplete = createSelector(
   isStepMappingComplete,
   isStepCalculationComplete,
-  (isMapped, isCalculated) => (step: CephLandmark) => {
-    return isMapped(step) && isCalculated(step);
+  (isMapped, isCalculated) => (imageId: string): D => (step: CephLandmark) => {
+    return isMapped(imageId)(step) && isCalculated(imageId)(step);
   },
 );
 
 export const isStepSkipped = createSelector(
   getSkippedSteps,
-  (skipped) => (s: CephLandmark) => skipped[s.symbol] === true,
+  (getSkipped) => (imageId: string): D => (s: CephLandmark) => getSkipped(imageId)[s.symbol] === true,
 );
 
 export const getStepStates = createSelector(
@@ -291,13 +299,15 @@ export const getStepStates = createSelector(
   isStepComplete,
   isStepSkipped,
   getExpectedNextManualLandmark,
-  (steps, isComplete, isSkipped, next) => {
+  (getSteps, isComplete, isSkipped, getNext) => (imageId: string) => {
+    const steps = getSteps(imageId);
+    const next = getNext(imageId);
     return mapValues(keyBy(steps, s => s.symbol), (s): StepState => {
       if (next !== null && next.symbol === s.symbol) {
         return 'current';
-      } else if (isComplete(s)) {
+      } else if (isComplete(imageId)(s)) {
         return 'done';
-      } else if (isSkipped(s)) {
+      } else if (isSkipped(imageId)(s)) {
         return 'skipped';
       }
       return 'pending';
@@ -305,9 +315,10 @@ export const getStepStates = createSelector(
   },
 );
 
+type E<T> = (s: CephLandmark) => T;
 export const getStepState = createSelector(
   getStepStates,
-  (states) => (s: CephLandmark) => states[s.symbol],
+  (getStates) => (imageId: string): E<StepState> => (s: CephLandmark) => getStates(imageId)[s.symbol],
 );
 
 /**
@@ -344,7 +355,7 @@ export const getAllCalculatedValues = createSelector(
     const steps = getSteps(imageId);
     return mapValues(
       keyBy(steps, c => c.symbol),
-      c => getValue(c),
+      c => getValue(imageId)(c),
     );
   },
 );

@@ -246,24 +246,6 @@ export const getAnalysisId = createSelector(
 
 export const getActiveImageId = (state: StoreState) => state[KEY_ACTIVE_IMAGE_ID];
 
-export const getActiveImageAnalysisId = createSelector(
-  getActiveImageId,
-  getAnalysisId,
-  (id, getId) => getId(id!).activeId,
-);
-
-export const getActiveManualLandmarks = createSelector(
-  getActiveImageId,
-  getManualLandmarks,
-  (id, getManual) => getManual(id!),
-);
-
-export const getActiveSkippedSteps = createSelector(
-  getActiveImageId,
-  getSkippedSteps,
-  (id, getSkipped) => getSkipped(id!),
-);
-
 export const getScaleFactor = createSelector(
   getImageProps,
   (getProps) => (id: string) => getProps(id).scaleFactor,
