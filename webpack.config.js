@@ -264,7 +264,7 @@ const config = {
     prod(new BabiliPlugin()),
     new CopyPlugin([
       { from: 'src/assets/icons', to: 'icons' },
-      { from: 'src/manifest.webmanifest', to: 'manifest.webmanifest' },
+      { from: 'src/manifest.json', to: 'manifest.json' },
     ]),
   ]),
 };

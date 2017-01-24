@@ -1,5 +1,7 @@
 {
   "name": "WebCeph",
+  "id": "net.forabi.webceph",
+  "url": "https://forabi.net/WebCeph",
   "short_name": "WebCeph",
   "start_url": ".",
   "display": "standalone",
