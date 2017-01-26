@@ -3,12 +3,13 @@ export interface OwnProps {
 }
 
 export interface StateProps {
-  activeTabId: number;
+  tabs: string[];
+  activeTabId: string | null;
 }
 
 
 export interface DispatchProps {
-  onTabChanged: (i: number) => any;
+  onTabChanged: (id: string) => any;
   onAddNewTab: () => any;
 }
 

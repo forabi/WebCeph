@@ -277,6 +277,17 @@ type WorkerDetails = {
 type TracingMode = 'auto' | 'manual' | 'assisted';
 type WorkspaceMode = 'tracing' | 'superimposition';
 type SuperimpositionMode = 'auto' | 'manual';
+type WorkspaceSettings = {
+  mode: WorkspaceMode;
+  tracing: {
+    imageId: string | null;
+  },
+  superimposition: {
+    mode: SuperimpositionMode;
+    /** An order list of superimposed images. */
+    imageIds: string[];
+  };
+};
 
 type TreatmentStage = {
   /**
@@ -377,10 +388,11 @@ interface StoreState {
     [T in ImageType]: AnalysisId<T>;
   };
   'workspace.analyses.summary.isShown': boolean;
-  'workspace.images.activeImageId': string | null;
-  'workspace.superimposition.mode': SuperimpositionMode;
-  /** An order list of superimposed images. */
-  'workspace.superimposition.imageIds': string[];
+  'workspaces.order': string[];
+  'workspaces.activeWorkspaceId': string | null;
+  'workspaces.settings': {
+    [id: string]: WorkspaceSettings;
+  };
   'workspace.treatment.stages.order': string[];
   /** User-specified order of treatment stages */
   'workspace.treatment.stages.data': {
@@ -498,10 +510,23 @@ interface Events {
     height: number;
   };
   SET_WORKSPACE_MODE_REQUESTED: {
+    id: string;
     mode: WorkspaceMode;
+  };
+  SET_ACTIVE_WORKSPACE: {
+    id: string;
+  };
+  ADD_NEW_WORKSPACE: {
+    id: string;
+    settings?: Partial<WorkspaceSettings>;
+  };
+  REMOVE_WORKSPACE: {
+    id: string;
+    removeUnreferencedImages: boolean;
   };
   SET_ACTIVE_IMAGE_ID: {
     imageId: string;
+    workspaceId: string;
   };
   SET_IMAGE_PROPS: (
     { id: string } &
@@ -597,9 +622,11 @@ interface Events {
     imageId: string;
   };
   SUPERIMPOSE_IMAGES_REQUESTED: {
+    workspaceId: string;
     imageIds: string[];
   };
   SET_SUPERIMPOSITION_MODE_REQUESTED: {
+    id: string;
     mode: SuperimpositionMode;
   };
   ADD_TREATMENT_STAGE: {

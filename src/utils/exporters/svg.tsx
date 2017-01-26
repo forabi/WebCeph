@@ -12,8 +12,11 @@ import {
 
 import {
   getImageProps,
-  getActiveImageId,
 } from 'store/reducers/workspace/image';
+
+import {
+  getActiveTracingImageId,
+} from 'store/reducers/workspace';
 
 import {
   getAllGeoObjects,
@@ -47,7 +50,7 @@ const createExport: Exporter = async (state, options, _) => {
     throw new RangeError('Cannot export more than one image');
   }
   const getProps = getImageProps(state);
-  const [imageId] = getActiveImageId(state) || getWorkspaceImageIds(state);
+  const [imageId] = getActiveTracingImageId(state) || getWorkspaceImageIds(state);
   const imageToExport = getProps(imageId);
 
   const fragment = new DocumentFragment();

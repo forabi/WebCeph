@@ -6,13 +6,13 @@ import analyses, {
   findStepBySymbol,
 } from './analyses';
 import treatment from './treatment';
-import superimposition from './superimposition';
-import image, { hasImage, getManualLandmarks, getActiveImageId } from './image';
-import { getSuperimposedImages } from './superimposition';
-import { getWorkspaceMode } from './mode';
+import image, { hasImage, getManualLandmarks } from './image';
+import settings, { getSuperimposedImages, getWorkspaceMode, getTracingImageId } from './settings';
 import workers from './workers';
 import fileImport from './import';
 import fileExport, { getExportError, hasExportError } from './export';
+import order from './order';
+import activeId, { getActiveWorkspaceId } from './activeId';
 
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
@@ -27,7 +27,9 @@ export default {
   ...fileExport,
   ...fileImport,
   ...treatment,
-  ...superimposition,
+  ...settings,
+  ...order,
+  ...activeId,
 };
 
 export const canEdit = hasImage;
@@ -97,28 +99,43 @@ export const getSortedLandmarksToDisplay = createSelector(
 // );
 
 export const workspaceHasError = createSelector(
-  (hasExportError),
+  hasExportError,
   (exportError) => exportError,
 );
 
 export const getWorkspaceErrorMessage = createSelector(
-  (getExportError),
+  getExportError,
   (error) => error !== null ? error.message : null,
 );
 
+export const getActiveTracingImageId = createSelector(
+  getTracingImageId,
+  getActiveWorkspaceId,
+  (getImageId, workspaceId) => getImageId(workspaceId!),
+);
+
+const EMPTY_ARRAY: string[] = [];
+
 export const getWorkspaceImageIds = createSelector(
   getWorkspaceMode,
-  getActiveImageId,
+  getActiveTracingImageId,
   getSuperimposedImages,
-  (mode, activeId, superimposed) => {
-    if (mode === 'tracing') {
-      return activeId !== null ? [activeId] : [];
+  (getMode, activeId, getSuperimposedImages) => (workspaceId: string): string[] => {
+    if (getMode(workspaceId) === 'tracing') {
+      return activeId !== null ? [activeId] : EMPTY_ARRAY;
     }
-    return superimposed;
+    return getSuperimposedImages(workspaceId);
   },
 );
 
-export const doesWorkspaceHaveImages = createSelector(
+export const getActiveWorkspaceMode = createSelector(
+  getWorkspaceMode,
+  getActiveWorkspaceId,
+  (getMode, workspaceId) => getMode(workspaceId!),
+);
+
+export const getActiveWorkspaceImageIds = createSelector(
   getWorkspaceImageIds,
-  (ids) => !isEmpty(ids),
+  getActiveWorkspaceId,
+  (getImages, workspaceId) => getImages(workspaceId!),
 );

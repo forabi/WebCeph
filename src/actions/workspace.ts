@@ -58,3 +58,7 @@ export const setActiveImageId = createActionCreator('SET_ACTIVE_IMAGE_ID');
 
 export const setSuperimpositionMode = createActionCreator('SET_SUPERIMPOSITION_MODE_REQUESTED');
 export const superimposeImages = createActionCreator('SUPERIMPOSE_IMAGES_REQUESTED');
+
+export const setActiveWorkspace = createActionCreator('SET_ACTIVE_WORKSPACE');
+export const addNewWorkspace = createActionCreator('ADD_NEW_WORKSPACE');
+export const removeWorkspace = createActionCreator('REMOVE_WORKSPACE');

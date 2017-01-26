@@ -1,13 +1,11 @@
 import * as React from 'react';
 
-import VerticalTabBar from 'components/VerticalTabBar';
+import VerticalTabBar from 'components/VerticalTabBar/connected';
 
 import Progress from './Progress';
 
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-
-import * as cx from 'classnames';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
@@ -39,13 +37,7 @@ const App = enhance(({ userAgent, isReady }: Props) => (
             <div className={classes.row}>
               <VerticalTabBar
                 className={classes.tab_bar}
-                activeTabId={1}
-                onTabChanged={(i) => alert(`Tab changed to ${i}`)}
-                onAddNewTab={() => alert('Add new tab')}
-              >
-                <div />
-                <div />
-              </VerticalTabBar>
+              />
               <div className={classes.workspace} />
             </div>
           </div>

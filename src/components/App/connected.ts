@@ -31,6 +31,12 @@ import {
   checkBrowserCompatibility,
 } from 'actions/initialization';
 
+import {
+  addNewWorkspace,
+} from 'actions/workspace';
+
+import uniqueId from 'lodash/uniqueId';
+
 import { connectionStatusChanged } from 'actions/env';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
@@ -67,6 +73,7 @@ const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> =
         if (shouldCheckCompatibility) {
           dispatch(checkBrowserCompatibility(void 0));
         }
+        dispatch(addNewWorkspace({ id: uniqueId('workspace_') }));
         dispatch(connectionStatusChanged({ isOffline: !navigator.onLine }));
       },
     };

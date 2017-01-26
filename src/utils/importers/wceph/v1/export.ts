@@ -15,18 +15,18 @@ import zipObject from 'lodash/zipObject';
 import map from 'lodash/map';
 
 import {
-  getWorkspaceImageIds,
+  getActiveWorkspaceImageIds,
 } from 'store/reducers/workspace';
 
 import {
   getImageProps,
-  getActiveImageId,
   getTracingDataByImageId,
 } from 'store/reducers/workspace/image';
 
 import {
-  getWorkspaceMode,
-} from 'store/reducers/workspace/mode';
+  getActiveTracingImageId,
+  getActiveWorkspaceMode,
+} from 'store/reducers/workspace';
 
 import {
   getTreatmentStagesOrder,
@@ -36,13 +36,13 @@ import {
 import {
   getSuperimpsotionMode,
   getSuperimposedImages,
-} from 'store/reducers/workspace/superimposition';
+} from 'store/reducers/workspace/settings';
 
 import { validateIndexJSON } from './validate';
 
 const createExport: Exporter = async (state, options, onUpdate) => {
   const {
-    imagesToSave = getWorkspaceImageIds(state),
+    imagesToSave = getActiveWorkspaceImageIds(state),
     treatmentStagesToSave = getTreatmentStagesOrder(state),
     saveWorkspaceSettings = true,
   } = options;
@@ -68,7 +68,7 @@ const createExport: Exporter = async (state, options, onUpdate) => {
     }),
   );
 
-  const activeImageId = getActiveImageId(state);
+  const activeImageId = getActiveTracingImageId(state);
   const hasActiveImage = activeImageId !== null && findIndex(
     imagesToSave, id => id === activeImageId) !== -1;
 
@@ -117,7 +117,7 @@ const createExport: Exporter = async (state, options, onUpdate) => {
     workspace: {
       mode: (
         saveWorkspaceSettings ?
-          getWorkspaceMode(state) : undefined
+          getActiveWorkspaceMode(state) : undefined
       ),
       activeImageId: (
         saveWorkspaceSettings ?
@@ -159,7 +159,7 @@ const createExport: Exporter = async (state, options, onUpdate) => {
     } : undefined,
   );
 
-  let props = activeImageId !== null ? getProps(activeImageId) : null;
+  const props = activeImageId !== null ? getProps(activeImageId) : null;
   let imageName;
   if (hasActiveImage && props && props.name !== null) {
     imageName = props.name;
