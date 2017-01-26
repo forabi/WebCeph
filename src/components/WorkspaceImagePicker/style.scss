@@ -1,21 +1,66 @@
+@import 'src/_theme.scss';
+
 .root {
   display: flex;
   height: 100%;
   width: 100%;
   align-items: center;
   justify-content: center;
-  background-color: slategrey;
+  background-color: $ms-color-neutralDark;
+  flex-wrap: 0;
 }
 
 .image {
-  height: 50%;
-  width: 50%;
-  font-size: 2.5rem;
-  border: 1px solid ghostwhite;
+  cursor: pointer;
+  height: 30vh;
+  max-height: 30%;
+  width: 30vh;
+  max-width: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 5px;
+  background-color: $ms-color-neutralTertiary;
+  border: 1px solid $ms-color-neutralSecondaryAlt;
+  color: $ms-color-neutralDark;
+  transition-property: color, border-color, background-color;
+  transition-duration: 0.3s;
+
+  &:hover, &:focus {
+    border-color: $ms-color-themeDark;
+    color: $ms-color-themeDark;
+    background-color: $ms-color-themeLight;
+  }
 }
 
-.image_placeholder {
+.image_dropzone {
   @extend .image;
   border-style: dashed;
-  opacity: 0.5;
+  background-color: $ms-color-neutralPrimary;
+  border: 1px solid $ms-color-neutralSecondaryAlt;
+  color: $ms-color-neutralSecondaryAlt;
+
+  &_icon {
+    font-size: 5rem;
+  }
+
+  &:hover, &:focus {
+    border-color: $ms-color-neutralLight;
+    color: $ms-color-neutralLight;
+    background-color: $ms-color-neutralPrimaryAlt;
+  }
+
+  &__active {
+    background: $ms-color-successBackground;
+    border-color: $ms-color-success;
+    color: $ms-color-success;
+  }
+
+
+  &__reject {
+    background: $ms-color-errorBackground;
+    border-color: $ms-color-error;
+    color: $ms-color-error;
+  }
 }
+

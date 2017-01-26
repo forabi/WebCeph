@@ -1679,16 +1679,9 @@ babel-register@^6.22.0:
     mkdirp "^0.5.1"
     source-map-support "^0.4.2"
 
-babel-runtime@^6.0.0, babel-runtime@^6.18.0, babel-runtime@^6.20.0, babel-runtime@^6.22.0, babel-runtime@^6.6.1, babel-runtime@^6.9.0, babel-runtime@^6.9.1, babel-runtime@^6.9.2:
+babel-runtime@^6.0.0, babel-runtime@^6.11.6, babel-runtime@^6.18.0, babel-runtime@^6.20.0, babel-runtime@^6.22.0, babel-runtime@^6.6.1, babel-runtime@^6.9.0, babel-runtime@^6.9.1, babel-runtime@^6.9.2:
   version "6.22.0"
   resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.22.0.tgz#1cf8b4ac67c77a4ddb0db2ae1f74de52ac4ca611"
-  dependencies:
-    core-js "^2.4.0"
-    regenerator-runtime "^0.10.0"
-
-babel-runtime@^6.11.6:
-  version "6.20.0"
-  resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.20.0.tgz#87300bdcf4cd770f09bf0048c64204e17806d16f"
   dependencies:
     core-js "^2.4.0"
     regenerator-runtime "^0.10.0"
@@ -6279,9 +6272,9 @@ react-draggable@^2.2.2:
   dependencies:
     classnames "^2.2.5"
 
-react-dropzone@^3.9.1:
-  version "3.9.1"
-  resolved "https://registry.yarnpkg.com/react-dropzone/-/react-dropzone-3.9.1.tgz#f90e0c7d603be3fb2253ee315063d424371a57bd"
+react-dropzone@^3.9.2:
+  version "3.9.2"
+  resolved "https://registry.yarnpkg.com/react-dropzone/-/react-dropzone-3.9.2.tgz#84703d1ee20ea4118f64fa38c14218415fecb1e9"
   dependencies:
     attr-accept "^1.0.3"
 

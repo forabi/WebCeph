@@ -29,7 +29,7 @@ function isTouchEvent<T>(e: any): e is React.TouchEvent<T> {
  * Provides a declarative API for viewing landmarks on a cephalomertic image
  * and performing common edits like brightness and contrast.
  */
-export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, mouseY: number }> {
+export class TracingViewer extends React.PureComponent<Props, { mouseX: number, mouseY: number }> {
   public refs: {
     canvas: React.ReactInstance;
   };
@@ -234,4 +234,4 @@ export class CephaloCanvas extends React.PureComponent<Props, { mouseX: number, 
   };
 }
 
-export default CephaloCanvas;
+export default TracingViewer;

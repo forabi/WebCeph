@@ -1,5 +1,6 @@
 export interface StateProps {
-  
+  images: string[];
+  showDropzone?: boolean;
 };
 
 export interface DispatchProps {

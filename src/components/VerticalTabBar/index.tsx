@@ -31,10 +31,7 @@ class VerticalTabBar extends React.PureComponent<Props, { }> {
         ))}
         {
           <button
-            className={cx(
-              classes.tab_item,
-              classes.tab_item_placeholder,
-            )}
+            className={classes.tab_item_placeholder}
             onClick={this.handleNewTab}
           >
             +

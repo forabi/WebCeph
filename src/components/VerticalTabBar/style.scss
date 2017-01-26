@@ -1,5 +1,7 @@
+@import 'src/_theme.scss';
+
 .root {
-  background-color: lightgray;
+  background-color: $ms-color-themeLighterAlt;
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -12,24 +14,32 @@
   min-height: 64px;
   min-width: 64px;
   margin: 3px;
-  border: 1px solid darkgray;
+  border: 1px solid $ms-color-neutralTertiary;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: x-large;
   background: white;
+
+  &:hover, &:focus {
+    background: $ms-color-themeLight;
+  }
+
+  & + & {
+    margin-top: 0;
+  }
+
+  &__active {
+    border: 1px solid $ms-color-themeDarker;
+    background-color: $ms-color-themeDarkAlt;
+    color: $ms-color-themeLighter;
+  }
+
+  &_placeholder {
+    @extend .tab_item;
+    content: '+';
+    border-style: dashed;
+    opacity: 0.5;
+  }
 }
 
-.tab_item + .tab_item {
-  margin-top: 0;
-}
-
-.tab_item__active {
-  border: 3px solid cornflowerblue;
-}
-
-.tab_item_placeholder {
-  content: '+';
-  border-style: dashed;
-  opacity: 0.5;
-}

@@ -4,7 +4,7 @@ import {
   MapDispatchToPropsFunction,
 } from 'react-redux';
 
-import CephaloCanvas from './index';
+import TracingViewer from './index';
 
 import {
   StateProps,
@@ -131,7 +131,7 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
 
 const connected = connect<StateProps, DispatchProps, OwnProps>(
   mapStateToProps, mapDispatchToProps,
-)(CephaloCanvas);
+)(TracingViewer);
 
 
 export default connected;
