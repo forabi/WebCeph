@@ -51,10 +51,14 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
     };
   };
 
+import { keyMap, createHandlers } from './shortcuts';
+
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
   (dispatch) => (
     {
       dispatch,
+      handlers: createHandlers(dispatch),
+      keyMap,
     }
   );
 

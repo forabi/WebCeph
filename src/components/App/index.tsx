@@ -29,19 +29,23 @@ const addLifeCycleHooks = lifecycle({
 
 const enhance = compose<Props, State>(pure, addLifeCycleHooks);
 
-const App = enhance(({ userAgent, isReady }: Props) => (
+import { HotKeys } from 'react-hotkeys';
+
+const App = enhance(({ userAgent, isReady, keyMap, handlers }: Props) => (
   <MuiThemeProvider muiTheme={getMuiTheme()}>
     { isReady ? (
-        <div className={classes.root}>
-          <div className={classes.container}>
-            <div className={classes.row}>
-              <VerticalTabBar
-                className={classes.tab_bar}
-              />
-              <div className={classes.workspace} />
+        <HotKeys keyMap={keyMap} handlers={handlers}>
+          <div className={classes.root}>
+            <div className={classes.container}>
+              <div className={classes.row}>
+                <VerticalTabBar
+                  className={classes.tab_bar}
+                />
+                <div className={classes.workspace} />
+              </div>
             </div>
           </div>
-        </div>
+        </HotKeys>
       ) : (
         <div className={classes.root_loading}>
           <Progress />

@@ -5232,6 +5232,10 @@ moment@2.x.x, moment@^2.15.1:
   version "2.17.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.17.1.tgz#fed9506063f36b10f066c8b59a144d7faebe1d82"
 
+mousetrap@^1.5.2:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/mousetrap/-/mousetrap-1.6.0.tgz#0168fcabb11d07669e87490324c981208121ac4d"
+
 ms@0.7.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.1.tgz#9cd13c03adbff25b65effde7ce864ee952017098"
@@ -6315,6 +6319,13 @@ react-hot-loader@^3.0.0-beta.5:
     react-proxy "^3.0.0-alpha.0"
     redbox-react "^1.2.5"
     source-map "^0.4.4"
+
+react-hotkeys@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/react-hotkeys/-/react-hotkeys-0.9.0.tgz#7a47ba4337be8925a96a024e6d58d433096a3233"
+  dependencies:
+    lodash "^4.13.1"
+    mousetrap "^1.5.2"
 
 react-proxy@^3.0.0-alpha.0:
   version "3.0.0-alpha.1"

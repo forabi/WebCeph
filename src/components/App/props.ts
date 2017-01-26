@@ -6,11 +6,13 @@ export interface OwnProps {
 export interface StateProps {
   shouldCheckCompatibility: boolean;
   isReady: boolean;
+  keyMap: KeyboardMap;
 }
 
 
 export interface DispatchProps {
   dispatch: GenericDispatch;
+  handlers: KeyboardHandlers;
 }
 
 export interface MergeProps {

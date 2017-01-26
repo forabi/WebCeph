@@ -667,6 +667,7 @@ type GenericDispatch = (action: GenericAction) => any;
 type ActionType = keyof Events;
 type StoreKey = keyof StoreState;
 type ActionCreator<T extends ActionType> = (payload: Events[T]) => Action<T>;
+type GenericActionCreator = ActionCreator<ActionType>;
 
 type GenericAction = {
   type: ActionType;
@@ -827,6 +828,15 @@ type Validator = (
   fileToValidate: File,
   options: ValidateOptions,
 ) => Promise<ValidationError[]>;
+
+
+type KeyboardCommand = (
+  'ADD_NEW_WORKSPACE'
+);
+
+type KeyboardActionCreators = Record<KeyboardCommand, () => GenericAction>;
+type KeyboardHandlers = Record<KeyboardCommand, (event: KeyboardEvent) => any>;
+type KeyboardMap = Record<KeyboardCommand, string>;
 
 /* Browser compatiblity checking */
 type BrowserId = 'Chrome' | 'Firefox' | 'Opera' | 'Microsoft Edge' | 'Safari';
