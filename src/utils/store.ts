@@ -10,7 +10,7 @@ export function createActionCreator<T extends ActionType>(type: T): ActionCreato
 };
 
 export function handleActions<Key extends StoreKey>(
-  map: ActionToReducerMap<Key>, defaultState: StoreState[Key]
+  map: ActionToReducerMap<Key>, defaultState: StoreState[Key],
 ): Reducer<StoreState[Key], ActionType> {
   return (state: StoreState[Key], action: Action<ActionType>) => {
     const reducer: Reducer<StoreState[Key], typeof action['type']> | undefined = map[action.type];

@@ -1,0 +1,21 @@
+.root {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  background-color: slategrey;
+}
+
+.image {
+  height: 50%;
+  width: 50%;
+  font-size: 2.5rem;
+  border: 1px solid ghostwhite;
+}
+
+.image_placeholder {
+  @extend .image;
+  border-style: dashed;
+  opacity: 0.5;
+}

@@ -16,8 +16,11 @@ import {
   getWorkspaceImageIds,
 } from 'store/reducers/workspace';
 import {
-  getWorkspaceMode,
-} from 'store/reducers/workspace/mode';
+  getActiveWorkspaceMode,
+} from 'store/reducers/workspace';
+import {
+  getActiveWorkspaceId,
+} from 'store/reducers/workspace/activeId';
 import {
   canvasResized,
   ignoreWorkspaceError,
@@ -27,7 +30,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: StoreStat
   const imageIds = getWorkspaceImageIds(state);
   return {
     imageIds,
-    mode: getWorkspaceMode(state),
+    workspaceId: getActiveWorkspaceId(state),
+    mode: getActiveWorkspaceMode(state),
     isLoading: isAnyImageLoading(state)(imageIds),
     hasError: workspaceHasError(state),
     errorMessage: getWorkspaceErrorMessage(state),
