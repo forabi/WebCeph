@@ -510,7 +510,7 @@ interface Events {
     height: number;
   };
   SET_WORKSPACE_MODE_REQUESTED: {
-    id: string;
+    workspaceId: string;
     mode: WorkspaceMode;
   };
   SET_ACTIVE_WORKSPACE: {
@@ -626,7 +626,7 @@ interface Events {
     imageIds: string[];
   };
   SET_SUPERIMPOSITION_MODE_REQUESTED: {
-    id: string;
+    workspaceId: string;
     mode: SuperimpositionMode;
   };
   ADD_TREATMENT_STAGE: {

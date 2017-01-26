@@ -24,23 +24,23 @@ const reducers: Partial<ReducerMap> = {
       };
     },
     REMOVE_WORKSPACE: (state, id) => omit(state, id) as typeof state,
-    SET_SUPERIMPOSITION_MODE_REQUESTED: (state, { payload: { id, mode } }) => {
+    SET_SUPERIMPOSITION_MODE_REQUESTED: (state, { payload: { workspaceId, mode } }) => {
       return {
         ...state,
-        [id]: {
-          ...state[id],
+        [workspaceId]: {
+          ...state[workspaceId],
           superimposition: {
-            ...state[id].superimposition,
+            ...state[workspaceId].superimposition,
             mode,
           },
         },
       };
     },
-    SET_WORKSPACE_MODE_REQUESTED: (state, { payload: { id, mode } }) => {
+    SET_WORKSPACE_MODE_REQUESTED: (state, { payload: { workspaceId, mode } }) => {
       return {
         ...state,
-        [id]: {
-          ...state[id],
+        [workspaceId]: {
+          ...state[workspaceId],
           mode,
         },
       };
