@@ -20,6 +20,10 @@
   background: white;
 }
 
+.tab_item + .tab_item {
+  margin-top: 0;
+}
+
 .tab_item__active {
   border: 3px solid cornflowerblue;
 }
