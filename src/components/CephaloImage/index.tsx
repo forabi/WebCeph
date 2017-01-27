@@ -4,11 +4,12 @@ import { pure } from 'recompose';
 
 import Props from './props';
 
-const Lens = pure((props: Props) => {
+const CephImage = pure((props: Props) => {
   const {
     src,
     width, height,
-    isFlippedX = false, isFlippedY = false,
+    isFlippedX = false,
+    isFlippedY = false,
     ...rest,
   } = props;
 
@@ -28,4 +29,4 @@ const Lens = pure((props: Props) => {
   );
 });
 
-export default Lens;
+export default CephImage;

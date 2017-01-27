@@ -23,10 +23,12 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state) => ({
   isOffline: isAppOffline(state),
 });
 
-const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = (dispatch) => (
+const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> = (
+  dispatch, { workspaceId }: OwnProps,
+) => (
   {
-    onFilesDropped: (files) => dispatch(importFileRequested(files[0])),
-    onDemoButtonClick: () => dispatch(loadImageFromURL({ url: DEMO_IMAGE_URL })),
+    onFilesDropped: ([file]) => dispatch(importFileRequested({ file, workspaceId })),
+    onDemoButtonClick: () => dispatch(loadImageFromURL({ workspaceId, url: DEMO_IMAGE_URL })),
   }
 );
 

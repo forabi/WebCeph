@@ -278,6 +278,10 @@ type TracingMode = 'auto' | 'manual' | 'assisted';
 type WorkspaceMode = 'tracing' | 'superimposition';
 type SuperimpositionMode = 'auto' | 'manual';
 type WorkspaceSettings = {
+  isImporting: boolean;
+  isExporting: boolean;
+  importError: GenericError | null;
+  exportError: GenericError | null;
   mode: WorkspaceMode;
   images: string[];
   tracing: {
@@ -328,10 +332,6 @@ interface StoreState {
       };
     };
   };
-  'workspace.export.isExporting': boolean;
-  'workspace.export.error': GenericError | null;
-  'workspace.import.isImporting': boolean;
-  'workspace.import.error': GenericError | null;
   'workspace.mode': 'tracing' | 'superimposition';
   'workspace.canvas.dimensions': {
     width: number;
@@ -486,8 +486,13 @@ interface Events {
     file: File;
     workspaceId: string;
   };
-  IMPORT_FILE_SUCCEEDED: void;
-  IMPORT_FILE_FAILED: GenericError;
+  IMPORT_FILE_SUCCEEDED: {
+    workspaceId: string;
+  };
+  IMPORT_FILE_FAILED: {
+    workspaceId: string;
+    error: GenericError;
+  };
   IMPORT_PROGRESS_CHANGED: {
     value: number;
     data?: any; // @TODO;

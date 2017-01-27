@@ -13,6 +13,10 @@ const reducers: Partial<ReducerMap> = {
         ...state,
         [id]: {
           ...settings,
+          isImporting: false,
+          importError: null,
+          isExporting: false,
+          exportError: null,
           images: [],
           mode: 'tracing',
           tracing: {
@@ -88,6 +92,36 @@ const reducers: Partial<ReducerMap> = {
         },
       } as typeof state;
     },
+    IMPORT_FILE_REQUESTED: (state, { payload: { workspaceId } }) => {
+      return {
+        ...state,
+        [workspaceId]: {
+          ...state[workspaceId],
+          importError: null,
+          isImporting: true,
+        },
+      };
+    },
+    IMPORT_FILE_FAILED: (state, { payload: { workspaceId, error } }) => {
+      return {
+        ...state,
+        [workspaceId]: {
+          ...state[workspaceId],
+          importError: error,
+          isImporting: false,
+        },
+      };
+    },
+    IMPORT_FILE_SUCCEEDED: (state, { payload: { workspaceId } }) => {
+      return {
+        ...state,
+        [workspaceId]: {
+          ...state[workspaceId],
+          importError: null,
+          isImporting: false,
+        },
+      };
+    },
   }, { }),
 };
 
@@ -134,3 +168,12 @@ export const getTracingImageId = createSelector(
   (getSettings) => (workspaceId: string) => getSettings(workspaceId).tracing.imageId,
 );
 
+export const hasImportFailed = createSelector(
+  getWorkspaceSettingsById,
+  (getSettings) => (workspaceId: string) => getSettings(workspaceId).importError !== null,
+);
+
+export const isImporting = createSelector(
+  getWorkspaceSettingsById,
+  (getSettings) => (workspaceId: string) => getSettings(workspaceId).isImporting,
+);

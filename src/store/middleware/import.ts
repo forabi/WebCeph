@@ -29,46 +29,54 @@ const importers = [
   },
 ];
 
+const fail = (error: Error, workspaceId: string) => {
+  console.error(
+    `Failed to import file.`,
+    error,
+  );
+  return importFileFailed({ workspaceId, error });
+};
+
 
 import requestIdleCallback from 'utils/requestIdleCallback';
 
 const middleware: Middleware = ({ dispatch }: Store<StoreState>) =>
   (next: GenericDispatch) => async (action: GenericAction) => {
-    try {
-      if (isActionOfType(action, 'LOAD_IMAGE_FROM_URL_REQUESTED')) {
-        next(action);
-        const { url, workspaceId } = action.payload;
+    if (isActionOfType(action, 'LOAD_IMAGE_FROM_URL_REQUESTED')) {
+      next(action);
+      const { url, workspaceId } = action.payload;
+      try {
         const blob = await (await fetch(url)).blob();
         const file = new File([blob], 'demo_image');
         return dispatch(importFileRequested({ file, workspaceId }));
-      } else if (isActionOfType(action, 'IMPORT_FILE_REQUESTED')) {
-        next(action);
-        const { file, workspaceId } = action.payload;
-        console.info('Importing file...', file.name);
-        const importer = find(importers, ({ doesMatch }) => doesMatch(file));
-        if (importer) {
+      } catch (error) {
+        return dispatch(fail(error, workspaceId));
+      }
+    } else if (isActionOfType(action, 'IMPORT_FILE_REQUESTED')) {
+      next(action);
+      const { file, workspaceId } = action.payload;
+      console.info('Importing file...', file.name);
+      const importer = find(importers, ({ doesMatch }) => doesMatch(file));
+      if (importer) {
+        try {
           const actions = [
+            importFileSucceeded({ workspaceId }),
             ...(await importer.importFn(file, { workspaceId })),
-            importFileSucceeded(void 0),
           ];
           each(actions, async a => {
             requestIdleCallback(() => dispatch(a));
           });
-        } else {
-          console.warn(
-            `Type of ${file.name} is not a supported format.`,
-          );
-          throw new Error('Incompatible file type');
+        } catch (error) {
+          return dispatch(fail(error, workspaceId));
         }
       } else {
-        return next(action);
+        console.warn(
+          `Type of ${file.name} is not a supported format.`,
+        );
+        throw new Error('Incompatible file type');
       }
-    } catch (e) {
-      console.error(
-        `Failed to import file.`,
-        e,
-      );
-      return next(importFileFailed(e));
+    } else {
+      return next(action);
     }
   };
 

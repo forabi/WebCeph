@@ -9,8 +9,6 @@ import treatment from './treatment';
 import image, { hasImage, getManualLandmarks } from './image';
 import settings, { getWorkspaceImageIds, getWorkspaceMode, getTracingImageId } from './settings';
 import workers from './workers';
-import fileImport from './import';
-import fileExport, { getExportError, hasExportError } from './export';
 import order from './order';
 import activeId, { getActiveWorkspaceId } from './activeId';
 
@@ -24,8 +22,6 @@ export default {
   ...image,
   ...canvas,
   ...workers,
-  ...fileExport,
-  ...fileImport,
   ...treatment,
   ...settings,
   ...order,
@@ -98,15 +94,15 @@ export const getSortedLandmarksToDisplay = createSelector(
 //   ({ future }) => !isEmpty(future),
 // );
 
-export const workspaceHasError = createSelector(
-  hasExportError,
-  (exportError) => exportError,
-);
+// export const workspaceHasError = createSelector(
+//   hasExportError,
+//   (exportError) => exportError,
+// );
 
-export const getWorkspaceErrorMessage = createSelector(
-  getExportError,
-  (error) => error !== null ? error.message : null,
-);
+// export const getWorkspaceErrorMessage = createSelector(
+//   getExportError,
+//   (error) => error !== null ? error.message : null,
+// );
 
 export const getActiveTracingImageId = createSelector(
   getTracingImageId,

@@ -11,11 +11,24 @@
 }
 
 .image_container {
-  cursor: pointer;
   height: 30vh;
   max-height: 30%;
   width: 30vh;
   max-width: 30%;
+
+  &:not([disabled]) {
+  cursor: pointer;
+  }
+  
+  &__error {
+    @extend .image_container;
+    @extend .image_dropzone__reject;
+  }
+
+  &__loading {
+    @extend .image_container;
+  }
+
   & .image {
     max-height: 100%;
     max-width: 100%;
@@ -30,7 +43,7 @@
   transition-property: color, border-color, background-color;
   transition-duration: 0.3s;
 
-  &:hover, &:focus {
+  &:hover:not([disabled]), &:focus:not([disabled]) {
     border-color: $ms-color-themeDark;
     color: $ms-color-themeDark;
     background-color: $ms-color-themeLight;
@@ -48,7 +61,7 @@
     font-size: 15vh;
   }
 
-  &:hover, &:focus {
+  &:hover:not([disabled]), &:focus:not([disabled]) {
     border-color: $ms-color-neutralLight;
     color: $ms-color-neutralLight;
     background-color: $ms-color-neutralPrimaryAlt;

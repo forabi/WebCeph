@@ -1,6 +1,8 @@
 export interface StateProps {
   images: string[];
   showDropzone?: boolean;
+  isFileLoading: boolean;
+  hasFileLoadFailed: boolean;
 };
 
 export interface DispatchProps {

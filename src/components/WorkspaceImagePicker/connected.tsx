@@ -19,17 +19,20 @@ import {
 } from 'actions/workspace';
 
 import {
-  getActiveWorkspaceId,
-} from 'store/reducers/workspace/activeId';
+  hasImportFailed,
+  isImporting,
+} from 'store/reducers/workspace/settings';
 
 import {
-  getActiveWorkspaceImageIds,
+  getWorkspaceImageIds,
 } from 'store/reducers/workspace';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
-  (state: StoreState) => {
+  (state: StoreState, { workspaceId }: OwnProps) => {
     return {
-      images: getActiveWorkspaceImageIds(state),
+      images: getWorkspaceImageIds(state)(workspaceId),
+      isFileLoading: isImporting(state)(workspaceId),
+      hasFileLoadFailed: hasImportFailed(state)(workspaceId),
     };
   };
 

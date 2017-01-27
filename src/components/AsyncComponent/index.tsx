@@ -1,23 +1,32 @@
 import * as React from 'react';
 
+import Progress from 'material-ui/CircularProgress';
+
 interface Props {
   className?: string;
-  Component: React.Factory<any>;
+  Component?: React.Factory<any>;
+  WhileLoading?: React.Factory<any>;
+  Error?: React.Factory<any>;
   isLoading: boolean;
   hasFailed: boolean;
 }
 
-import Progress from 'material-ui/CircularProgress';
-
 import { pure } from 'recompose';
 
-const AsyncComponent = pure(({ hasFailed, Component, isLoading }: Props) => {
+const defaultLoading = () => <Progress color="white" />;
+const defaultError = () => <span>Error</span>;
+
+const AsyncComponent = pure(({
+  isLoading, WhileLoading = defaultLoading,
+  hasFailed, Error = defaultError,
+  Component,
+}: Props) => {
   if (hasFailed) {
-    return <span>Error</span>;
+    return <Error />;
   } else if (isLoading) {
-    return <Progress color="white" />;
+    return <WhileLoading />;
   }
-  return <Component />;
+  return typeof Component !== 'undefined' ? <Component /> : null;
 });
 
 export default AsyncComponent;
