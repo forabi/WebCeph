@@ -2,7 +2,9 @@ import bluebird from 'bluebird';
 import { readFileAsDataURL } from 'utils/file';
 
 import {
+  loadImageStarted,
   loadImageSucceeded,
+  setActiveImageId,
 } from 'actions/workspace';
 
 import uniqueId from 'lodash/uniqueId';
@@ -10,8 +12,12 @@ import uniqueId from 'lodash/uniqueId';
 const importFile: Importer = async (fileToImport, options) => {
   const {
     ids = [uniqueId('imported_image_')],
+    workspaceId,
   } = options;
-  const actions: GenericAction[] = [];
+  const [imageId] = ids;
+  const actions: GenericAction[] = [
+    loadImageStarted({ imageId, workspaceId }),
+  ];
   const dataURL = await readFileAsDataURL(fileToImport);
   const img = new Image();
   img.src = dataURL;
@@ -20,12 +26,13 @@ const importFile: Importer = async (fileToImport, options) => {
     img.onerror = ({ error }) => cb(error, null);
   });
   actions.push(loadImageSucceeded({
-    id: ids[0],
+    id: imageId,
     name: fileToImport.name,
     data: dataURL,
     height,
     width,
   }));
+  actions.push(setActiveImageId({ imageId, workspaceId }));
   return actions;
 };
 

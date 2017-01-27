@@ -10,12 +10,16 @@
   flex-wrap: 0;
 }
 
-.image {
+.image_container {
   cursor: pointer;
   height: 30vh;
   max-height: 30%;
   width: 30vh;
   max-width: 30%;
+  & .image {
+    max-height: 100%;
+    max-width: 100%;
+  }
   display: flex;
   align-items: center;
   justify-content: center;
@@ -34,14 +38,14 @@
 }
 
 .image_dropzone {
-  @extend .image;
+  @extend .image_container;
   border-style: dashed;
   background-color: $ms-color-neutralPrimary;
   border: 1px solid $ms-color-neutralSecondaryAlt;
   color: $ms-color-neutralSecondaryAlt;
 
   &_icon {
-    font-size: 5rem;
+    font-size: 15vh;
   }
 
   &:hover, &:focus {

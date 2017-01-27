@@ -9,7 +9,7 @@ const Lens = pure((props: Props) => {
     src,
     width, height,
     isFlippedX = false, isFlippedY = false,
-    children,
+    ...rest,
   } = props;
 
   let transform = '';
@@ -21,17 +21,10 @@ const Lens = pure((props: Props) => {
   }
 
   return (
-    <svg width={width || 0} height={height || 0}>
-      <image
-        xlinkHref={src || undefined}
-        x={0}
-        y={0}
-        width={width || 0}
-        height={height || 0}
-        transform={transform}
-      />
-      {children}
-    </svg>
+    <img
+      src={src || undefined}
+      {...rest}
+    />
   );
 });
 

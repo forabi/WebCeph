@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Dropzone from 'react-dropzone/src/index.js';
+import CephaloImage from 'components/CephaloImage/async';
 import Props from './props';
 
 import map from 'lodash/map';
@@ -7,19 +8,17 @@ import map from 'lodash/map';
 const classes = require('./style.scss');
 
 export default class WorkspaceImagePicker extends React.PureComponent<Props, { }> {
-  handleDrop = () => {
-    alert('Dropped');
+  handleDrop = ([file]: File[]) => {
+    this.props.onRequestFileLoad(file);
   }
 
   render() {
     const { showDropzone = true } = this.props;
     return (
       <div className={classes.root}>
-        {map(this.props.images, (_, i) => (
-          <button className={classes.image}>
-            <span className={classes.image_dropzone_icon}>
-              {i + 1}
-            </span>
+        {map(this.props.images, (imageId) => (
+          <button className={classes.image_container}>
+            <CephaloImage key={imageId} imageId={imageId} className={classes.image} />
           </button>
         ))}
         {!showDropzone ? null : (

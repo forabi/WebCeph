@@ -1,7 +1,6 @@
 import {
   connect,
   MapStateToProps,
-  MapDispatchToPropsFunction,
 } from 'react-redux';
 
 import CephaloLens from './index';
@@ -13,17 +12,13 @@ import {
 } from './props';
 
 import {
-  getImageProps,
-  getActiveImageId,
+  getImageSrc,
 } from 'store/reducers/workspace/image';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
-  (state: StoreState) => {
-    const props = getImageProps(state)(getActiveImageId(state)!);
+  (state: StoreState, { imageId }: OwnProps) => {
     return {
-      src: props.data,
-      height: props.height,
-      width: props.width,
+      src: getImageSrc(state)(imageId),
     };
   };
 

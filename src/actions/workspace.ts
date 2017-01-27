@@ -14,7 +14,7 @@ export const importFileRequested = createActionCreator('IMPORT_FILE_REQUESTED');
 export const importFileSucceeded = createActionCreator('IMPORT_FILE_SUCCEEDED');
 export const importFileFailed = createActionCreator('IMPORT_FILE_FAILED');
 
-export const loadImageFile = createActionCreator('LOAD_IMAGE_REQUESTED');
+export const loadImageStarted = createActionCreator('LOAD_IMAGE_STARTED');
 export const loadImageSucceeded = createActionCreator('LOAD_IMAGE_SUCCEEDED');
 export const loadImageFailed = createActionCreator('LOAD_IMAGE_FAILED');
 

@@ -2,6 +2,7 @@ import { handleActions } from 'utils/store';
 import { createSelector } from 'reselect';
 
 import omit from 'lodash/omit';
+import without from 'lodash/without';
 
 const KEY_WORKSPACE_SETTINGS: StoreKey = 'workspaces.settings';
 
@@ -12,13 +13,13 @@ const reducers: Partial<ReducerMap> = {
         ...state,
         [id]: {
           ...settings,
+          images: [],
           mode: 'tracing',
           tracing: {
             imageId: null,
           },
           superimposition: {
             mode: 'auto',
-            imageIds: [],
           },
         },
       };
@@ -45,14 +46,14 @@ const reducers: Partial<ReducerMap> = {
         },
       };
     },
-    SUPERIMPOSE_IMAGES_REQUESTED: (state, { payload: { workspaceId, imageIds }}) => {
+    SUPERIMPOSE_IMAGES_REQUESTED: (state, { payload: { workspaceId, order }}) => {
       return {
         ...state,
         [workspaceId]: {
           ...state[workspaceId],
           superimposition: {
             ...state[workspaceId].superimposition,
-            imageIds,
+            order,
           },
         },
       };
@@ -69,6 +70,24 @@ const reducers: Partial<ReducerMap> = {
         },
       };
     },
+    LOAD_IMAGE_STARTED: (state, { payload: { workspaceId, imageId } }) => {
+      return {
+        ...state,
+        [workspaceId]: {
+          ...state[workspaceId],
+          images: [ ...state[workspaceId].images, imageId ],
+        },
+      };
+    },
+    CLOSE_IMAGE_REQUESTED: (state, { payload: { workspaceId, imageId } }) => {
+      return {
+        ...state,
+        [workspaceId]: {
+          ...state[workspaceId],
+          images: without(state[workspaceId].images, imageId),
+        },
+      } as typeof state;
+    },
   }, { }),
 };
 
@@ -84,6 +103,11 @@ export const getWorkspaceSettingsById = createSelector(
 export const getWorkspaceMode = createSelector(
   getWorkspaceSettingsById,
   getSettings => (workspaceId: string) => getSettings(workspaceId).mode,
+);
+
+export const getWorkspaceImageIds = createSelector(
+  getWorkspaceSettingsById,
+  (getSettings) => (id: string) => getSettings(id).images,
 );
 
 export const isTracing = createSelector(
@@ -103,11 +127,6 @@ export const getSuperimpositionSettingsByWorkspaceId = createSelector(
 export const getSuperimpsotionMode = createSelector(
   getSuperimpositionSettingsByWorkspaceId,
   (getSettings) => (id: string) => getSettings(id).mode,
-);
-
-export const getSuperimposedImages = createSelector(
-  getSuperimpositionSettingsByWorkspaceId,
-  (getSettings) => (id: string) => getSettings(id).imageIds,
 );
 
 export const getTracingImageId = createSelector(

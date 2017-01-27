@@ -7,7 +7,7 @@ export function printUnexpectedPayloadWarning(type: string, state: any, actualTy
   );
 }
 
-export const delay = (timeout: number, resolveValue: any) => {
+export const delay = (timeout: number, resolveValue: any = undefined) => {
   return new Promise((resolve) => {
     setTimeout(
       resolve.bind(null, resolveValue),

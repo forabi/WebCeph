@@ -30,11 +30,15 @@ function isTouchEvent<T>(e: any): e is React.TouchEvent<T> {
  * and performing common edits like brightness and contrast.
  */
 export class TracingViewer extends React.PureComponent<Props, { mouseX: number, mouseY: number }> {
-  public refs: {
-    canvas: React.ReactInstance;
-  };
-
-  state = { mouseX: 0, mouseY: 0 };
+  constuctor() {
+    this.state = {
+      mouseX: 0,
+      mouseY: 0,
+    };
+    this.refs = {
+      canvas: null,
+    };
+  }
 
   render() {
     const {

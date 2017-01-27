@@ -279,13 +279,12 @@ type WorkspaceMode = 'tracing' | 'superimposition';
 type SuperimpositionMode = 'auto' | 'manual';
 type WorkspaceSettings = {
   mode: WorkspaceMode;
+  images: string[];
   tracing: {
     imageId: string | null;
   },
   superimposition: {
     mode: SuperimpositionMode;
-    /** An order list of superimposed images. */
-    imageIds: string[];
   };
 };
 
@@ -471,6 +470,7 @@ interface Events {
   APP_IS_READY: void;
   LOAD_IMAGE_FROM_URL_REQUESTED: {
     url: string;
+    workspaceId: string;
   };
   EXPORT_FILE_REQUESTED: {
     format: ExportFileFormat;
@@ -482,16 +482,19 @@ interface Events {
     value: number;
     data?: any; // @TODO;
   };
-  IMPORT_FILE_REQUESTED: File;
+  IMPORT_FILE_REQUESTED: {
+    file: File;
+    workspaceId: string;
+  };
   IMPORT_FILE_SUCCEEDED: void;
   IMPORT_FILE_FAILED: GenericError;
   IMPORT_PROGRESS_CHANGED: {
     value: number;
     data?: any; // @TODO;
   };
-  LOAD_IMAGE_REQUESTED: {
-    id: string;
-    file: File;
+  LOAD_IMAGE_STARTED: {
+    imageId: string;
+    workspaceId: string;
   };
   LOAD_IMAGE_SUCCEEDED: (
     { id: string } & ImageBlobData
@@ -501,7 +504,8 @@ interface Events {
     error: GenericError;
   };
   CLOSE_IMAGE_REQUESTED: {
-    id: string;
+    imageId: string;
+    workspaceId: string;
   };
   CANVAS_RESIZED: {
     top: number;
@@ -623,7 +627,7 @@ interface Events {
   };
   SUPERIMPOSE_IMAGES_REQUESTED: {
     workspaceId: string;
-    imageIds: string[];
+    order: string[];
   };
   SET_SUPERIMPOSITION_MODE_REQUESTED: {
     workspaceId: string;
@@ -780,7 +784,9 @@ type ImportOptions = Partial<{
   loadWorkspaceSettings: boolean;
   loadSuperimpositionState: boolean;
   treatmentStagesToLoad: string[];
-}>;
+}> & {
+  workspaceId: string;
+};
 
 /**
  * A WCeph File importer recieves the file to be imported along with any import options and

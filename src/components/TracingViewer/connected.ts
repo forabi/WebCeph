@@ -13,7 +13,7 @@ import {
 } from './props';
 
 import {
-  getImageProps
+  getImageSrc,
 } from 'store/reducers/workspace/image';
 
 import {
@@ -96,9 +96,9 @@ const getPropsForLandmark = createSelector(
       props.angleIndicatorProps = {
         className: cx(classes.angle_indicator, ...getHighlightClassNames(symbol)),
         r: '2.5cm',
-      }
+      };
     }
-    
+
     props.className = cx(...classNames, ...getHighlightClassNames(symbol));
 
     return props;
@@ -109,16 +109,18 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: StoreState, { imageId }: OwnProps) => {
     return {
       canvasSize: getCanvasDimensions(state),
-      src: getImageProps(state)(imageId).data,
-      imageWidth: getImageWidth(state) as number,
-      imageHeight: getImageHeight(state) as number,
+      src: getImageSrc(state)(imageId),
+      imageWidth: 200,
+      imageHeight: 200,
+      // imageWidth: getImageWidth(state) as number,
+      // imageHeight: getImageHeight(state) as number,
       scale: getScale(state),
-      brightness: getImageBrightness(state),
-      contrast: getImageContrast(state),
-      isFlippedX: isImageFlippedX(state),
-      isFlippedY: isImageFlippedY(state),
+      // brightness: getImageBrightness(state),
+      // contrast: getImageContrast(state),
+      // isFlippedX: isImageFlippedX(state),
+      // isFlippedY: isImageFlippedY(state),
       landmarks: getSortedLandmarksToDisplay(state),
-      isInverted: isImageInverted(state),
+      // isInverted: isImageInverted(state),
       isHighlightMode: isHighlightMode(state),
       highlightedLandmarks: getHighlightedLandmarks(state),
       activeTool: getActiveTool(state),

@@ -26,6 +26,7 @@ const importFile: Importer = async (fileToImport, options) => {
   const {
     loadWorkspaceSettings = true,
     loadSuperimpositionState = true,
+    workspaceId,
   } = options;
   let actions: GenericAction[] = [];
   const zip = new JSZip();
@@ -67,7 +68,7 @@ const importFile: Importer = async (fileToImport, options) => {
       const blob = await zip.file(path).async('blob');
       const name = json.data[originalId].name;
       const imageFile = new File([blob], name || originalId);
-      const imageActions = await importImage(imageFile, { ids: [id] });
+      const imageActions = await importImage(imageFile, { workspaceId, ids: [id] });
       actions = [
         ...actions,
         ...imageActions,
@@ -84,8 +85,8 @@ const importFile: Importer = async (fileToImport, options) => {
     if (mode === 'assisted') {
       mode = 'auto';
     }
-    actions.push(setSuperimpositionMode({ mode }));
-    actions.push(superimposeImages({ imageIds }));
+    actions.push(setSuperimpositionMode({ workspaceId, mode }));
+    actions.push(superimposeImages({ workspaceId, order: imageIds }));
   }
 
   if (loadWorkspaceSettings) {
@@ -93,8 +94,8 @@ const importFile: Importer = async (fileToImport, options) => {
     if (activeImageId === null) {
       activeImageId = keys(json.refs.images)[0];
     }
-    actions.push(setActiveImageId({ imageId: activeImageId }));
-    actions.push(setWorkspaceMode({ mode: mode || 'tracing' }));
+    actions.push(setActiveImageId({ workspaceId, imageId: activeImageId }));
+    actions.push(setWorkspaceMode({ workspaceId, mode: mode || 'tracing' }));
   }
 
   return actions;

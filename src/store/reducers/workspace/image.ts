@@ -38,8 +38,8 @@ const imagesReducer = handleActions<typeof KEY_IMAGES>(
         },
       };
     },
-    CLOSE_IMAGE_REQUESTED: (state, { payload: { id } }) => {
-      return omit(state, id) as typeof state;
+    CLOSE_IMAGE_REQUESTED: (state, { payload: { imageId } }) => {
+      return omit(state, imageId) as typeof state;
     },
     SET_SCALE_FACTOR_REQUESTED: (state, { payload: { imageId, value } }) => {
       return {
@@ -73,10 +73,10 @@ const loadStatusReducer = handleActions<typeof KEY_IMAGES_LOAD_STATUS>({
       },
     };
   },
-  LOAD_IMAGE_REQUESTED: (state, { payload: { id } }) => {
+  LOAD_IMAGE_STARTED: (state, { payload: { imageId } }) => {
     return {
       ...state,
-      [id]: {
+      [imageId]: {
         isLoading: true,
         error: null,
       },
@@ -184,29 +184,47 @@ export const getImageProps = createSelector(
   (all) => (imageId: string) => all[imageId],
 );
 
+export const getImageSrc = createSelector(
+  getImageProps,
+  (getProps) => (id: string) => getProps(id).data,
+);
+
+export const isImageFlippedX = createSelector(
+  getImageProps,
+  (getProps) => (id: string) => getProps(id).flipX,
+);
+
 export const getImageStatus = createSelector(
   getAllImagesStatus,
   (all) => (imageId: string) => all[imageId],
 );
 
-export const isAnyImageLoading = createSelector(
+export const isImageLoading = createSelector(
   getImageStatus,
-  (getStatus) => (ids: string[]) => some(ids, id => getStatus(id).isLoading === true),
+  (getStatus) => (imageId: string) => {
+    const status = getStatus(imageId);
+    return status.isLoading === true && status.error === null;
+  },
+);
+
+export const isAnyImageLoading = createSelector(
+  isImageLoading,
+  (isLoading) => (ids: string[]) => some(ids, isLoading),
 );
 
 export const hasImageLoadFailed = createSelector(
   getImageStatus,
   (getStatus) => (id: string) => {
-    const props = getStatus(id);
-    return props.isLoading === false && props.error === null;
+    const status = getStatus(id);
+    return status.isLoading === false && status.error !== null;
   },
 );
 
 export const isImageLoaded = createSelector(
   getImageStatus,
   (getStatus) => (id: string) => {
-    const props = getStatus(id);
-    return props.isLoading === false && props.error !== null;
+    const status = getStatus(id);
+    return status.isLoading === false && status.error === null;
   },
 );
 

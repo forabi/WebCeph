@@ -35,7 +35,7 @@ import {
 
 import {
   getSuperimpsotionMode,
-  getSuperimposedImages,
+  getWorkspaceImageIds,
 } from 'store/reducers/workspace/settings';
 
 import { validateIndexJSON } from './validate';
@@ -102,7 +102,7 @@ const createExport: Exporter = async (state, options, onUpdate) => {
     ),
     superimposition: {
       mode: getSuperimpsotionMode(state),
-      imageIds: getSuperimposedImages(state),
+      imageIds: getWorkspaceImageIds(state),
     },
     treatmentStages: {
       order: getTreatmentStagesOrder(state),

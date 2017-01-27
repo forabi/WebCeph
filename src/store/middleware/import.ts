@@ -29,23 +29,26 @@ const importers = [
   },
 ];
 
+
+import requestIdleCallback from 'utils/requestIdleCallback';
+
 const middleware: Middleware = ({ dispatch }: Store<StoreState>) =>
   (next: GenericDispatch) => async (action: GenericAction) => {
     try {
       if (isActionOfType(action, 'LOAD_IMAGE_FROM_URL_REQUESTED')) {
         next(action);
-        const { url } = action.payload;
+        const { url, workspaceId } = action.payload;
         const blob = await (await fetch(url)).blob();
         const file = new File([blob], 'demo_image');
-        return dispatch(importFileRequested(file));
+        return dispatch(importFileRequested({ file, workspaceId }));
       } else if (isActionOfType(action, 'IMPORT_FILE_REQUESTED')) {
         next(action);
-        const file = action.payload;
+        const { file, workspaceId } = action.payload;
         console.info('Importing file...', file.name);
         const importer = find(importers, ({ doesMatch }) => doesMatch(file));
         if (importer) {
           const actions = [
-            ...(await importer.importFn(file)),
+            ...(await importer.importFn(file, { workspaceId })),
             importFileSucceeded(void 0),
           ];
           each(actions, async a => {

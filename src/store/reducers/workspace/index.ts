@@ -7,7 +7,7 @@ import analyses, {
 } from './analyses';
 import treatment from './treatment';
 import image, { hasImage, getManualLandmarks } from './image';
-import settings, { getSuperimposedImages, getWorkspaceMode, getTracingImageId } from './settings';
+import settings, { getWorkspaceImageIds, getWorkspaceMode, getTracingImageId } from './settings';
 import workers from './workers';
 import fileImport from './import';
 import fileExport, { getExportError, hasExportError } from './export';
@@ -114,19 +114,7 @@ export const getActiveTracingImageId = createSelector(
   (getImageId, workspaceId) => getImageId(workspaceId!),
 );
 
-const EMPTY_ARRAY: string[] = [];
-
-export const getWorkspaceImageIds = createSelector(
-  getWorkspaceMode,
-  getActiveTracingImageId,
-  getSuperimposedImages,
-  (getMode, activeId, getSuperimposedImages) => (workspaceId: string): string[] => {
-    if (getMode(workspaceId) === 'tracing') {
-      return activeId !== null ? [activeId] : EMPTY_ARRAY;
-    }
-    return getSuperimposedImages(workspaceId);
-  },
-);
+export { getWorkspaceImageIds };
 
 export const getActiveWorkspaceMode = createSelector(
   getWorkspaceMode,

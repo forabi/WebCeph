@@ -7,6 +7,7 @@ export interface StateProps {
   shouldCheckCompatibility: boolean;
   isReady: boolean;
   keyMap: KeyboardMap;
+  workspaceId: string;
 }
 
 

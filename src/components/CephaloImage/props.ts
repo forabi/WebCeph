@@ -1,8 +1,5 @@
 export interface StateProps {
   src: string | null;
-  width: number | null;
-  height: number | null;
-  children?: React.ReactChild[];
 }
 
 export interface DispatchProps {
@@ -10,7 +7,10 @@ export interface DispatchProps {
   onMouseDown?(x: number, y: number, e: React.MouseEvent<SVGImageElement>): any;
 }
 
-export interface OwnProps {
+export interface OwnProps extends React.DOMAttributes<HTMLImageElement> {
+  imageId: string;
+  width?: string | number;
+  height?: string | number;
   isFlippedX?: boolean;
   isFlippedY?: boolean;
 }

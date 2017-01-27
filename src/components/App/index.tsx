@@ -32,7 +32,7 @@ const enhance = compose<Props, State>(pure, addLifeCycleHooks);
 
 import { HotKeys } from 'react-hotkeys';
 
-const App = enhance(({ userAgent, isReady, keyMap, handlers }: Props) => (
+const App = enhance(({ userAgent, isReady, keyMap, handlers, workspaceId }: Props) => (
   <MuiThemeProvider muiTheme={getMuiTheme()}>
     { isReady ? (
         <HotKeys keyMap={keyMap} handlers={handlers}>
@@ -43,7 +43,7 @@ const App = enhance(({ userAgent, isReady, keyMap, handlers }: Props) => (
                   className={classes.tab_bar}
                 />
                 <div className={classes.workspace}>
-                  <WorkspaceImagePicker />
+                  <WorkspaceImagePicker workspaceId={workspaceId} />
                 </div>
               </div>
             </div>

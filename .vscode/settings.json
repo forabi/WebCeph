@@ -22,5 +22,7 @@
   "tslint.exclude": [
     "node_modules/**/*",
     "**/*.js"
-  ]
+  ],
+  "circleci.apiKey": "77dd78953735761b965260b0f49f225339b8dfcf",
+  "circleci.rate": "300"
 }

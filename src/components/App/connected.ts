@@ -24,6 +24,10 @@ import {
 } from 'store/reducers/env/compat';
 
 import {
+  getActiveWorkspaceId,
+} from 'store/reducers/workspace/activeId';
+
+import {
   restorePersistedState,
 } from 'actions/persistence';
 
@@ -48,6 +52,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
         isCompatibilityIgnored(state) ||
         isCheckingCompatiblity(state)
       ),
+      workspaceId: getActiveWorkspaceId(state),
     };
   };
 

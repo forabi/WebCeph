@@ -15,8 +15,7 @@ import {
 } from './props';
 
 import {
-  addNewWorkspace,
-  setActiveWorkspace,
+  importFileRequested,
 } from 'actions/workspace';
 
 import {
@@ -30,14 +29,14 @@ import {
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: StoreState) => {
     return {
-      images: ['1'],
+      images: getActiveWorkspaceImageIds(state),
     };
   };
 
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
-  (dispatch) => (
+  (dispatch, { workspaceId }: OwnProps) => (
     {
-      
+      onRequestFileLoad: (file) => dispatch(importFileRequested({ file, workspaceId })),
     }
   );
 

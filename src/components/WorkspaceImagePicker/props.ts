@@ -4,13 +4,14 @@ export interface StateProps {
 };
 
 export interface DispatchProps {
-  
+  onRequestFileLoad: (file: File) => any;
 };
 
 export type ConnectableProps = StateProps & DispatchProps;
 
 export interface OwnProps {
   className?: string;
+  workspaceId: string;
 };
 
 export type Props = ConnectableProps & OwnProps;
