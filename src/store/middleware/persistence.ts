@@ -33,14 +33,11 @@ const PERSISTABLE_KEYS: StoreKey[] = [
   'workspace.analyses.lastUsedId',
 ];
 
+import requestIdleCallback from 'utils/requestIdleCallback';
+
 const isStoreEntryPersistable = (key: string): boolean => {
   return indexOf(PERSISTABLE_KEYS, key) > -1;
 };
-
-declare var window: Window & { requestIdleCallback?: RequestIdleCallback };
-
-// @TODO: replace with a polyfill?
-const rIC = window.requestIdleCallback || ((fn: Function) => fn());
 
 const saveStateMiddleware: Middleware = ({ getState }: Store<StoreState>) => (next: GenericDispatch) =>
   async (action: GenericAction) => {
@@ -49,7 +46,7 @@ const saveStateMiddleware: Middleware = ({ getState }: Store<StoreState>) => (ne
       console.info(
         `Action ${action.type} has triggered state persistence`,
       );
-      rIC(async () => {
+      requestIdleCallback(async () => {
         try {
           next(persistStateStarted(void 0));
           console.info('Persisting state...');

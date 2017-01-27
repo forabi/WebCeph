@@ -44,10 +44,13 @@ const middleware: Middleware = ({ dispatch }: Store<StoreState>) =>
         console.info('Importing file...', file.name);
         const importer = find(importers, ({ doesMatch }) => doesMatch(file));
         if (importer) {
-          const actions = await importer.importFn(file, { });
-          console.log('actions', actions);
-          next(importFileSucceeded(void 0));
-          each(actions, dispatch);
+          const actions = [
+            ...(await importer.importFn(file)),
+            importFileSucceeded(void 0),
+          ];
+          each(actions, async a => {
+            requestIdleCallback(() => dispatch(a));
+          });
         } else {
           console.warn(
             `Type of ${file.name} is not a supported format.`,
