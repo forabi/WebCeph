@@ -16,6 +16,7 @@ import {
 
 import {
   importFileRequested,
+  traceImage,
 } from 'actions/workspace';
 
 import {
@@ -40,6 +41,7 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
   (dispatch, { workspaceId }: OwnProps) => (
     {
       onRequestFileLoad: (file) => dispatch(importFileRequested({ file, workspaceId })),
+      onImageClick: (imageId) => dispatch(traceImage({ imageId, workspaceId })),
     }
   );
 

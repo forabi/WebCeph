@@ -7,6 +7,7 @@ export interface StateProps {
 
 export interface DispatchProps {
   onRequestFileLoad: (file: File) => any;
+  onImageClick: (imageId: string) => any;
 };
 
 export type ConnectableProps = StateProps & DispatchProps;

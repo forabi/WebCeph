@@ -517,10 +517,10 @@ interface Events {
   CANVAS_RESIZED: {
     workspaceId: string;
     contentRect: {
-    top: number;
-    left: number;
-    width: number;
-    height: number;
+      top: number;
+      left: number;
+      width: number;
+      height: number;
     };
   };
   SET_WORKSPACE_MODE_REQUESTED: {
@@ -549,6 +549,10 @@ interface Events {
       tracing: CephImageTracingData;
     }>
   );
+  TRACE_IMAGE_REQUESTED: {
+    imageId: string;
+    workspaceId: string;
+  }
   ADD_MANUAL_LANDMARK_REQUESTED: {
     imageId: string;
     symbol: string;

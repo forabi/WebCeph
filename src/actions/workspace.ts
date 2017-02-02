@@ -62,3 +62,5 @@ export const superimposeImages = createActionCreator('SUPERIMPOSE_IMAGES_REQUEST
 export const setActiveWorkspace = createActionCreator('SET_ACTIVE_WORKSPACE');
 export const addNewWorkspace = createActionCreator('ADD_NEW_WORKSPACE');
 export const removeWorkspace = createActionCreator('REMOVE_WORKSPACE');
+
+export const traceImage = createActionCreator('TRACE_IMAGE_REQUESTED');

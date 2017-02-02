@@ -27,6 +27,10 @@ export default class WorkspaceImagePicker extends React.PureComponent<Props, { }
     this.props.onRequestFileLoad(file);
   }
 
+  handleImageClick = (imageId: string) => (_: React.MouseEvent<HTMLElement>) => {
+    this.props.onImageClick(imageId);
+  }
+
   render() {
     const {
       showDropzone = true,
@@ -41,6 +45,7 @@ export default class WorkspaceImagePicker extends React.PureComponent<Props, { }
               className={classes.image}
               key={imageId}
               imageId={imageId}
+              onClick={this.handleImageClick(imageId)}
             />
           </button>
         ))}
