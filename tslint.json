@@ -25,6 +25,7 @@
       "never-prefix",
       true
     ],
+    "interface-over-type-literal": false,
     "typedef-whitespace": [
       true,
       {
