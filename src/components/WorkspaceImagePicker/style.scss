@@ -7,13 +7,12 @@
   align-items: center;
   justify-content: center;
   background-color: $ms-color-neutralDark;
-  flex-wrap: 0;
+  flex-wrap: wrap;
 }
 
 .image_container {
-  height: 30vh;
-  max-height: 30%;
-  min-width: 30vh;
+  height: 40vh;
+  min-width: 40vh;
 
   &:not([disabled]) {
   cursor: pointer;
@@ -28,10 +27,11 @@
     @extend .image_container;
   }
 
-  & .image {
+  .image {
     max-height: 100%;
     max-width: 100%;
   }
+
   display: flex;
   align-items: center;
   justify-content: center;
