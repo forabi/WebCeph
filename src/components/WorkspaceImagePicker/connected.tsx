@@ -21,18 +21,18 @@ import {
 
 import {
   hasImportFailed,
-  isImporting,
 } from 'store/reducers/workspace/settings';
 
 import {
   getWorkspaceImageIds,
+  shouldShowLoadingFileIndicator,
 } from 'store/reducers/workspace';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: StoreState, { workspaceId }: OwnProps) => {
     return {
       images: getWorkspaceImageIds(state)(workspaceId),
-      isFileLoading: isImporting(state)(workspaceId),
+      isFileLoading: shouldShowLoadingFileIndicator(state)(workspaceId),
       hasFileLoadFailed: hasImportFailed(state)(workspaceId),
     };
   };

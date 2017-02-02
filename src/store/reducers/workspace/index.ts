@@ -6,8 +6,14 @@ import analyses, {
   findStepBySymbol,
 } from './analyses';
 import treatment from './treatment';
-import image, { hasImage, getManualLandmarks } from './image';
-import settings, { getWorkspaceImageIds, getWorkspaceMode, getTracingImageId } from './settings';
+import image, {
+  hasImage, getManualLandmarks,
+  isAnyImageLoading,
+} from './image';
+import settings, {
+  getWorkspaceImageIds, getWorkspaceMode, getTracingImageId,
+  isImporting,
+} from './settings';
 import workers from './workers';
 import order from './order';
 import activeId, { getActiveWorkspaceId } from './activeId';
@@ -122,4 +128,15 @@ export const getActiveWorkspaceImageIds = createSelector(
   getWorkspaceImageIds,
   getActiveWorkspaceId,
   (getImages, workspaceId) => getImages(workspaceId!),
+);
+
+export const shouldShowLoadingFileIndicator = createSelector(
+  getWorkspaceImageIds,
+  isImporting,
+  isAnyImageLoading,
+  (getIds, isFileImporting, isAnyLoading) => (workspaceId: string) => {
+    return (
+      isFileImporting(workspaceId) && !(isAnyLoading(getIds(workspaceId)))
+    );
+  },
 );
