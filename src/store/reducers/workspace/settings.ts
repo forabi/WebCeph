@@ -12,12 +12,12 @@ const reducers: Partial<ReducerMap> = {
       return {
         ...state,
         [id]: {
-          ...settings,
           isImporting: false,
           importError: null,
           isExporting: false,
           exportError: null,
           images: [],
+          contectRect: null,
           mode: 'tracing',
           tracing: {
             imageId: null,
@@ -25,6 +25,7 @@ const reducers: Partial<ReducerMap> = {
           superimposition: {
             mode: 'auto',
           },
+          ...settings,
         },
       };
     },
@@ -119,6 +120,27 @@ const reducers: Partial<ReducerMap> = {
           ...state[workspaceId],
           importError: null,
           isImporting: false,
+        },
+      };
+    },
+    TRACE_IMAGE_REQUESTED: (state, { payload: { imageId, workspaceId } }) => {
+      return {
+        ...state,
+        [workspaceId]: {
+          ...state[workspaceId],
+          mode: 'tracing',
+          tracing: {
+            imageId,
+          },
+        },
+      };
+    },
+    CANVAS_RESIZED: (state, { payload: { workspaceId, contentRect } }) => {
+      return {
+        ...state,
+        [workspaceId]: {
+          ...state[workspaceId],
+          contentRect,
         },
       };
     },

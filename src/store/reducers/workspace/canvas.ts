@@ -2,7 +2,6 @@ import { handleActions } from 'utils/store';
 import { createSelector } from 'reselect';
 import Tools from 'editorTools';
 
-const KEY_CANVAS_DIMENSIONS: StoreKey = 'workspace.canvas.dimensions';
 const KEY_CANVAS_MOUSE_POSITION: StoreKey = 'workspace.canvas.mouse.position';
 const KEY_CANVAS_TOOL_ID: StoreKey = 'workspace.canvas.tools.activeToolId';
 const KEY_HIGHLIGHTED_STEP: StoreKey = 'workspace.canvas.highlightedStep';
@@ -10,12 +9,6 @@ const KEY_SCALE: StoreKey = 'workspace.canvas.scale.value';
 const KEY_SCALE_ORIGIN: StoreKey = 'workspace.canvas.scale.offset';
 
 const reducers: Partial<ReducerMap> = {
-  [KEY_CANVAS_DIMENSIONS]: handleActions<typeof KEY_CANVAS_DIMENSIONS>(
-    {
-      CANVAS_RESIZED: (_, { payload }) => payload,
-    },
-    { height: 750, width: 550, top: 0, left: 0 },
-  ),
   [KEY_CANVAS_MOUSE_POSITION]: handleActions<typeof KEY_CANVAS_MOUSE_POSITION>(
     {
       MOUSE_POSITION_CHANGED: (_, { payload }) => payload,
@@ -61,8 +54,6 @@ const reducers: Partial<ReducerMap> = {
 export default reducers;
 
 export const getHighlightedStep = (state: StoreState) => state[KEY_HIGHLIGHTED_STEP];
-
-export const getCanvasDimensions = (state: StoreState) => state[KEY_CANVAS_DIMENSIONS];
 
 export const getMousePosition = (state: StoreState) => state[KEY_CANVAS_MOUSE_POSITION];
 

@@ -274,6 +274,13 @@ type WorkerDetails = {
   error: null | GenericError;
 };
 
+type ContentRect = {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+};
+
 type TracingMode = 'auto' | 'manual' | 'assisted';
 type WorkspaceMode = 'tracing' | 'superimposition';
 type SuperimpositionMode = 'auto' | 'manual';
@@ -283,6 +290,7 @@ type WorkspaceSettings = {
   importError: GenericError | null;
   exportError: GenericError | null;
   mode: WorkspaceMode;
+  contectRect: ContentRect | null;
   images: string[];
   tracing: {
     imageId: string | null;
@@ -333,12 +341,6 @@ interface StoreState {
     };
   };
   'workspace.mode': 'tracing' | 'superimposition';
-  'workspace.canvas.dimensions': {
-    width: number;
-    height: number;
-    top: number;
-    left: number;
-  };
   'workspace.canvas.mouse.position': null | {
     x: number;
     y: number;
@@ -513,10 +515,13 @@ interface Events {
     workspaceId: string;
   };
   CANVAS_RESIZED: {
+    workspaceId: string;
+    contentRect: {
     top: number;
     left: number;
     width: number;
     height: number;
+    };
   };
   SET_WORKSPACE_MODE_REQUESTED: {
     workspaceId: string;
