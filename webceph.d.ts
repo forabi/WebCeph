@@ -552,7 +552,7 @@ interface Events {
   TRACE_IMAGE_REQUESTED: {
     imageId: string;
     workspaceId: string;
-  }
+  };
   ADD_MANUAL_LANDMARK_REQUESTED: {
     imageId: string;
     symbol: string;
