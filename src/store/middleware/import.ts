@@ -37,9 +37,6 @@ const fail = (error: Error, workspaceId: string) => {
   return importFileFailed({ workspaceId, error });
 };
 
-
-import requestIdleCallback from 'utils/requestIdleCallback';
-
 const middleware: Middleware = ({ dispatch }: Store<StoreState>) =>
   (next: GenericDispatch) => async (action: GenericAction) => {
     if (isActionOfType(action, 'LOAD_IMAGE_FROM_URL_REQUESTED')) {
@@ -60,12 +57,10 @@ const middleware: Middleware = ({ dispatch }: Store<StoreState>) =>
       if (importer) {
         try {
           const actions = [
-            importFileSucceeded({ workspaceId }),
             ...(await importer.importFn(file, { workspaceId })),
+            importFileSucceeded({ workspaceId }),
           ];
-          each(actions, async a => {
-            requestIdleCallback(() => dispatch(a));
-          });
+          each(actions, dispatch);
         } catch (error) {
           return dispatch(fail(error, workspaceId));
         }
