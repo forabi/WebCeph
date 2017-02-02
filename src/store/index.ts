@@ -50,14 +50,25 @@ function addDevTools() {
   return (f: any) => f;
 }
 
+const enhancedReducer = enableLoadingPersistedState(reducer);
+
+declare var module: __WebpackModuleApi.Module;
+
 const createConfiguredStore = () => {
   const store = createStore<StoreState>(
-    enableLoadingPersistedState(reducer),
+    enhancedReducer,
     compose(
       applyMiddleware(...middlewares),
       addDevTools(),
     ),
   );
+
+  if (module.hot) {
+    module.hot.accept('./reducers', () => {
+      const nextReducer = require('./reducers').default;
+      store.replaceReducer(nextReducer);
+    });
+  }
   return store;
 };
 

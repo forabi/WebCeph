@@ -73,7 +73,6 @@ const config = {
   entry: {
     bundle: compact([
       hot('react-hot-loader/patch'),
-      hot('webpack/hot/only-dev-server'),
       hot('webpack-hot-middleware/client'),
       path.resolve(__dirname, './src/index.tsx'),
     ]),
@@ -145,6 +144,7 @@ const config = {
         test: /\.tsx?$/,
         exclude: /node_modules/,
         use: compact([
+          hot('react-hot-loader/webpack'),
           prod('babel-loader'),
           {
             loader: 'ts-loader',
@@ -154,7 +154,7 @@ const config = {
               compilerOptions: Object.assign(
                 env.isProd ? {
                   jsx: 'preserve',
-                } : { }
+                } : { },
               ),
             },
           },
@@ -163,7 +163,10 @@ const config = {
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        use: ['babel-loader'],
+        use: [
+          hot('react-hot-loader/webpack'),
+          'babel-loader',
+        ],
       },
       {
         test: /\.css$/,

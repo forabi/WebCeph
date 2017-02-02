@@ -5,7 +5,6 @@ import { Store } from 'redux';
 import { setAppUpdateStatus, setAppInstallStatus } from 'actions/env';
 import { isAppInitialized, isAppInstalled } from 'store/reducers/app';
 
-declare var System: any;
 declare var module: __WebpackModuleApi.Module;
 declare var window: Window & {
   ResizeObserver?: ResizeObserver;
@@ -91,12 +90,16 @@ window.addEventListener('offline', handleConnectionChange);
 
 const rootEl = document.getElementById('container');
 
-const render = (App: typeof ReduxApp) => ReactDOM.render(<App />, rootEl);
+const render = (App: typeof ReduxApp) => ReactDOM.render(
+  <App />,
+  rootEl,
+);
 
 render(ReduxApp);
 
 if (module.hot) {
   module.hot.accept('./ReduxApp', () => {
-    System.import('./ReduxApp').then((App: { default: typeof ReduxApp }) => render(App.default));
+    const NextApp: typeof ReduxApp = require('./ReduxApp').default;
+    render(NextApp);
   });
 }
