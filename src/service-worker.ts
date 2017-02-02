@@ -3,7 +3,7 @@
 import toolbox from 'sw-toolbox/sw-toolbox.js';
 
 type ServiceWorkerOptions = {
-  assets: ReadonlyArray<string>
+  assets: ReadonlyArray<string>;
 };
 
 declare const serviceWorkerOption: ServiceWorkerOptions;

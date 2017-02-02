@@ -79,7 +79,7 @@ if (__DEBUG__) {
 // });
 
 const handleConnectionChange = () => {
-  console.log('Connection changed', navigator.onLine);
+  console.info('Connection changed', navigator.onLine);
   store.dispatch(connectionStatusChanged({
     isOffline: !navigator.onLine,
   }));
