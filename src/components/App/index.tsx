@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import VerticalTabBar from 'components/VerticalTabBar/connected';
-import WorkspaceImagePicker from 'components/WorkspaceImagePicker/connected';
+import Workspace from 'components/Workspace/connected';
 
 import Progress from './Progress';
 
@@ -42,9 +42,7 @@ const App = enhance(({ userAgent, isReady, keyMap, handlers, workspaceId }: Prop
                 <VerticalTabBar
                   className={classes.tab_bar}
                 />
-                <div className={classes.workspace}>
-                  <WorkspaceImagePicker workspaceId={workspaceId} />
-                </div>
+                <Workspace className={classes.workspace} workspaceId={workspaceId} />
               </div>
             </div>
           </div>

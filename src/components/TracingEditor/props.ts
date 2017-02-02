@@ -1,9 +1,10 @@
 export interface StateProps {
-  mode: WorkspaceMode;
+  imageId: string | null;
 };
 
 export interface DispatchProps {
-  onResize(rect: ContentRect): any;
+  onFilesDrop: (files: File[]) => any;
+  onDemoButtonClick: () => any;
 };
 
 export type ConnectableProps = StateProps & DispatchProps;

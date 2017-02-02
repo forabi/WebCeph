@@ -20,13 +20,14 @@ const demoButtonStyle = { marginTop: 5 };
 
 class CephaloDropzone extends React.PureComponent<Props, { }> {
   refs: {
+    [key: string]: Element;
     dropzone: any;
   };
 
 
   render() {
     const {
-      onFilesDropped,
+      onFilesDrop,
       onDemoButtonClick,
       isOffline,
       // supportedImageTypes = [
@@ -40,11 +41,11 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
     } = this.props;
     return (
       <Dropzone
-        ref={this.setRef}
+        ref="dropzone"
         className={classes.dropzone}
         activeClassName={classes.dropzone__active}
         rejectClassName={classes.dropzone__reject}
-        onDrop={onFilesDropped}
+        onDrop={onFilesDrop}
         multiple={allowsMultipleFiles}
         disableClick
         disablePreview

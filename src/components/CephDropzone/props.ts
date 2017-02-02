@@ -5,14 +5,14 @@ export interface StateProps {
 }
 
 export interface DispatchProps {
-  onFilesDropped(files: File[]): any;
-  onDemoButtonClick(): any;
+  
 }
 
 export type ConnectableProps = StateProps & DispatchProps;
 
 export interface OwnProps {
-  workspaceId: string;
+  onDemoButtonClick(): any;
+  onFilesDrop(files: File[]): any;
 };
 
 export type Props = ConnectableProps & OwnProps;
