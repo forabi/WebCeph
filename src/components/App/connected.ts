@@ -28,6 +28,10 @@ import {
 } from 'store/reducers/workspace/activeId';
 
 import {
+  hasMultipleWorkspaces,
+} from 'store/reducers/workspace';
+
+import {
   restorePersistedState,
 } from 'actions/persistence';
 
@@ -53,6 +57,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
         isCheckingCompatiblity(state)
       ),
       workspaceId: getActiveWorkspaceId(state),
+      shouldShowWorkspaceSwitcher: hasMultipleWorkspaces(state),
     };
   };
 

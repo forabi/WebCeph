@@ -17,6 +17,7 @@ import settings, {
 import workers from './workers';
 import order from './order';
 import activeId, { getActiveWorkspaceId } from './activeId';
+import { getWorkspacesIdsInOrder } from './order';
 
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
@@ -139,4 +140,9 @@ export const shouldShowLoadingFileIndicator = createSelector(
       isFileImporting(workspaceId) && !(isAnyLoading(getIds(workspaceId)))
     );
   },
+);
+
+export const hasMultipleWorkspaces = createSelector(
+  getWorkspacesIdsInOrder,
+  (workspaces) => workspaces.length > 1,
 );

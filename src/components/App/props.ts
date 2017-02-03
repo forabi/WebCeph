@@ -8,6 +8,7 @@ export interface StateProps {
   isReady: boolean;
   keyMap: KeyboardMap;
   workspaceId: string;
+  shouldShowWorkspaceSwitcher: boolean;
 }
 
 

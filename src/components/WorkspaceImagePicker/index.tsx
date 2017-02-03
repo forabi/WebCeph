@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Dropzone from 'react-dropzone/src/index.js';
+import Dropzone from 'react-dropzone';
 import CephaloImage from 'components/CephaloImage/async';
 import AsyncComponent from 'components/AsyncComponent';
 import Props from './props';

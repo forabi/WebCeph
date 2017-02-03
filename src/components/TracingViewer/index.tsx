@@ -55,7 +55,7 @@ export class TracingViewer extends React.PureComponent<Props, { mouseX: number, 
     const minHeight = Math.max(canvasHeight, imageHeight);
     const minWidth = Math.max(canvasWidth, imageWidth);
     return (
-      <div style={{ height: minHeight, width: minWidth }}>
+      <div className={className} style={{ height: minHeight, width: minWidth }}>
         <svg
           ref={this.setRef}
           className={cx(classes.canvas, className)}

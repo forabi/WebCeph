@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Dropzone from 'react-dropzone';
 import * as cx from 'classnames';
-import RaisedButton from 'material-ui/RaisedButton';
+import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
 import FlatButton from 'material-ui/FlatButton';
 // import join from 'lodash/join';
 import Props from './props';
@@ -16,8 +16,6 @@ const DropzonePlaceholder = require(
   'svg-react-loader?name=DropzonePlaceholder!svgo-loader?useConfig=svgoConfig!./assets/placeholder.svg',
 ) as React.SFCFactory<React.ReactSVGElement>;
 
-const demoButtonStyle = { marginTop: 5 };
-
 class CephaloDropzone extends React.PureComponent<Props, { }> {
   refs: {
     [key: string]: Element;
@@ -30,6 +28,7 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
       onFilesDrop,
       onDemoButtonClick,
       isOffline,
+      className,
       // supportedImageTypes = [
       //   'image/jpeg',
       //   'image/png',
@@ -42,7 +41,7 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
     return (
       <Dropzone
         ref="dropzone"
-        className={classes.dropzone}
+        className={cx(className, classes.dropzone)}
         activeClassName={classes.dropzone__active}
         rejectClassName={classes.dropzone__reject}
         onDrop={onFilesDrop}
@@ -71,16 +70,17 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
               transitionEnterTimeout={1000}
               transitionLeaveTimeout={1000}
             >
-              <DropzonePlaceholder />
+              <DropzonePlaceholder style={{ maxWidth: '100%' }} />
             </ReactCSSTransitionGroup>
             <span className={cx(classes.dropzone_placeholder_text, classes.text_center, classes.muted)}>
-              To start tracing, drop a cephalometric radiograph here or
+              To start tracing, drop a cephalogram or a photograph here or
             </span>
-            <RaisedButton
-              primary
-              label="Click to pick an image"
+            <Button
+              buttonType={ButtonType.primary}
               onClick={this.openFilePicker}
-            />
+            >
+              Click to pick an image
+            </Button>
           </div>
         </ReactCSSTransitionGroup>
         {
@@ -94,13 +94,12 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
                 Don't have one around? Try a sample image from Wikipedia!
               </small>
               <br />
-              <FlatButton
-                secondary
-                primary
-                style={demoButtonStyle}
-                label="Load sample image"
+              <Button
+                className={classes.demo_button}
                 onClick={onDemoButtonClick}
-              />
+              >
+                Load sample image
+              </Button>
             </div>
           )
         }

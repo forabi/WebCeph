@@ -1,6 +1,9 @@
+@import 'src/_theme.scss';
+
 .root {
   // @TODO: Load font 
-  font-family: Roboto, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  @include ms-Fabric;
+  @extend .ms-font-m;
 }
 
 .root_loading {

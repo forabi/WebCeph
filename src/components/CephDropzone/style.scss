@@ -1,3 +1,5 @@
+@import 'src/_theme.scss';
+
 .muted {
   color: gray;
 }
@@ -13,12 +15,15 @@
   flex-direction: column;
   flex-wrap: nowrap;
   width: 100%;
-  background-color: #EEEEEE;
+  background-color: $ms-color-neutralLighterAlt;
 
   .dropzone_load_demo {
     margin: 15px 0;
-    margin-top: auto;
     flex-grow: 0;
+  }
+
+  .demo_button {
+    margin-top: 15px;
   }
 
   .dropzone_placeholder {
@@ -37,17 +42,27 @@
   }
 
   .dropzone_placeholder_image {
-    max-width: 75%;
-    max-height: 65%;
     margin-bottom: 40px;
-    [id="circle"], [id="cephalo"], [id="incorrect"] {
+    [id="portrait-bg"] {
+      fill: $ms-color-themeTertiary !important;
+    }
+    [id="portrait-silhouette"] {
+      fill: $ms-color-themeLight !important;
+    }
+
+    [id="circle"] {
+      fill: none;
+      stroke: $ms-color-neutralTertiary;
+      stroke-opacity: 0.3;
+    }
+    [id="circle"], [id="images"], [id="incorrect"], [id="x"] {
       transition-property: fill stroke transform opacity;
       transition-duration: 0.3s;
       transform-origin: center center;
     }
 
-    [id="incorrect"] {
-      fill: rgba(255, 100, 100, 50) !important;
+    [id="x"] * {
+      fill: $ms-color-error !important;
     }
 
     [id="incorrect"], [id="correct"] {
@@ -59,12 +74,12 @@
     cursor: pointer;
     .dropzone_placeholder_image {
       [id="circle"] {
-        fill: rgba(0, 200, 100, 110) !important;
-        stroke: rgba(0, 200, 100, 255) !important;
+        fill: $ms-color-successBackground !important;
+        stroke: $ms-color-success !important;
         transform: scale(1.05);
       }
 
-      [id="cephalo"] {
+      [id="images"] {
         transform: rotate(-10deg) scale(0.85);
       }
 
@@ -79,12 +94,12 @@
 
     .dropzone_placeholder_image {
       [id="circle"] {
-        fill: rgba(255, 100, 100, 50) !important;
-        stroke: rgba(255, 100, 100, 100) !important;
+        fill: $ms-color-errorBackground !important;
+        stroke: $ms-color-error !important;
         transform: scale(0.7);
       }
 
-      [id="cephalo"] {
+      [id="images"] {
         transform: scale(0.5);
         opacity: 0 !important;
       }

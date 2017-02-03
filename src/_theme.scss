@@ -1,5 +1,11 @@
 // Copied from https://github.com/OfficeDev/office-ui-fabric-core/blob/master/src/sass/variables/_Color.Variables.scss
 // Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See LICENSE in the project root for license information.
+@import 'node_modules/office-ui-fabric-core/src/sass/References.scss';
+@import 'node_modules/office-ui-fabric-core/src/sass/Icon.Definitions.scss';
+@import 'node_modules/office-ui-fabric-core/src/sass/Icon.scss';
+@import 'node_modules/office-ui-fabric-core/src/sass/Font.Definitions.scss';
+@import 'node_modules/office-ui-fabric-core/src/sass/Font.scss';
+@import 'node_modules/office-ui-fabric-core/src/sass/mixins/General.Mixins.scss';
 
 // Theme
 $ms-color-themeDarker:     #004578 !default;
