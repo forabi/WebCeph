@@ -73,7 +73,7 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
               <DropzonePlaceholder style={{ maxWidth: '100%' }} />
             </ReactCSSTransitionGroup>
             <span className={cx(classes.dropzone_placeholder_text, classes.text_center, classes.muted)}>
-              To start tracing, drop a cephalogram or a photograph here or
+              To start tracing, drop a cephalogram or a photograph here
             </span>
             <Button
               buttonType={ButtonType.primary}
