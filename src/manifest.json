@@ -1,21 +1,15 @@
 {
   "name": "WebCeph",
-  "id": "net.forabi.webceph",
   "url": "https://forabi.net/WebCeph",
   "short_name": "WebCeph",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#eee",
+  "background_color": "#f8f8f8",
   "description": "Cephalometric tracing tool",
   "icons": [
     {
       "src": "icons/32.png",
       "sizes": "32x32",
-      "type": "image/png"
-    },
-    {
-      "src": "icons/48.png",
-      "sizes": "48x48",
       "type": "image/png"
     },
     {
@@ -46,11 +40,6 @@
       "src": "icons/512.png",
       "sizes": "512x512",
       "type": "image/png"
-    }
-  ],
-  "related_applications": [
-    {
-      "platform": "web"
     }
   ]
 }
