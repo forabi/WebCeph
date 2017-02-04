@@ -19,24 +19,27 @@ class VerticalTabBar extends React.PureComponent<Props, { }> {
   render() {
     return (
       <div className={cx(classes.root, this.props.className)}>
-        {map(this.props.tabs, (id, i) => (
-          <button
-            tabIndex={0}
-            key={id}
-            className={cx(classes.tab_item, { [classes.tab_item__active]: id === this.props.activeTabId })}
-            onClick={this.handleTabClick(id)}
-          >
-            {i + 1}
-          </button>
-        ))}
-        {
+        {map(this.props.tabs, (id, i) => {
+          const isActiveTab = this.props.activeTabId === id;
+          return (
+            <button
+              tabIndex={0}
+              key={id}
+              className={cx(classes.tab_item, { [classes.tab_item__active]: isActiveTab })}
+              onClick={!isActiveTab ? this.handleTabClick(id) : undefined}
+            >
+              {i + 1}
+            </button>
+          );
+        })}
+        { this.props.canAddWorkspace ? (
           <button
             className={classes.tab_item_placeholder}
             onClick={this.handleNewTab}
           >
             +
           </button>
-        }
+        ) : null}
       </div>
     );
   }

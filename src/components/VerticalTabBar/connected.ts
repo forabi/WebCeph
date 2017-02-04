@@ -23,6 +23,10 @@ import {
 } from 'store/reducers/workspace/activeId';
 
 import {
+  isLastWorkspaceUsed,
+} from 'store/reducers/workspace';
+
+import {
   getWorkspacesIdsInOrder,
 } from 'store/reducers/workspace/order';
 
@@ -31,13 +35,18 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
     return {
       activeTabId: getActiveWorkspaceId(state),
       tabs: getWorkspacesIdsInOrder(state),
+      canAddWorkspace: isLastWorkspaceUsed(state),
     };
   };
 
 const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
   (dispatch) => (
     {
-      onAddNewTab: () => dispatch(addNewWorkspace({ id: uniqueId('workspace_') })),
+      onAddNewTab: () => {
+        const id = uniqueId('workspace_');
+        dispatch(addNewWorkspace({ id }));
+        dispatch(setActiveWorkspace({ id }));
+      },
       onTabChanged: (id) => dispatch(setActiveWorkspace({ id })),
     }
   );

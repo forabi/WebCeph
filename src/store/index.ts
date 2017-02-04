@@ -11,6 +11,7 @@ import {
   loadStateMiddleware,
   clearStateMiddleware,
 } from './middleware/persistence';
+import workspaceManagerMiddleware from './middleware/workspaceManager';
 
 declare const window: Window & { devToolsExtension?: () => any };
 
@@ -19,6 +20,7 @@ const reducer = combineReducers<StoreState>(reducers);
 const middlewares: Middleware[] = [
   compatibilityMiddleware,
   fetchAnalysis,
+  workspaceManagerMiddleware,
   importMiddleware,
   exportMiddleware,
   autoScaleMiddleware,

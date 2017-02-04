@@ -32,17 +32,23 @@ const enhance = compose<Props, State>(pure, addLifeCycleHooks);
 
 import { HotKeys } from 'react-hotkeys';
 
-const App = enhance(({ userAgent, isReady, keyMap, handlers, shouldShowWorkspaceSwitcher, workspaceId }: Props) => (
+const App = enhance(({
+  userAgent, isReady, keyMap, handlers,
+  shouldShowWorkspaceSwitcher,
+  activeWorkspaceId,
+}: Props) => (
   <MuiThemeProvider muiTheme={getMuiTheme()}>
     { isReady ? (
         <HotKeys keyMap={keyMap} handlers={handlers}>
           <div className={classes.root}>
             <div className={classes.container}>
               <div className={classes.row}>
-                {shouldShowWorkspaceSwitcher ? <VerticalTabBar
-                  className={classes.tab_bar}
-                /> : null}
-                <Workspace className={classes.workspace} workspaceId={workspaceId} />
+                {shouldShowWorkspaceSwitcher ? (
+                  <VerticalTabBar
+                    className={classes.tab_bar}
+                  />
+                ) : null}
+                <Workspace className={classes.workspace} workspaceId={activeWorkspaceId} />
               </div>
             </div>
           </div>

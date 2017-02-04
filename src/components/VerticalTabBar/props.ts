@@ -5,6 +5,7 @@ export interface OwnProps {
 export interface StateProps {
   tabs: string[];
   activeTabId: string | null;
+  canAddWorkspace: boolean;
 }
 
 

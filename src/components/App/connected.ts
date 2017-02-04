@@ -28,6 +28,7 @@ import {
 } from 'store/reducers/workspace/activeId';
 
 import {
+  isLastWorkspaceUsed,
   hasMultipleWorkspaces,
 } from 'store/reducers/workspace';
 
@@ -56,8 +57,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
         isCompatibilityIgnored(state) ||
         isCheckingCompatiblity(state)
       ),
-      workspaceId: getActiveWorkspaceId(state),
-      shouldShowWorkspaceSwitcher: hasMultipleWorkspaces(state),
+      activeWorkspaceId: getActiveWorkspaceId(state),
+      shouldShowWorkspaceSwitcher: hasMultipleWorkspaces(state) || isLastWorkspaceUsed(state),
     };
   };
 

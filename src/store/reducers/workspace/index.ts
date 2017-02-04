@@ -23,6 +23,8 @@ import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
 import mapValues from 'lodash/mapValues';
+import every from 'lodash/every';
+import last from 'lodash/last';
 
 export default {
   ...analyses,
@@ -145,4 +147,27 @@ export const shouldShowLoadingFileIndicator = createSelector(
 export const hasMultipleWorkspaces = createSelector(
   getWorkspacesIdsInOrder,
   (workspaces) => workspaces.length > 1,
+);
+
+export const doesWorkspaceHaveImages = createSelector(
+  getWorkspaceImageIds,
+  (getImages) => (workspaceId: string) => getImages(workspaceId).length > 0,
+);
+export const isWorkspaceUsed = doesWorkspaceHaveImages;
+
+export const areAllWorkspacesUsed = createSelector(
+  isWorkspaceUsed,
+  getWorkspacesIdsInOrder,
+  (isUsed, workspaces) => every(workspaces, isUsed),
+);
+
+export const getLastWorkspaceId = createSelector(
+  getWorkspacesIdsInOrder,
+  (workspaces) => last(workspaces) || null,
+);
+
+export const isLastWorkspaceUsed = createSelector(
+  isWorkspaceUsed,
+  getLastWorkspaceId,
+  (isUsed, lastWorkspace) => lastWorkspace !== null ? isUsed(lastWorkspace) : true,
 );
