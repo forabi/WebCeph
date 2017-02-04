@@ -4,8 +4,8 @@ import { createSelector } from 'reselect';
 import without from 'lodash/without';
 import omit from 'lodash/omit';
 
-const KEY_STAGES_ORDER: StoreKey = 'workspace.treatment.stages.order';
-const KEY_STAGES_DATA: StoreKey = 'workspace.treatment.stages.data';
+const KEY_STAGES_ORDER: StoreKey = 'treatment.stages.order';
+const KEY_STAGES_DATA: StoreKey = 'treatment.stages.data';
 
 const reducers: Partial<ReducerMap> = {
   [KEY_STAGES_ORDER]: handleActions<typeof KEY_STAGES_ORDER>({

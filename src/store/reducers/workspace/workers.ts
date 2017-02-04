@@ -3,7 +3,7 @@ import { createSelector } from 'reselect';
 import omit from 'lodash/omit';
 import isEmpty from 'lodash/isEmpty';
 
-const KEY_WORKERS: StoreKey = 'workspace.workers';
+const KEY_WORKERS: StoreKey = 'workers';
 
 const workersReducer = handleActions<typeof KEY_WORKERS>(
   {

@@ -353,13 +353,13 @@ interface StoreState {
   };
   'workspace.canvas.highlightedStep': string | null;
   /** Data indexed by image ID */
-  'workspace.images.props': {
+  'images.props': {
     [imageId: string]: ImageBlobData & CephImageData<ImageType>;
   };
-  'workspace.images.tracing': {
+  'images.tracing': {
     [imageId: string]: CephImageTracingData;
   };
-  'workspace.images.status': {
+  'images.status': {
     [imageId: string]: {
       isLoading: true;
       error: null;
@@ -371,7 +371,7 @@ interface StoreState {
       error: null;
     };
   };
-  'workspace.analyses.status': Partial<{
+  'analyses.status': Partial<{
     [T in ImageType]: {
       [analysisId: string]: {
         isLoading: true;
@@ -385,21 +385,21 @@ interface StoreState {
       };
     };
   }>;
-  'workspace.analyses.lastUsedId': {
+  'analyses.lastUsedId': {
     [T in ImageType]: AnalysisId<T>;
   };
-  'workspace.analyses.summary.isShown': boolean;
+  'analyses.summary.isShown': boolean;
   'workspaces.order': string[];
   'workspaces.activeWorkspaceId': string | null;
   'workspaces.settings': {
     [id: string]: WorkspaceSettings;
   };
-  'workspace.treatment.stages.order': string[];
+  'treatment.stages.order': string[];
   /** User-specified order of treatment stages */
-  'workspace.treatment.stages.data': {
+  'treatment.stages.data': {
     [stageId: string]: TreatmentStage;
   };
-  'workspace.workers': {
+  'workers': {
     [workerId: string]: WorkerDetails;
   };
 }

@@ -4,9 +4,9 @@ import omit from 'lodash/omit';
 
 import { createSelector } from 'reselect';
 
-const KEY_IMAGES: StoreKey = 'workspace.images.props';
-const KEY_IMAGES_LOAD_STATUS: StoreKey = 'workspace.images.status';
-const KEY_TRACING: StoreKey = 'workspace.images.tracing';
+const KEY_IMAGES: StoreKey = 'images.props';
+const KEY_IMAGES_LOAD_STATUS: StoreKey = 'images.status';
+const KEY_TRACING: StoreKey = 'images.tracing';
 
 const imagesReducer = handleActions<typeof KEY_IMAGES>(
   {

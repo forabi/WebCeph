@@ -27,9 +27,9 @@ import {
   tryMap,
 } from 'analyses/helpers';
 
-const KEY_ANALYSIS_LOAD_STATUS: StoreKey = 'workspace.analyses.status';
-const KEY_LAST_USED_ID: StoreKey = 'workspace.analyses.lastUsedId';
-const KEY_SUMMARY_SHOWN: StoreKey = 'workspace.analyses.summary.isShown';
+const KEY_ANALYSIS_LOAD_STATUS: StoreKey = 'analyses.status';
+const KEY_LAST_USED_ID: StoreKey = 'analyses.lastUsedId';
+const KEY_SUMMARY_SHOWN: StoreKey = 'analyses.summary.isShown';
 
 const analysisLoadStatusReducer = handleActions<typeof KEY_ANALYSIS_LOAD_STATUS>({
   SET_ANALYSIS_REQUESTED: (state, { payload: { analysisId, imageType } }) => {

@@ -30,7 +30,7 @@ const PERSISTABLE_KEYS: StoreKey[] = [
   'app.status.isInstalled',
   'env.compat.isIgnored',
   'env.compat.results',
-  'workspace.analyses.lastUsedId',
+  'analyses.lastUsedId',
 ];
 
 import requestIdleCallback from 'utils/requestIdleCallback';
