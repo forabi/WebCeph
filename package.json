@@ -69,7 +69,7 @@
     "@types/mocha": "^2.2.38",
     "@types/node": "^7.0.4",
     "@types/randomcolor": "^0.4.3",
-    "@types/react": "^15.0.6",
+    "@types/react": "^0.14.49",
     "@types/react-addons-css-transition-group": "^15.0.1",
     "@types/react-dom": "^0.14.22",
     "@types/react-dropzone": "^0.0.31",
