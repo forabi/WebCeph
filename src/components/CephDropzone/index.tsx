@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as Dropzone from 'react-dropzone';
 import * as cx from 'classnames';
 import { Button, ButtonType } from 'office-ui-fabric-react/lib/Button';
-import FlatButton from 'material-ui/FlatButton';
 // import join from 'lodash/join';
 import Props from './props';
 
@@ -14,7 +13,7 @@ const fadeIn = require('transitions/fade-in.scss');
 
 const DropzonePlaceholder = require(
   'svg-react-loader?name=DropzonePlaceholder!svgo-loader?useConfig=svgoConfig!./assets/placeholder.svg',
-) as React.SFCFactory<React.ReactSVGElement>;
+) as React.DOMFactory<React.DOMAttributes<SVGElement>, SVGElement>;
 
 class CephaloDropzone extends React.PureComponent<Props, { }> {
   refs: {
@@ -70,7 +69,9 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
               transitionEnterTimeout={1000}
               transitionLeaveTimeout={1000}
             >
-              <DropzonePlaceholder style={{ maxWidth: '100%' }} />
+              <DropzonePlaceholder
+                className={classes.dropzone_svg}
+              />
             </ReactCSSTransitionGroup>
             <span className={cx(classes.dropzone_placeholder_text, classes.text_center, classes.muted)}>
               To start tracing, drop a cephalogram or a photograph here
