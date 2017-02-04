@@ -4,15 +4,16 @@
   // @TODO: Load font 
   @include ms-Fabric;
   @extend .ms-font-m;
+  background-color: $ms-color-neutralLighterAlt;
 }
 
 .root_loading {
+  @extend .root;
   display: flex;
   height: 100vh;
   width: 100vw;
   align-items: center;
   justify-content: center;
-  background-color: #EEEEEE;
 }
 
 .container {
