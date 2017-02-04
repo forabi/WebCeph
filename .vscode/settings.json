@@ -11,7 +11,7 @@
     "**/.hg": true,
     "**/.DS_Store": true,
     "build/": true,
-    "src/assets": true
+    "src/assets/breeze-icons": true
   },
   "editor.tabSize": 2,
   "editor.renderLineHighlight": "all",
