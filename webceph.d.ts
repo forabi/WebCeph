@@ -330,9 +330,13 @@ interface StoreState {
   'app.persistence.isUpgrading': boolean;
   'app.persistence.save.error': GenericError | null;
   'app.persistence.load.error': GenericError | null;
+  /** Languages available for the app */
+  'app.locale.availableLocales': string[];
   'env.connection.isOffline': boolean;
   'env.compat.isIgnored': boolean;
   'env.compat.isBeingChecked': boolean;
+  /** Default languages provided by the browser (navigator.language or navigator.languages) */
+  'env.locale.requestedLocales': string[];
   'env.compat.results': {
     [userAgent: string]: {
       missingFeatures: {
@@ -340,7 +344,8 @@ interface StoreState {
       };
     };
   };
-  'workspace.mode': 'tracing' | 'superimposition';
+  /** Language preference explicitly set by user */
+  'user.preferences.preferredLocale': string;
   'workspace.canvas.mouse.position': null | {
     x: number;
     y: number;

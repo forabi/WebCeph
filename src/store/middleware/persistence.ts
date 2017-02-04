@@ -31,6 +31,7 @@ const PERSISTABLE_KEYS: StoreKey[] = [
   'env.compat.isIgnored',
   'env.compat.results',
   'analyses.lastUsedId',
+  'user.preferences.preferredLocale',
 ];
 
 import requestIdleCallback from 'utils/requestIdleCallback';
