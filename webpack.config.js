@@ -152,9 +152,10 @@ const config = {
               transpileOnly: true,
               silent: true,
               compilerOptions: Object.assign(
+                { module: 'es2015' },
                 env.isProd ? {
                   jsx: 'preserve',
-                } : { },
+                } : {},
               ),
             },
           },

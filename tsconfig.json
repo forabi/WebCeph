@@ -16,7 +16,7 @@
     "inlineSourceMap": true,
     "sourceMap": false,
     "inlineSources": true,
-    "module": "es2015",
+    "module": "commonjs",
     "forceConsistentCasingInFileNames": true,
     "preserveConstEnums": true,
     "traceResolution": false,
