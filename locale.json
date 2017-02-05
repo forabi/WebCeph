@@ -1,0 +1,18 @@
+[
+  {
+    "id": "action_load_sample_image",
+    "defaultMessage": "Load sample image"
+  },
+  {
+    "id": "action_pick_image",
+    "defaultMessage": "Click to pick an image"
+  },
+  {
+    "id": "callout_load_sample_image",
+    "defaultMessage": "Don't have one around? Try a sample image from Wikipedia!"
+  },
+  {
+    "id": "callout_start_tracing",
+    "defaultMessage": "To start tracing, drop a cephalogram or a photograph here"
+  }
+]

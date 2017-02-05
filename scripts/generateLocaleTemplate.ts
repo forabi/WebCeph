@@ -32,15 +32,16 @@ async function getLocales(file: string) {
 
 async function main() {
   try {
+    const templatePath = 'locale.json';
     const messagesPerFile = await bluebird.map(
       glob('src/components/**/index.ts*'),
       (path: string) => readFileAsString(path),
     ).map(getLocales);
     const allMessages = _.chain(messagesPerFile).flatten().sortBy('id').sortedUniqBy('id').value();
-    await writeAsJSON('messages/locale.json', allMessages);
+    await writeAsJSON(templatePath, allMessages);
     console.info('Finished. Number of messages: ', allMessages.length);
   } catch (e) {
-    console.error('Failed to generate locale files:', e);
+    console.error('Failed to generate locale template:', e);
     process.exit(1);
   }
 }

@@ -5,7 +5,8 @@
   "scripts": {
     "tslint": "tslint src/**/*.ts{,x}",
     "eslint": "eslint *.js src",
-    "i18n": "ts-node scripts/locale.ts",
+    "i18n:template": "ts-node scripts/generateLocaleTemplate.ts",
+    "i18n:update": "ts-node scripts/updateLocales.ts",
     "lint": "npm run tslint && npm run eslint",
     "test": "NODE_ENV=test karma start --single-run",
     "test:watch": "NODE_ENV=test karma start --watch --no-single-run",

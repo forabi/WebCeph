@@ -1,0 +1,6 @@
+{
+  "action_load_sample_image": "Load sample image",
+  "action_pick_image": "Click to pick an image",
+  "callout_load_sample_image": "Don't have one around? Try a sample image from Wikipedia!",
+  "callout_start_tracing": "To start tracing, drop a cephalogram or a photograph here"
+}

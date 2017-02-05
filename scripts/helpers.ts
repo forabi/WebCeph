@@ -9,6 +9,10 @@ export const readFile = (path: string) => bluebird.fromNode(cb => fs.readFile(pa
 
 export const readFileAsString = async (path: string) => String(await readFile(path));
 
+export const readAsJSON = async (path: string) => JSON.parse(await readFileAsString(path));
+
 export const writeFile = (path: string, data: any) => bluebird.fromNode(cb => fs.writeFile(path, data, cb));
 
 export const writeAsJSON = (path: string, data: any) => writeFile(path, JSON.stringify(data, undefined, 2));
+
+export const fileExists = (path: string) => fs.existsSync(path);
