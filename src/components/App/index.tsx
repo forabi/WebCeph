@@ -14,6 +14,8 @@ import attempt from 'lodash/attempt';
 
 import { compose, lifecycle, pure } from 'recompose';
 
+import { IntlProvider } from 'react-intl';
+
 import Props from './props';
 
 attempt(injectTapEventPlugin);
@@ -37,29 +39,31 @@ const App = enhance(({
   shouldShowWorkspaceSwitcher,
   activeWorkspaceId,
 }: Props) => (
-  <MuiThemeProvider muiTheme={getMuiTheme()}>
-    { isReady ? (
-        <HotKeys keyMap={keyMap} handlers={handlers}>
-          <div className={classes.root}>
-            <div className={classes.container}>
-              <div className={classes.row}>
-                {shouldShowWorkspaceSwitcher ? (
-                  <VerticalTabBar
-                    className={classes.tab_bar}
-                  />
-                ) : null}
-                <Workspace className={classes.workspace} workspaceId={activeWorkspaceId} />
+  <IntlProvider defaultLocale="en">
+    <MuiThemeProvider muiTheme={getMuiTheme()}>
+      { isReady ? (
+          <HotKeys keyMap={keyMap} handlers={handlers}>
+            <div className={classes.root}>
+              <div className={classes.container}>
+                <div className={classes.row}>
+                  {shouldShowWorkspaceSwitcher ? (
+                    <VerticalTabBar
+                      className={classes.tab_bar}
+                    />
+                  ) : null}
+                  <Workspace className={classes.workspace} workspaceId={activeWorkspaceId} />
+                </div>
               </div>
             </div>
+          </HotKeys>
+        ) : (
+          <div className={classes.root_loading}>
+            <Progress />
           </div>
-        </HotKeys>
-      ) : (
-        <div className={classes.root_loading}>
-          <Progress />
-        </div>
-      )
-    }
-  </MuiThemeProvider>
+        )
+      }
+    </MuiThemeProvider>
+  </IntlProvider>
 ));
 
 export default App as React.ComponentClass<Props>;

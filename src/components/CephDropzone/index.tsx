@@ -7,6 +7,27 @@ import Props from './props';
 
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
+import { FormattedMessage, injectIntl, InjectedIntl, defineMessages } from 'react-intl';
+
+type InjectedIntlProps = {
+  intl: InjectedIntl;
+};
+
+const messageDescriptors = defineMessages({
+  action_load_sample_image: {
+    id: 'action_load_sample_image',
+    defaultMessage: 'Load sample image',
+  },
+  callout_load_sample_image: {
+    id: 'callout_load_sample_image',
+    defaultMessage: 'Don\'t have one around? Try a sample image from Wikipedia!',
+  },
+  action_pick_image: {
+    id: 'action_pick_image',
+    defaultMessage: 'Click to pick an image',
+  },
+});
+
 const classes = require('./style.scss');
 const scaleInAndRotate = require('transitions/scale-in-and-rotate.scss');
 const fadeIn = require('transitions/fade-in.scss');
@@ -15,7 +36,7 @@ const DropzonePlaceholder = require(
   'svg-react-loader?name=DropzonePlaceholder!svgo-loader?useConfig=svgoConfig!./assets/placeholder.svg',
 ) as React.DOMFactory<React.DOMAttributes<SVGElement>, SVGElement>;
 
-class CephaloDropzone extends React.PureComponent<Props, { }> {
+class CephaloDropzone extends React.PureComponent<Props & InjectedIntlProps, { }> {
   refs: {
     [key: string]: Element;
     dropzone: any;
@@ -36,6 +57,7 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
       //   'application/zip',
       // ],
       allowsMultipleFiles = false,
+      intl: { formatMessage },
     } = this.props;
     return (
       <Dropzone
@@ -74,13 +96,16 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
               />
             </ReactCSSTransitionGroup>
             <span className={cx(classes.dropzone_placeholder_text, classes.text_center, classes.muted)}>
-              To start tracing, drop a cephalogram or a photograph here
+              <FormattedMessage
+                id="callout_start_tracing"
+                defaultMessage="To start tracing, drop a cephalogram or a photograph here"
+              />
             </span>
             <Button
               buttonType={ButtonType.primary}
               onClick={this.openFilePicker}
             >
-              Click to pick an image
+              {formatMessage(messageDescriptors.action_pick_image)}
             </Button>
           </div>
         </ReactCSSTransitionGroup>
@@ -92,14 +117,14 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
               <small
                 className={classes.muted}
               >
-                Don't have one around? Try a sample image from Wikipedia!
+                {formatMessage(messageDescriptors.callout_load_sample_image)}
               </small>
               <br />
               <Button
                 className={classes.demo_button}
                 onClick={onDemoButtonClick}
               >
-                Load sample image
+                {formatMessage(messageDescriptors.action_load_sample_image)}
               </Button>
             </div>
           )
@@ -116,4 +141,4 @@ class CephaloDropzone extends React.PureComponent<Props, { }> {
   }
 };
 
-export default CephaloDropzone;
+export default injectIntl(CephaloDropzone);
