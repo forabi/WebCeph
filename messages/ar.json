@@ -1,6 +1,6 @@
 {
   "action_load_sample_image": "حمل صورة للتجربة",
-  "action_pick_image": "Click to pick an image",
-  "callout_load_sample_image": "Don't have one around? Try a sample image from Wikipedia!",
-  "callout_start_tracing": "To start tracing, drop a cephalogram or a photograph here"
+  "action_pick_image": "انقر لاختيار صورة",
+  "callout_load_sample_image": "ليس في متناولك صورة الآن؟ جرب صورة من ويكيبيديا!",
+  "callout_start_tracing": "لبدء الترسيم، أسقط صورة سيفالومترية أو ضوئية هنا"
 }
