@@ -155,7 +155,7 @@ const config = {
                 { module: 'es2015' },
                 env.isProd ? {
                   jsx: 'preserve',
-                } : {},
+                } : { },
               ),
             },
           },
@@ -164,10 +164,10 @@ const config = {
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        use: [
+        use: compact([
           hot('react-hot-loader/webpack'),
           'babel-loader',
-        ],
+        ]),
       },
       {
         test: /\.css$/,
