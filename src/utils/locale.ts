@@ -23,6 +23,12 @@ export function getPrimaryLang(locale: string) {
   return (matches && matches[1]) ? matches[1] : undefined;
 }
 
+
+export function getDirForLocale(locale: string) {
+  const primaryLang = getPrimaryLang(locale);
+  return primaryLang === 'ar' ? 'rtl' : 'ltr';
+}
+
 /** Return the first subtag of an IETF language tag
  * @example en-US => US
  */

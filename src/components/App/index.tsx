@@ -14,7 +14,9 @@ import attempt from 'lodash/attempt';
 
 import { compose, lifecycle, pure } from 'recompose';
 
-import { IntlProvider, FormattedMessage } from 'react-intl';
+import { IntlProvider } from 'react-intl';
+
+import { getDirForLocale } from 'utils/locale';
 
 import Props from './props';
 
@@ -33,6 +35,7 @@ const addLifeCycleHooks = lifecycle({
 const enhance = compose<Props, State>(pure, addLifeCycleHooks);
 
 import { HotKeys } from 'react-hotkeys';
+import Helmet from 'react-helmet';
 
 const App = enhance(({
   userAgent, isReady, keyMap, handlers,
@@ -44,6 +47,7 @@ const App = enhance(({
       { isReady ? (
           <IntlProvider key={locale} defaultLocale="en" locale={locale} messages={messages}>
             <HotKeys keyMap={keyMap} handlers={handlers}>
+              <Helmet htmlAttributes={{ lang: locale, dir: getDirForLocale(locale) }} />
               <div className={classes.root}>
                 <div className={classes.container}>
                   <div className={classes.row}>

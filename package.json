@@ -28,6 +28,7 @@
   "homepage": "https://gitlab.com/forabi/cephalo#README",
   "dependencies": {
     "@types/babel-core": "^6.7.14",
+    "@types/react-helmet": "^0.0.28",
     "bluebird": "^3.4.7",
     "bowser": "^1.4.6",
     "classnames": "^2.2.5",
@@ -45,6 +46,7 @@
     "react-dom": "^15.4.2",
     "react-draggable": "^2.2.2",
     "react-dropzone": "^3.9.2",
+    "react-helmet": "^4.0.0",
     "react-hot-loader": "^3.0.0-beta.5",
     "react-hotkeys": "^0.9.0",
     "react-intl": "^2.2.3",
