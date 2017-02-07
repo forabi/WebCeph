@@ -3,14 +3,15 @@ export interface OwnProps {
   userAgent: string;
 }
 
-export interface StateProps {
+export type StateProps = {
   shouldCheckCompatibility: boolean;
-  isReady: boolean;
-  keyMap: KeyboardMap;
-  activeWorkspaceId: string;
   shouldShowWorkspaceSwitcher: boolean;
-}
-
+  keyMap: KeyboardMap;
+  isReady: boolean;
+  activeWorkspaceId: string;
+  locale: string;
+  messages: ReactIntl.Messages;
+};
 
 export interface DispatchProps {
   dispatch: GenericDispatch;

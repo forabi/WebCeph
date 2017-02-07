@@ -318,6 +318,17 @@ interface UndoableState<T> {
   future: T[];
 }
 
+type FetchStatus = {
+  isLoading: true;
+  error: null;
+} | {
+  isLoading: false;
+  error: GenericError;
+} | {
+  isLoading: false;
+  error: null;
+};
+
 interface StoreState {
   'app.init.isInitialized': boolean;
   'app.status.isUpdating': boolean;
@@ -331,7 +342,10 @@ interface StoreState {
   'app.persistence.save.error': GenericError | null;
   'app.persistence.load.error': GenericError | null;
   /** Languages available for the app */
-  'app.locale.availableLocales': string[];
+  'app.locale.supportedLocales': string[];
+  'app.locale.fetchStatus': {
+    [locale: string]: FetchStatus;
+  };
   'env.connection.isOffline': boolean;
   'env.compat.isIgnored': boolean;
   'env.compat.isBeingChecked': boolean;
@@ -345,7 +359,7 @@ interface StoreState {
     };
   };
   /** Language preference explicitly set by user */
-  'user.preferences.preferredLocale': string;
+  'user.preferences.preferredLocale': string | null;
   'workspace.canvas.mouse.position': null | {
     x: number;
     y: number;
@@ -378,16 +392,7 @@ interface StoreState {
   };
   'analyses.status': Partial<{
     [T in ImageType]: {
-      [analysisId: string]: {
-        isLoading: true;
-        error: null;
-      } | {
-        isLoading: false;
-        error: GenericError;
-      } | {
-        isLoading: false;
-        error: null;
-      };
+      [analysisId: string]: FetchStatus;
     };
   }>;
   'analyses.lastUsedId': {
@@ -683,6 +688,15 @@ interface Events {
   CLEAR_PRESISTED_STATE_REQUESTED: void;
   CLEAR_PRESISTED_STATE_SUCCEEDED: void;
   CLEAR_PERSISTED_STATE_FAILED: GenericError;
+  SET_USER_PREFERRED_LOCALE: string;
+  UNSET_USER_PREFERRED_LOCALE: void;
+  ENV_LOCALES_CHANGED: string[];
+  FETCH_LOCALE_STARTED: string;
+  FETCH_LOCALE_SUCCEEDED: string;
+  FETCH_LOCALE_FAILED: {
+    locale: string,
+    error: GenericError;
+  };
 }
 
 type GenericDispatch = (action: GenericAction) => any;

@@ -1,6 +1,18 @@
 import first from 'lodash/first';
 import find from 'lodash/find';
 
+declare const navigator: Navigator & Partial<{ languages: string[] }>;
+
+export function getNavigatorLanguages() {
+  // navigator.languages is the list of locales
+  // preferred by the user in the browser settings.
+  // navigator.language is usually the browser UI language.
+  if (navigator.languages) {
+    return [...navigator.languages, navigator.language];
+  }
+  return [navigator.language];
+};
+
 const localeRegExp = /([a-z]{2,})(?:\-([A-Z]{2,}))?/;
 
 /** Return the primary language part of an IETF language tag
@@ -34,7 +46,7 @@ export function negotiateLanguageOrLocale(
   preferred: string[] ,
   tryPrimaryLanguage = true,
   fallbackToFirstSupported = true,
-): string | undefined {
+) {
   let locale: (string | undefined);
   for (let i = 0; i < preferred.length && locale === undefined; i++) {
     locale = find(supported, s => s === preferred[i]);

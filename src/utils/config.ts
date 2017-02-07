@@ -11,3 +11,7 @@ export const DEMO_IMAGE_URL =
   'https://upload.wikimedia.org/wikipedia/commons/6/66/Cephalometric_radiograph.JPG';
 
 export { undoableConfig };
+
+export const supportedLocales = ['en-US', 'ar-SY'];
+
+export const bundledLocales = ['en-US', 'ar-SY'];

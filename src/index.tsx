@@ -2,13 +2,19 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import ReduxApp, { store } from './ReduxApp';
 import { Store } from 'redux';
-import { setAppUpdateStatus, setAppInstallStatus } from 'actions/env';
+import {
+  setAppUpdateStatus,
+  setAppInstallStatus,
+  envLocalesChanged,
+  connectionStatusChanged,
+} from 'actions/env';
+import { getNavigatorLanguages } from 'utils/locale';
 import { isAppInitialized, isAppInstalled } from 'store/reducers/app';
 
 declare var module: __WebpackModuleApi.Module;
 declare var window: Window & {
   ResizeObserver?: ResizeObserver;
-  __STORE__: Store<StoreState>;
+  __STORE__: Store<StoreState> | undefined;
 };
 
 if (!__DEBUG__ && location.protocol !== 'https:') {
@@ -60,8 +66,6 @@ if (!__DEBUG__ && 'serviceWorker' in navigator) {
 
 // import { hasUnsavedWork } from 'store/reducers/workspace';
 
-import { connectionStatusChanged } from 'actions/env';
-
 if (__DEBUG__) {
   window.__STORE__ = store;
 }
@@ -87,6 +91,15 @@ const handleConnectionChange = () => {
 
 window.addEventListener('online', handleConnectionChange);
 window.addEventListener('offline', handleConnectionChange);
+
+const handleLanguageChange = () => {
+  console.info('Locales changed', getNavigatorLanguages());
+  store.dispatch(envLocalesChanged(getNavigatorLanguages()));
+};
+
+window.addEventListener('languagechange', handleLanguageChange);
+
+handleConnectionChange();
 
 const rootEl = document.getElementById('container');
 

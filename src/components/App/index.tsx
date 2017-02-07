@@ -38,24 +38,26 @@ const App = enhance(({
   userAgent, isReady, keyMap, handlers,
   shouldShowWorkspaceSwitcher,
   activeWorkspaceId,
+  locale, messages,
 }: Props) => (
-  <IntlProvider defaultLocale="en">
     <MuiThemeProvider muiTheme={getMuiTheme()}>
       { isReady ? (
-          <HotKeys keyMap={keyMap} handlers={handlers}>
-            <div className={classes.root}>
-              <div className={classes.container}>
-                <div className={classes.row}>
-                  {shouldShowWorkspaceSwitcher ? (
-                    <VerticalTabBar
-                      className={classes.tab_bar}
-                    />
-                  ) : null}
-                  <Workspace className={classes.workspace} workspaceId={activeWorkspaceId} />
+          <IntlProvider defaultLocale="en" locale={locale} messages={messages}>
+            <HotKeys keyMap={keyMap} handlers={handlers}>
+              <div className={classes.root}>
+                <div className={classes.container}>
+                  <div className={classes.row}>
+                    {shouldShowWorkspaceSwitcher ? (
+                      <VerticalTabBar
+                        className={classes.tab_bar}
+                      />
+                    ) : null}
+                    <Workspace className={classes.workspace} workspaceId={activeWorkspaceId} />
+                  </div>
                 </div>
               </div>
-            </div>
-          </HotKeys>
+            </HotKeys>
+          </IntlProvider>
         ) : (
           <div className={classes.root_loading}>
             <Progress />
@@ -63,7 +65,6 @@ const App = enhance(({
         )
       }
     </MuiThemeProvider>
-  </IntlProvider>
 ));
 
 export default App as React.ComponentClass<Props>;
