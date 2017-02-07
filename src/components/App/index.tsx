@@ -14,7 +14,7 @@ import attempt from 'lodash/attempt';
 
 import { compose, lifecycle, pure } from 'recompose';
 
-import { IntlProvider } from 'react-intl';
+import { IntlProvider, FormattedMessage } from 'react-intl';
 
 import Props from './props';
 
@@ -42,7 +42,7 @@ const App = enhance(({
 }: Props) => (
     <MuiThemeProvider muiTheme={getMuiTheme()}>
       { isReady ? (
-          <IntlProvider defaultLocale="en" locale={locale} messages={messages}>
+          <IntlProvider key={locale} defaultLocale="en" locale={locale} messages={messages}>
             <HotKeys keyMap={keyMap} handlers={handlers}>
               <div className={classes.root}>
                 <div className={classes.container}>

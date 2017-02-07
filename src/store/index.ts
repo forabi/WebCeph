@@ -1,11 +1,12 @@
 import { createStore, applyMiddleware, combineReducers, compose, Middleware, Reducer } from 'redux';
 import reducers from './reducers';
 import analyticsMiddleware from './middleware/analytics';
-import fetchAnalysis from './middleware/fetchAnalysis';
+import fetchAnalysisMiddleware from './middleware/fetchAnalysis';
 import exportMiddleware from './middleware/export';
 import importMiddleware from './middleware/import';
 import autoScaleMiddleware from './middleware/autoScale';
 import compatibilityMiddleware from './middleware/compatibility';
+import fetchLocaleMiddleware from './middleware/fetchLocale';
 import {
   saveStateMiddleware,
   loadStateMiddleware,
@@ -19,7 +20,8 @@ const reducer = combineReducers<StoreState>(reducers);
 
 const middlewares: Middleware[] = [
   compatibilityMiddleware,
-  fetchAnalysis,
+  fetchAnalysisMiddleware,
+  fetchLocaleMiddleware,
   workspaceManagerMiddleware,
   importMiddleware,
   exportMiddleware,

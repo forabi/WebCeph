@@ -38,5 +38,4 @@ const ConnectedWorkspace = connect<StateProps, DispatchProps, OwnProps>(
   mapStateToProps, mapDispatchToProps,
 )(Workspace);
 
-
 export default ConnectedWorkspace;

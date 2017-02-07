@@ -14,4 +14,15 @@ export { undoableConfig };
 
 export const supportedLocales = ['en-US', 'ar-SY'];
 
-export const bundledLocales = ['en-US', 'ar-SY'];
+export const bundledLocales = ['en-US'];
+
+import zipObject from 'lodash/zipObject';
+import map from 'lodash/map';
+
+export const bundleLocaleData = zipObject(
+  bundledLocales,
+  map(bundledLocales, (locale) => {
+    return require(`json-loader!locale/${locale}.json`) as Locale;
+  }),
+);
+

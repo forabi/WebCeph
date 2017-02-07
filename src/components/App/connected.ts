@@ -41,7 +41,8 @@ import {
 } from 'actions/initialization';
 
 import {
-  getNegotiatedLocale,
+  getActiveLocale,
+  getActiveLocaleData,
 } from 'store/reducers/locale';
 
 import {
@@ -63,13 +64,8 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
       ),
       activeWorkspaceId: getActiveWorkspaceId(state),
       shouldShowWorkspaceSwitcher: hasMultipleWorkspaces(state) || isLastWorkspaceUsed(state),
-      locale: getNegotiatedLocale(state),
-      messages: {
-        action_load_sample_image: 'حمل صورة للتجربة',
-        action_pick_image: 'انقر لاختيار صورة',
-        callout_load_sample_image: 'ليس في متناولك صورة الآن؟ جرب صورة من ويكيبيديا!',
-        callout_start_tracing: 'لبدء الترسيم، أسقط صورة سيفالومترية أو ضوئية هنا',
-      },
+      locale: getActiveLocale(state),
+      messages: getActiveLocaleData(state),
     };
   };
 

@@ -22,7 +22,7 @@ const reducers: Partial<ReducerMap> = {
       return payload.complete !== true && payload.error !== null;
     },
   }, false),
-  [KEY_IS_INSTALLING]: handleActions<typeof KEY_IS_UPDATING>({
+  [KEY_IS_INSTALLING]: handleActions<typeof KEY_IS_INSTALLING>({
     APP_INSTALL_STATUS_CHANGED: (_, { payload }) => {
       return payload.complete !== true && payload.error !== null;
     },

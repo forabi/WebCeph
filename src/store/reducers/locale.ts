@@ -1,12 +1,13 @@
 import { handleActions } from 'utils/store';
 import { createSelector } from 'reselect';
 import { negotiateLanguageOrLocale } from 'utils/locale';
-import { supportedLocales, bundledLocales } from 'utils/config';
+import { supportedLocales, bundledLocales, bundleLocaleData } from 'utils/config';
 import zipObject from 'lodash/zipObject';
 import filter from 'lodash/filter';
 import map from 'lodash/map';
 
 const KEY_SUPPORTED_LOCALES: StoreKey = 'app.locale.supportedLocales';
+const KEY_LOCALE_DATA: StoreKey = 'app.locale.data';
 const KEY_LOCALE_FETCH_STATUS: StoreKey = 'app.locale.fetchStatus';
 const KEY_REQUESTED_LOCALES: StoreKey = 'env.locale.requestedLocales';
 const KEY_USER_PREFERRED_LOCALE: StoreKey = 'user.preferences.preferredLocale';
@@ -21,6 +22,14 @@ const reducers: Partial<ReducerMap> = {
   [KEY_REQUESTED_LOCALES]: handleActions<typeof KEY_REQUESTED_LOCALES>({
     ENV_LOCALES_CHANGED: (_, { payload }) => payload,
   }, []),
+  [KEY_LOCALE_DATA]: handleActions<typeof KEY_LOCALE_DATA>({
+    FETCH_LOCALE_SUCCEEDED: (state, { payload: { locale, messages } }) => {
+      return {
+        ...state,
+        [locale]: messages,
+      };
+    },
+  }, bundleLocaleData),
   [KEY_USER_PREFERRED_LOCALE]: handleActions<typeof KEY_USER_PREFERRED_LOCALE>({
     SET_USER_PREFERRED_LOCALE: (_, { payload }) => {
       return payload;
@@ -37,7 +46,7 @@ const reducers: Partial<ReducerMap> = {
         },
       };
     },
-    FETCH_LOCALE_SUCCEEDED: (state, { payload: locale }) => {
+    FETCH_LOCALE_SUCCEEDED: (state, { payload: { locale } }) => {
       return {
         ...state,
         [locale]: {
@@ -64,6 +73,7 @@ export const getSupportedLocales = (state: StoreState) => state[KEY_SUPPORTED_LO
 export const getEnvLocales = (state: StoreState) => state[KEY_REQUESTED_LOCALES];
 export const getUserPreferredLocale = (state: StoreState) => state[KEY_USER_PREFERRED_LOCALE];
 export const getFetchStatus = (state: StoreState) => state[KEY_LOCALE_FETCH_STATUS];
+export const getLocaleData = (state: StoreState) => state[KEY_LOCALE_DATA];
 
 export const hasLocaleFetchingFailed = createSelector(
   getFetchStatus,
@@ -111,6 +121,31 @@ export const getAllPreferredLocales = createSelector(
 );
 
 export const getNegotiatedLocale = createSelector(
+  getSupportedLocales,
+  getAllPreferredLocales,
+  (supported, preferred) => {
+    return negotiateLanguageOrLocale(
+      supported,
+      preferred,
+      true,
+      true,
+    ) as string;
+  },
+);
+
+export const getLocaleToFetch = createSelector(
+  isLocaleFetched,
+  isLocaleFetching,
+  getNegotiatedLocale,
+  (isFetched, isFetching, locale) => {
+    if (!isFetched(locale) && !isFetching(locale)) {
+      return locale;
+    }
+    return undefined;
+  },
+);
+
+export const getFirstReadyNegotiatedLocale = createSelector(
   getSupportedFetchedLocales,
   getAllPreferredLocales,
   (supported, preferred) => {
@@ -123,3 +158,15 @@ export const getNegotiatedLocale = createSelector(
   },
 );
 
+export const getActiveLocale = getFirstReadyNegotiatedLocale;
+
+export const getLocaleDataById = createSelector(
+  getLocaleData,
+  (data) => (id: string) => data[id],
+);
+
+export const getActiveLocaleData = createSelector(
+  getLocaleDataById,
+  getFirstReadyNegotiatedLocale,
+  (getData, locale) => getData(locale),
+);

@@ -329,6 +329,8 @@ type FetchStatus = {
   error: null;
 };
 
+type Locale = Record<string, string>;
+
 interface StoreState {
   'app.init.isInitialized': boolean;
   'app.status.isUpdating': boolean;
@@ -345,6 +347,9 @@ interface StoreState {
   'app.locale.supportedLocales': string[];
   'app.locale.fetchStatus': {
     [locale: string]: FetchStatus;
+  };
+  'app.locale.data': {
+    [locale: string]: Locale | undefined;
   };
   'env.connection.isOffline': boolean;
   'env.compat.isIgnored': boolean;
@@ -692,7 +697,10 @@ interface Events {
   UNSET_USER_PREFERRED_LOCALE: void;
   ENV_LOCALES_CHANGED: string[];
   FETCH_LOCALE_STARTED: string;
-  FETCH_LOCALE_SUCCEEDED: string;
+  FETCH_LOCALE_SUCCEEDED: {
+    locale: string;
+    messages: Locale;
+  };
   FETCH_LOCALE_FAILED: {
     locale: string,
     error: GenericError;

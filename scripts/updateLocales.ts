@@ -17,7 +17,7 @@ async function getUpdatedLocales(localePath: string, template: Messages) {
       }
       return message;
     }),
-  };
+  } as Locale;
   return updated;
 }
 

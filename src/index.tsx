@@ -100,6 +100,7 @@ const handleLanguageChange = () => {
 window.addEventListener('languagechange', handleLanguageChange);
 
 handleConnectionChange();
+handleLanguageChange();
 
 const rootEl = document.getElementById('container');
 
