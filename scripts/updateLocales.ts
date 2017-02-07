@@ -1,7 +1,8 @@
 import * as _ from 'lodash';
-import { readAsJSON, writeAsJSON, fileExists } from './helpers';
+import { readAsJSON, writeAsJSON, fileExists, glob } from './helpers';
 import { Messages } from 'react-intl';
 import * as bluebird from 'bluebird';
+import * as parseArgs from 'minimist';
 
 async function getUpdatedLocales(localePath: string, template: Messages) {
   let data: Record<string, string> = { };
@@ -20,20 +21,29 @@ async function getUpdatedLocales(localePath: string, template: Messages) {
   return updated;
 }
 
-const supportedLocales = ['ar', 'en'];
-
 async function main() {
   try {
-    const templatePath = 'locale.json';
+    const { template: templatePath, input } = parseArgs(process.argv.slice(2), {
+      string: ['template', 'input'],
+      alias: {
+        i: 'input',
+        t: 'template',
+      },
+      default: {
+        input: 'src/locale',
+        template: 'src/locale.json',
+      },
+    });
     const template = _.keyBy(await readAsJSON(templatePath), 'id') as Messages;
+    const files = await glob(input);
     await bluebird.map(
-      supportedLocales.map(l => `messages/${l}.json`),
+      files,
       async (localePath: string) => {
         const updated = await getUpdatedLocales(localePath, template);
         return writeAsJSON(localePath, updated);
       },
     );
-    console.log('Finished.');
+    console.info(`Finished. ${files.length} locale files updated.`);
   } catch (e) {
     console.error('Failed to update locale files:', e);
   }
