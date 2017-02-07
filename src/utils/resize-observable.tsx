@@ -11,18 +11,14 @@ interface State {
 }
 
 export default class ResizeObservableComponent extends React.PureComponent<Props, State> {
-  refs: {
-    target: Element,
-  };
-
-  private handleResize: ResizeObserverCallback = (entries, _) => {
-    each(entries, this.props.onResize);
-  };
+  target: Element | null;
 
   componentDidMount() {
-    const observer = new ResizeObserver(this.handleResize);
-    observer.observe(this.refs.target);
-    this.setState(state => ({ ...state, observer }));
+    if (this.target !== null) {
+      const observer = new ResizeObserver(this.handleResize);
+      observer.observe(this.target);
+      this.setState(state => ({ ...state, observer }));
+    }
   }
 
   componentWillUnmount() {
@@ -33,9 +29,14 @@ export default class ResizeObservableComponent extends React.PureComponent<Props
 
   render() {
     return (
-      <div className={this.props.className} ref="target">
+      <div className={this.props.className} ref={this.setTarget}>
         {this.props.children}
       </div>
     );
+  }
+
+  private setTarget = (node: Element | null) => this.target = node;
+  private handleResize: ResizeObserverCallback = (entries, _) => {
+    each(entries, this.props.onResize);
   }
 };

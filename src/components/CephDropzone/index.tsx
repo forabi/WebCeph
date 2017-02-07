@@ -36,12 +36,8 @@ const DropzonePlaceholder = require(
   'svg-react-loader?name=DropzonePlaceholder!svgo-loader?useConfig=svgoConfig!./assets/placeholder.svg',
 ) as React.DOMFactory<React.DOMAttributes<SVGElement>, SVGElement>;
 
-class CephaloDropzone extends React.PureComponent<Props & InjectedIntlProps, { }> {
-  refs: {
-    [key: string]: Element;
-    dropzone: any;
-  };
-
+class CephDropzone extends React.PureComponent<Props & InjectedIntlProps, { }> {
+  dropzone: null | React.ReactInstance & { open: Function };
 
   render() {
     const {
@@ -61,7 +57,7 @@ class CephaloDropzone extends React.PureComponent<Props & InjectedIntlProps, { }
     } = this.props;
     return (
       <Dropzone
-        ref="dropzone"
+        ref={this.setRef}
         className={cx(className, classes.dropzone)}
         activeClassName={classes.dropzone__active}
         rejectClassName={classes.dropzone__reject}
@@ -133,12 +129,12 @@ class CephaloDropzone extends React.PureComponent<Props & InjectedIntlProps, { }
     );
   };
 
-  private setRef = (node: any) => this.refs.dropzone = node;
+  private setRef = (node: any) => this.dropzone = node;
   private openFilePicker = () => {
-    if (this.refs.dropzone !== null) {
-      this.refs.dropzone.open();
+    if (this.dropzone !== null) {
+      this.dropzone.open();
     }
   }
 };
 
-export default injectIntl(CephaloDropzone);
+export default injectIntl(CephDropzone);
