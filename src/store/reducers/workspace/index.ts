@@ -9,6 +9,7 @@ import treatment from './treatment';
 import image, {
   hasImage, getManualLandmarks,
   isAnyImageLoading,
+  getImageName,
 } from './image';
 import settings, {
   getWorkspaceImageIds, getWorkspaceMode, getTracingImageId,
@@ -170,4 +171,27 @@ export const isLastWorkspaceUsed = createSelector(
   isWorkspaceUsed,
   getLastWorkspaceId,
   (isUsed, lastWorkspace) => lastWorkspace !== null ? isUsed(lastWorkspace) : true,
+);
+
+export const getWorkspaceTitle = createSelector(
+  getWorkspaceMode,
+  getWorkspaceImageIds,
+  getTracingImageId,
+  getImageName,
+  (getMode, getImages, getTracingImage, getName) => (workspaceId: string) => {
+    const mode = getMode(workspaceId);
+    if (mode === 'tracing') {
+      const tracingImage = getTracingImage(workspaceId);
+      return tracingImage !== null ? getName(tracingImage) : null;
+    } else {
+      const images = getImages(workspaceId);
+      return getName(images[0]);
+    }
+  },
+);
+
+export const getActiveWorkspaceTitle = createSelector(
+  getActiveWorkspaceId,
+  getWorkspaceTitle,
+  (id, getTitle) => id !== null ? getTitle(id) : null,
 );

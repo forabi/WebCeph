@@ -41,13 +41,20 @@ const App = enhance(({
   userAgent, isReady, keyMap, handlers,
   shouldShowWorkspaceSwitcher,
   activeWorkspaceId,
+  title,
   locale, messages,
 }: Props) => (
     <MuiThemeProvider muiTheme={getMuiTheme()}>
       { isReady ? (
           <IntlProvider key={locale} defaultLocale="en" locale={locale} messages={messages}>
             <HotKeys keyMap={keyMap} handlers={handlers}>
-              <Helmet htmlAttributes={{ lang: locale, dir: getDirForLocale(locale) }} />
+              <Helmet
+                htmlAttributes={{
+                  lang: locale,
+                  dir: getDirForLocale(locale),
+                }}
+                title={title !== null ? `${title} - WebCeph` : 'WebCeph'}
+              />
               <div className={classes.root}>
                 <div className={classes.container}>
                   <div className={classes.row}>

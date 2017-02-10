@@ -30,6 +30,7 @@ import {
 import {
   isLastWorkspaceUsed,
   hasMultipleWorkspaces,
+  getActiveWorkspaceTitle,
 } from 'store/reducers/workspace';
 
 import {
@@ -63,6 +64,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
         isCheckingCompatiblity(state)
       ),
       activeWorkspaceId: getActiveWorkspaceId(state),
+      title: getActiveWorkspaceTitle(state),
       shouldShowWorkspaceSwitcher: hasMultipleWorkspaces(state) || isLastWorkspaceUsed(state),
       locale: getActiveLocale(state),
       messages: getActiveLocaleData(state),

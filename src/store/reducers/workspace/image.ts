@@ -34,6 +34,7 @@ const imagesReducer = handleActions<typeof KEY_IMAGES>(
           analysis: {
             activeId: null,
           },
+          ...state[payload.id],
           ...payload,
         },
       };
@@ -226,6 +227,12 @@ export const isImageLoaded = createSelector(
     const status = getStatus(id);
     return status.isLoading === false && status.error === null;
   },
+);
+
+export const getImageName = createSelector(
+  isImageLoaded,
+  getImageProps,
+  (isLoaded, getProps) => (id: string) => isLoaded(id) && getProps(id).name || null,
 );
 
 export const hasImage = createSelector(

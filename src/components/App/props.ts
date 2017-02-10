@@ -11,6 +11,7 @@ export type StateProps = {
   activeWorkspaceId: string;
   locale: string;
   messages: ReactIntl.Messages;
+  title: string | null;
 };
 
 export interface DispatchProps {
