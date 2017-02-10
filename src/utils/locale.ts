@@ -1,5 +1,7 @@
 import first from 'lodash/first';
 import find from 'lodash/find';
+import includes from 'lodash/includes';
+import memoize from 'lodash/memoize';
 
 declare const navigator: Navigator & Partial<{ languages: string[] }>;
 
@@ -23,11 +25,16 @@ export function getPrimaryLang(locale: string) {
   return (matches && matches[1]) ? matches[1] : undefined;
 }
 
+const RTL_PRIMARY_LANGS = [
+  'ar',
+  'fr',
+  'ku',
+];
 
-export function getDirForLocale(locale: string) {
+export const getDirForLocale = memoize((locale: string) => {
   const primaryLang = getPrimaryLang(locale);
-  return primaryLang === 'ar' ? 'rtl' : 'ltr';
-}
+  return includes(RTL_PRIMARY_LANGS, primaryLang) ? 'rtl' : 'ltr';
+});
 
 /** Return the first subtag of an IETF language tag
  * @example en-US => US
