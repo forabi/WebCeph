@@ -1,7 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const webpack = require('webpack');
-const fail = require('webpack-fail-plugin');
-const failTests = require('./webpack-fail-tests-plugin');
 const path = require('path');
 const env = require('./env');
 const WebpackHTMLPlugin = require('webpack-html-plugin');
@@ -16,6 +14,8 @@ let Dashboard;
 let DashboardPlugin;
 let dashboard;
 
+const BUILD_PATH = path.resolve(__dirname, process.env.BUILD_PATH || 'build');
+
 /* eslint-disable global-require */
 if (env.isDev && !env.isTest) {
   Dashboard = require('webpack-dashboard');
@@ -27,6 +27,7 @@ if (env.isDev && !env.isTest) {
 const prod = p => (env.isProd ? p : null);
 const hot = p => (env.isHot ? p : null);
 const test = p => (env.isTest ? p : null);
+const dev = p => (env.isDev ? p : null);
 
 const pkg = require('./package.json');
 
@@ -56,6 +57,13 @@ const sassLoaders = [
     },
   },
 ];
+
+const excludedPatterns = compact([
+  /node_modules/,
+  /test/,
+  prod(/\.test\.tsx?$/),
+  prod(/\.test\.jsx?$/),
+]);
 
 const buildPath = env.isProd ? '' : '/';
 
@@ -108,7 +116,7 @@ const config = {
   performance: env.isDev ? false : undefined,
 
   output: {
-    path: path.resolve(__dirname, 'build'),
+    path: BUILD_PATH,
     filename: env.isProd ? '[name]_[chunkhash].js' : '[name]_[hash].js',
     publicPath: buildPath,
   },
@@ -127,10 +135,7 @@ const config = {
         enforce: 'post',
         test: /\.tsx?$/,
         include: path.resolve(__dirname, 'src'),
-        exclude: [
-          /node_modules/,
-          /\.test\.tsx?$/,
-        ],
+        exclude: excludedPatterns,
         use: [
           {
             loader: 'istanbul-instrumenter-loader',
@@ -142,20 +147,23 @@ const config = {
       }),
       {
         test: /\.tsx?$/,
-        exclude: /node_modules/,
+        exclude: excludedPatterns,
         use: compact([
           hot('react-hot-loader/webpack'),
           prod('babel-loader'),
           {
             loader: 'ts-loader',
             query: {
-              transpileOnly: true,
+              transpileOnly: env.isDev && !env.isTest,
               silent: true,
               compilerOptions: Object.assign(
-                { module: 'es2015' },
+                {
+                  module: 'es2015',
+                  noEmitOnError: env.isProd || env.isTest,
+                },
                 env.isProd ? {
                   jsx: 'preserve',
-                } : { },
+                } : { }
               ),
             },
           },
@@ -163,7 +171,7 @@ const config = {
       },
       {
         test: /\.jsx?$/,
-        exclude: /node_modules/,
+        exclude: excludedPatterns,
         use: compact([
           hot('react-hot-loader/webpack'),
           'babel-loader',
@@ -196,8 +204,8 @@ const config = {
   },
 
   plugins: compact([
-    prod(fail),
-    test(failTests),
+    dev(new webpack.NamedModulesPlugin()),
+    new webpack.NoEmitOnErrorsPlugin(),
     new webpack.LoaderOptionsPlugin({
       options: {
         minimize: true,
@@ -259,7 +267,7 @@ const config = {
       'process.env.ENVIRONMENT': JSON.stringify('BROWSER'),
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       isBrowser: true,
-      isHot: JSON.stringify(Boolean(process.env.HOT)),
+      isHot: JSON.stringify(env.isHot),
     }),
     new ServiceWorkerWebpackPlugin({
       entry: path.join(__dirname, 'src/service-worker.ts'),
