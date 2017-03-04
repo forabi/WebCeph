@@ -55,7 +55,7 @@ To start a local development server, use the following command:
 yarn run dev
 ```
 
-This will run a version of the app at http://localhost:8080, the port can be changed by setting the `PORT` environment variable:
+This will run a version of the app [locally on port 8080](http://localhost:8080/), the port can be changed by setting the `PORT` environment variable:
 
 ```
 PORT=5678 yarn run dev
