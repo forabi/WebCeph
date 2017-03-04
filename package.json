@@ -1,7 +1,8 @@
 {
   "name": "webceph",
   "version": "1.0.0",
-  "description": "",
+  "private": true,
+  "description": "A web app for tracing and analyzing cephalograms and photographs used in the planning of orthodontic treatment.",
   "scripts": {
     "tslint": "tslint src/**/*.ts{,x}",
     "eslint": "eslint *.js src",
@@ -20,7 +21,7 @@
   },
   "keywords": [],
   "author": "Muhammad Fawwaz Orabi <mfawwaz93@gmail.com> (http://forabi.github.io)",
-  "license": "ISC",
+  "license": "GPLv3",
   "bugs": {
     "url": "https://gitlab.com/forabi/cephalo/issues"
   },
