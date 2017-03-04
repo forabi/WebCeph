@@ -65,14 +65,14 @@ The server is configured to hot-reload whenever a source file is changed so you 
 
 After you have made your changes, make sure to modify the tests or add new ones as you see fit.
 
-### Building
-Make sure to run the tests with the following command:
+During development, you can run the tests in watch mode with the following command:
 
 ```
 yarn test:watch
 ```
 
-Now you can build a production version:
+### Building
+You can build a production version with the following:
 
 ```
 yarn run prod
