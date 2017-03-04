@@ -28,7 +28,7 @@ Measurements are automatically interpreted and used to evaulate and summarize th
 Images and tracing data never leave your device. All measurements and interpretations are performed locally. Every tracing can be exported and saved on your computer.
 
 ### Completely free of charge
-No payments, no expiration time, no hidden costs. There is no catch! I made the app to scratch my own itch and decided to share it in the hope it can be useful.
+No payments, no expiration time, no hidden costs. There is no catch! I made the app to scratch my own itch and decided to share it in the hope that it will be useful.
 
 ## Development
 WebCeph is open source and licensed under [the GNU Public License 3](https://www.gnu.org/licenses/gpl-3.0.en.html).
