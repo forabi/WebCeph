@@ -3,7 +3,7 @@ WebCeph
 
 A web app for tracing and [analyzing cephalograms](https://en.wikipedia.org/wiki/Cephalometric_analysis) and photographs used in the planning of [orthodontic treatment](https://en.wikipedia.org/wiki/Orthodontics).
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/EmNYULKKgLE" frameborder="0" allowfullscreen></iframe>
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/EmNYULKKgLE/0.jpg)](https://www.youtube.com/watch?v=EmNYULKKgLE)
 
 ## Features
 ### Easy to use
