@@ -1,6 +1,5 @@
 export interface OwnProps {
   className?: string;
-  userAgent: string;
 }
 
 export type StateProps = {
@@ -12,6 +11,7 @@ export type StateProps = {
   locale: string;
   messages: ReactIntl.Messages;
   title: string | null;
+  userAgent: string;
 };
 
 export interface DispatchProps {
@@ -21,6 +21,7 @@ export interface DispatchProps {
 
 export interface MergeProps {
   onComponentMount: () => any;
+  onComponentUpdate: () => any;
 }
 
 export type ConnectableProps = StateProps & DispatchProps & MergeProps;

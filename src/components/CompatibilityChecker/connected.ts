@@ -14,7 +14,7 @@ import {
 import {
   isCheckingCompatiblity,
   isBrowserCompatible,
-  getMissingFeatures,
+  getMissingFeaturesForUserAgent,
 } from 'store/reducers/env/compat';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: StoreState, { userAgent }: OwnProps) => {
@@ -24,7 +24,7 @@ const mapStateToProps: MapStateToProps<StateProps, OwnProps> = (state: StoreStat
     currentBrowser,
     isChecking,
     shouldUpgradeCurrentBrowser: !isCompatible,
-    missingFeatures: getMissingFeatures(state)(userAgent),
+    missingFeatures: getMissingFeaturesForUserAgent(state)(userAgent),
     open: isChecking || !isCompatible,
     isNerdMode: false,
     recommendedBrowsers: getApplicapleBrowsers(true),

@@ -341,6 +341,7 @@ interface StoreState {
   'app.persistence.isSaving': boolean;
   'app.persistence.isLoading': boolean;
   'app.persistence.isUpgrading': boolean;
+  'app.persistence.isReady': boolean;
   'app.persistence.save.error': GenericError | null;
   'app.persistence.load.error': GenericError | null;
   /** Languages available for the app */
@@ -351,12 +352,20 @@ interface StoreState {
   'app.locale.data': {
     [locale: string]: Locale | undefined;
   };
-  'env.connection.isOffline': boolean;
-  'env.compat.isIgnored': boolean;
-  'env.compat.isBeingChecked': boolean;
   /** Default languages provided by the browser (navigator.language or navigator.languages) */
   'env.locale.requestedLocales': string[];
-  'env.compat.results': {
+  'env.userAgent': string | null;
+  'env.connection.isOffline': boolean;
+  'env.compat.check.ignored': {
+    [userAgent: string]: boolean;
+  };
+  'env.compat.check.status': {
+    [userAgent: string]: {
+      isChecking: boolean;
+      error: GenericError | null;
+    };
+  };
+  'env.compat.check.results': {
     [userAgent: string]: {
       missingFeatures: {
         [featureId: string]: MissingBrowserFeature;
@@ -674,11 +683,22 @@ interface Events {
     update: Partial<TreatmentStage>;
   };
   TOGGLE_ANALYSIS_RESULTS_REQUESTED: void;
-  BROWSER_COMPATIBLITY_CHECK_REQUESTED: void;
-  BROWSER_COMPATIBLITY_CHECK_SUCCEEDED: void;
-  BROWSER_COMPATIBLITY_CHECK_FAILED: GenericError;
-  IGNORE_BROWSER_COMPATIBLITY_REQUESTED: void;
-  ENFORCE_BROWSER_COMPATIBLITY_REQUESTED: void;
+  BROWSER_COMPATIBLITY_CHECK_REQUESTED: {
+    userAgent: string;
+  };
+  BROWSER_COMPATIBLITY_CHECK_SUCCEEDED: {
+    userAgent: string;
+  };
+  BROWSER_COMPATIBLITY_CHECK_FAILED: {
+    userAgent: string;
+    error: GenericError;
+  };
+  IGNORE_BROWSER_COMPATIBLITY_REQUESTED: {
+    userAgent: string;
+  };
+  ENFORCE_BROWSER_COMPATIBLITY_REQUESTED: {
+    userAgent: string;
+  };
   MISSING_BROWSER_FEATURE_DETECTED: {
     userAgent: string;
     feature: MissingBrowserFeature;
@@ -876,6 +896,13 @@ type Validator = (
   options: ValidateOptions,
 ) => Promise<ValidationError[]>;
 
+/**
+ * A file saver allows a persistent file to be updated on disk or remotely by
+ * listening to state changes and doing some work asynchronously.
+ * It allows the concept of opening and closing files instead of requiring the user
+ * to manually export a file after every change.
+ */
+type Saver = (state: StoreState) => IterableIterator<GenericAction>;
 
 type KeyboardCommand = (
   'ADD_NEW_WORKSPACE'

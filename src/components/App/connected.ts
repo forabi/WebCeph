@@ -14,14 +14,18 @@ import {
 } from './props';
 
 import {
-  isAppInitialized,
-} from 'store/reducers/app';
+  isAppReady,
+} from 'store/reducers';
 
 import {
-  isCompatibilityIgnored,
-  isCheckingCompatiblity,
-  isBrowserCompatible,
-} from 'store/reducers/env/compat';
+  getUserAgent,
+} from 'store/reducers/env/userAgent';
+
+import {
+  isThisBrowserCompatible,
+  isCompatibilityIgnoredForThisBrowser,
+  isCheckingCompatiblityForThisBrowser,
+} from 'store/reducers/env';
 
 import {
   getActiveWorkspaceId,
@@ -55,19 +59,20 @@ import uniqueId from 'lodash/uniqueId';
 import { connectionStatusChanged } from 'actions/env';
 
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
-  (state: StoreState, { userAgent }: OwnProps) => {
+  (state: StoreState) => {
     return {
-      isReady: isAppInitialized(state),
+      isReady: isAppReady(state),
       shouldCheckCompatibility: !(
-        isBrowserCompatible(state)(userAgent) ||
-        isCompatibilityIgnored(state) ||
-        isCheckingCompatiblity(state)
+        isThisBrowserCompatible(state) ||
+        isCompatibilityIgnoredForThisBrowser(state) ||
+        isCheckingCompatiblityForThisBrowser(state)
       ),
       activeWorkspaceId: getActiveWorkspaceId(state),
       title: getActiveWorkspaceTitle(state),
       shouldShowWorkspaceSwitcher: hasMultipleWorkspaces(state) || isLastWorkspaceUsed(state),
       locale: getActiveLocale(state),
       messages: getActiveLocaleData(state),
+      userAgent: getUserAgent(state),
     };
   };
 
@@ -85,7 +90,7 @@ const mapDispatchToProps: MapDispatchToPropsFunction<DispatchProps, OwnProps> =
 const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> =
   (stateProps, dispatchProps, ownProps): ConnectableProps => {
     const { dispatch } = dispatchProps;
-    const { isReady, shouldCheckCompatibility } = stateProps;
+    const { isReady, shouldCheckCompatibility, userAgent } = stateProps;
     return {
       ...stateProps,
       ...dispatchProps,
@@ -94,11 +99,11 @@ const mergeProps: MergeProps<StateProps, DispatchProps, OwnProps> =
         if (!isReady) {
           dispatch(restorePersistedState(void 0));
         }
+      },
+      onComponentUpdate: () => {
         if (shouldCheckCompatibility) {
-          dispatch(checkBrowserCompatibility(void 0));
+          dispatch(checkBrowserCompatibility({ userAgent }));
         }
-        dispatch(addNewWorkspace({ id: uniqueId('workspace_') }));
-        dispatch(connectionStatusChanged({ isOffline: !navigator.onLine }));
       },
     };
   };

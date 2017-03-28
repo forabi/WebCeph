@@ -19,6 +19,8 @@ declare const window: Window & { devToolsExtension?: () => any };
 const reducer = combineReducers<StoreState>(reducers);
 
 const middlewares: Middleware[] = [
+  loadStateMiddleware,
+  clearStateMiddleware,
   compatibilityMiddleware,
   fetchAnalysisMiddleware,
   fetchLocaleMiddleware,
@@ -27,8 +29,6 @@ const middlewares: Middleware[] = [
   exportMiddleware,
   autoScaleMiddleware,
   saveStateMiddleware,
-  loadStateMiddleware,
-  clearStateMiddleware,
 ];
 
 if (__DEBUG__) {

@@ -1,4 +1,5 @@
 import { handleActions } from 'utils/store';
+import { defaultWorkspaceId } from 'utils/config';
 
 import without from 'lodash/without';
 
@@ -8,7 +9,7 @@ const reducers: Partial<ReducerMap> = {
   [KEY_WORKSPACES_ORDER]: handleActions<typeof KEY_WORKSPACES_ORDER>({
     ADD_NEW_WORKSPACE: (state, { payload: { id } }) => [...state, id],
     REMOVE_WORKSPACE: (state, { payload: { id }}) => without(state, id),
-  }, []),
+  }, [defaultWorkspaceId]),
 };
 
 export default reducers;

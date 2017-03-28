@@ -1,3 +1,7 @@
+import zipObject from 'lodash/zipObject';
+import map from 'lodash/map';
+import uniqueId from 'lodash/uniqueId';
+
 const redoType: ActionType = 'REDO_REQUESTED';
 const undoType: ActionType = 'UNDO_REQUESTED';
 
@@ -16,8 +20,6 @@ export const supportedLocales = ['en-US', 'ar-SY'];
 
 export const bundledLocales = ['en-US'];
 
-import zipObject from 'lodash/zipObject';
-import map from 'lodash/map';
 
 export const bundleLocaleData = zipObject(
   bundledLocales,
@@ -26,3 +28,19 @@ export const bundleLocaleData = zipObject(
   }),
 );
 
+export const defaultWorkspaceId = uniqueId('workspace_');
+export const defaultWorkspaceSettings: WorkspaceSettings = {
+  isImporting: false,
+  importError: null,
+  isExporting: false,
+  exportError: null,
+  images: [],
+  contectRect: null,
+  mode: 'tracing',
+  tracing: {
+    imageId: null,
+  },
+  superimposition: {
+    mode: 'auto',
+  },
+};

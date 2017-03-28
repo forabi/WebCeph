@@ -16,10 +16,10 @@ import { isActionOfType } from 'utils/store';
 
 const middleware: Middleware = (_: Store<StoreState>) =>
   (next: GenericDispatch) => async (action: GenericAction) => {
-    if (!isActionOfType(action, 'BROWSER_COMPATIBLITY_CHECK_REQUESTED')) {
-      return next(action);
-    } else {
+    next(action);
+    if (isActionOfType(action, 'BROWSER_COMPATIBLITY_CHECK_REQUESTED')) {
       try {
+        const userAgent = action.payload.userAgent;
         const Modernizr = require('exports-loader?Modernizr!utils/modernizr.js');
         const features = keys(featureDetails);
         const total = features.length;
@@ -32,7 +32,7 @@ const middleware: Middleware = (_: Store<StoreState>) =>
           j++;
           if (!isSupported && !featureDetails[feature].optional) {
             next(foundMissingFeature({
-              userAgent: navigator.userAgent,
+              userAgent,
               feature: {
                 id: feature,
                 optional: featureDetails[feature].optional || false,
@@ -41,7 +41,7 @@ const middleware: Middleware = (_: Store<StoreState>) =>
             }));
           }
           if (j === total) {
-            next(compatiblityCheckSucceeded(void 0));
+            next(compatiblityCheckSucceeded({ userAgent }));
           }
         };
         // Listen for feature test events

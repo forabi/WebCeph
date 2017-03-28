@@ -2,6 +2,9 @@ import * as React from 'react';
 
 import VerticalTabBar from 'components/VerticalTabBar/connected';
 import Workspace from 'components/Workspace/connected';
+import Settings from 'components/Settings/connected';
+
+import { Route, Link } from 'react-router-dom';
 
 import Progress from './Progress';
 
@@ -30,6 +33,9 @@ const addLifeCycleHooks = lifecycle({
   componentDidMount(this: React.Component<Props, { }>) {
     this.props.onComponentMount();
   },
+  componentDidUpdate(this: React.Component<Props, { }>) {
+    this.props.onComponentUpdate();
+  },
 });
 
 const enhance = compose<Props, State>(pure, addLifeCycleHooks);
@@ -38,7 +44,7 @@ import { HotKeys } from 'react-hotkeys';
 import Helmet from 'react-helmet';
 
 const App = enhance(({
-  userAgent, isReady, keyMap, handlers,
+  isReady, keyMap, handlers,
   shouldShowWorkspaceSwitcher,
   activeWorkspaceId,
   title,
@@ -65,7 +71,9 @@ const App = enhance(({
                     ) : null}
                     <Workspace className={classes.workspace} workspaceId={activeWorkspaceId} />
                   </div>
+                  <Link to="/settings">Settings</Link>
                 </div>
+                <Route path="/settings" component={Settings} />
               </div>
             </HotKeys>
           </IntlProvider>

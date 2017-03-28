@@ -19,6 +19,7 @@ import some from 'lodash/some';
 const observedActions: ActionType[] = [
   'ENV_LOCALES_CHANGED',
   'SET_USER_PREFERRED_LOCALE',
+  'LOAD_PERSISTED_STATE_SUCCEEDED',
 ];
 
 declare const require: __WebpackModuleApi.RequireFunction;
@@ -31,7 +32,7 @@ const addReactIntlData = (locale: string) => {
     require.ensure([], () => {
       try {
         const data = requireLang(`./${primaryLang}.js`) as ReactIntl.Locale;
-        console.log('hey!', data);
+        console.info(`Locale data fetched for ${locale}`);
         addLocaleData(data);
         resolve();
       } catch (e) {

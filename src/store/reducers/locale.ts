@@ -160,6 +160,18 @@ export const getFirstReadyNegotiatedLocale = createSelector(
 
 export const getActiveLocale = getFirstReadyNegotiatedLocale;
 
+export const isNegotiatedLocaleFetched = createSelector(
+  isLocaleFetched,
+  getNegotiatedLocale,
+  (isFetched, locale) => isFetched(locale),
+);
+
+export const getNegotiatedLocaleFetchError = createSelector(
+  getFetchStatus,
+  getNegotiatedLocale,
+  (getStatus, locale) => getStatus[locale].error,
+);
+
 export const getLocaleDataById = createSelector(
   getLocaleData,
   (data) => (id: string) => data[id],

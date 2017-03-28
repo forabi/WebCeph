@@ -9,7 +9,8 @@ import {
   connectionStatusChanged,
 } from 'actions/env';
 import { getNavigatorLanguages } from 'utils/locale';
-import { isAppInitialized, isAppInstalled } from 'store/reducers/app';
+import { isAppInstalled } from 'store/reducers/app';
+import { isPersistedStateReady } from 'store/reducers/persistence';
 
 declare var module: __WebpackModuleApi.Module;
 declare var window: Window & {
@@ -26,14 +27,18 @@ if (window.ResizeObserver === undefined) {
   window.ResizeObserver = require('resize-observer-polyfill').default;
 }
 
-const installOrUpdateApp = () => {
+let reg: ServiceWorkerRegistration;
+
+const installOrUpdateApp = async () => {
   const state = store.getState();
-  const runtime = require('serviceworker-webpack-plugin/lib/runtime');
-  runtime.register().then((reg: ServiceWorkerRegistration) => {
-    reg.onupdatefound = () => {
+  if (!reg) {
+    const runtime = require('serviceworker-webpack-plugin/lib/runtime');
+    reg = await runtime.register();
+    reg.addEventListener('updatefound', () => {
       const newWorker = reg.installing;
       const setStatus = isAppInstalled(state) ? setAppUpdateStatus : setAppInstallStatus;
-      if (newWorker !== undefined) {
+      if (newWorker) {
+        // @TODO: get total size
         switch (newWorker.state) {
           case 'installing':
             store.dispatch(
@@ -44,12 +49,16 @@ const installOrUpdateApp = () => {
             store.dispatch(
               setStatus({ complete: true }),
             );
+            break;
           default:
             break;
         }
       }
-    };
-  });
+    });
+  } else {
+    // @TODO: does this actually update?
+    await reg.update();
+  }
 };
 
 if (!__DEBUG__ && 'serviceWorker' in navigator) {
@@ -57,7 +66,7 @@ if (!__DEBUG__ && 'serviceWorker' in navigator) {
     const state = store.getState();
     // Wait for persisted state to load so that we can know whether we are
     // updating the app or installing for the first time.
-    if (isAppInitialized(state)) {
+    if (isPersistedStateReady(state)) {
       unsubscribe();
       installOrUpdateApp();
     }
@@ -67,6 +76,7 @@ if (!__DEBUG__ && 'serviceWorker' in navigator) {
 // import { hasUnsavedWork } from 'store/reducers/workspace';
 
 if (__DEBUG__) {
+  // Expose store in development
   window.__STORE__ = store;
 }
 

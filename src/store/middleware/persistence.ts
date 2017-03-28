@@ -19,7 +19,12 @@ import { isActionOfType } from 'utils/store';
 
 const PERSISTABLE_EVENTS: ActionType[] = [
   'BROWSER_COMPATIBLITY_CHECK_SUCCEEDED',
+  'BROWSER_COMPATIBLITY_CHECK_FAILED',
+  'IGNORE_BROWSER_COMPATIBLITY_REQUESTED',
+  'ENFORCE_BROWSER_COMPATIBLITY_REQUESTED',
   'FETCH_ANALYSIS_SUCCEEDED',
+  'SET_USER_PREFERRED_LOCALE',
+  'UNSET_USER_PREFERRED_LOCALE',
 ];
 
 const isPersistenceNeededForAction = ({ type }: GenericAction): boolean => {
@@ -28,8 +33,8 @@ const isPersistenceNeededForAction = ({ type }: GenericAction): boolean => {
 
 const PERSISTABLE_KEYS: StoreKey[] = [
   'app.status.isInstalled',
-  'env.compat.isIgnored',
-  'env.compat.results',
+  'env.compat.check.ignored',
+  'env.compat.check.results',
   'analyses.lastUsedId',
   'user.preferences.preferredLocale',
 ];

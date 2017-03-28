@@ -1,4 +1,6 @@
+import { defaultWorkspaceId, defaultWorkspaceSettings } from 'utils/config';
 import { handleActions } from 'utils/store';
+
 import { createSelector } from 'reselect';
 
 import omit from 'lodash/omit';
@@ -12,19 +14,7 @@ const reducers: Partial<ReducerMap> = {
       return {
         ...state,
         [id]: {
-          isImporting: false,
-          importError: null,
-          isExporting: false,
-          exportError: null,
-          images: [],
-          contectRect: null,
-          mode: 'tracing',
-          tracing: {
-            imageId: null,
-          },
-          superimposition: {
-            mode: 'auto',
-          },
+          ...defaultWorkspaceSettings,
           ...settings,
         },
       };
@@ -144,7 +134,9 @@ const reducers: Partial<ReducerMap> = {
         },
       };
     },
-  }, { }),
+  }, {
+    [defaultWorkspaceId]: defaultWorkspaceSettings,
+  }),
 };
 
 export default reducers;
