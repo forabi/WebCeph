@@ -1,5 +1,6 @@
 declare const __DEBUG__: boolean;
 declare const __VERSION__: string;
+declare const __BUILD_TIMESTAMP__: number;
 
 type AngularUnit = 'degree' | 'radian';
 type LinearUnit = 'mm' | 'cm' | 'in';

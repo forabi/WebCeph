@@ -263,6 +263,7 @@ const config = {
     }),
     new webpack.DefinePlugin({
       __VERSION__: JSON.stringify(pkg.version),
+      __BUILD_TIMESTAMP__: Date.now(),
       __DEBUG__: JSON.stringify(env.isDev),
       'process.env.ENVIRONMENT': JSON.stringify('BROWSER'),
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
