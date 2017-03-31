@@ -851,7 +851,7 @@ type ImportOptions = Partial<{
 };
 
 /**
- * A WCeph File importer recieves the file to be imported along with any import options and
+ * A file importer recieves the file to be imported along with any import options and
  * returns an array of actions to be dispatched in order.
  */
 type Importer = (file: File, options: ImportOptions) => Promise<GenericAction[]>;
@@ -879,7 +879,7 @@ type ValidateOptions = {
 };
 
 /**
- * A WCeph File exporter recieves the application state along with any export options and
+ * A file exporter recieves the application state along with any export options and
  * returns an File blob to be saved.
  */
 type Exporter = (
@@ -889,8 +889,8 @@ type Exporter = (
 ) => Promise<File>;
 
 /**
- * A WCeph validator recieves the file to validate and returns zero, one or more validation errors.
- * A return value with length = 0 means that the files is valid.
+ * A validator recieves the file to validate and returns zero, one or more validation errors.
+ * A return value with a length of 0 means that the files is valid.
  */
 type Validator = (
   fileToValidate: File,
