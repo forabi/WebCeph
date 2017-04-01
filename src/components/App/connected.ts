@@ -50,14 +50,6 @@ import {
   getActiveLocaleData,
 } from 'store/reducers/locale';
 
-import {
-  addNewWorkspace,
-} from 'actions/workspace';
-
-import uniqueId from 'lodash/uniqueId';
-
-import { connectionStatusChanged } from 'actions/env';
-
 const mapStateToProps: MapStateToProps<StateProps, OwnProps> =
   (state: StoreState) => {
     return {
