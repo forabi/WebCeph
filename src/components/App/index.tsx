@@ -21,6 +21,8 @@ import { IntlProvider } from 'react-intl';
 
 import { getDirForLocale } from 'utils/locale';
 
+import { defaultLocale } from 'utils/config';
+
 import Props from './props';
 
 attempt(injectTapEventPlugin);
@@ -52,16 +54,22 @@ const App = enhance(({
 }: Props) => (
     <MuiThemeProvider muiTheme={getMuiTheme()}>
       { isReady ? (
-          <IntlProvider key={locale} defaultLocale="en" locale={locale} messages={messages}>
-            <HotKeys keyMap={keyMap} handlers={handlers}>
+          <IntlProvider
+            key={locale}
+            defaultLocale={defaultLocale}
+            locale={locale}
+            messages={messages}
+          >
+            <div className={classes.root}>
               <Helmet
                 htmlAttributes={{
                   lang: locale,
                   dir: getDirForLocale(locale),
                 }}
-                title={title !== null ? `${title} - WebCeph` : 'WebCeph'}
+                title={title ? `${title!} - WebCeph` : 'WebCeph'}
+                defaultTitle="WebCeph"
               />
-              <div className={classes.root}>
+              <HotKeys keyMap={keyMap} handlers={handlers}>
                 <div className={classes.container}>
                   <div className={classes.row}>
                     {shouldShowWorkspaceSwitcher ? (
@@ -73,9 +81,9 @@ const App = enhance(({
                   </div>
                   <Link to="/settings">Settings</Link>
                 </div>
-                <Route path="/settings" component={Settings} />
-              </div>
-            </HotKeys>
+              </HotKeys>
+              <Route path="/settings" component={Settings} />
+            </div>
           </IntlProvider>
         ) : (
           <div className={classes.root_loading}>
