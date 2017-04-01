@@ -20,6 +20,7 @@ export const supportedLocales = ['en-US', 'ar-SY'];
 
 export const bundledLocales = ['en-US'];
 
+export const defaultLocale = bundledLocales[0];
 
 export const bundleLocaleData = zipObject(
   bundledLocales,
