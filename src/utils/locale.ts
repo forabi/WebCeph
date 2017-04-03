@@ -3,6 +3,8 @@ import find from 'lodash/find';
 import includes from 'lodash/includes';
 import memoize from 'lodash/memoize';
 
+import langMap from 'langmap';
+
 declare const navigator: Navigator & Partial<{ languages: string[] }>;
 
 export function getNavigatorLanguages() {
@@ -71,4 +73,12 @@ export function negotiateLanguageOrLocale(
     locale = first(supported);
   }
   return locale;
+};
+
+export function getNativeNameForLocale(locale: string) {
+  const obj = langMap[locale];
+  if (obj !== undefined) {
+    return obj.nativeName;
+  }
+  return undefined;
 };

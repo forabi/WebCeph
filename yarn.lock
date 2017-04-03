@@ -4527,6 +4527,10 @@ klaw@^1.0.0:
   optionalDependencies:
     graceful-fs "^4.1.9"
 
+langmap@^0.0.14:
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/langmap/-/langmap-0.0.14.tgz#8c86a37fed19a03a8ccb2a6f78afd4f69195a80e"
+
 latest-version@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/latest-version/-/latest-version-2.0.0.tgz#56f8d6139620847b8017f8f1f4d78e211324168b"

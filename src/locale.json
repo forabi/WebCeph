@@ -14,5 +14,9 @@
   {
     "id": "callout_start_tracing",
     "defaultMessage": "To start tracing, drop a cephalogram or a photograph here"
+  },
+  {
+    "id": "label_language",
+    "defaultMessage": "Language"
   }
 ]
