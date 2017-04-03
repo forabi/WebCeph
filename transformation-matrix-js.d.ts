@@ -1,4 +1,6 @@
 declare module 'transformation-matrix-js' {
+  type Value = { x: number, y: number };
+  type Point = { x: number, y: number };
   class Matrix {
     static from(
       a: number, b: number, c: number,
@@ -22,8 +24,8 @@ declare module 'transformation-matrix-js' {
     constructor(context?: CanvasRenderingContext2D, element?: Element);
     constructor(element?: Element);
 
-    applyToArray(points: Array<{ x: number, y: number }>): this;
-    applyToPoint(x: number, y: number): this;
+    applyToArray(points: Point[]): this;
+    applyToPoint(x: number, y: number): Point;
     applyToObject(obj: object): string;
 
     clone(): Matrix;
@@ -67,6 +69,15 @@ declare module 'transformation-matrix-js' {
       a: number, b: number, c: number,
       d: number, e: number, f: number,
     ): this;
+
+    decompose(): {
+      translate: Value;
+      rotation: Value;
+      scale: Value;
+      skew: Value;
+    };
+
+    inverse(): Matrix;
   }
 
   export { Matrix };
