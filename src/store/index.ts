@@ -32,7 +32,13 @@ const middlewares: Middleware[] = [
 ];
 
 if (__DEBUG__) {
-  middlewares.push(analyticsMiddleware);
+  // middlewares.push(analyticsMiddleware);
+  const { createLogger } = require('redux-logger');
+  middlewares.push(createLogger({
+    diff: true,
+    duration: true,
+    timestamp: true,
+  }));
 }
 
 const enableLoadingPersistedState = (r: Reducer<StoreState>): Reducer<StoreState> => {
