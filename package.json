@@ -62,7 +62,8 @@
     "resize-observer-polyfill": "^1.3.2",
     "scroll-into-view-if-needed": "^1.0.4",
     "serviceworker-webpack-plugin": "^0.1.8",
-    "sw-toolbox": "^3.4.0"
+    "sw-toolbox": "^3.4.0",
+    "transformation-matrix-js": "^2.7.1"
   },
   "devDependencies": {
     "@types/babel-core": "^6.7.14",

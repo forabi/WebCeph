@@ -7113,6 +7113,10 @@ tough-cookie@^2.0.0, tough-cookie@~2.3.0:
   dependencies:
     punycode "^1.4.1"
 
+transformation-matrix-js@^2.7.1:
+  version "2.7.1"
+  resolved "https://registry.yarnpkg.com/transformation-matrix-js/-/transformation-matrix-js-2.7.1.tgz#0b62e88b655e843e8e5972a668159554ffdcc910"
+
 traverse@0.6.6, traverse@^0.6.6:
   version "0.6.6"
   resolved "https://registry.yarnpkg.com/traverse/-/traverse-0.6.6.tgz#cbdf560fd7b9af632502fed40f918c157ea97137"
