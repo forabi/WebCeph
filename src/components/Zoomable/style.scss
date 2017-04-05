@@ -4,6 +4,7 @@
 }
 
 .zoomable {
+  will-change: transform;
   transition-property: 'transform';
   transition-duration: 200ms;
   transition-timing-function: ease-in;

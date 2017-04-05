@@ -30,11 +30,7 @@ class Zoomable extends React.PureComponent<Props, any> {
   setScrollable = (node: HTMLDivElement) => this.scrollable = node;
 
   applyZoom(f: number, { x: mouseX, y: mouseY }: Coords) {
-    console.log({ mouseX, mouseY });
-    this.props.onZoom(
-      this.props.scale * f,
-      mouseX, mouseY,
-    );
+    this.props.onZoom(this.props.scale * f, mouseX, mouseY);
   }
 
   applyPan() {
@@ -84,7 +80,7 @@ class Zoomable extends React.PureComponent<Props, any> {
   }
 
   render() {
-    const { style, className, children, ...rest } = this.props;
+    const { style, className, children, scale, ...rest } = this.props;
     return (
       <div ref={this.setScrollable} className={cx(classes.root, className)}>
         <div
@@ -93,7 +89,7 @@ class Zoomable extends React.PureComponent<Props, any> {
           className={classes.zoomable}
           style={{
             ...style,
-            transform: this.matrix.toCSS3D(),
+            transform: this.matrix.toCSS(),
             // This is required as CSS defaults to center
             transformOrigin: '0 0',
           }}
