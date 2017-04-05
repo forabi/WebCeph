@@ -2,7 +2,13 @@ import * as React from 'react';
 
 import { Matrix } from 'transformation-matrix-js';
 
+import round from 'lodash/round';
+
 import mapValues from 'lodash/mapValues';
+
+import * as cx from 'classnames';
+
+const roundCoordinate = (n: number) => round(n, 3);
 
 type Coords = { x: number, y: number };
 
@@ -35,12 +41,23 @@ class Zoomable extends React.PureComponent<Props, any> {
     
   }
 
+  /**
+   * Gets the original mouse position relative to the element
+   * as if the coordinates were on the element without the transformations
+   * applied to it.
+   */
   getMouseCoords(ev: React.MouseEvent<HTMLDivElement>) {
     const { top, left } = this.eventTarget.getBoundingClientRect();
+    // The mouse coordinates do not include the translation of the element,
+    // so we reapply the translation manually.
     const { e: translateX, f: translateY } = this.matrix;
     const x = ev.clientX - Math.round(left) + translateX;
     const y = ev.clientY - Math.round(top) + translateY;
-    return mapValues(this.matrix.inverse().applyToPoint(x, y), Math.round);
+    // Now we have the mouse position applied correctly to the transormation
+    // matrix, we inverse the matrix to get the original point on the element
+    // with no transformations applied.
+    const originalPoint = this.matrix.inverse().applyToPoint(x, y);
+    return mapValues(originalPoint, roundCoordinate) as typeof originalPoint;
   }
 
   handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -67,9 +84,9 @@ class Zoomable extends React.PureComponent<Props, any> {
   }
 
   render() {
-    const { style, children, ...rest } = this.props;
+    const { style, className, children, ...rest } = this.props;
     return (
-      <div ref={this.setScrollable} className={classes.root}>
+      <div ref={this.setScrollable} className={cx(classes.root, className)}>
         <div
           {...rest}
           ref={this.setEventTarget}
@@ -77,6 +94,7 @@ class Zoomable extends React.PureComponent<Props, any> {
           style={{
             ...style,
             transform: this.matrix.toCSS3D(),
+            // This is required as CSS defaults to center
             transformOrigin: '0 0',
           }}
           onContextMenu={this.handleContextMenu}
