@@ -1,5 +1,7 @@
 export interface StateProps {
   imageId: string | null;
+  imageSrc: string;
+  isDemoImageLoading: boolean;
 };
 
 export interface DispatchProps {

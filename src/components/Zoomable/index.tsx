@@ -1,6 +1,14 @@
 import * as React from 'react';
 
-import { Matrix } from 'transformation-matrix-js';
+import {
+  applyToPoint,
+  identity,
+  inverse,
+  scale,
+  translate,
+  transform,
+  toCSS,
+} from 'transformation-matrix';
 
 import round from 'lodash/round';
 
@@ -15,26 +23,26 @@ type Coords = { x: number, y: number };
 type Props = React.HTMLAttributes<HTMLDivElement> & {
   originX: number;
   originY: number;
-  scale: number;
+  scaleFactor: number;
   onZoom(scale: number, translateX: number, translateY: number): any;
 };
 
 const classes = require('./style.scss');
 
-class Zoomable extends React.PureComponent<Props, any> {
+class Zoomable extends React.PureComponent<Props, {}> {
   eventTarget: HTMLDivElement;
   scrollable: HTMLDivElement;
-  private matrix = new Matrix();
+  private matrix = identity();
 
   setEventTarget = (node: HTMLDivElement) => this.eventTarget = node;
   setScrollable = (node: HTMLDivElement) => this.scrollable = node;
 
   applyZoom(f: number, { x: mouseX, y: mouseY }: Coords) {
-    this.props.onZoom(this.props.scale * f, mouseX, mouseY);
+    this.props.onZoom(this.props.scaleFactor * f, mouseX, mouseY);
   }
 
   applyPan() {
-    
+    // @TODO
   }
 
   /**
@@ -52,7 +60,8 @@ class Zoomable extends React.PureComponent<Props, any> {
     // Now we have the mouse position applied correctly to the transormation
     // matrix, we inverse the matrix to get the original point on the element
     // with no transformations applied.
-    const originalPoint = this.matrix.inverse().applyToPoint(x, y);
+    const inverseMatrix = inverse(this.matrix);
+    const originalPoint = applyToPoint(inverseMatrix, { x, y });
     return mapValues(originalPoint, roundCoordinate) as typeof originalPoint;
   }
 
@@ -70,32 +79,41 @@ class Zoomable extends React.PureComponent<Props, any> {
   }
 
   componentWillReceiveProps(newProps: Props) {
-    this.matrix.reset();
-    const { scale, originX, originY } = newProps;
-    const act = new Matrix();
-    act.translate(originX, originY);
-    act.scaleU(scale);
-    act.translate(-originX, -originY);
-    this.matrix.multiply(act);
+    const { scaleFactor, originX, originY } = newProps;
+    this.matrix = transform(
+      identity(),
+      translate(originX, originY),
+      scale(scaleFactor, scaleFactor),
+      translate(-originX, -originY),
+    );
+    console.log({...newProps, matrix: this.matrix});
   }
 
   render() {
-    const { style, className, children, scale, ...rest } = this.props;
+    const {
+      style, className,
+      children, scaleFactor,
+      onZoom, originX, originY,
+      ...rest,
+    } = this.props;
     return (
-      <div ref={this.setScrollable} className={cx(classes.root, className)}>
+      <div
+        ref={this.setScrollable}
+        className={cx(classes.root, className)}
+        onContextMenu={this.handleContextMenu}
+        onMouseDown={this.handleMouseDown}
+        onWheel={this.handleMouseWheel}
+      >
         <div
           {...rest}
           ref={this.setEventTarget}
           className={classes.zoomable}
           style={{
             ...style,
-            transform: this.matrix.toCSS(),
+            transform: toCSS(this.matrix),
             // This is required as CSS defaults to center
             transformOrigin: '0 0',
           }}
-          onContextMenu={this.handleContextMenu}
-          onMouseDown={this.handleMouseDown}
-          onWheel={this.handleMouseWheel}
         >
           {children}
         </div>
