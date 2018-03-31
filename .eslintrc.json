@@ -1,7 +1,3 @@
 {
-    "extends": "airbnb",
-    "parser": "babel-eslint",
-    "plugins": [
-        "react"
-    ]
+  "extends": ["./node_modules/@hollowverse/config/eslint/base/.eslintrc.json"]
 }

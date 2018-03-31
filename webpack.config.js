@@ -1,29 +1,16 @@
+/* eslint import/no-extraneous-dependencies: ["error", {"devDependencies": true}] */
 const webpack = require('webpack');
-const fail = require('webpack-fail-plugin');
 const path = require('path');
-const env = require('./env');
-const WebpackHTMLPlugin = require('webpack-html-plugin');
+const {
+  isProd,
+  ifProd,
+  ifHot,
+  isHot,
+  isDev,
+} = require('@hollowverse/utils/helpers/env');
+const WebpackHTMLPlugin = require('html-webpack-plugin');
+const BabelMinifyPlugin = require('babel-minify-webpack-plugin');
 const { compact } = require('lodash');
-const autoprefixer = require('autoprefixer');
-const BabiliPlugin = require('babili-webpack-plugin');
-const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
-
-let Dashboard;
-let DashboardPlugin;
-let dashboard;
-
-if (env.isDev) {
-  Dashboard = require('webpack-dashboard');
-  DashboardPlugin = require('webpack-dashboard/plugin');
-
-  dashboard = new Dashboard();
-}
-
-const prod = p => (env.isProd ? p : null);
-const hot = p => (env.isHot ? p : null);
-const dev = p => (env.isDev ? p : null);
-
-const pkg = require('./package.json');
 
 const localCSSLoaders = [
   'style-loader',
@@ -34,83 +21,29 @@ const localCSSLoaders = [
       localIdentName: '[name]_[local]_[hash:base64:5]',
     },
   },
-  'postcss-loader',
 ];
 
-const globalCSSLoaders = [
-  'style-loader',
-  'css-loader',
-  'postcss-loader',
-];
-
-const sassLoaders = [
-  {
-    loader: 'sass-loader',
-    query: {
-      sourceMap: true,
-    },
-  },
-];
-
-const buildPath = env.isProd ? '' : '/';
+const globalCSSLoaders = ['style-loader', 'css-loader'];
 
 const config = {
-  devServer: env.isDev ? {
-    inline: true,
-    contentBase: buildPath,
-    hot: env.isHot,
-  } : undefined,
+  mode: isProd ? 'production' : 'development',
 
-  devtool: env.isDev ? 'eval' : false,
+  performance: false,
 
-  entry: {
-    bundle: compact([
-      hot('react-hot-loader/patch'),
-      hot('webpack/hot/only-dev-server'),
-      hot('webpack-hot-middleware/client'),
-      path.resolve(__dirname, './src/index.tsx'),
-    ]),
-    lib: [
-      'react',
-      'react-dom',
-      'reselect',
-      'redux',
-      'react-redux',
-      'redux-actions',
-      'redux-undo',
-      'lodash/assign',
-      'lodash/map',
-      'lodash/findIndex',
-      'lodash/attempt',
-      'lodash/curry',
-      'lodash/reduce',
-      'lodash/find',
-      'lodash/uniqBy',
-      'lodash/isEmpty',
-      'lodash/omit',
-      'lodash/filter',
-      'lodash/memoize',
-      'material-ui/CircularProgress',
-      'material-ui/Dialog',
-      'material-ui/List/List',
-      'material-ui/List/ListItem',
-      'material-ui/RaisedButton',
-      'material-ui/FlatButton',
-    ],
+  optimization: {
+    namedModules: true,
+    namedChunks: true,
+  },
+
+  resolve: {
+    extensions: ['.ts', '.tsx', '.jsx', '.js'],
+    modules: [path.join(__dirname, 'src'), __dirname, 'node_modules'],
   },
 
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: env.isProd ? '[name]_[chunkhash].js' : '[name]_[hash].js',
-    publicPath: buildPath,
-  },
-
-  resolve: {
-    extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js'],
-    modules: [
-      path.join(__dirname, 'src'),
-      'node_modules',
-    ],
+    filename: isProd ? '[name]_[chunkhash].js' : '[name].js',
+    publicPath: '/',
   },
 
   module: {
@@ -118,125 +51,56 @@ const config = {
       {
         test: /\.tsx?$/,
         exclude: /node_modules/,
-        use: compact([
-          prod('babel-loader'),
-          {
-            loader: 'ts-loader',
-            query: {
-              transpileOnly: true,
-              silent: true,
-              compilerOptions: Object.assign(
-                {
-                  module: 'es2015',
-                },
-                env.isProd ? {
-                  jsx: 'preserve',
-                } : { }
-              ),
-            },
-          },
-        ]),
+        use: [
+          'babel-loader',
+          { loader: 'ts-loader', options: { transpileOnly: isDev } },
+        ],
       },
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         use: ['babel-loader'],
-      }, {
-        test: /\.css$/,
-        use: localCSSLoaders,
       },
       {
-        test: /\.scss$/,
-        include: [
-          path.resolve(path.resolve(__dirname, 'src/components')),
-        ],
-        use: [...localCSSLoaders, ...sassLoaders],
+        test: /\.module\.css$/,
+        exclude: /node_modules/,
+        use: [...localCSSLoaders],
       },
       {
-        test: /\.scss$/,
-        include: [
-          path.resolve(path.resolve(__dirname, 'src/layout')),
-        ],
-        use: [...globalCSSLoaders, ...sassLoaders],
+        test: /\.global\.css$/,
+        exclude: /node_modules/,
+        use: [...globalCSSLoaders],
       },
       {
         test: /\.html$/,
-        use: 'html',
+        use: 'html-loader',
       },
     ],
   },
 
   plugins: compact([
-    new webpack.LoaderOptionsPlugin({
-      options: {
-        context: __dirname,
-        postcss() {
-          return {
-            defaults: [autoprefixer],
-          };
-        },
-        svgoConfig: {
-          plugins: [
-            { removeXMLNS: true },
-            { cleanupIDs: false },
-            { convertShapeToPath: false },
-            { removeEmptyContainers: false },
-            { removeViewBox: false },
-            { mergePaths: false },
-            { convertStyleToAttrs: false },
-            { convertPathData: false },
-            { convertTransform: false },
-            { removeUnknownsAndDefaults: false },
-            { collapseGroups: false },
-            { moveGroupAttrsToElems: false },
-            { moveElemsAttrsToGroup: false },
-            { cleanUpEnableBackground: false },
-            { removeHiddenElems: false },
-            { removeNonInheritableGroupAttrs: false },
-            { removeUselessStrokeAndFill: false },
-            { transformsWithOnePath: false },
-          ],
-        },
-      },
-    }),
-    hot(new webpack.HotModuleReplacementPlugin()),
-    dashboard ? new DashboardPlugin(dashboard.setData) : null,
-    fail,
-    new webpack.optimize.CommonsChunkPlugin({
-      names: ['common'],
-      minSize: 100000,
-    }),
+    ifHot(new webpack.HotModuleReplacementPlugin()),
+    new webpack.WatchIgnorePlugin([/node_modules/]),
     new WebpackHTMLPlugin({
-      filename: 'index.html',
       template: path.resolve(__dirname, 'src/index.html'),
       inject: 'body',
-      minify: env.isProduction ? {
-        html5: true,
-        collapseBooleanAttributes: true,
-        collapseInlineTagWhitespace: true,
-        collapseWhitespace: true,
-      } : false,
-    }),
-    new webpack.ProvidePlugin({
-      Promise: 'bluebird',
+      minify: isProd
+        ? {
+            html5: true,
+            collapseBooleanAttributes: true,
+            collapseInlineTagWhitespace: true,
+            collapseWhitespace: true,
+          }
+        : false,
     }),
     new webpack.DefinePlugin({
-      __VERSION__: JSON.stringify(pkg.version),
-      __DEBUG__: JSON.stringify(env.isDev),
-      'process.env.ENVIRONMENT': JSON.stringify('BROWSER'),
+      __VERSION__: JSON.stringify('v2'),
+      __DEBUG__: JSON.stringify(isDev),
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       isBrowser: true,
-      isHot: JSON.stringify(Boolean(process.env.HOT)),
+      isHot,
     }),
-    new ServiceWorkerWebpackPlugin({
-      entry: path.join(__dirname, 'src/service-worker.ts'),
-    }),
-    new webpack.LoaderOptionsPlugin({
-      minimize: true,
-      debug: false,
-    }),
-    prod(new webpack.optimize.OccurrenceOrderPlugin(true)),
-    prod(new BabiliPlugin()),
+    ifProd(new BabelMinifyPlugin()),
   ]),
 };
 

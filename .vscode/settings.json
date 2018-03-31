@@ -13,7 +13,6 @@
     "build/": true,
     "src/assets": true
   },
-  "eslint.autoFixOnSave": true,
-  "tslint.autoFixOnSave": true,
-  "editor.tabSize": 2
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true
 }

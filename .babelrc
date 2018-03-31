@@ -2,32 +2,28 @@
   "sourceMaps": "both",
   "presets": [
     [
-      "env",
+      "@babel/env",
       {
         "modules": false,
-        "browsers": [
-          "last 2 Chrome versions",
-          "last 5 Firefox versions"
-        ]
+        "loose": true,
+        "useBuiltIns": "entry",
+        "shippedProposals": true
       }
     ],
-    "react",
-    "stage-3"
+    "@babel/react",
+    "@babel/stage-3"
+  ],
+  "plugins": [
+    "@babel/transform-runtime"
   ],
   "env": {
     "production": {
       "plugins": [
-        "transform-runtime",
-        "minify-empty-function",
-        "transform-inline-environment-variables",
-        "transform-node-env-inline",
-        "transform-remove-console",
-        "transform-remove-debugger"
+        "transform-inline-environment-variables"
       ],
       "presets": [
         "react-optimize"
       ]
-    },
-    "sourceMaps": false
+    }
   }
 }

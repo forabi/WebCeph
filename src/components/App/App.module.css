@@ -1,0 +1,23 @@
+.app {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-areas:
+    'workspace sidebar'
+    'toolbar toolbar';
+  grid-template-columns: 1fr minmax(auto, 300px);
+  grid-template-rows: 1fr auto;
+}
+
+.workspace {
+  grid-area: workspace;
+}
+
+.sidebar {
+  grid-area: sidebar;
+  width: 25%;
+}
+
+.toolbar {
+  grid-area: toolbar;
+}

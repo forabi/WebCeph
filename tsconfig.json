@@ -1,44 +1,23 @@
 {
   "compilerOptions": {
-    "target": "es2015",
-    "lib": [
-        "es5",
-        "es2015",
-        "webworker",
-        "dom"
-    ],
-    "outDir": "build/",
-    "allowJs": true,
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["webworker", "dom", "esnext"],
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "noImplicitAny": true,
+    "maxNodeModuleJsDepth": 3,
+    "strict": true,
+    "allowJs": true,
+    "checkJs": true,
     "moduleResolution": "node",
-    "jsx": "react",
+    "jsx": "preserve",
     "sourceMap": true,
-    "module": "commonjs",
-    "isolatedModules": true,
-    "forceConsistentCasingInFileNames": true,
     "preserveConstEnums": true,
-    "traceResolution": false,
-    "noImplicitReturns": true,
-    "pretty": true,
-    "noUnusedParameters": true,
-    "strictNullChecks": true,
-    "noUnusedLocals": true,
-    "noImplicitThis": true,
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "*": [
-        "*",
-        "src/*"
-      ]
+      "*": ["*", "src/*"]
     }
   },
   "compileOnSave": true,
-  "exclude": [
-      "node_modules",
-      "src/**/*.test.ts",
-      "build/**"
-  ]
+  "exclude": ["node_modules", "src/**/*.test.ts", "build/**"]
 }
