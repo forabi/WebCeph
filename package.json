@@ -22,6 +22,10 @@
     "url": "https://gitlab.com/forabi/WebCeph/issues"
   },
   "homepage": "https://gitlab.com/forabi/WebCeph#README",
+  "resolutions": {
+    "@types/react": "15",
+    "@types/react-dom": "15"
+  },
   "dependencies": {
     "@babel/polyfill": "^7.0.0-beta.42",
     "bluebird": "^3.4.6",
@@ -32,11 +36,13 @@
     "lodash": "^4.16.4",
     "material-ui": "^0.16.4",
     "moment": "^2.15.1",
+    "prop-types": "^15.6.1",
     "react": "^15.4.0",
     "react-dom": "^15.4.0",
     "react-draggable": "^2.2.2",
     "react-dropzone": "^3.6.0",
     "react-helmet": "^5.2.0",
+    "react-intl": "^2.4.0",
     "react-redux": "^5.0.0-beta.1",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
@@ -70,6 +76,7 @@
     "@types/react-dom": "15",
     "@types/react-dropzone": "0.0.28",
     "@types/react-helmet": "^5.0.5",
+    "@types/react-intl": "^2.3.5",
     "@types/react-redux": "^4.4.32",
     "@types/react-router": "^4.0.23",
     "@types/react-router-dom": "^4.2.6",
@@ -189,12 +196,10 @@
     }
   },
   "browserslist": [
-    "and_chr >= 62",
     "chrome >= 55",
-    "edge >= 14",
-    "firefox >= 57",
-    "ios_saf >= 9.3",
-    "safari >= 9.1"
+    "edge >= 16",
+    "firefox >= 59",
+    "safari >= 11.3"
   ],
   "engines": {
     "node": ">= 6.10"

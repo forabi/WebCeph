@@ -13,6 +13,11 @@
   grid-area: workspace;
 }
 
+.workspace > * {
+  width: 100%;
+  height: 100%;
+}
+
 .sidebar {
   grid-area: sidebar;
   width: 25%;

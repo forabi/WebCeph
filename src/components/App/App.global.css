@@ -1,8 +1,14 @@
+:root {
+  --color-background: #eee;
+  --font-family: system-ui;
+}
+
 html,
 body {
   margin: 0;
   height: 100%;
   width: 100%;
+  font-family: var(--font-family);
 }
 
 #container {

@@ -720,6 +720,10 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-intl@^2.3.5":
+  version "2.3.5"
+  resolved "https://registry.yarnpkg.com/@types/react-intl/-/react-intl-2.3.5.tgz#eafa170d83c06302416075867a6fd219c1cf84d8"
+
 "@types/react-redux@^4.4.32":
   version "4.4.32"
   resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-4.4.32.tgz#7df8dc2f6429e31cc782020bf41ae5911b24e214"
@@ -746,11 +750,7 @@
   version "0.0.30"
   resolved "https://registry.yarnpkg.com/@types/react-tap-event-plugin/-/react-tap-event-plugin-0.0.30.tgz#123f35080412f489b6770c5a65c159ff96654cb5"
 
-"@types/react@*":
-  version "0.14.49"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-0.14.49.tgz#983b773c91d341488e06d57ba677301b2cd9b846"
-
-"@types/react@15", "@types/react@^15":
+"@types/react@*", "@types/react@15", "@types/react@^15":
   version "15.6.15"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-15.6.15.tgz#1856f932120311aa566f91e6d0c6e613d6448236"
 
@@ -5168,6 +5168,26 @@ interpret@^1.0.4:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.1.0.tgz#7ed1b1410c6a0e0f78cf95d3b8440c63f78b8614"
 
+intl-format-cache@^2.0.5:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/intl-format-cache/-/intl-format-cache-2.1.0.tgz#04a369fecbfad6da6005bae1f14333332dcf9316"
+
+intl-messageformat-parser@1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/intl-messageformat-parser/-/intl-messageformat-parser-1.4.0.tgz#b43d45a97468cadbe44331d74bb1e8dea44fc075"
+
+intl-messageformat@^2.0.0, intl-messageformat@^2.1.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/intl-messageformat/-/intl-messageformat-2.2.0.tgz#345bcd46de630b7683330c2e52177ff5eab484fc"
+  dependencies:
+    intl-messageformat-parser "1.4.0"
+
+intl-relativeformat@^2.0.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/intl-relativeformat/-/intl-relativeformat-2.1.0.tgz#010f1105802251f40ac47d0e3e1a201348a255df"
+  dependencies:
+    intl-messageformat "^2.0.0"
+
 into-stream@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/into-stream/-/into-stream-3.1.0.tgz#96fb0a936c12babd6ff1752a17d05616abd094c6"
@@ -5181,7 +5201,7 @@ invariant@^2.0.0, invariant@^2.2.0:
   dependencies:
     loose-envify "^1.0.0"
 
-invariant@^2.2.1, invariant@^2.2.2:
+invariant@^2.1.1, invariant@^2.2.1, invariant@^2.2.2:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   dependencies:
@@ -8064,7 +8084,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.5.4, prop-types@^15.6.0:
+prop-types@^15.5.4, prop-types@^15.6.0, prop-types@^15.6.1:
   version "15.6.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.1.tgz#36644453564255ddda391191fb3a125cbdf654ca"
   dependencies:
@@ -8276,6 +8296,15 @@ react-helmet@^5.2.0:
     object-assign "^4.1.1"
     prop-types "^15.5.4"
     react-side-effect "^1.1.0"
+
+react-intl@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/react-intl/-/react-intl-2.4.0.tgz#66c14dc9df9a73b2fbbfbd6021726e80a613eb15"
+  dependencies:
+    intl-format-cache "^2.0.5"
+    intl-messageformat "^2.1.0"
+    intl-relativeformat "^2.0.0"
+    invariant "^2.1.1"
 
 react-redux@^5.0.0-beta.1:
   version "5.0.0-beta.3"
