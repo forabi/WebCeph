@@ -8,16 +8,16 @@ const autoprefixer = require('autoprefixer');
 const BabiliPlugin = require('babili-webpack-plugin');
 const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 
-let Dashboard;
-let DashboardPlugin;
-let dashboard;
+// let Dashboard;
+// let DashboardPlugin;
+// let dashboard;
 
-if (env.isDev) {
-  Dashboard = require('webpack-dashboard');
-  DashboardPlugin = require('webpack-dashboard/plugin');
+// if (env.isDev) {
+//   Dashboard = require('webpack-dashboard');
+//   DashboardPlugin = require('webpack-dashboard/plugin');
 
-  dashboard = new Dashboard();
-}
+//   dashboard = new Dashboard();
+// }
 
 const prod = p => (env.isProd ? p : null);
 const hot = p => (env.isHot ? p : null);
@@ -37,11 +37,7 @@ const localCSSLoaders = [
   'postcss-loader',
 ];
 
-const globalCSSLoaders = [
-  'style-loader',
-  'css-loader',
-  'postcss-loader',
-];
+const globalCSSLoaders = ['style-loader', 'css-loader', 'postcss-loader'];
 
 const sassLoaders = [
   {
@@ -55,11 +51,13 @@ const sassLoaders = [
 const buildPath = env.isProd ? '' : '/';
 
 const config = {
-  devServer: env.isDev ? {
-    inline: true,
-    contentBase: buildPath,
-    hot: env.isHot,
-  } : undefined,
+  devServer: env.isDev
+    ? {
+      inline: true,
+      contentBase: buildPath,
+      hot: env.isHot,
+    }
+    : undefined,
 
   devtool: env.isDev ? 'eval' : false,
 
@@ -107,10 +105,7 @@ const config = {
 
   resolve: {
     extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js'],
-    modules: [
-      path.join(__dirname, 'src'),
-      'node_modules',
-    ],
+    modules: [path.join(__dirname, 'src'), 'node_modules'],
   },
 
   module: {
@@ -129,9 +124,11 @@ const config = {
                 {
                   module: 'es2015',
                 },
-                env.isProd ? {
-                  jsx: 'preserve',
-                } : { }
+                env.isProd
+                  ? {
+                    jsx: 'preserve',
+                  }
+                  : {}
               ),
             },
           },
@@ -141,22 +138,19 @@ const config = {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         use: ['babel-loader'],
-      }, {
+      },
+      {
         test: /\.css$/,
         use: localCSSLoaders,
       },
       {
         test: /\.scss$/,
-        include: [
-          path.resolve(path.resolve(__dirname, 'src/components')),
-        ],
+        include: [path.resolve(path.resolve(__dirname, 'src/components'))],
         use: [...localCSSLoaders, ...sassLoaders],
       },
       {
         test: /\.scss$/,
-        include: [
-          path.resolve(path.resolve(__dirname, 'src/layout')),
-        ],
+        include: [path.resolve(path.resolve(__dirname, 'src/layout'))],
         use: [...globalCSSLoaders, ...sassLoaders],
       },
       {
@@ -200,7 +194,7 @@ const config = {
       },
     }),
     hot(new webpack.HotModuleReplacementPlugin()),
-    dashboard ? new DashboardPlugin(dashboard.setData) : null,
+    // dashboard ? new DashboardPlugin(dashboard.setData) : null,
     fail,
     new webpack.optimize.CommonsChunkPlugin({
       names: ['common'],
@@ -210,12 +204,14 @@ const config = {
       filename: 'index.html',
       template: path.resolve(__dirname, 'src/index.html'),
       inject: 'body',
-      minify: env.isProduction ? {
-        html5: true,
-        collapseBooleanAttributes: true,
-        collapseInlineTagWhitespace: true,
-        collapseWhitespace: true,
-      } : false,
+      minify: env.isProduction
+        ? {
+          html5: true,
+          collapseBooleanAttributes: true,
+          collapseInlineTagWhitespace: true,
+          collapseWhitespace: true,
+        }
+        : false,
     }),
     new webpack.ProvidePlugin({
       Promise: 'bluebird',
