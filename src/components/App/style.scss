@@ -49,6 +49,8 @@
     width: 25vw;
     max-width: 25vw;
     flex-grow: 0;
+    max-height: calc(100% - 50px);
+
     .selector {
       flex-grow: 0;
       width: 100%;
