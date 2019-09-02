@@ -26,8 +26,13 @@ import Props from './props';
 
 const CephaloEditorToolbar = (props: Props) => {
   const {
-    canEdit, canRedo, canUndo,
-    contrast, brightness, isImageInverted,
+    className,
+    canEdit,
+    canRedo,
+    canUndo,
+    contrast,
+    brightness,
+    isImageInverted,
     activeToolId,
     onBrightnessChange,
     onContrastChange,
@@ -41,15 +46,30 @@ const CephaloEditorToolbar = (props: Props) => {
     onShowSummaryClick,
     canShowSummary,
     canExport,
-    isExporting,
+    isExporting
   } = props;
 
   const cannotEdit = !canEdit;
   return (
-    <div className={cx(classes.root, props.className)}>
-      <FlatButton onTouchTap={onUndoClick} disabled={cannotEdit || !canUndo} label="Undo" icon={<IconUndo/>} />
-      <FlatButton onTouchTap={onRedoClick} disabled={cannotEdit || !canRedo} label="Redo" icon={<IconRedo/>} />
-      <FlatButton onTouchTap={onFlipXClick} disabled={cannotEdit} label="Flip" icon={<IconFlip/>} />
+    <div className={cx(classes.root, className)}>
+      <FlatButton
+        onTouchTap={onUndoClick}
+        disabled={cannotEdit || !canUndo}
+        label="Undo"
+        icon={<IconUndo />}
+      />
+      <FlatButton
+        onTouchTap={onRedoClick}
+        disabled={cannotEdit || !canRedo}
+        label="Redo"
+        icon={<IconRedo />}
+      />
+      <FlatButton
+        onTouchTap={onFlipXClick}
+        disabled={cannotEdit}
+        label="Flip"
+        icon={<IconFlip />}
+      />
       <FlatButton
         disabled={cannotEdit || activeToolId === ToolsIds.SELECT}
         label=""
@@ -69,7 +89,9 @@ const CephaloEditorToolbar = (props: Props) => {
         onTouchTap={onToolButtonClick.bind(null, ToolsIds.ERASER)}
       />
       <FlatButton
-        disabled={true || cannotEdit || activeToolId === ToolsIds.ZOOM_WITH_CLICK}
+        disabled={
+          true || cannotEdit || activeToolId === ToolsIds.ZOOM_WITH_CLICK
+        }
         label=""
         icon={<IconZoom />}
         onTouchTap={onToolButtonClick.bind(null, ToolsIds.ZOOM_WITH_CLICK)}
@@ -83,7 +105,13 @@ const CephaloEditorToolbar = (props: Props) => {
       <FlatButton
         disabled={!canExport}
         label="Export"
-        icon={!isExporting ? <IconExport /> : <CircularProgress size={24} thickness={2} />}
+        icon={
+          !isExporting ? (
+            <IconExport />
+          ) : (
+            <CircularProgress size={24} thickness={2} />
+          )
+        }
         onTouchTap={onExportClick}
       />
     </div>

@@ -25,33 +25,43 @@ import Props from './props';
 
 attempt(injectTapEventPlugin);
 
-type State = { };
+type State = {};
 
 const classes = require('./style.scss');
 
 const addLifeCycleHooks = lifecycle({
-  componentDidMount(this: React.Component<Props, { }>) {
+  componentDidMount(this: React.Component<Props, {}>) {
     this.props.onComponentMount();
-  },
+  }
 });
 
-const enhance = compose<Props, State>(pure, addLifeCycleHooks);
+const enhance = compose<Props, State>(
+  pure,
+  addLifeCycleHooks
+);
 
-const App = enhance(({ userAgent, isReady, isSummaryShown = false, shouldShowStepper = false }: Props) => (
-  <MuiThemeProvider muiTheme={getMuiTheme()}>
-    { isReady ? (
+const App = enhance(
+  ({
+    userAgent,
+    isReady,
+    isSummaryShown = false,
+    shouldShowStepper = false
+  }: Props) => (
+    <MuiThemeProvider muiTheme={getMuiTheme()}>
+      {isReady ? (
         <div className={classes.root}>
           <CommandPalette className={classes.command_palette} />
           <AnalysisResultsViewer open={isSummaryShown} />
           <CompatibilityChecker userAgent={userAgent} />
           <div className={classes.container}>
-            <Menu className={classes.menu} />
-            <div className={classes.row}>
-              <CephaloCanvasContainer className={classes.main} />
-              <div className={cx(classes.sidebar, { [classes.sidebar_hidden]: !shouldShowStepper })}>
-                <AnalysisSelector className={classes.selector} />
-                <AnalysisStepper className={classes.stepper} />
-              </div>
+            <CephaloCanvasContainer className={classes.canvas} />
+            <div
+              className={cx(classes.sidebar, {
+                [classes.sidebar_hidden]: !shouldShowStepper
+              })}
+            >
+              <AnalysisSelector className={classes.selector} />
+              <AnalysisStepper className={classes.stepper} />
             </div>
             <Toolbar className={classes.toolbar} />
           </div>
@@ -60,9 +70,9 @@ const App = enhance(({ userAgent, isReady, isSummaryShown = false, shouldShowSte
         <div className={classes.root_loading}>
           <Progress />
         </div>
-      )
-    }
-  </MuiThemeProvider>
-));
+      )}
+    </MuiThemeProvider>
+  )
+);
 
 export default App as React.ComponentClass<Props>;

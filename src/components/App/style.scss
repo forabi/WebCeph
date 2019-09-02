@@ -23,33 +23,36 @@
   flex-wrap: no-wrap;
   flex-grow: 1;
   overflow: hidden;
+  display: grid;
+  grid-template-areas: 'canvas sidebar' 'toolbar toolbar';
+  grid-template-columns: 1fr auto;
+  grid-template-rows: 1fr auto;
+
   .menu {
   }
 
   .command_palette {
   }
 
-  .row {
-    display: flex;
-    flex-direction: row;
-    flex-grow: 1;
+  .toolbar {
+    grid-area: toolbar;
   }
 
-  .main {
-    flex-grow: 1;
-    flex-basis: 75%;
+  .canvas {
+    grid-area: canvas;
   }
 
   .sidebar {
+    grid-area: sidebar;
     max-height: 100%;
     overflow: hidden;
     &_hidden {
+      width: 0;
       display: none;
     }
     width: 25vw;
     max-width: 25vw;
     flex-grow: 0;
-    max-height: calc(100% - 50px);
 
     .selector {
       flex-grow: 0;
