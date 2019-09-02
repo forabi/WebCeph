@@ -47,7 +47,7 @@ const App = enhance(
     isSummaryShown = false,
     shouldShowStepper = false
   }: Props) => (
-    <MuiThemeProvider muiTheme={getMuiTheme()}>
+    <MuiThemeProvider muiTheme={getMuiTheme({ fontFamily: 'inherit' })}>
       {isReady ? (
         <div className={classes.root}>
           <CommandPalette className={classes.command_palette} />
