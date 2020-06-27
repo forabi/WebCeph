@@ -2,10 +2,10 @@
   "compilerOptions": {
     "target": "es2015",
     "lib": [
-        "es5",
-        "es2015",
-        "webworker",
-        "dom"
+      "es5",
+      "es2015",
+      "webworker",
+      "dom"
     ],
     "outDir": "build/",
     "allowJs": true,
@@ -21,6 +21,8 @@
     "traceResolution": false,
     "noImplicitReturns": true,
     "pretty": true,
+    "transpileOnly": true,
+    "silent": true,
     "noUnusedParameters": true,
     "strictNullChecks": true,
     "noUnusedLocals": true,
@@ -37,8 +39,8 @@
   },
   "compileOnSave": true,
   "exclude": [
-      "node_modules",
-      "src/**/*.test.ts",
-      "build/**"
+    "node_modules",
+    "src/**/*.test.ts",
+    "build/**"
   ]
 }
