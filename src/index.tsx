@@ -1,72 +1,83 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-
+import React from 'react';
+import ReactDOM from 'react-dom';
 import ReduxApp, { store } from './ReduxApp';
 import { Store } from 'redux';
-import { setAppUpdateStatus } from 'actions/env';
+import {
+  setAppUpdateStatus,
+  setAppInstallStatus,
+  envLocalesChanged,
+  connectionStatusChanged,
+} from 'actions/env';
+import { getNavigatorLanguages } from 'utils/locale';
+import { isAppInstalled } from 'store/reducers/app';
+import { isPersistedStateReady } from 'store/reducers/persistence';
 
-declare var System: any;
 declare var module: __WebpackModuleApi.Module;
 declare var window: Window & {
   ResizeObserver?: ResizeObserver;
-  __STORE__: Store<any>;
+  __STORE__: Store<StoreState> | undefined;
 };
 
 if (!__DEBUG__ && location.protocol !== 'https:') {
- location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
+  // Auto redirect to HTTPS version
+  location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
 }
 
 if (window.ResizeObserver === undefined) {
   window.ResizeObserver = require('resize-observer-polyfill').default;
 }
 
-if (!__DEBUG__ && 'serviceWorker' in navigator) {
-  const runtime = require('serviceworker-webpack-plugin/lib/runtime');
-  runtime.register().then((reg: ServiceWorkerRegistration) => {
-    reg.onupdatefound = () => {
+let reg: ServiceWorkerRegistration;
+
+const installOrUpdateApp = async () => {
+  const state = store.getState();
+  if (!reg) {
+    const runtime = require('serviceworker-webpack-plugin/lib/runtime');
+    reg = await runtime.register();
+    reg.addEventListener('updatefound', () => {
       const newWorker = reg.installing;
-      if (newWorker !== undefined) {
+      const setStatus = isAppInstalled(state) ? setAppUpdateStatus : setAppInstallStatus;
+      if (newWorker) {
+        // @TODO: get total size
         switch (newWorker.state) {
           case 'installing':
             store.dispatch(
-              setAppUpdateStatus({ complete: false })
+              setStatus({ complete: false }),
             );
             break;
           case 'installed':
             store.dispatch(
-              setAppUpdateStatus({ complete: true })
+              setStatus({ complete: true }),
             );
+            break;
           default:
             break;
         }
       }
-    };
+    });
+  } else {
+    // @TODO: does this actually update?
+    await reg.update();
+  }
+};
+
+if (!__DEBUG__ && 'serviceWorker' in navigator) {
+  const unsubscribe = store.subscribe(() => {
+    const state = store.getState();
+    if (isPersistedStateReady(state)) {
+      unsubscribe();
+      installOrUpdateApp();
+    }
   });
 }
 
-
-import { hasUnsavedWork } from 'store/reducers/workspace';
-
-import { connectionStatusChanged } from 'actions/env';
-
 if (__DEBUG__) {
+  // Expose store in development
   window.__STORE__ = store;
 }
 
-window.addEventListener('beforeunload', e => {
-  const state = store.getState();
-  if (hasUnsavedWork(state)) {
-    const confirmationMessage = (
-      'Are you sure you want to close this window?'
-    );
-    e.returnValue = confirmationMessage;
-    return confirmationMessage;
-  }
-  return undefined;
-});
-
 const handleConnectionChange = () => {
-  console.log('Connection changed', navigator.onLine);
+  console.info('Connection changed', navigator.onLine);
   store.dispatch(connectionStatusChanged({
     isOffline: !navigator.onLine,
   }));
@@ -75,14 +86,28 @@ const handleConnectionChange = () => {
 window.addEventListener('online', handleConnectionChange);
 window.addEventListener('offline', handleConnectionChange);
 
+const handleLanguageChange = () => {
+  console.info('Locales changed', getNavigatorLanguages());
+  store.dispatch(envLocalesChanged(getNavigatorLanguages()));
+};
+
+window.addEventListener('languagechange', handleLanguageChange);
+
+handleConnectionChange();
+handleLanguageChange();
+
 const rootEl = document.getElementById('container');
 
-const render = (App: typeof ReduxApp) => ReactDOM.render(<App />, rootEl);
+const render = (App: typeof ReduxApp) => ReactDOM.render(
+  <App />,
+  rootEl,
+);
 
 render(ReduxApp);
 
 if (module.hot) {
   module.hot.accept('./ReduxApp', () => {
-    System.import('./ReduxApp').then((App: { default: typeof ReduxApp }) => render(App.default));
+    const NextApp: typeof ReduxApp = require('./ReduxApp').default;
+    render(NextApp);
   });
 }
