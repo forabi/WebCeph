@@ -36,7 +36,7 @@
     "langmap": "^0.0.14",
     "lodash": "^4.17.4",
     "material-ui": "^0.16.7",
-    "moment": "^2.15.1",
+    "moment": "^2.29.2",
     "office-ui-fabric-core": "^6.0.0",
     "office-ui-fabric-react": "^1.5.2",
     "randomcolor": "^0.4.4",
