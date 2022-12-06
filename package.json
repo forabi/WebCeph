@@ -129,7 +129,7 @@
     "expect": "^1.20.2",
     "expect-jsx": "^3.0.0",
     "exports-loader": "^0.6.3",
-    "express": "^4.14.1",
+    "express": "^4.17.3",
     "file-loader": "^0.10.0",
     "glob": "^7.1.1",
     "istanbul-instrumenter-loader": "^1.2.0",
